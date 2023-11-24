@@ -2,6 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://hgvf.github.io/category/</loc>
+    <lastmod>2023-11-25T02:17:34+08:00</lastmod>
+  </url><url>
     <loc>https://hgvf.github.io/posts/</loc>
     <lastmod>2023-11-25T02:17:34+08:00</lastmod>
   </url><url>
@@ -11,7 +14,8 @@
     <loc>https://hgvf.github.io/</loc>
     <lastmod>2023-11-25T02:17:34+08:00</lastmod>
   </url><url>
-    <loc>https://hgvf.github.io/categories/</loc>
+    <loc>https://hgvf.github.io/category/%E5%85%B6%E4%BB%96/</loc>
+    <lastmod>2023-11-25T02:17:34+08:00</lastmod>
   </url><url>
     <loc>https://hgvf.github.io/tags/</loc>
   </url>

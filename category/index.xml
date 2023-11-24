@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Category on Weiwei 的 Blog</title>
+    <link>https://hgvf.github.io/category/</link>
+    <description>Recent content in Category on Weiwei 的 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 25 Nov 2023 02:17:34 +0800</lastBuildDate>
+    <atom:link href="https://hgvf.github.io/category/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>其他</title>
+      <link>https://hgvf.github.io/category/%E5%85%B6%E4%BB%96/</link>
+      <pubDate>Sat, 25 Nov 2023 02:17:34 +0800</pubDate>
+      <guid>https://hgvf.github.io/category/%E5%85%B6%E4%BB%96/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>
