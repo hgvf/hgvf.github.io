@@ -6,8 +6,34 @@
     <description>Recent content in Posts on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:33:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 01:39:58 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker</title>
+      <link>https://hgvf.github.io/posts/docker/</link>
+      <pubDate>Sun, 26 Nov 2023 01:39:58 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/docker/</guid>
+      <description>Links 安裝教學1 安裝教學2 可以把現有的 image pull 下來用 -&amp;gt; Docker Hub 基礎入門 聖經?! 建立 docker 環境1 建立 docker 環境2 官方文件 官方文件 (Dockerfile) 指令 查看 docker 版本 $ docker version 查看現有的 images (還沒跑起來的映象檔) $ docker images # (Optional) $ docker images ls 查看執行中的 containers $ docker container ls -a # or $ docker ps -a Shutdown container $ docker container stop &amp;lt;CONTAINER_ID&amp;gt; # 然後還要執行這個 $ docker rm &amp;lt;container_ID&amp;gt; Pull image $ docker pull &amp;lt;docker_name&amp;gt; Remove image $ docker image rm &amp;lt;IMAGE_ID&amp;gt; 啟動 image，且進入其 bash 模式 $ docker run -it &amp;lt;docker_name or IMAGE_ID&amp;gt; bash 創建 Docker 環境 Step1: 創立 Dockerfile</description>
+    </item>
+    <item>
+      <title>SocialMedia</title>
+      <link>https://hgvf.github.io/posts/socialmedia/</link>
+      <pubDate>Sun, 26 Nov 2023 01:37:37 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/socialmedia/</guid>
+      <description>Ch2 Power distribution 在社群網路中，degree 越大的點會越少，反之則越多。 $P(k)=Ck^{-\gamma}=\frac{1}{k^{\gamma}}C$ 其中 k: degree, C: 不同 network 可能有不同的常數, $\gamma$: 通常為正數。 Local clustering coefficient (per vertex) $$C_i=\frac{vertex_i 的鄰居彼此的 link 數量}{k_i(k_i-1)/2}$$
+Global clustering coefficient (per vertex) $$C=\frac{3\times network 中三角形數量}{圖中 triplet 數量}$$
+triplet: 一個點往外連，讓一條 link 連到 3 個 vertices 就算一個 triplet。 Ch3 Empirical network features 符合 power-law degree distribution。 Small average distance (graph diameter)，類似小世界定理，表示說人跟人之間的 link 最多距離不超過6。 Large clustering coefficient，表示說社群網路中會有很多的三角形存在。 Giant connected component，表示真實世界中常會有少數個很大的 connected component。 Phase transition $G_{n, p}$: 一個圖共有 $N=\frac{n(n-1)}{2}$ 條 edges，每條連接的機率是 $p$。 $=p \frac{n(n-1)}{2}=N \cdot p$ $=\frac{1}{n}\sum_{i}{k_i}=\frac{2}{n}=p(n-1) \simeq pn$ (每個點平均有幾條 edge) Graph density $\rho=\frac{}{n(n-1)/2}=p$ Phase transition Graph G(n, p), critical value=$p_c$: 1.</description>
+    </item>
+    <item>
+      <title>Database</title>
+      <link>https://hgvf.github.io/posts/database/</link>
+      <pubDate>Sun, 26 Nov 2023 01:37:15 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/database/</guid>
+      <description>ER Model Types of attributes: 1. Simple 2. Composite, composed of several components: Name (FirstName, MiddleName,&amp;hellip;) 3. Multi-valued, may have multiple values: Student (High-school, College,&amp;hellip;)
+Weak Entity: 沒有 key attribute，必須有另外一個 relationship 當作 owner 來協助辨識 weak entity，辨識的組合如下: 1. Partial key of weak entity. 2. 另外一個 strong entity，用來辨識 weak entity。
+圖示: ER Model 範例: Relational Model Superkey: 在一個 relational table $R$ 中，任兩個 rows 的 superkey 內容都不可能相同，superkey 是一個集合。
+Key: Superkey of $R$，可以想成是 superkey 的最小集合，移除 key 中任何一個 attribute 都會使集合不符合 superkey。</description>
+    </item>
     <item>
       <title>SpeechBrain</title>
       <link>https://hgvf.github.io/posts/speechbrain/</link>
@@ -65,7 +91,7 @@ Model architecture:
       <pubDate>Sat, 25 Nov 2023 02:17:34 +0800</pubDate>
       <guid>https://hgvf.github.io/posts/todolist/</guid>
       <description>網站未來新增:
-技術文件 論文筆記 課程筆記 旅遊 美食 景點 履歷 一些事的心得 一些雜事的處理 SOP 踩過的雷 股市 汽車 </description>
+技術文件 論文筆記 課程筆記 (CCU, NTUST) 旅遊 美食 景點 履歷 一些事的心得 一些雜事的處理 SOP 踩過的雷 股市 汽車 </description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Database on Weiwei 的 Blog</title>
+    <link>https://hgvf.github.io/tags/database/</link>
+    <description>Recent content in Database on Weiwei 的 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Nov 2023 01:37:15 +0800</lastBuildDate>
+    <atom:link href="https://hgvf.github.io/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Database</title>
+      <link>https://hgvf.github.io/posts/database/</link>
+      <pubDate>Sun, 26 Nov 2023 01:37:15 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/database/</guid>
+      <description>ER Model Types of attributes: 1. Simple 2. Composite, composed of several components: Name (FirstName, MiddleName,&amp;hellip;) 3. Multi-valued, may have multiple values: Student (High-school, College,&amp;hellip;)
+Weak Entity: 沒有 key attribute，必須有另外一個 relationship 當作 owner 來協助辨識 weak entity，辨識的組合如下: 1. Partial key of weak entity. 2. 另外一個 strong entity，用來辨識 weak entity。
+圖示: ER Model 範例: Relational Model Superkey: 在一個 relational table $R$ 中，任兩個 rows 的 superkey 內容都不可能相同，superkey 是一個集合。
+Key: Superkey of $R$，可以想成是 superkey 的最小集合，移除 key 中任何一個 attribute 都會使集合不符合 superkey。</description>
+    </item>
+  </channel>
+</rss>

@@ -6,8 +6,15 @@
     <description>Recent content in Virtual Environment on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:28:47 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 01:39:58 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/tags/virtual-environment/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker</title>
+      <link>https://hgvf.github.io/posts/docker/</link>
+      <pubDate>Sun, 26 Nov 2023 01:39:58 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/docker/</guid>
+      <description>Links 安裝教學1 安裝教學2 可以把現有的 image pull 下來用 -&amp;gt; Docker Hub 基礎入門 聖經?! 建立 docker 環境1 建立 docker 環境2 官方文件 官方文件 (Dockerfile) 指令 查看 docker 版本 $ docker version 查看現有的 images (還沒跑起來的映象檔) $ docker images # (Optional) $ docker images ls 查看執行中的 containers $ docker container ls -a # or $ docker ps -a Shutdown container $ docker container stop &amp;lt;CONTAINER_ID&amp;gt; # 然後還要執行這個 $ docker rm &amp;lt;container_ID&amp;gt; Pull image $ docker pull &amp;lt;docker_name&amp;gt; Remove image $ docker image rm &amp;lt;IMAGE_ID&amp;gt; 啟動 image，且進入其 bash 模式 $ docker run -it &amp;lt;docker_name or IMAGE_ID&amp;gt; bash 創建 Docker 環境 Step1: 創立 Dockerfile</description>
+    </item>
     <item>
       <title>Anaconda</title>
       <link>https://hgvf.github.io/posts/anaconda/</link>

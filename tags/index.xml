@@ -6,8 +6,29 @@
     <description>Recent content in Tags on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:33:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 01:39:58 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python</title>
+      <link>https://hgvf.github.io/tags/python/</link>
+      <pubDate>Sun, 26 Nov 2023 01:39:58 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Virtual Environment</title>
+      <link>https://hgvf.github.io/tags/virtual-environment/</link>
+      <pubDate>Sun, 26 Nov 2023 01:39:58 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/virtual-environment/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Database</title>
+      <link>https://hgvf.github.io/tags/database/</link>
+      <pubDate>Sun, 26 Nov 2023 01:37:15 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/database/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Deep-learning</title>
       <link>https://hgvf.github.io/tags/deep-learning/</link>
@@ -23,13 +44,6 @@
       <description></description>
     </item>
     <item>
-      <title>Python</title>
-      <link>https://hgvf.github.io/tags/python/</link>
-      <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
-      <guid>https://hgvf.github.io/tags/python/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>EEW System</title>
       <link>https://hgvf.github.io/tags/eew-system/</link>
       <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
@@ -41,13 +55,6 @@
       <link>https://hgvf.github.io/tags/linux/</link>
       <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
       <guid>https://hgvf.github.io/tags/linux/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Virtual Environment</title>
-      <link>https://hgvf.github.io/tags/virtual-environment/</link>
-      <pubDate>Sun, 26 Nov 2023 01:28:47 +0800</pubDate>
-      <guid>https://hgvf.github.io/tags/virtual-environment/</guid>
       <description></description>
     </item>
     <item>
