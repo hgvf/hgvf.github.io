@@ -155,7 +155,7 @@ $PE_(pos, 2i+1) = cos(\frac{pos}{10000^\frac{2i}{d_{model}}})$
 <ul>
 <li><strong>Noam learning rate scheduler</strong>:</li>
 </ul>
-<pre><code>$$lrate=d^{-0.5}_{model}  \cdot  min(step\_num^{-0.5}, step\_num \cdot warmup\_step^{-1.5})$$
+<pre><code>$lrate=d^{-0.5}_{model}  \cdot  min(step\_num^{-0.5}, step\_num \cdot warmup\_step^{-1.5})$
 
 - 也就是在 warmup 期間使用極小的 learning rate，之後才用較大的 learning rate 更新梯度。</code></pre>
 
