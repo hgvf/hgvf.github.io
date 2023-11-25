@@ -6,8 +6,22 @@
     <description>Recent content on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:39:58 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 02:04:35 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lab_command</title>
+      <link>https://hgvf.github.io/posts/lab_command/</link>
+      <pubDate>Sun, 26 Nov 2023 02:04:35 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/lab_command/</guid>
+      <description>查看 GPU 狀態 $ nvidia-smi # 逐秒檢查 (ex. 每秒刷新一次) $ watch -n 1 nvidia-smi 複製 (ex. dataset) $ cp -ar &amp;lt;dataset_path&amp;gt; &amp;lt;target_path&amp;gt; 用 pid 看是誰的 process $ ps -o user= -p &amp;lt;pid&amp;gt; 用 pid 看對應的 command $ ps -p &amp;lt;pid&amp;gt; -o args 看到底誰在用 SWAP $ (echo &amp;#34;COMM PID SWAP&amp;#34;; for file in /proc/*/status ; do awk &amp;#39;/^Pid|VmSwap|Name/{printf $2 &amp;#34; &amp;#34; $3}END{ print &amp;#34;&amp;#34;}&amp;#39; $file; done | grep kB | grep -wv &amp;#34;0 kB&amp;#34; | sort -k 3 -n -r) | column -t 用 command line 載 IEEE papers $ wget &amp;#34;http://ieeexplore.</description>
+    </item>
+    <item>
+      <title>Seiscomp</title>
+      <link>https://hgvf.github.io/posts/seiscomp/</link>
+      <pubDate>Sun, 26 Nov 2023 02:03:54 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/seiscomp/</guid>
+      <description>基本觀念 所有 SeiscomP 的模組: picking, magnitude, estimation, … 都是透過 XML 檔案來溝通 每次要做一個事件都必須將 metadata 匯入資料庫 系統 fdsnws: web service scamp: 計算 amplitude scautoloc: 自動定位 scautopick: 自動 picking scdb: seiscomp 資料庫連接的模組 scevent: 判斷是否成為一個 event scmag: 計算 magnitude scmaster: 管理 Seiscomp 即時資料的訊息環 基本指令 (SeiscomP) 連進 mysql server $ mysql -u root -p 啟動 Seiscomp System Update Configuration: 可確認資料庫是否正常運作 Enable module(s): 將模組 ON Start → 啟動 Seiscomp $ scconfig 觀察 mseed 檔案內的波型 右鍵往右拖移 → Zoom-in 右鍵往左拖移 → Zoom-out # 看 offline data $ scrttv &amp;lt;mseed filename&amp;gt; # 看 real-time data $ scrttv 建立事件 SeiscomP資料夾 裡面會拆解該事件每個測站的波型，並分類，有固定格式 $ scart -I &amp;lt;mseed filename&amp;gt; 透過 UI 介面看事件 要先 scart 把波型資料匯入 # Offline 模式 $ scolv -d &amp;lt;database name, default: localhost&amp;gt; -i &amp;lt;event xml filename, default: events.</description>
+    </item>
     <item>
       <title>Docker</title>
       <link>https://hgvf.github.io/posts/docker/</link>
@@ -90,7 +104,7 @@ Model architecture:
       <pubDate>Sat, 25 Nov 2023 02:17:34 +0800</pubDate>
       <guid>https://hgvf.github.io/posts/todolist/</guid>
       <description>網站未來新增:
-技術文件 論文筆記 課程筆記 (CCU, NTUST) 旅遊 美食 景點 履歷 一些事的心得 一些雜事的處理 SOP 踩過的雷 股市 汽車 </description>
+技術文件 論文筆記 課程筆記 (CCU, NTUST) 旅遊 美食 景點 履歷 一些事的心得 一些雜事的處理 SOP 踩過的雷 股市 汽車 搜尋介面 </description>
     </item>
   </channel>
 </rss>

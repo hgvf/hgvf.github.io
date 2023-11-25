@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>指令大軍 on Weiwei 的 Blog</title>
+    <link>https://hgvf.github.io/category/%E6%8C%87%E4%BB%A4%E5%A4%A7%E8%BB%8D/</link>
+    <description>Recent content in 指令大軍 on Weiwei 的 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Nov 2023 02:04:35 +0800</lastBuildDate>
+    <atom:link href="https://hgvf.github.io/category/%E6%8C%87%E4%BB%A4%E5%A4%A7%E8%BB%8D/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lab_command</title>
+      <link>https://hgvf.github.io/posts/lab_command/</link>
+      <pubDate>Sun, 26 Nov 2023 02:04:35 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/lab_command/</guid>
+      <description>查看 GPU 狀態 $ nvidia-smi # 逐秒檢查 (ex. 每秒刷新一次) $ watch -n 1 nvidia-smi 複製 (ex. dataset) $ cp -ar &amp;lt;dataset_path&amp;gt; &amp;lt;target_path&amp;gt; 用 pid 看是誰的 process $ ps -o user= -p &amp;lt;pid&amp;gt; 用 pid 看對應的 command $ ps -p &amp;lt;pid&amp;gt; -o args 看到底誰在用 SWAP $ (echo &amp;#34;COMM PID SWAP&amp;#34;; for file in /proc/*/status ; do awk &amp;#39;/^Pid|VmSwap|Name/{printf $2 &amp;#34; &amp;#34; $3}END{ print &amp;#34;&amp;#34;}&amp;#39; $file; done | grep kB | grep -wv &amp;#34;0 kB&amp;#34; | sort -k 3 -n -r) | column -t 用 command line 載 IEEE papers $ wget &amp;#34;http://ieeexplore.</description>
+    </item>
+  </channel>
+</rss>

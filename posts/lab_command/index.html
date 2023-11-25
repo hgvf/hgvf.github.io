@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Lab_command // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Lab_command"/>
+<meta name="twitter:description" content="查看 GPU 狀態 $ nvidia-smi # 逐秒檢查 (ex. 每秒刷新一次) $ watch -n 1 nvidia-smi 複製 (ex. dataset) $ cp -ar &lt;dataset_path&gt; &lt;target_path&gt; 用 pid 看是誰的 process $ ps -o user= -p &lt;pid&gt; 用 pid 看對應的 command $ ps -p &lt;pid&gt; -o args 看到底誰在用 SWAP $ (echo &#34;COMM PID SWAP&#34;; for file in /proc/*/status ; do awk &#39;/^Pid|VmSwap|Name/{printf $2 &#34; &#34; $3}END{ print &#34;&#34;}&#39; $file; done | grep kB | grep -wv &#34;0 kB&#34; | sort -k 3 -n -r) | column -t 用 command line 載 IEEE papers $ wget &#34;http://ieeexplore."/>
+
+    <meta property="og:title" content="Lab_command" />
+<meta property="og:description" content="查看 GPU 狀態 $ nvidia-smi # 逐秒檢查 (ex. 每秒刷新一次) $ watch -n 1 nvidia-smi 複製 (ex. dataset) $ cp -ar &lt;dataset_path&gt; &lt;target_path&gt; 用 pid 看是誰的 process $ ps -o user= -p &lt;pid&gt; 用 pid 看對應的 command $ ps -p &lt;pid&gt; -o args 看到底誰在用 SWAP $ (echo &#34;COMM PID SWAP&#34;; for file in /proc/*/status ; do awk &#39;/^Pid|VmSwap|Name/{printf $2 &#34; &#34; $3}END{ print &#34;&#34;}&#39; $file; done | grep kB | grep -wv &#34;0 kB&#34; | sort -k 3 -n -r) | column -t 用 command line 載 IEEE papers $ wget &#34;http://ieeexplore." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/lab_command/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T02:04:35+08:00" />
+<meta property="article:modified_time" content="2023-11-26T02:04:35+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Lab_command</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://hgvf.github.io/tags/linux/">Linux</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h3 id="查看-gpu-狀態">查看 GPU 狀態</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ nvidia-smi
+
+# 逐秒檢查 (ex. 每秒刷新一次)
+$ watch -n 1 nvidia-smi
+</code></pre><h3 id="複製-ex-dataset">複製 (ex. dataset)</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cp -ar &lt;dataset_path&gt; &lt;target_path&gt;
+</code></pre><h3 id="用-pid-看是誰的-process">用 pid 看是誰的 process</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ ps -o user= -p &lt;pid&gt;
+</code></pre><h3 id="用-pid-看對應的-command">用 pid 看對應的 command</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ ps -p &lt;pid&gt; -o args
+</code></pre><h3 id="看到底誰在用-swap">看到底誰在用 SWAP</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ (echo &#34;COMM PID SWAP&#34;; for file in /proc/*/status ; do awk &#39;/^Pid|VmSwap|Name/{printf $2 &#34; &#34; $3}END{ print &#34;&#34;}&#39; $file; done | grep kB | grep -wv &#34;0 kB&#34; | sort -k 3 -n -r) | column -t
+</code></pre><h3 id="用-command-line-載-ieee-papers">用 command line 載 IEEE papers</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ wget &#34;http://ieeexplore.ieee.org/stampPDF/getPDF.jsp?tp=&amp;isnumber=&amp;arnumber=&lt;numberID&gt;&#34; -O paper.pdf
+</code></pre><h3 id="掛載硬碟-sop">掛載硬碟 SOP</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ sudo fdisk -l
+$ sudo mount &lt;drive point&gt; &lt;mount point&gt;
+</code></pre><h3 id="看磁碟使用程度--h-以-gb-為單位">看磁碟使用程度 (-h: 以 GB 為單位)</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell="># 看所有空間的使用程度
+$ df -h
+
+# 看當前目錄大小
+$ du -h
+
+# 排序
+$ du -h | sort -h
+</code></pre><h3 id="找檔案路徑-只會從-path-中搜尋">找檔案路徑 (只會從 $PATH 中搜尋)</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ where &lt;search_target&gt;
+$ which &lt;search_target&gt;
+</code></pre><p>which 應該也是這樣用吧?</p>
+<h3 id="開啟-jupyter-notebook">開啟 jupyter notebook</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ jupyter notebook --no-browser --port=5000 --NotebookApp.token=&#39;&#39; --NotebookApp.password=&#39;&#39;
+
+$ ssh -L 5000:localhost:5000 weiwei@140.118.127.90
+</code></pre><h3 id="在-juputer-安裝新的-kernel-pyenv">在 juputer 安裝新的 kernel (pyenv)</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ python -m ipykernel install --user --name &lt;pyenv enviro_name&gt; --display-name &lt;name of kernel&gt;
+
+再去存放 kernel.json 那邊，改掉裡面的路徑，改成 env path
+
+要用的環境必須要先安裝好 ipykernel
+</code></pre><h3 id="terminal-下載-google-drive-檔案">Terminal 下載 google drive 檔案</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ gdown https://drive.google.com/uc?id=&lt;FileID&gt;
+</code></pre><h3 id="在電腦-or-server-上架設-http-server">在電腦 or Server 上架設 HTTP server</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ python -m http.server &lt;port&gt;
+
+# 在本機端 IP:port 就有了
+</code></pre><h3 id="啟動-overleaf-server">啟動 Overleaf Server</h3>
+<ul>
+<li>IP: 89</li>
+<li>帳號: nlplab</li>
+<li>密碼: nlp6806</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd project/overleaf
+
+$ sudo bin/docker-compose up
+</code></pre><h3 id="啟動-nlplab-website-database">啟動 NLPLAB website database</h3>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd project/nlplab/api
+
+$ sudo bin/docker-compose up
+</code></pre><h3 id="更改-oj-或-overleaf-憑證">更改 OJ 或 Overleaf 憑證</h3>
+<ul>
+<li>Online Judge</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd projects/OnlineJudgeDeploy/data/backend/ssl/
+
+$ sudo cp /etc/letsencrypt/live/nlp.csie.ntust.edu.tw-0001/fullchain.pem server.crt 
+$ sudo cp /etc/letsencrypt/live/nlp.csie.ntust.edu.tw-0001/privkey.pem server.key 
+
+$ cd ../../..
+
+$ sudo docker-compose down
+$ sudo docker-compose up -d
+</code></pre><ul>
+<li>Overleaf</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd ~/projects/overleaf/config/nginx/certs
+
+$ sudo cp /etc/letsencrypt/live/nlp.csie.ntust.edu.tw-0001/fullchain.pem .
+$ sudo cp /etc/letsencrypt/live/nlp.csie.ntust.edu.tw-0001/privkey.pem .
+
+$ cd ../../../
+
+$ sudo bin/docker-compose down
+$ sudo bin/docker-compose up -d
+</code></pre>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

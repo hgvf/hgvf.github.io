@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Seiscomp // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Seiscomp"/>
+<meta name="twitter:description" content="基本觀念 所有 SeiscomP 的模組: picking, magnitude, estimation, … 都是透過 XML 檔案來溝通 每次要做一個事件都必須將 metadata 匯入資料庫 系統 fdsnws: web service scamp: 計算 amplitude scautoloc: 自動定位 scautopick: 自動 picking scdb: seiscomp 資料庫連接的模組 scevent: 判斷是否成為一個 event scmag: 計算 magnitude scmaster: 管理 Seiscomp 即時資料的訊息環 基本指令 (SeiscomP) 連進 mysql server $ mysql -u root -p 啟動 Seiscomp System Update Configuration: 可確認資料庫是否正常運作 Enable module(s): 將模組 ON Start → 啟動 Seiscomp $ scconfig 觀察 mseed 檔案內的波型 右鍵往右拖移 → Zoom-in 右鍵往左拖移 → Zoom-out # 看 offline data $ scrttv &lt;mseed filename&gt; # 看 real-time data $ scrttv 建立事件 SeiscomP資料夾 裡面會拆解該事件每個測站的波型，並分類，有固定格式 $ scart -I &lt;mseed filename&gt; 透過 UI 介面看事件 要先 scart 把波型資料匯入 # Offline 模式 $ scolv -d &lt;database name, default: localhost&gt; -i &lt;event xml filename, default: events."/>
+
+    <meta property="og:title" content="Seiscomp" />
+<meta property="og:description" content="基本觀念 所有 SeiscomP 的模組: picking, magnitude, estimation, … 都是透過 XML 檔案來溝通 每次要做一個事件都必須將 metadata 匯入資料庫 系統 fdsnws: web service scamp: 計算 amplitude scautoloc: 自動定位 scautopick: 自動 picking scdb: seiscomp 資料庫連接的模組 scevent: 判斷是否成為一個 event scmag: 計算 magnitude scmaster: 管理 Seiscomp 即時資料的訊息環 基本指令 (SeiscomP) 連進 mysql server $ mysql -u root -p 啟動 Seiscomp System Update Configuration: 可確認資料庫是否正常運作 Enable module(s): 將模組 ON Start → 啟動 Seiscomp $ scconfig 觀察 mseed 檔案內的波型 右鍵往右拖移 → Zoom-in 右鍵往左拖移 → Zoom-out # 看 offline data $ scrttv &lt;mseed filename&gt; # 看 real-time data $ scrttv 建立事件 SeiscomP資料夾 裡面會拆解該事件每個測站的波型，並分類，有固定格式 $ scart -I &lt;mseed filename&gt; 透過 UI 介面看事件 要先 scart 把波型資料匯入 # Offline 模式 $ scolv -d &lt;database name, default: localhost&gt; -i &lt;event xml filename, default: events." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/seiscomp/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T02:03:54+08:00" />
+<meta property="article:modified_time" content="2023-11-26T02:03:54+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Seiscomp</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://hgvf.github.io/tags/c/c&#43;&#43;/">C/C&#43;&#43;</a>
+              <a class="tag" href="https://hgvf.github.io/tags/linux/">Linux</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h1 id="基本觀念">基本觀念</h1>
+<hr>
+<ul>
+<li>所有 SeiscomP 的模組: picking, magnitude, estimation, … 都是透過 XML 檔案來溝通</li>
+<li>每次要做一個事件都必須將 metadata 匯入資料庫</li>
+</ul>
+<hr>
+<h1 id="系統">系統</h1>
+<hr>
+<ul>
+<li><strong>fdsnws</strong>: web service</li>
+<li><strong>scamp</strong>: 計算 amplitude</li>
+<li><strong>scautoloc</strong>: 自動定位</li>
+<li><strong>scautopick</strong>: 自動 picking</li>
+<li><strong>scdb</strong>: seiscomp 資料庫連接的模組</li>
+<li><strong>scevent</strong>: 判斷是否成為一個 event</li>
+<li><strong>scmag</strong>: 計算 magnitude</li>
+<li><strong>scmaster</strong>: 管理 Seiscomp 即時資料的訊息環</li>
+</ul>
+<hr>
+<h1 id="基本指令-seiscomp">基本指令 (SeiscomP)</h1>
+<hr>
+<ul>
+<li>連進 mysql server</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ mysql -u root -p
+</span></span></code></pre></div><ul>
+<li>啟動 Seiscomp
+<ul>
+<li>System
+<ul>
+<li>Update Configuration: 可確認資料庫是否正常運作</li>
+<li>Enable module(s): 將模組 ON</li>
+<li>Start → 啟動 Seiscomp</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scconfig
+</span></span></code></pre></div><ul>
+<li>觀察 mseed 檔案內的波型
+<ul>
+<li>右鍵往右拖移 → Zoom-in</li>
+<li>右鍵往左拖移 → Zoom-out</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 看 offline data</span>
+</span></span><span style="display:flex;"><span>$ scrttv &lt;mseed filename&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 看 real-time data</span>
+</span></span><span style="display:flex;"><span>$ scrttv
+</span></span></code></pre></div><ul>
+<li>建立事件 SeiscomP資料夾
+<ul>
+<li>裡面會拆解該事件每個測站的波型，並分類，有固定格式</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scart -I &lt;mseed filename&gt;
+</span></span></code></pre></div><ul>
+<li>透過 UI 介面看事件
+<ul>
+<li>要先 scart 把波型資料匯入</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Offline 模式</span>
+</span></span><span style="display:flex;"><span>$ scolv -d &lt;database name, default: localhost&gt; -i &lt;event xml filename, default: events.xml&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 只輸入 scolv: 抓 real-time data</span>
+</span></span><span style="display:flex;"><span>$ scolv
+</span></span></code></pre></div><ul>
+<li>將人工檢視的事件匯入資料庫
+<ul>
+<li>把處理完的事件存成另外的 xml，並用 scdb 匯入</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scdb -d &lt;database name, default: localhost&gt; -i &lt;event xml filename, default: events.xml&gt;
+</span></span></code></pre></div><ul>
+<li>將 autopicking 或事件檔案結果轉成 xml 檔案
+<ul>
+<li>用 scrttv 看波形後，再匯入轉好的 xml 檔案來看 autopicking 結果等等</li>
+<li>格式參考: <a href="https://www.seiscomp.de/doc/apps/sh2proc.html">https://www.seiscomp.de/doc/apps/sh2proc.html</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sh2proc &lt;要轉的檔案&gt; -d &lt;database name&gt; &gt; &lt;xml filename&gt;
+</span></span></code></pre></div><ul>
+<li>排序 mseed 檔案，以 endtime 為主，並移除重複的儀器
+<ul>
+<li>相關參數: <a href="https://www.seiscomp.de/doc/apps/scmssort.html">https://www.seiscomp.de/doc/apps/scmssort.html</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$  scmssort -vuE &lt;要轉的 mseed&gt; &gt; &lt;轉好的 mseed 檔案名稱&gt;
+</span></span></code></pre></div><ul>
+<li>將資料庫中的事件資料刪除 (使用上要小心)
+<ul>
+<li>相關參數: <a href="https://www.seiscomp.de/doc/apps/scdbstrip.html">https://www.seiscomp.de/doc/apps/scdbstrip.html</a></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scdbstrip -d &lt;name of database&gt; --days &lt;保留最近X天的資料&gt;
+</span></span></code></pre></div><ul>
+<li>觀察 Seiscomp 即時資料訊息環內容
+<ul>
+<li>類似 Earthworm shared memory (RING)</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scmm
+</span></span></code></pre></div><ul>
+<li>看資料庫，除了 scolv 的指令</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scesv
+</span></span></code></pre></div><ul>
+<li>在地圖上看即時的資料</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scmv
+</span></span></code></pre></div><h1 id="其他動作">其他動作</h1>
+<hr>
+<ul>
+<li>
+<p>線上取得事件資訊 (下載事件 xml 檔案)</p>
+<ul>
+<li>
+<p>瀏覽器網址: 127.0.0.1:8080</p>
+</li>
+<li>
+<p>使用 python obspy 套件: <a href="https://docs.obspy.org/packages/obspy.clients.fdsn.html">https://docs.obspy.org/packages/obspy.clients.fdsn.html</a></p>
+<p>(將 Client 裡面的參數改成 “https://127.0.0.1:8080”，就可透過套件取得波型等資料)</p>
+</li>
+</ul>
+</li>
+<li>
+<p>將 metadata 匯入 Seiscomp，才可做後續分析</p>
+<ul>
+<li>
+<p>開啟 Seiscomp</p>
+</li>
+<li>
+<p><strong>Inventory</strong> → Import (.xml) → Check inventory → Sync keys → Test sync → Sync</p>
+</li>
+<li>
+<p><strong>Bindings</strong> → 右邊 global → 下面 add profile</p>
+<p>→ 設定 <em>detecLocid</em> (location) &amp; <em>detecStream</em> (channel)</p>
+<p>→ (optional) scautopick→ detecFilter (每筆 trace 的 picking procedure)</p>
+<p>→ 將剛剛做好的 profile(s) 按住拉到左邊資料夾的 <em>TW</em> 代表將設定檔 apply 到那些測站</p>
+</li>
+</ul>
+</li>
+<li>
+<p>設定系統波型資料來源</p>
+<ul>
+<li><strong>Modules</strong> → System → global → recordStream</li>
+</ul>
+</li>
+<li>
+<p>實作一系列 offline 測試</p>
+<ul>
+<li>by <strong>run_offline_seiscomp.sh</strong></li>
+<li>步驟: autopicking → autoloc → amp → mag → event</li>
+<li>執行 shell script</li>
+<li>執行 <strong>scart</strong> 完後，會將 mseed 裡面的波形，有格式的放入設定的 recordStream 路徑</li>
+</ul>
+</li>
+<li>
+<p>實作一系列 online 測試</p>
+<ul>
+<li>先用 run_seisbench 生出 phase.txt</li>
+<li>sh2proc 將事件資料轉成 xml 檔案</li>
+<li><strong>scdispatch</strong>: 將 picks.xml 資訊寫入訊息環、資料庫</li>
+<li>直接輸入 <strong>scolv</strong>，看有沒有在 DB 中</li>
+</ul>
+</li>
+<li>
+<p>Scolv 手動 pick</p>
+<ul>
+<li><strong>1</strong>: 進入 picking 模式</li>
+<li><strong>R</strong>: 鍵讓系統找出合理的 P-arrival</li>
+<li><strong>空白鍵</strong>: 確定此 picking 結果</li>
+<li>全部做完後，右上角紅色按鈕 “Submit” 將結果傳回 scolv，再跳回剛剛的頁面做 &ldquo;Relocate&rdquo;，重新定位</li>
+<li><strong>Z, N, E</strong>: 打開波形，按 “Z”, “N”, “E” 切換顯示方式指定哪一軸</li>
+<li><strong>T</strong>: 打開波形，直接顯示三軸資訊</li>
+<li>裡面的 P, S 線如果是黑色，代表 unused，沒有被拿來做定位等事情，需要在下方欄位 activate，才會變綠色</li>
+<li><strong>F3</strong>: 將資料庫中 metadata 有記錄的測站顯示，可以在裡面挑選要看的測站 (ex. 用測站距離震央決定)</li>
+</ul>
+</li>
+<li>
+<p>更改模組參數</p>
+<ul>
+<li>scconfig → Modules → 改 !</li>
+<li>改完記得 Update configuration → Restart</li>
+</ul>
+</li>
+<li>
+<p>將 seisbench autopicking 結果產生的檔案轉成 xml 檔案</p>
+<ul>
+<li>首先要先將 mseed 波形匯入 DB</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scart -I &lt;mseed file&gt;
+</span></span></code></pre></div><ul>
+<li>參考達毅 source code</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sh2proc phase.txt -d localhost &gt; picks.xml
+</span></span></code></pre></div><ul>
+<li>因為免費版的 seiscomp 在定位等模組中不會考慮 S-wave，所以轉好 xml 檔案後，還須使用 scolv 去手動把 S 波 pick 出來，再產生新的 events.xml</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scolv -d localhost -i picks.xml
+</span></span></code></pre></div><ul>
+<li>最後再更新 DB</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ scdb -d localhost -i new_events.xml
+</span></span></code></pre></div><ul>
+<li>將 mseed 轉成 MAN (tank files)</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 需要 source earthworm 環境</span>
+</span></span><span style="display:flex;"><span>$ ms2tank &lt;path/to/mseed&gt; &gt;&gt; &lt;outfile&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 設定每個封包有幾個點</span>
+</span></span><span style="display:flex;"><span>$ ms2tank &lt;path/to/mseed&gt; -n &lt;number of sample per packet&gt; &gt;&gt; &lt;outfile&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 排序時間 (否則輸出是依照測站回播而不是時間順序)</span>
+</span></span><span style="display:flex;"><span>$ remux_tbuf &lt;path/to/tankfile&gt; &lt;outfile&gt;
+</span></span></code></pre></div><ul>
+<li>
+<p>IRIS ringserver</p>
+<ul>
+<li>先去 github 下載 zip</li>
+<li><strong>make</strong> 編譯</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ CFLAGS<span style="color:#f92672">=</span>-std<span style="color:#f92672">=</span>gnu99 make
+</span></span></code></pre></div><ul>
+<li>進去 scconfig 把 <strong>seedlink</strong> 模組 unable</li>
+<li>進去 binding 在 <strong>seedlink</strong> 創建 profile，下方 source 選定即時資料來源，選完後按 <strong>+</strong></li>
+<li>seedlink profile 記得拉到每個測站</li>
+<li>再從中設定 address, port 等等，最後再去重啟模組</li>
+<li>ring.conf 內容設定
+<ul>
+<li><strong>RingDirectory</strong>: ****ring server需要一個資料夾存 buffer</li>
+<li><strong>WriteIP</strong>: 寫波形進 ring server 的 IP</li>
+<li>d</li>
+</ul>
+</li>
+<li>單獨執行 ringserver</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ ringserver ring.conf
+</span></span></code></pre></div><ul>
+<li>觀察 ringserver</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 觀察 ringserver 有無啟動</span>
+</span></span><span style="display:flex;"><span>$ slinktool -I &lt;ringserver address:port&gt; <span style="color:#f92672">(</span>ex. 127.0.0.1:18001<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 查看 ringserver 監聽的測站列表</span>
+</span></span><span style="display:flex;"><span>$ slinktool -L &lt;ringserver address:port&gt; <span style="color:#f92672">(</span>ex. 127.0.0.1:18001<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 看 ringserver 波形資訊有無進入</span>
+</span></span><span style="display:flex;"><span>$ slinktool -Q &lt;ringserver addredd:port&gt;
+</span></span></code></pre></div></li>
+<li>
+<p>Note</p>
+<ul>
+<li><strong>Travel time</strong> 通常是左下往右上，線性的，如果有偏差太大的可能就不適合加入定位測站</li>
+<li>手動增加 <strong>Multiple event</strong>: 在 picker 介面中按右鍵 → Create Artifical Origin，系統就會從該點往就算理論 P/S 到時</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
