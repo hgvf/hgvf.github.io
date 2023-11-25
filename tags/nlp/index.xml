@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Python on Weiwei 的 Blog</title>
-    <link>https://hgvf.github.io/tags/python/</link>
-    <description>Recent content in Python on Weiwei 的 Blog</description>
+    <title>NLP on Weiwei 的 Blog</title>
+    <link>https://hgvf.github.io/tags/nlp/</link>
+    <description>Recent content in NLP on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 26 Nov 2023 01:33:25 +0800</lastBuildDate>
-    <atom:link href="https://hgvf.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://hgvf.github.io/tags/nlp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SpeechBrain</title>
       <link>https://hgvf.github.io/posts/speechbrain/</link>
@@ -26,22 +26,6 @@ tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.
 安裝 Kaldi Git clone Kaldi $ cd &amp;lt;要安裝的位置&amp;gt; $ git clone https://github.com/kaldi-asr/kaldi Install tools $ cd &amp;lt;kaldi-root&amp;gt;/tools $ make -j &amp;lt;NUM_CPU&amp;gt; (在 lab 時候 &amp;lt;NUM_CPU&amp;gt; 可以用 32。)
 使用 OpenBLAS 安裝 BLAS libraries $ cd &amp;lt;kaldi-root&amp;gt;/tools $ ./extras/install_openblas.sh 檢查有沒有 tools 缺漏 $ ./extras/check_dependencies.sh (有缺漏就按照指示裝，沒有的話會顯示 all ok)
 Compile &amp;amp; install Kaldi $ cd &amp;lt;kaldi-root&amp;gt;/src $ ./configure --use-cuda=no $ make -j clean depend $ make -j &amp;lt;NUM_CPU&amp;gt; </description>
-    </item>
-    <item>
-      <title>Anaconda</title>
-      <link>https://hgvf.github.io/posts/anaconda/</link>
-      <pubDate>Sun, 26 Nov 2023 01:28:47 +0800</pubDate>
-      <guid>https://hgvf.github.io/posts/anaconda/</guid>
-      <description>安裝 參考網站: https://ithelp.ithome.com.tw/articles/10237621
-指令 看已建立的所有環境 conda env list 建立環境 conda create --name &amp;lt;env_name&amp;gt; python=&amp;lt;python version&amp;gt; 啟動環境 conda activate &amp;lt;env_name&amp;gt; 安裝套件 conda install &amp;lt;package&amp;gt; 退出環境 conda deactivate 刪除環境 conda env remove --name &amp;lt;env_name&amp;gt; 看已安裝套件 conda list </description>
-    </item>
-    <item>
-      <title>Pyenv</title>
-      <link>https://hgvf.github.io/posts/pyenv/</link>
-      <pubDate>Sun, 26 Nov 2023 01:26:56 +0800</pubDate>
-      <guid>https://hgvf.github.io/posts/pyenv/</guid>
-      <description>參考網站 https://github.com/pyenv/pyenv#installation https://github.com/pyenv/pyenv-installer
-相關檔案 Shims 安裝之後會被加入到 PATH 當中。 主要用來執行 user 呼叫的 python 相關指令，例如 pip, python&amp;hellip;。 指令的參數也都會被傳給 pyenv 執行。 Versions 放置所有下載的 python 版本。 plugins 存放 pyenv 相關插件，例如 pyenv-virtualenv&amp;hellip;。 pyenv-virtualenv 用來管理 virtualenv 創建的虛擬環境等等。 如何選擇 python 版本 (照以下順序) 使用 PYENV_VERSION 的環境變數，這個變數可以使用 &amp;ldquo;pyenv shell &amp;quot; 指令來設置。 如果目前目錄底下的 .python-version 存在，則可以用 &amp;ldquo;pyenv shell&amp;rdquo; 來修改。 會不斷往 parent 目錄尋找 .python-version，直到搜尋到檔案系統的 root。 依照 Global 的 $(pyenv root)/version 檔案，可以用 &amp;ldquo;pyenv global&amp;rdquo; 來修改。 (如果 global version file 不存在，則 pyenv 會假設你希望用系統內建的 python) 安裝教學 安裝 pyenv: curl https://pyenv.</description>
     </item>
   </channel>
 </rss>

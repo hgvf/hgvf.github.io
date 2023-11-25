@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>SpeechBrain // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SpeechBrain"/>
+<meta name="twitter:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
+YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &lt;label_smoothing&gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &lt;lr_sgd&gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &lt;foo&gt; Include 其他的 yaml file: include 讀取 &amp; 執行其他的 python function: apply (ex."/>
+
+    <meta property="og:title" content="SpeechBrain" />
+<meta property="og:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
+YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &lt;label_smoothing&gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &lt;lr_sgd&gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &lt;foo&gt; Include 其他的 yaml file: include 讀取 &amp; 執行其他的 python function: apply (ex." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/speechbrain/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T01:33:25+08:00" />
+<meta property="article:modified_time" content="2023-11-26T01:33:25+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">SpeechBrain</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://hgvf.github.io/tags/python/">Python</a>
+              <a class="tag" href="https://hgvf.github.io/tags/deep-learning/">Deep-learning</a>
+              <a class="tag" href="https://hgvf.github.io/tags/nlp/">NLP</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h3 id="參考網站">參考網站</h3>
+<p><a href="https://speechbrain.github.io">https://speechbrain.github.io</a> (SpeechBrain 官網)
+<a href="https://github.com/speechbrain/speechbrain">https://github.com/speechbrain/speechbrain</a> (SpeechBrain github)
+<a href="https://speechbrain.readthedocs.io/en/latest/index.html">https://speechbrain.readthedocs.io/en/latest/index.html</a> (Speechbrain docs)</p>
+<h2 id="yaml-file">YAML file</h2>
+<p>speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。</p>
+<h4 id="tags">tags:</h4>
+<ol>
+<li>新增一個 python object: <strong>new</strong> (ex. LogSoftmax)</li>
+</ol>
+<pre tabindex="0"><code class="language-yaml=" data-lang="yaml=">log_softmax: !new: torch.nn.LogSoftmax
+    dim: -1
+</code></pre><ol start="2">
+<li>新增一個 function object: <strong>name</strong> (ex. seq_cost)</li>
+</ol>
+<pre tabindex="0"><code class="language-yaml=" data-lang="yaml=">seq_cost: !name: speechbrain.nnet.losses.kldiv_loss
+    label_smoothing: &lt;label_smoothing&gt;
+</code></pre><ol start="3">
+<li>取用 yaml file 其他變數的值: <strong>ref</strong> (ex. SGD)</li>
+</ol>
+<pre tabindex="0"><code class="language-yaml=" data-lang="yaml=">SGD: !name: torch.optim.SGD
+    lr: !ref &lt;lr_sgd&gt;
+</code></pre><ol start="4">
+<li>複製一份 variable or object，且不會有相同 reference: <strong>copy</strong></li>
+</ol>
+<pre tabindex="0"><code class="language-yaml=" data-lang="yaml=">apple: !copy &lt;foo&gt;
+</code></pre><ol start="5">
+<li>Include 其他的 yaml file: <strong>include</strong></li>
+<li>讀取 &amp; 執行其他的 python function: <strong>apply</strong> (ex. 設定 seed)</li>
+</ol>
+<pre tabindex="0"><code class="language-yaml=" data-lang="yaml=">__set_seed: !apply: torch.manual_seed [!ref &lt;seed&gt;]
+</code></pre><h2 id="brain-class">Brain Class</h2>
+<ol>
+<li>宣告方式:</li>
+</ol>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">class ASR(sb.Brain):
+</code></pre><ol start="2">
+<li>每個 sb.Brain object 都必須包含兩個 functions:</li>
+</ol>
+<ul>
+<li><strong>compute_forward()</strong>: 定義如何計算以及計算什麼值。</li>
+</ul>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">def compute_forward(self, batch, stage):
+</code></pre><ul>
+<li><strong>compute_objectives()</strong>: 定義如何計算 loss。</li>
+</ul>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">def compute_objectives(self, predictions, batch, stage):
+</code></pre><ol start="3">
+<li>一般的 sb.Brain object 中，初始化 init() 包含以下參數：</li>
+</ol>
+<ul>
+<li><strong>modules</strong>: 以 dictionary 存在，可以存放 model 架構等等。</li>
+<li><strong>opt_class</strong>: 存放 optimizer 相關參數。</li>
+<li><strong>hparams</strong>: 存放 hyperparameters。</li>
+<li><strong>run_opts</strong>: 用來控制 fit() 運作細節。</li>
+<li><strong>checkpointer</strong>: 存放 checkpointer，若這個欄位不為 None，則會自動存 optimizer 狀態、讀取最近的 checkpointer &amp; resume、預設 15 mins 存一次存一次、以及在 evaluation 時挑選最佳 checkpoint。</li>
+</ul>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">def __init__(
+self, 
+modules=hparams[&#34;modules&#34;],
+opt_class=hparams[&#34;Adam&#34;],
+hparams=hparams,
+run_opts=run_opts,
+checkpointer=hparams[&#34;checkpointer&#34;],
+):
+</code></pre><h2 id="fit-structure">fit() structure</h2>
+<p>負責主要 training 的流程等等。</p>
+<ol>
+<li>初始化 init() 包含以下參數：</li>
+</ol>
+<ul>
+<li><strong>epoch_counter</strong>: 在 EpochCounter class 中，可以控制 epoch。</li>
+<li><strong>train_set</strong> &amp; <strong>valid_set</strong>: 接收 Torch Dataset or DataLoader，如果沒有傳 dataloader，會在後面的 make_dataloader() 製作。</li>
+<li><strong>progressbar</strong>: 顯示 tqdm 進度條。</li>
+<li><strong>train_loader_kwargs</strong> &amp; <strong>valid_loader_kwargs</strong>: 把製作 dataloader 相關參數傳給 make_dataloader()。</li>
+</ul>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">def fit(
+self, 
+epoch_counter=hparams[&#34;epoch_counter&#34;],
+train_set=train_data,
+valid_set=valid_data,
+progressbar=None,
+train_loader_kwargs=hparams[&#34;train_dataloader_opts&#34;],
+valid_loader_kwargs=hparams[&#34;valid_dataloader_opts&#34;],
+):
+</code></pre><ol start="2">
+<li>大致架構如下：</li>
+</ol>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">def fit(self, ...):
+    self.make_dataloader()
+    # fit() 開始
+    self.on_fit_start()
+    
+    for epoch in epoch_counter:
+        # Training stage 開始
+        self.on_stage_start(Stage.TRAIN)
+        
+        for batch in train_set:
+            # 裡面執行 compute_forward() &amp; compute_objectives()
+            self.fit_batch(batch)
+        
+        # Training stage 結束
+        self.on_stage_end(Stage.TRAIN)
+        # Valid stage 開始
+        self.on_stage_start(Stage.VALID)
+        
+        for batch in valid_set:
+            # 裡面執行 compute_forward() &amp; compute_objectives()
+            self.evaluate_batch(batch)
+            
+        # Valid stage 結束    
+        self.on_stage_end(Stage.VALID)
+</code></pre><ul>
+<li><strong>make_dataloader()</strong>: 可以將 train_set &amp; valid_set 變成適合 iterate 的格式。</li>
+<li><strong>on_fit_start()</strong>: 在訓練前有一些設定，例如初始化 optimizer、resume latest checkpoint&hellip;。</li>
+<li><strong>on_stage_start()</strong>: 開始 iterate data，也可以在這建立一些 container 來搜集統計數據。</li>
+<li><strong>fit_batch()</strong>: 會呼叫 compute_forword() &amp; compute_objectives()，記錄下平均 loss、checkpoint 等等。</li>
+<li><strong>on_stage_end()</strong>: 清除 stage 使用到的資料，也可以輸出一些 stage 的統計數據。</li>
+<li>validation 版本 <strong>on_stage_end()</strong>: 同上，也會更新 learning rate、紀錄 checkpoint、epoch 數據。</li>
+</ul>
+<h2 id="dataio">DataIO</h2>
+<p>主要由三個 blocks 組成：</p>
+<ol>
+<li><strong>DynamicItemDataset</strong>: 會從 csv, json 檔案中取得資料，創建一個類似 pytorch dataset 的物件。</li>
+<li><strong>Dynamic Items Pipelines (DIPs)</strong>: 由使用者來定義，可以定義如何操作 dataset、或是 audio file augmentation。</li>
+<li><strong>Categorical Encoder</strong>: 可以將 encoding label 轉換成 discrete 數值，而 label 跟 unique index 的對應關係會由兩個 dictionary 維護：lab2ind &amp; ind2lab，例如 speakerID: 1223 -&gt; [5]。</li>
+</ol>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">from speechbrain.dataio.dataset import DynamicItemDataset
+
+# .json file
+dataset = DynamicItemDataset.from_json(&#34;data.json&#34;)
+
+# .csv file
+dataset = DynamicItemDataset.from_csv(&#34;data.csv&#34;)
+</code></pre><p>這邊的 dataset 無法直接被使用，而是需要 user 指定 output 欄位，就可以使用 DIP 來操作。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">@speechbrain.utils.data_pipeline.takes(&#34;file_path&#34;)
+@speechbrain.utils.data_pipeline.provides(&#34;signal&#34;)
+def audio_pipeline(file_path):
+      sig = speechbrain.dataio.dataio.read_audio(file_path)
+      return sig
+</code></pre><p>指定接收 &ldquo;file_path&rdquo;，然後提供 &ldquo;signal&rdquo; dataset，也就是帶有 audio 的 tensor。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">dataset.add_dynamic_item(audio_pipeline)
+dataset.set_output_keys([&#34;signal&#34;, &#34;file_path&#34;],)
+
+# add_dynamic_item 另外寫法
+dataset.add_dynamic_item(speechbrain.dataio.dataio.read_audio, takes=&#34;file_path&#34;, provides=&#34;signal&#34;)
+</code></pre><p>指定完 dataset 輸出欄位後，必須轉換成為 <strong>DynamicItemDataset</strong> 形式，再使用 <strong>set_output_keys</strong> 來指定輸出什麼。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">dataset[0]
+</code></pre><p>{&lsquo;file_path&rsquo;: &lsquo;./LibriSpeech/dev-clean-2/5338/284437/5338-284437-0014.flac&rsquo;,
+&lsquo;signal&rsquo;: tensor([ 2.1362e-04,  6.1035e-05, -3.0518e-05,  &hellip;,  3.0518e-04,
+3.9673e-04,  3.9673e-04])}</p>
+<p>這時的 dataset 就會是根據 output keys 來輸出結果。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">from speechbrain.dataio.encoder import CategoricalEncoder
+
+# 宣告一個 Categorical encoder
+spk_id_encoder = CateforicalEncoder()
+
+# 傳統沒有 encode 的狀況
+speechbrain.dataio.dataset.set_output_keys([dataset], [&#34;spk_id&#34;],)
+
+dataset[0]    # result: {&#39;spk_id&#39;: &#39;5338&#39;}
+</code></pre><p>以往直接輸出數值，可能會遇到這些 id 不是唯一值的狀況，就會造成問題，因此需要借助 categorical encoder 來 encode 出 unique id。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python="># Iterate 整個 dataset 的 spkID 欄位，
+# 來更新內部的 lab2ind &amp; ind2lab
+spk_id_encoder.update_from_didataset(dataset, &#34;spkID&#34;)
+</code></pre><p>盡量在前一步先做 <strong>set_output_keys()</strong>，避免計算上耗費資源。
+而且只設定單一 key 也會使 encoder 有比較好的 fit 成果。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python="># 看有多少個 distinct value 
+len(spk_id_encoder)
+
+# label -&gt; integer encoding
+spk_id_encoder.lab2ind    
+
+# integer encoding -&gt; label
+spk_id_encoder.ind2lab
+</code></pre><p>當做完了 categorical encoding 之後，就可以套用在 data pipeline 之中。</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">@speechbrain.utils.data_pipeline.takes(&#34;spkID&#34;)
+@speechbrain.utils.data_pipeline.provides(&#34;spkid_encoded&#34;)
+def spk_id_encoding(spkid):
+      return torch.LongTensor([spk_id_encoder.encode_label(spkid)]) 
+      
+speechbrain.dataio.dataset.add_dynamic_item(
+        [dataset], spk_id_encoding) 
+        
+speechbrain.dataio.dataset.set_output_keys(
+        [dataset], [&#34;spkid_encoded&#34;],)
+
+dataset[100]
+</code></pre><p>Output: {&lsquo;spkid_encoded&rsquo;: tensor([3])}</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

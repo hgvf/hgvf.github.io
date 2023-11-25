@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Earthworm // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Earthworm"/>
+<meta name="twitter:description" content="基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?"/>
+
+    <meta property="og:title" content="Earthworm" />
+<meta property="og:description" content="基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/earthworm/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T01:30:46+08:00" />
+<meta property="article:modified_time" content="2023-11-26T01:30:46+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Earthworm</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://hgvf.github.io/tags/c/c&#43;&#43;/">C/C&#43;&#43;</a>
+              <a class="tag" href="https://hgvf.github.io/tags/linux/">Linux</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h2 id="基本觀念">基本觀念</h2>
+<ol>
+<li>參數檔案存在 /params (ex. earthworm.d)。</li>
+<li>執行檔存在 /bin。</li>
+<li><strong>startstop.d</strong>: 告訴 earthworm 目前有多少 ring, module&hellip;。</li>
+<li><strong>earthworm.d</strong>: 定義 ring 名稱、代號，以及 modules, message type&hellip;。</li>
+<li><strong>earthworm_global.d</strong>: 定義機構代號、</li>
+</ol>
+<h2 id="指令">指令</h2>
+<ol start="0">
+<li><strong>啟動 earthworm 系統</strong></li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ source ew_linux_xxx.bash
+
+# 啟動 earthworm system
+$ startstop
+
+# 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組
+$ recon
+</code></pre><ol>
+<li><strong>sniffwave</strong>: 主要查看某個 RING 收到的資料</li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ sniffwave XXX_RING
+
+# only station header
+# sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n
+$ sniffwave WAVE_RING TWGB BHE TW -- n
+
+# only station waveforms
+# sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- y
+$ sniffwave WAVE_RING TWGB BHE TW -- y
+</code></pre><ol start="2">
+<li><strong>findwave</strong>: 查看某個 RING 有無收到資料，並寫到某個檔案之中</li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ findwave XXX_RING &lt;index_name&gt; &lt;days&gt; &lt;file_name&gt; &lt;output types&gt;
+
+# index_name:   將來建立 wave server 時，每個 channel 檔案 index size，
+#               日後在提取資料時就依照 index 來找資料，通常 40~60
+# days:         每個 channel 檔案最多暫存幾天
+# output_types: w -&gt; for wave server output
+#               d -&gt; 其她資訊
+#
+# ex: findwave WAVE_RING 1 1 out.txt w
+# 以下檔案只適用 wave server
+</code></pre><p><img src="https://i.imgur.com/9OAtTr3.png" alt=""></p>
+<pre><code>- Tank:          資料型態
+- SCNL names:    測站名 (搜尋裡面的波形，通常測站都有 ENZ 三軸，所以 SCNL 通常要是三的倍數)
+- BH(E|N|Z):     Channel 
+                (E: 東西向, N: 南北向, Z: 垂直向, B: 取樣率不到 100, H: 寬頻資料)
+- TW:　          Network name
+- TW 後面的 '--': Location name
+- size:          封包長度，iris 資料大小都不同
+- ModuleID:      用哪個 module 接收資料
+- File size:     一天有多少 MB (取決於這個 ring 開的記憶體空間)
+- Index size:    每個 channel 的 index size (單位為 byte)
+- File name:     存這個資料的路徑 (目前為暫存檔，存在 memory)
+</code></pre>
+<ol start="3">
+<li><strong>getmenu</strong>: 可以看目前這個網路 server 位置的封包狀況</li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ getmenu &lt;IP_address&gt;:&lt;Port number&gt;
+</code></pre><h2 id="modules">Modules</h2>
+<ol>
+<li><strong>slink2ew</strong>: 接收某些測站的 seed link 波型資料。</li>
+</ol>
+<ul>
+<li>
+<pre><code>Stream:  指定要那些測站的資料進來 (TW_*: 所有 TW 測站)。
+</code></pre>
+</li>
+<li>
+<pre><code>Selector: 篩選進來資料的條件 (channel, instrument...)。
+</code></pre>
+</li>
+</ul>
+<ol start="2">
+<li><strong>wave_serverV</strong>: 建立 wave server 的參數檔。</li>
+</ol>
+<ul>
+<li>
+<pre><code>裡面設定的 ring name 要與收到波型的 ring 相同 (ex. 與 slink 相同 ring)。
+</code></pre>
+</li>
+<li>
+<pre><code>要另外新增資料夾放 tank files (在 .d 檔設定 TankStructFile，有兩個!)。
+</code></pre>
+</li>
+<li>
+<pre><code>裡面要貼上用 findwave 製作出來的格式。
+</code></pre>
+</li>
+<li>
+<pre><code>InputQueueLen: 設為前面 tank 格式數量的兩倍以上。
+</code></pre>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell="># 檢查 wave_server 有沒有成功運作
+$ getmenu 127.0.0.1:16022 
+</code></pre><ol start="3">
+<li><strong>waveman2disk</strong>: 擷取 wave server 資料，然後改成任意格式，或是切片段波型 (不需掛載在 startstop。)</li>
+</ol>
+<ul>
+<li>
+<pre><code>InputMethod: 可以改成 interactive。
+</code></pre>
+</li>
+<li>
+<pre><code>SaveSNL: 限制要存的檔案類型 (用 station, channel, network, location 選擇)。
+</code></pre>
+</li>
+<li>
+<pre><code>StartTime: 要確定時間區段正確性 (用 getmenu 確認波型時間區段)。
+</code></pre>
+</li>
+<li>
+<pre><code>Duration: 切分的時間長度 (單位:秒)。
+</code></pre>
+</li>
+<li>
+<pre><code>WaveServer: 設定 ip, port number。
+</code></pre>
+</li>
+<li>
+<pre><code>輸出格式: 選擇波型輸出格式 (只能選一種!!!)。
+</code></pre>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell="># 執行程式
+$ waveman2disk waveman2disk.d
+</code></pre><ol start="4">
+<li><strong>tankplayer</strong>: 重新跑一次地震波形資料並接收。(虛擬的 real-time)</li>
+</ol>
+<ul>
+<li>
+<pre><code>RINGNAME: 可以改成別的以免混淆。
+</code></pre>
+</li>
+<li>
+<pre><code>WaveFile: 改成要存放 tank files 的路徑。
+</code></pre>
+</li>
+</ul>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell="># 先將蒐集到的資料轉成 tank file (ex. SAC -&gt; tb)
+$ sac2tb &lt;file_name&gt; &gt;&gt; &lt;tb file_name&gt;
+
+# 要照時間排序才能一次輸出三個 channels，否則一次只會播放一個 channel
+$ remux_tbuf &lt;tb file_name&gt; r &lt;sorted tb file_name&gt;
+
+# 將氣象局的 Afile 轉成 tank file
+# 在 window 底下執行
+$ CWB24toTank &lt;AFile&gt;
+</code></pre><ol start="5">
+<li><strong>pick_ew</strong>: 自動挑出 P-wave, S-wave (使用 STA/LTA rule)，並放到指定的 ring，必須連帶更改一些測站參數檔等等。</li>
+</ol>
+<ul>
+<li>
+<pre><code>StaFile: 要自動作 picking 的測站清單。
+</code></pre>
+</li>
+<li>
+<pre><code>InRing, OutRing: 波型進出的 ring，要設定好。
+</code></pre>
+</li>
+<li>
+<pre><code>依照模組 copy 對應所需 (ex. eqproc...)。
+</code></pre>
+</li>
+<li>
+<pre><code>根據要 picking 的測站，更改 pick_ew.memphis 裡面的測站資料。
+</code></pre>
+</li>
+</ul>
+<ol start="6">
+<li><strong>binder_ew</strong>: 把 pick_ew 的東西包起來做初步定位，藉此分隔不同測站的資料。</li>
+</ol>
+<h2 id="相關套件">相關套件</h2>
+<ol>
+<li><strong>Swarm</strong>: 用來看波形圖</li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd /mnt/nas7/weiwei/Earthworm/earthworm_7.10/src/display/swarm-2.8.11
+
+# 啟動軟體
+$ sh swarm.sh
+
+# 在 GUI 左邊欄位按: New data source -&gt; 選 earthworm wave server
+    -&gt; 輸入對應的 ip, port...
+    
+# 左下角的 wave to monitor -&gt; 可以看到 wave server 裡面所有測站的即時波型
+</code></pre><ol start="2">
+<li>
+<p><strong>Hypoinverse</strong>: 收到 pick_ew 的資料來定位地震，並計算規模，然後寫進 EW shared memory。</p>
+</li>
+<li>
+<p><strong>CWB_EEW</strong>: 氣象局目前的預警系統。</p>
+</li>
+</ol>
+<pre tabindex="0"><code class="language-shell=" data-lang="shell=">$ cd /mnt/nas7/weiwei/Earthworm/earthworm_7.10/src/eew/cwb
+</code></pre>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

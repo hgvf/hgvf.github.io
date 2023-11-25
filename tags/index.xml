@@ -6,13 +6,41 @@
     <description>Recent content in Tags on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:28:47 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 01:33:25 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deep-learning</title>
+      <link>https://hgvf.github.io/tags/deep-learning/</link>
+      <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/deep-learning/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>NLP</title>
+      <link>https://hgvf.github.io/tags/nlp/</link>
+      <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/nlp/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Python</title>
       <link>https://hgvf.github.io/tags/python/</link>
-      <pubDate>Sun, 26 Nov 2023 01:28:47 +0800</pubDate>
+      <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
       <guid>https://hgvf.github.io/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>EEW System</title>
+      <link>https://hgvf.github.io/tags/eew-system/</link>
+      <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/eew-system/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Linux</title>
+      <link>https://hgvf.github.io/tags/linux/</link>
+      <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
+      <guid>https://hgvf.github.io/tags/linux/</guid>
       <description></description>
     </item>
     <item>
@@ -23,17 +51,17 @@
       <description></description>
     </item>
     <item>
-      <title>Deep-learning</title>
-      <link>https://hgvf.github.io/tags/deep-learning/</link>
-      <pubDate>Sun, 26 Nov 2023 00:52:32 +0800</pubDate>
-      <guid>https://hgvf.github.io/tags/deep-learning/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>Machine Translation</title>
       <link>https://hgvf.github.io/tags/machine-translation/</link>
       <pubDate>Sun, 26 Nov 2023 00:52:32 +0800</pubDate>
       <guid>https://hgvf.github.io/tags/machine-translation/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>C/C&#43;&#43;</title>
+      <link>https://hgvf.github.io/tags/c/c&#43;&#43;/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://hgvf.github.io/tags/c/c&#43;&#43;/</guid>
       <description></description>
     </item>
   </channel>

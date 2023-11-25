@@ -6,8 +6,34 @@
     <description>Recent content in Posts on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 01:28:47 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 01:33:25 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SpeechBrain</title>
+      <link>https://hgvf.github.io/posts/speechbrain/</link>
+      <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/speechbrain/</guid>
+      <description>參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
+YAML file speechbrain 中會使用到 &amp;ldquo;.yaml&amp;rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &amp;lt;label_smoothing&amp;gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &amp;lt;lr_sgd&amp;gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &amp;lt;foo&amp;gt; Include 其他的 yaml file: include 讀取 &amp;amp; 執行其他的 python function: apply (ex.</description>
+    </item>
+    <item>
+      <title>ESPnet 安裝記錄</title>
+      <link>https://hgvf.github.io/posts/espnet/</link>
+      <pubDate>Sun, 26 Nov 2023 01:33:07 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/espnet/</guid>
+      <description>參考網站 https://espnet.github.io/espnet/installation.html (ESPNet 官網)
+安裝 Kaldi Git clone Kaldi $ cd &amp;lt;要安裝的位置&amp;gt; $ git clone https://github.com/kaldi-asr/kaldi Install tools $ cd &amp;lt;kaldi-root&amp;gt;/tools $ make -j &amp;lt;NUM_CPU&amp;gt; (在 lab 時候 &amp;lt;NUM_CPU&amp;gt; 可以用 32。)
+使用 OpenBLAS 安裝 BLAS libraries $ cd &amp;lt;kaldi-root&amp;gt;/tools $ ./extras/install_openblas.sh 檢查有沒有 tools 缺漏 $ ./extras/check_dependencies.sh (有缺漏就按照指示裝，沒有的話會顯示 all ok)
+Compile &amp;amp; install Kaldi $ cd &amp;lt;kaldi-root&amp;gt;/src $ ./configure --use-cuda=no $ make -j clean depend $ make -j &amp;lt;NUM_CPU&amp;gt; </description>
+    </item>
+    <item>
+      <title>Earthworm</title>
+      <link>https://hgvf.github.io/posts/earthworm/</link>
+      <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/earthworm/</guid>
+      <description>基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&amp;hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&amp;hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?&amp;gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?</description>
+    </item>
     <item>
       <title>Anaconda</title>
       <link>https://hgvf.github.io/posts/anaconda/</link>
