@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Attention is All You Need // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Attention is All You Need"/>
+<meta name="twitter:description" content="https://arxiv.org/pdf/1706.03762.pdf Model architecture: (1) 每個 sub-layer 過後都會經過 layer normalization，讓 input 的 mean=0, variance=1，讓資料都投影到差不多的 range，可以提升 training 效率。 (2) 任兩個 sub-layers 間都使用 residual connection，在做 backpropagation 時可以使梯度不要爆炸或消失，也不會使 information 完全由 layer 決定，而是多參考初始狀態。 (3) 經過完每個 sub-layer 之後，在 residual connection &amp; layer normalization 之前，會先 dropout(0.1)，甚至是 input embedding 也會經過 dropout。 (4) 使用 37k 大小的字典做 byte-pair encoding。 (5) 最終結果是用倒數 10 個 checkpoints 的 model weights 作 average。 (6) Label smoothing=0.1。 Attention: (1) Scaled Dot-Production attention: $$Attention(Q, K, V)=softmax(\frac{QK^T}{\sqrt[]{d_k}})V$$ (2) Multi-head attention: $$MultiHead(Q, K, V)=Concat(head_1, &hellip;, head_h)W^O$$ $$head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)$$"/>
+
+    <meta property="og:title" content="Attention is All You Need" />
+<meta property="og:description" content="https://arxiv.org/pdf/1706.03762.pdf Model architecture: (1) 每個 sub-layer 過後都會經過 layer normalization，讓 input 的 mean=0, variance=1，讓資料都投影到差不多的 range，可以提升 training 效率。 (2) 任兩個 sub-layers 間都使用 residual connection，在做 backpropagation 時可以使梯度不要爆炸或消失，也不會使 information 完全由 layer 決定，而是多參考初始狀態。 (3) 經過完每個 sub-layer 之後，在 residual connection &amp; layer normalization 之前，會先 dropout(0.1)，甚至是 input embedding 也會經過 dropout。 (4) 使用 37k 大小的字典做 byte-pair encoding。 (5) 最終結果是用倒數 10 個 checkpoints 的 model weights 作 average。 (6) Label smoothing=0.1。 Attention: (1) Scaled Dot-Production attention: $$Attention(Q, K, V)=softmax(\frac{QK^T}{\sqrt[]{d_k}})V$$ (2) Multi-head attention: $$MultiHead(Q, K, V)=Concat(head_1, &hellip;, head_h)W^O$$ $$head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)$$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/transformer/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T00:52:32+08:00" />
+<meta property="article:modified_time" content="2023-11-26T00:52:32+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Attention is All You Need</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <ul>
+<li><a href="https://arxiv.org/pdf/1706.03762.pdf">https://arxiv.org/pdf/1706.03762.pdf</a></li>
+<li><strong>Model architecture</strong>:
+<img src="https://i.imgur.com/ktilrsi.png" alt="Transformer network">
+(1) 每個 sub-layer 過後都會經過 <strong>layer normalization</strong>，讓 input 的 mean=0, variance=1，讓資料都投影到差不多的 range，可以提升 training 效率。
+(2) 任兩個 sub-layers 間都使用 <strong>residual connection</strong>，在做 backpropagation 時可以使梯度不要爆炸或消失，也不會使 information 完全由 layer 決定，而是多參考初始狀態。
+(3) 經過完每個 sub-layer 之後，在 residual connection &amp; layer normalization 之前，會先 dropout(0.1)，甚至是 input embedding 也會經過 dropout。
+(4) 使用 37k 大小的字典做 byte-pair encoding。
+(5) 最終結果是用倒數 10 個 checkpoints 的 model weights 作 average。
+(6) Label smoothing=0.1。</li>
+</ul>
+<hr>
+<ul>
+<li><strong>Attention</strong>:</li>
+</ul>
+<p><img src="https://i.imgur.com/oMONStd.png" alt="Attention">
+(1) Scaled Dot-Production attention:
+$$Attention(Q, K, V)=softmax(\frac{QK^T}{\sqrt[]{d_k}})V$$
+(2) Multi-head attention:
+$$MultiHead(Q, K, V)=Concat(head_1, &hellip;, head_h)W^O$$
+$$head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)$$</p>
+<pre><code>- 其中 key, value 都是 embedding size / nhead。
+- scale 的目的則是因為若 dmodel 很大，則 query, key 內積之 variance 會很大。
+(因為若原本 query &amp; key 都是 random，則初始 mean=0, variance=0，內積過後 mean=0, variance=dmodel)
+</code></pre>
+<hr>
+<ul>
+<li><strong>Positional Encoding</strong>:
+利用 sine, cosine 算出不需要訓練的數值:
+$$PE_(pos, 2i) = sin(\frac{pos}{10000^\frac{2i}{d_{model}}})$$
+$$PE_(pos, 2i+1) = cos(\frac{pos}{10000^\frac{2i}{d_{model}}})$$</li>
+</ul>
+<pre><code>- 希望可以應付很長的 sequence。
+- 也確保相同距離的 tokens，但整體 sequence 長度不同，一樣有相同的 position embedding 差異。
+(ex. 兩個 tokens 在 Seq1(length=5) 和 Seq2(length=512)都差距 3 個 tokens，則 position information 也保證一樣。)
+- 也就是偶數維度使用 sin 計算出的數值，奇數維度使用 cos 計算的數值。
+- 同樣也會經過 dropout。
+</code></pre>
+<hr>
+<ul>
+<li><strong>Noam learning rate scheduler</strong>:
+$$lrate=d^{-0.5}_{model}  \cdot  min(step_num^{-0.5}, step_num \cdot warmup_step^{-1.5})$$</li>
+</ul>
+<pre><code>- 也就是在 warmup 期間使用極小的 learning rate，之後才用較大的 learning rate 更新梯度。</code></pre>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
