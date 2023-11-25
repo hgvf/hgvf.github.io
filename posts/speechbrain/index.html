@@ -14,13 +14,11 @@
     
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SpeechBrain"/>
-<meta name="twitter:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
-YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+<meta name="twitter:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs) YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
 tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &lt;label_smoothing&gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &lt;lr_sgd&gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &lt;foo&gt; Include 其他的 yaml file: include 讀取 &amp; 執行其他的 python function: apply (ex."/>
 
     <meta property="og:title" content="SpeechBrain" />
-<meta property="og:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
-YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+<meta property="og:description" content="參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs) YAML file speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
 tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &lt;label_smoothing&gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &lt;lr_sgd&gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &lt;foo&gt; Include 其他的 yaml file: include 讀取 &amp; 執行其他的 python function: apply (ex." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://hgvf.github.io/posts/speechbrain/" /><meta property="article:section" content="posts" />
@@ -109,9 +107,11 @@ tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.
     </header>
     <div class="post-content">
       <h3 id="參考網站">參考網站</h3>
-<p><a href="https://speechbrain.github.io">https://speechbrain.github.io</a> (SpeechBrain 官網)
-<a href="https://github.com/speechbrain/speechbrain">https://github.com/speechbrain/speechbrain</a> (SpeechBrain github)
-<a href="https://speechbrain.readthedocs.io/en/latest/index.html">https://speechbrain.readthedocs.io/en/latest/index.html</a> (Speechbrain docs)</p>
+<ul>
+<li><a href="https://speechbrain.github.io">https://speechbrain.github.io</a> (SpeechBrain 官網)</li>
+<li><a href="https://github.com/speechbrain/speechbrain">https://github.com/speechbrain/speechbrain</a> (SpeechBrain github)</li>
+<li><a href="https://speechbrain.readthedocs.io/en/latest/index.html">https://speechbrain.readthedocs.io/en/latest/index.html</a> (Speechbrain docs)</li>
+</ul>
 <h2 id="yaml-file">YAML file</h2>
 <p>speechbrain 中會使用到 &ldquo;.yaml&rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。</p>
 <h4 id="tags">tags:</h4>

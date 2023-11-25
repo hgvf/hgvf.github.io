@@ -13,7 +13,7 @@
       <link>https://hgvf.github.io/posts/earthworm/</link>
       <pubDate>Sun, 26 Nov 2023 01:30:46 +0800</pubDate>
       <guid>https://hgvf.github.io/posts/earthworm/</guid>
-      <description>基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&amp;hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&amp;hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?&amp;gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?</description>
+      <description>Ref 研習教學影片 (感謝子毅提供！) 基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&amp;hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&amp;hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?&amp;gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &amp;lt;RING_NAME&amp;gt; &amp;lt;Station&amp;gt; &amp;lt;CNL&amp;gt; &amp;lt;TW?</description>
     </item>
   </channel>
 </rss>

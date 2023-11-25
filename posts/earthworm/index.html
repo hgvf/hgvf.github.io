@@ -14,10 +14,10 @@
     
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Earthworm"/>
-<meta name="twitter:description" content="基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?"/>
+<meta name="twitter:description" content="Ref 研習教學影片 (感謝子毅提供！) 基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?"/>
 
     <meta property="og:title" content="Earthworm" />
-<meta property="og:description" content="基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?" />
+<meta property="og:description" content="Ref 研習教學影片 (感謝子毅提供！) 基本觀念 參數檔案存在 /params (ex. earthworm.d)。 執行檔存在 /bin。 startstop.d: 告訴 earthworm 目前有多少 ring, module&hellip;。 earthworm.d: 定義 ring 名稱、代號，以及 modules, message type&hellip;。 earthworm_global.d: 定義機構代號、 指令 啟動 earthworm 系統 $ source ew_linux_xxx.bash # 啟動 earthworm system $ startstop # 如果有新增的模組，在不關掉 earthworm 系統之下匯入模組 $ recon sniffwave: 主要查看某個 RING 收到的資料 $ sniffwave XXX_RING # only station header # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?&gt; -- n $ sniffwave WAVE_RING TWGB BHE TW -- n # only station waveforms # sniffwave &lt;RING_NAME&gt; &lt;Station&gt; &lt;CNL&gt; &lt;TW?" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://hgvf.github.io/posts/earthworm/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-11-26T01:30:46+08:00" />
@@ -103,7 +103,11 @@
       </div>
     </header>
     <div class="post-content">
-      <h2 id="基本觀念">基本觀念</h2>
+      <h2 id="ref">Ref</h2>
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PL1JK9KOKer9dQi_BCGuXaWaStkoTGZLEP">研習教學影片</a> (感謝子毅提供！)</li>
+</ul>
+<h2 id="基本觀念">基本觀念</h2>
 <ol>
 <li>參數檔案存在 /params (ex. earthworm.d)。</li>
 <li>執行檔存在 /bin。</li>

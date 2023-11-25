@@ -20,8 +20,7 @@
       <link>https://hgvf.github.io/posts/speechbrain/</link>
       <pubDate>Sun, 26 Nov 2023 01:33:25 +0800</pubDate>
       <guid>https://hgvf.github.io/posts/speechbrain/</guid>
-      <description>參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs)
-YAML file speechbrain 中會使用到 &amp;ldquo;.yaml&amp;rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
+      <description>參考網站 https://speechbrain.github.io (SpeechBrain 官網) https://github.com/speechbrain/speechbrain (SpeechBrain github) https://speechbrain.readthedocs.io/en/latest/index.html (Speechbrain docs) YAML file speechbrain 中會使用到 &amp;ldquo;.yaml&amp;rdquo; 類型檔案來定義不同的參數，例如訓練的 hparams、模型架構等等。
 tags: 新增一個 python object: new (ex. LogSoftmax) log_softmax: !new: torch.nn.LogSoftmax dim: -1 新增一個 function object: name (ex. seq_cost) seq_cost: !name: speechbrain.nnet.losses.kldiv_loss label_smoothing: &amp;lt;label_smoothing&amp;gt; 取用 yaml file 其他變數的值: ref (ex. SGD) SGD: !name: torch.optim.SGD lr: !ref &amp;lt;lr_sgd&amp;gt; 複製一份 variable or object，且不會有相同 reference: copy apple: !copy &amp;lt;foo&amp;gt; Include 其他的 yaml file: include 讀取 &amp;amp; 執行其他的 python function: apply (ex.</description>
     </item>
     <item>
