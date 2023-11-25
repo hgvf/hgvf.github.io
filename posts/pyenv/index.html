@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Pyenv // Weiwei 的 Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.120.4">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Guan-Wei Tang" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pyenv"/>
+<meta name="twitter:description" content="參考網站 https://github.com/pyenv/pyenv#installation https://github.com/pyenv/pyenv-installer
+相關檔案 Shims 安裝之後會被加入到 PATH 當中。 主要用來執行 user 呼叫的 python 相關指令，例如 pip, python&hellip;。 指令的參數也都會被傳給 pyenv 執行。 Versions 放置所有下載的 python 版本。 plugins 存放 pyenv 相關插件，例如 pyenv-virtualenv&hellip;。 pyenv-virtualenv 用來管理 virtualenv 創建的虛擬環境等等。 如何選擇 python 版本 (照以下順序) 使用 PYENV_VERSION 的環境變數，這個變數可以使用 &ldquo;pyenv shell &quot; 指令來設置。 如果目前目錄底下的 .python-version 存在，則可以用 &ldquo;pyenv shell&rdquo; 來修改。 會不斷往 parent 目錄尋找 .python-version，直到搜尋到檔案系統的 root。 依照 Global 的 $(pyenv root)/version 檔案，可以用 &ldquo;pyenv global&rdquo; 來修改。 (如果 global version file 不存在，則 pyenv 會假設你希望用系統內建的 python) 安裝教學 安裝 pyenv: curl https://pyenv."/>
+
+    <meta property="og:title" content="Pyenv" />
+<meta property="og:description" content="參考網站 https://github.com/pyenv/pyenv#installation https://github.com/pyenv/pyenv-installer
+相關檔案 Shims 安裝之後會被加入到 PATH 當中。 主要用來執行 user 呼叫的 python 相關指令，例如 pip, python&hellip;。 指令的參數也都會被傳給 pyenv 執行。 Versions 放置所有下載的 python 版本。 plugins 存放 pyenv 相關插件，例如 pyenv-virtualenv&hellip;。 pyenv-virtualenv 用來管理 virtualenv 創建的虛擬環境等等。 如何選擇 python 版本 (照以下順序) 使用 PYENV_VERSION 的環境變數，這個變數可以使用 &ldquo;pyenv shell &quot; 指令來設置。 如果目前目錄底下的 .python-version 存在，則可以用 &ldquo;pyenv shell&rdquo; 來修改。 會不斷往 parent 目錄尋找 .python-version，直到搜尋到檔案系統的 root。 依照 Global 的 $(pyenv root)/version 檔案，可以用 &ldquo;pyenv global&rdquo; 來修改。 (如果 global version file 不存在，則 pyenv 會假設你希望用系統內建的 python) 安裝教學 安裝 pyenv: curl https://pyenv." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://hgvf.github.io/posts/pyenv/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-26T01:26:56+08:00" />
+<meta property="article:modified_time" content="2023-11-26T01:26:56+08:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://hgvf.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Guan-Wei Tang" /></a>
+      <span class="app-header-title">Weiwei 的 Blog</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/category/">Category</a>
+      </nav>
+      <p>記錄生活大小事</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/hgvf" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/guan-wei-tang-1403431aa/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="https://www.facebook.com/hgvf4450/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-facebook">
+  <title>My Facebook</title>
+  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+</svg>
+          </a>
+        
+          <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-mail">
+  <title>My Email</title>
+  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Pyenv</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 26, 2023
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://hgvf.github.io/tags/python/">Python</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h3 id="參考網站">參考網站</h3>
+<p><a href="https://github.com/pyenv/pyenv#installation">https://github.com/pyenv/pyenv#installation</a>
+<a href="https://github.com/pyenv/pyenv-installer">https://github.com/pyenv/pyenv-installer</a></p>
+<h2 id="相關檔案">相關檔案</h2>
+<ul>
+<li>Shims
+<ul>
+<li>安裝之後會被加入到 PATH 當中。</li>
+<li>主要用來執行 user 呼叫的 python 相關指令，例如 pip, python&hellip;。</li>
+<li>指令的參數也都會被傳給 pyenv 執行。</li>
+</ul>
+</li>
+<li>Versions
+<ul>
+<li>放置所有下載的 python 版本。</li>
+</ul>
+</li>
+<li>plugins
+<ul>
+<li>存放 pyenv 相關插件，例如 pyenv-virtualenv&hellip;。</li>
+</ul>
+</li>
+<li>pyenv-virtualenv
+<ul>
+<li>用來管理 virtualenv 創建的虛擬環境等等。</li>
+</ul>
+</li>
+</ul>
+<h2 id="如何選擇-python-版本-照以下順序">如何選擇 python 版本 (照以下順序)</h2>
+<ol>
+<li>使用 <strong>PYENV_VERSION</strong> 的環境變數，這個變數可以使用 &ldquo;pyenv shell &quot; 指令來設置。</li>
+<li>如果目前目錄底下的 <strong>.python-version</strong> 存在，則可以用 &ldquo;pyenv shell&rdquo; 來修改。</li>
+<li>會不斷往 parent 目錄尋找 <strong>.python-version</strong>，直到搜尋到檔案系統的 root。</li>
+<li>依照 Global 的 <strong>$(pyenv root)/version</strong> 檔案，可以用 &ldquo;pyenv global&rdquo; 來修改。
+(如果 global version file 不存在，則 pyenv 會假設你希望用系統內建的 python)</li>
+</ol>
+<h2 id="安裝教學">安裝教學</h2>
+<ol>
+<li>安裝 pyenv:
+<blockquote>
+<p><code>curl https://pyenv.run | bash</code></p>
+</blockquote>
+</li>
+<li><em>~/.profile</em> (加在最前面):
+<blockquote>
+<p><code>export PYENV_ROOT=&quot;$HOME/.pyenv&quot;</code>
+<code>export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;</code></p>
+</blockquote>
+</li>
+<li><em>~/.profile</em> (加在最後面):
+<blockquote>
+<p><code>eval &quot;$(pyenv init --path)&quot;</code></p>
+</blockquote>
+</li>
+<li><em>~/.bashrc</em> (加在最後面):
+<blockquote>
+<p><code>eval &quot;$(pyenv init -)&quot;</code>
+<code>eval &quot;$(pyenv virtualenv-init -)&quot;</code></p>
+</blockquote>
+</li>
+<li>重新啟動 <em>~/.profile</em> &amp; <em>~/.bashrc</em>:
+<blockquote>
+<p><code>source ~/.profile</code>
+<code>source ~/.bashrc</code></p>
+</blockquote>
+</li>
+<li>可能需要重新啟動整個 shell。</li>
+</ol>
+<h2 id="架設環境">架設環境</h2>
+<ol>
+<li>安裝 python 版本:
+<blockquote>
+<p><code>pyenv install &lt;version&gt;</code></p>
+</blockquote>
+</li>
+<li>建立虛擬環境:
+<blockquote>
+<p><code>pyenv virtualenv &lt;version&gt; &lt;virtualenv_name&gt;</code></p>
+</blockquote>
+</li>
+<li>啟動虛擬環境:
+<blockquote>
+<p><code>pyenv activate &lt;virtualenv_name&gt;</code></p>
+</blockquote>
+</li>
+</ol>
+<h2 id="相關移除方法">相關移除方法</h2>
+<ol>
+<li>移除某個虛擬環境:
+<ul>
+<li>去 <em>.pyenv</em> 資料夾底下的 <em>version</em> 找到 &lt;virtualenv_name&gt; 並刪除。</li>
+</ul>
+</li>
+<li>刪掉整個 pyenv:
+<ul>
+<li>刪掉整個 <em>/.pyenv</em></li>
+<li>移除 <em>~/.bashrc</em> 中的
+<blockquote>
+<p><code>export PATH=&quot;$HOME/.pyenv/bin:$PATH&quot;</code>
+<code>eval &quot;$(pyenv init --path)&quot;</code>
+<code>eval &quot;$(pyenv virtualenv-init -)&quot;</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>刪完後重新啟動 shell。</li>
+</ol>
+<h2 id="移動整個-pyenv">移動整個 pyenv</h2>
+<ol>
+<li>先把 .pyenv 資料夾移動好</li>
+<li>更改 ~/.profile 裡面的 #PYENV_ROOT 路徑</li>
+<li>去新的路徑中，$PYENV_ROOT/versions 裡面，重新 link 那些環境檔案</li>
+</ol>
+<blockquote>
+<p>如果不知道 link 的路徑，可以用 readlink <!-- raw HTML omitted --> 檢查以前是怎樣 link 的</p>
+</blockquote>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
