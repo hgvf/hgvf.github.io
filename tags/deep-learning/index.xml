@@ -13,7 +13,8 @@
       <link>https://hgvf.github.io/posts/transformer/</link>
       <pubDate>Sun, 26 Nov 2023 00:52:32 +0800</pubDate>
       <guid>https://hgvf.github.io/posts/transformer/</guid>
-      <description>https://arxiv.org/pdf/1706.03762.pdf Model architecture: (1) 每個 sub-layer 過後都會經過 layer normalization，讓 input 的 mean=0, variance=1，讓資料都投影到差不多的 range，可以提升 training 效率。 (2) 任兩個 sub-layers 間都使用 residual connection，在做 backpropagation 時可以使梯度不要爆炸或消失，也不會使 information 完全由 layer 決定，而是多參考初始狀態。 (3) 經過完每個 sub-layer 之後，在 residual connection &amp;amp; layer normalization 之前，會先 dropout(0.1)，甚至是 input embedding 也會經過 dropout。 (4) 使用 37k 大小的字典做 byte-pair encoding。 (5) 最終結果是用倒數 10 個 checkpoints 的 model weights 作 average。 (6) Label smoothing=0.1。 Attention: (1) Scaled Dot-Production attention: $$Attention(Q, K, V)=softmax(\frac{QK^T}{\sqrt[]{d_k}})V$$ (2) Multi-head attention: $$MultiHead(Q, K, V)=Concat(head_1, &amp;hellip;, head_h)W^O$$ $$head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)$$</description>
+      <description>https://arxiv.org/pdf/1706.03762.pdf
+Model architecture: (1) 每個 sub-layer 過後都會經過 **layer normalization**，讓 input 的 mean=0, variance=1，讓資料都投影到差不多的 range，可以提升 training 效率。 (2) 任兩個 sub-layers 間都使用 **residual connection**，在做 backpropagation 時可以使梯度不要爆炸或消失，也不會使 information 完全由 layer 決定，而是多參考初始狀態。 (3) 經過完每個 sub-layer 之後，在 residual connection &amp;amp; layer normalization 之前，會先 dropout(0.1)，甚至是 input embedding 也會經過 dropout。 (4) 使用 37k 大小的字典做 byte-pair encoding。 (5) 最終結果是用倒數 10 個 checkpoints 的 model weights 作 average。 (6) Label smoothing=0.1。 Attention: (1) Scaled Dot-Production attention: $Attention(Q, K, V)=softmax(\frac{QK^T}{\sqrt[]{d_k}})V$ (2) Multi-head attention: $MultiHead(Q, K, V)=Concat(head_1, &amp;hellip;, head_h)W^O$ $head_i=Attention(QW_i^Q, KW_i^K, VW_i^V)$</description>
     </item>
   </channel>
 </rss>
