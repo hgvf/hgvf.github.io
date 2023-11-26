@@ -6,8 +6,15 @@
     <description>Recent content in 指令大軍 on Weiwei 的 Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 26 Nov 2023 02:08:36 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 26 Nov 2023 13:45:31 +0800</lastBuildDate>
     <atom:link href="https://hgvf.github.io/category/%E6%8C%87%E4%BB%A4%E5%A4%A7%E8%BB%8D/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git</title>
+      <link>https://hgvf.github.io/posts/git/</link>
+      <pubDate>Sun, 26 Nov 2023 13:45:31 +0800</pubDate>
+      <guid>https://hgvf.github.io/posts/git/</guid>
+      <description>Ref Pro Git 書 為你自己學 Git 好用 &amp;amp; 常忘的指令們 取消 uncommit $ git reset --soft &amp;lt;commit ID&amp;gt; # or $ git reset --soft HEAD^ 取消 git add 檔案 $ git reset &amp;lt;filepath&amp;gt; </description>
+    </item>
     <item>
       <title>好用網站</title>
       <link>https://hgvf.github.io/posts/useful_websites/</link>
