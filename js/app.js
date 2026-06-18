@@ -6,7 +6,7 @@ import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
   initAdminModals,
-  openAddSector, submitSector, handleDeleteSector,
+  openAddSector, openEditSector, submitSector, handleDeleteSector,
   openAddSubsector, openEditSubsector, submitSubsector, handleDeleteSubsector,
   openEditNotes, submitNotes,
   openAddTicker, openEditTicker, submitTicker, handleDeleteTicker,
@@ -143,7 +143,15 @@ async function selectSector(sectorId) {
   // Ticker bar shows every ticker in the sector (US/TW/JP/KR), overview first.
   const allSymbols      = [...new Set([...overviewSymbols, ...tickerSymbols])];
 
-  renderTickerBar(allSymbols, _prices);
+  renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
+
+  // Wire the ✎ / "+ Add Tickers" button that renderTickerBar appends when admin.
+  document.getElementById('tickerBarInner')
+    ?.querySelector('[data-action="edit-ticker-overview"]')
+    ?.addEventListener('click', () => {
+      if (_currentSector) openEditSector(_currentSector);
+    });
+
   const sectorContentEl = document.getElementById('sectorContent');
   if (sectorContentEl) {
     sectorContentEl.innerHTML = '';
@@ -154,7 +162,7 @@ async function selectSector(sectorId) {
   _unsubPrices = subscribePrices(allSymbols, newPrices => {
     _prices = newPrices;
     updatePriceCells(_prices);
-    renderTickerBar(allSymbols, _prices);
+    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
   });
 }
 
