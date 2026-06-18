@@ -37,7 +37,6 @@ export function fmtVolume(v) {
   return String(v);
 }
 
-/** Very minimal markdown: # h2, ## h3, **bold**, - bullet, blank line = paragraph break */
 export function parseMarkdown(text) {
   if (!text) return '';
   return text
@@ -58,7 +57,6 @@ function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* ── Ticker performance bar ──────────────────────────────────────── */
 export function buildTickerCard(symbol, p) {
   const dayChg = p?.day_change_pct ?? null;
   const cls    = changeClass(dayChg);
@@ -81,8 +79,7 @@ export function buildTickerCard(symbol, p) {
   return a;
 }
 
-/* ── Watchlist table ─────────────────────────────────────────────── */
-export function buildWatchlistTable(tickers, prices, isAdmin, callbacks) {
+export function buildWatchlistTable(tickers, prices, isAdmin) {
   if (!tickers || tickers.length === 0) return '<p class="state-msg">No tickers yet.</p>';
 
   const cols = ['Last', 'Day%', 'Wk%', 'Mo%', 'Yr%', 'P/E', 'Mkt Cap', 'Volume'];
@@ -124,7 +121,6 @@ export function buildWatchlistTable(tickers, prices, isAdmin, callbacks) {
   </table>`;
 }
 
-/* ── Analysis table ──────────────────────────────────────────────── */
 export function buildAnalysisTable(a, isAdmin) {
   if (!a.columns || !a.rows) return '';
   const ths = a.columns.map(c => `<th style="text-align:left">${c}</th>`).join('');
@@ -142,7 +138,6 @@ export function buildAnalysisTable(a, isAdmin) {
   </table>`;
 }
 
-/* ── Research note card ──────────────────────────────────────────── */
 export function buildResearchCard(note, isAdmin) {
   const adminBtns = isAdmin ? `
     <div class="card-admin-ctrls">
@@ -159,7 +154,6 @@ export function buildResearchCard(note, isAdmin) {
   </div>`;
 }
 
-/* ── Full sector page ────────────────────────────────────────────── */
 export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
   const container = document.getElementById('sectorContent');
   if (!container) return;
@@ -179,20 +173,15 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     const grid = document.createElement('div');
     grid.className = 'subsector-grid';
 
-    // Notes panel
     if (subsector.notes || isAdmin) {
       const notesCard = document.createElement('div');
       notesCard.className = 'glass-card notes-card';
-      const editBtn = isAdmin
-        ? `<button class="btn-icon btn-edit-notes admin-only" data-id="${subsector.id}" title="Edit notes">✎ Edit Notes</button>`
-        : '';
       notesCard.innerHTML = `
         <p class="card-title">Notes${isAdmin ? `<button class="btn-icon btn-edit-notes" data-id="${subsector.id}" title="Edit notes" style="margin-left:0.5rem">✎</button>` : ''}</p>
-        <div class="notes-body">${parseMarkdown(subsector.notes || '_No notes yet._')}</div>`;
+        <div class="notes-body">${parseMarkdown(subsector.notes || '')}</div>`;
       grid.appendChild(notesCard);
     }
 
-    // Watchlist table
     const wlCard = document.createElement('div');
     wlCard.className = 'glass-card wl-card';
     wlCard.dataset.subsectorId = subsector.id;
@@ -204,7 +193,6 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     block.innerHTML = `<h3 class="subsector-title">${subsector.name}${adminSubCtrls}</h3>`;
     block.appendChild(grid);
 
-    // Analysis tables
     analysis.forEach(a => {
       const card = document.createElement('div');
       card.className = 'glass-card analysis-card';
@@ -216,14 +204,12 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     });
     if (isAdmin) {
       const addAnalysisBtn = document.createElement('button');
-      addAnalysisBtn.className = 'btn-add-row admin-only';
+      addAnalysisBtn.className = 'btn-add-row btn-add-analysis admin-only';
       addAnalysisBtn.dataset.subsectorId = subsector.id;
       addAnalysisBtn.textContent = '+ Add Analysis Table';
-      addAnalysisBtn.classList.add('btn-add-analysis');
       block.appendChild(addAnalysisBtn);
     }
 
-    // Research notes
     if (research_notes.length > 0 || isAdmin) {
       const section = document.createElement('div');
       section.className = 'research-section';
@@ -243,14 +229,13 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
 
   if (isAdmin) {
     const addSubBtn = document.createElement('button');
-    addSubBtn.className = 'btn-add-row btn-add-subsector';
+    addSubBtn.className = 'btn-add-row btn-add-subsector admin-only';
     addSubBtn.dataset.sectorId = sector.id;
     addSubBtn.textContent = '+ Add Subsector';
     container.appendChild(addSubBtn);
   }
 }
 
-/* ── Ticker bar ──────────────────────────────────────────────────── */
 export function renderTickerBar(symbols, prices) {
   const bar = document.getElementById('tickerBarInner');
   if (!bar) return;
@@ -258,9 +243,7 @@ export function renderTickerBar(symbols, prices) {
   symbols.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {})));
 }
 
-/* ── Live price update (no full re-render) ───────────────────────── */
 export function updatePriceCells(prices) {
-  // Update ticker bar
   document.querySelectorAll('.ticker-card').forEach(card => {
     const sym = card.querySelector('.tc-symbol')?.textContent;
     if (!sym || !prices[sym]) return;
@@ -278,7 +261,6 @@ export function updatePriceCells(prices) {
     }
   });
 
-  // Update table cells — find rows by wl-symbol text
   document.querySelectorAll('table.wl-table tbody tr').forEach(row => {
     const symEl = row.querySelector('.wl-symbol');
     if (!symEl) return;
