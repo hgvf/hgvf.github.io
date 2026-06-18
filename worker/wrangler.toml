@@ -6,7 +6,7 @@ compatibility_date = "2024-01-01"
 crons = ["0 2 * * 2-6"]
 
 [vars]
-FIREBASE_PROJECT_ID = "watchlist-12e29"
+FIREBASE_PROJECT_ID = "watchlist-7fd99"
 
 # Secrets — set via CLI:
 #   wrangler secret put TRIGGER_SECRET
