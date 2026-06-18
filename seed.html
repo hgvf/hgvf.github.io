@@ -51,7 +51,6 @@
       const auth = getAuth(app);
       const db = getFirestore(app);
 
-      // Sign in if needed
       if (!auth.currentUser) {
         try {
           print('正在登入...');
@@ -105,12 +104,14 @@
 
             for (let ai = 0; ai < (sub.analysis || []).length; ai++) {
               const a = sub.analysis[ai];
-              const ref = await addDoc(collection(db, 'analysis'), {
+              // Firestore doesn't support nested arrays — serialize each row as JSON string
+              const rowsFlat = (a.rows || []).map(row => JSON.stringify(row));
+              await addDoc(collection(db, 'analysis'), {
                 subsectorId: subId,
                 sectorId,
                 title: a.title || '',
                 columns: a.columns || [],
-                rows: a.rows || [],
+                rows: rowsFlat,
                 order: ai,
               });
               print(`      analysis "${a.title}" ✓`, 'ok');
