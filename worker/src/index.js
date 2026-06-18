@@ -140,6 +140,25 @@ async function firestoreSet(token, projectId, docPath, fields) {
   });
 }
 
+// Batch-write up to 500 docs in a single Firestore commit request (1 subrequest).
+async function firestoreBatchSet(token, projectId, writes) {
+  if (writes.length === 0) return;
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:commit`;
+  const body = {
+    writes: writes.map(({ docPath, fields }) => ({
+      update: {
+        name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
+        fields: toFirestoreFields(fields),
+      },
+    })),
+  };
+  return fetch(url, {
+    method:  'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body:    JSON.stringify(body),
+  });
+}
+
 async function firestoreGet(token, projectId, collPath) {
   const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collPath}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
@@ -166,25 +185,26 @@ async function fetchAndStorePrices(env) {
   // A crumb/cookie session is needed for the v7 quote endpoint (P/E, market cap).
   const session = await getYahooSession();
 
-  // Fetch prices in batches of 20
+  // Fetch all prices in batches of 20 (Yahoo limit), collect writes, then commit
+  // everything in a single Firestore batch request to stay under the 50-subrequest limit.
   const BATCH = 20;
-  let updated = 0;
+  const allWrites = [];
+  const now = new Date().toISOString();
   for (let i = 0; i < symbols.length; i += BATCH) {
     const batch = symbols.slice(i, i + BATCH);
-    // Chart endpoint → price + week/month/year % changes (no crumb needed).
     const prices = await fetchYahooBatch(batch);
-    // Quote endpoint → P/E, market cap, currency (works across US/TW/JP/KR).
     const meta   = await fetchQuoteMeta(batch, session);
-    await Promise.all(Object.entries(prices).map(([sym, p]) =>
-      firestoreSet(token, env.FIREBASE_PROJECT_ID, `prices/${sym}`, {
-        ...p,
-        ...(meta[sym] || {}),
-        last_updated: new Date().toISOString(),
-      })
-    ));
-    updated += Object.keys(prices).length;
+    for (const [sym, p] of Object.entries(prices)) {
+      allWrites.push({
+        docPath: `prices/${sym}`,
+        fields: { ...p, ...(meta[sym] || {}), last_updated: now },
+      });
+    }
   }
-  return updated;
+
+  // Single commit for all symbols — counts as 1 subrequest regardless of symbol count.
+  await firestoreBatchSet(token, env.FIREBASE_PROJECT_ID, allWrites);
+  return allWrites.length;
 }
 
 /* ── Yahoo Finance ────────────────────────── */
