@@ -1,0 +1,32 @@
+name: Deploy Cloudflare Worker
+
+# Deploys worker/ to Cloudflare whenever the worker code changes on main.
+# This closes the gap where merging a worker fix to the repo did NOT update
+# the live Worker (which must be redeployed for changes to take effect).
+#
+# Required repo secret (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN  — a token with the "Edit Cloudflare Workers" template.
+#                           Create at https://dash.cloudflare.com/profile/api-tokens
+#
+# Note: existing Worker secrets set via `wrangler secret put`
+# (SERVICE_ACCOUNT_EMAIL, SERVICE_ACCOUNT_KEY, TRIGGER_SECRET, ...) are
+# preserved across deploys — `wrangler deploy` never clears them.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+  workflow_dispatch:   # allows a manual one-click deploy from the Actions tab
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: worker
+          command: deploy
