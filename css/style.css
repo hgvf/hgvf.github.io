@@ -182,16 +182,13 @@ img { display: block; max-width: 100%; }
   text-align: center; padding: 0;
 }
 
-.ticker-bar { padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; overflow: hidden; }
+.ticker-bar { padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; }
 .ticker-bar-inner {
-  display: flex; gap: 0.75rem; overflow-x: auto;
-  scrollbar-width: thin; scrollbar-color: rgba(139,94,60,0.25) transparent; padding-bottom: 4px;
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
 }
-.ticker-bar-inner::-webkit-scrollbar { height: 4px; }
-.ticker-bar-inner::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.25); border-radius: 2px; }
 
 .ticker-card {
-  flex-shrink: 0; display: flex; flex-direction: column; gap: 0.15rem;
+  display: flex; flex-direction: column; gap: 0.15rem;
   padding: 0.65rem 0.9rem; border-radius: var(--radius-md);
   background: rgba(255,252,245,0.55); border: 1px solid rgba(255,255,255,0.5);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
