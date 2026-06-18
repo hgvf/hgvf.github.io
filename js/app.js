@@ -142,9 +142,10 @@ async function selectSector(sectorId) {
 
   const tickerSymbols   = subsectorsData.flatMap(({ tickers }) => tickers.map(t => t.symbol));
   const overviewSymbols = _currentSector.ticker_overview || [];
+  // Ticker bar shows every ticker in the sector (US/TW/JP/KR), overview first.
   const allSymbols      = [...new Set([...overviewSymbols, ...tickerSymbols])];
 
-  renderTickerBar(overviewSymbols, _prices);
+  renderTickerBar(allSymbols, _prices);
   const sectorContentEl = document.getElementById('sectorContent');
   if (sectorContentEl) {
     sectorContentEl.innerHTML = '';
@@ -155,7 +156,7 @@ async function selectSector(sectorId) {
   _unsubPrices = subscribePrices(allSymbols, newPrices => {
     _prices = newPrices;
     updatePriceCells(_prices);
-    renderTickerBar(overviewSymbols, _prices);
+    renderTickerBar(allSymbols, _prices);
   });
 }
 

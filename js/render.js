@@ -14,7 +14,8 @@ export function fmtChg(val) {
   return (val >= 0 ? '+' : '') + val.toFixed(2) + '%';
 }
 export function formatPrice(price, symbol) {
-  if (symbol && symbol.endsWith('.TW')) return price.toLocaleString('zh-TW', { maximumFractionDigits: 0 });
+  // TW / JP / KR markets quote in whole local-currency units → no decimals.
+  if (symbol && /\.(TW|TWO|T|KS|KQ)$/.test(symbol)) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
   return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 export function fmtMarketCap(p) {
