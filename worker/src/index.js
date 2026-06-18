@@ -74,26 +74,24 @@ async function verifyFirebaseToken(idToken, projectId) {
     if (payload.aud !== projectId) return false;
     if (payload.exp < Date.now() / 1000) return false;
 
-    // Fetch Google public keys
-    const res  = await fetch('https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com');
-    const keys = await res.json();
+    // Fetch Google public keys in JWK format (directly importable by WebCrypto)
+    const res  = await fetch('https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com');
+    const jwks = await res.json();
     const header = JSON.parse(atob(parts[0].replace(/-/g,'+').replace(/_/g,'/')));
-    const certPem = keys[header.kid];
-    if (!certPem) return false;
+    const jwk = (jwks.keys || []).find(k => k.kid === header.kid);
+    if (!jwk) return false;
 
-    const key = await importPublicKeyFromCert(certPem);
+    const key = await crypto.subtle.importKey(
+      'jwk', jwk,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false, ['verify']
+    );
     const sig = base64urlToUint8(parts[2]);
     const data = new TextEncoder().encode(parts[0] + '.' + parts[1]);
     return crypto.subtle.verify({ name: 'RSASSA-PKCS1-v1_5' }, key, sig, data);
   } catch {
     return false;
   }
-}
-
-async function importPublicKeyFromCert(pem) {
-  const b64  = pem.replace(/-----[^-]+-----/g,'').replace(/\s/g,'');
-  const der  = base64ToUint8(b64);
-  return crypto.subtle.importKey('spki', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
 }
 
 /* ── Firebase Firestore REST API (via service account JWT) ──────── */
