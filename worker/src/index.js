@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7-2026-06-18';
+const WORKER_VERSION = 'batched-v7+spark-2026-06-18';
 
 export default {
   async fetch(request, env) {
@@ -193,20 +193,25 @@ async function fetchAndStorePrices(env) {
   const symbols = [...new Set([...tickerSymbols, ...overviewSymbols])];
   if (symbols.length === 0) return 0;
 
-  // getYahooSession costs 2 subrequests; v7 quote batch costs ceil(N/50) requests.
-  // Total budget for N symbols: 1+1+1+2+ceil(N/50)+1 = well under 50.
+  // getYahooSession costs 2 subrequests; v7 quote = ceil(N/50); spark = ceil(N/15).
+  // Total for N≈45: 1+1+1+2+1+3+1 ≈ 10 — comfortably under the 50 limit.
   const session = await getYahooSession();
 
-  const BATCH = 50;
-  const allWrites = [];
-  const now = new Date().toISOString();
-  for (let i = 0; i < symbols.length; i += BATCH) {
-    const batch = symbols.slice(i, i + BATCH);
-    const quotes = await fetchAllQuoteData(batch, session);
-    for (const [sym, p] of Object.entries(quotes)) {
-      allWrites.push({ docPath: `prices/${sym}`, fields: { ...p, last_updated: now } });
-    }
+  // v7 quote → price, day%, P/E, market cap, volume (batched 50/req)
+  const quotes = {};
+  const QBATCH = 50;
+  for (let i = 0; i < symbols.length; i += QBATCH) {
+    Object.assign(quotes, await fetchAllQuoteData(symbols.slice(i, i + QBATCH), session));
   }
+
+  // v8 spark → week/month/year % from historical closes (batched ~15/req)
+  const spark = await fetchSparkData(symbols, session);
+
+  const now = new Date().toISOString();
+  const allWrites = Object.entries(quotes).map(([sym, p]) => ({
+    docPath: `prices/${sym}`,
+    fields: { ...p, ...(spark[sym] || {}), last_updated: now },
+  }));
 
   await firestoreBatchSet(token, env.FIREBASE_PROJECT_ID, allWrites);
   return allWrites.length;
@@ -258,6 +263,42 @@ async function fetchAllQuoteData(symbols, session) {
       out[q.symbol] = entry;
     }
   } catch { /* skip */ }
+  return out;
+}
+
+/* Batched week/month/year % via the v8 spark endpoint, which accepts many
+   symbols per request (1 request per ~15 symbols) — unlike the v8 chart
+   endpoint which is one symbol per request. Computes changes from daily closes. */
+async function fetchSparkData(symbols, session) {
+  const out = {};
+  const CHUNK = 15;
+  for (let i = 0; i < symbols.length; i += CHUNK) {
+    const batch = symbols.slice(i, i + CHUNK);
+    try {
+      let url = `https://query1.finance.yahoo.com/v8/finance/spark`
+        + `?symbols=${encodeURIComponent(batch.join(','))}`
+        + `&range=1y&interval=1d`;
+      if (session?.crumb) url += `&crumb=${encodeURIComponent(session.crumb)}`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': YAHOO_UA, ...(session?.cookie ? { Cookie: session.cookie } : {}) },
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      for (const r of data?.spark?.result || []) {
+        const sym    = r.symbol;
+        const resp   = r.response?.[0];
+        const closes = (resp?.indicators?.quote?.[0]?.close || []).filter(v => v != null);
+        if (!sym || closes.length === 0) continue;
+        const last = closes[closes.length - 1];
+        const pct  = prev => (prev && last) ? ((last - prev) / prev * 100) : null;
+        out[sym] = {
+          week_change_pct:  pct(closes[closes.length - 6]),
+          month_change_pct: pct(closes[closes.length - 23]),
+          year_change_pct:  pct(closes[0]),
+        };
+      }
+    } catch { /* skip this chunk */ }
+  }
   return out;
 }
 
