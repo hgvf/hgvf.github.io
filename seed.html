@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>Firestore Seeder</title>
+  <style>
+    body { font-family: monospace; background: #111; color: #eee; padding: 2rem; }
+    button { padding: 0.6rem 1.4rem; background: #4f8ef7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+    button:disabled { background: #555; cursor: default; }
+    #log { margin-top: 1.5rem; white-space: pre-wrap; line-height: 1.6; }
+    .ok  { color: #6f6; }
+    .err { color: #f66; }
+  </style>
+</head>
+<body>
+  <h2>Firestore Seeder</h2>
+  <p>必須先登入 Google（在主站登入後再開此頁），點下方按鈕將 watchlist 資料寫入 Firestore。</p>
+  <button id="btn">開始 Seed</button>
+  <div id="log"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore, doc, setDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyDT4eEQZXnqTBn17LGrg9isYFRFFNCbI-I",
+      authDomain:        "watchlist-7fd99.firebaseapp.com",
+      projectId:         "watchlist-7fd99",
+      storageBucket:     "watchlist-7fd99.firebasestorage.app",
+      messagingSenderId: "1074341286002",
+      appId:             "1:1074341286002:web:bda4e06fc474b4789072eb",
+    };
+
+    const WATCHLIST = {"sectors":[{"id":"high-speed-cable","name":"高速傳輸/Cable","ticker_overview":["CRDO","ALAB","TEL","APH"],"subsectors":[{"id":"switch-ic","name":"高速傳輸 & 交換機","notes":"- **Credo (CRDO)**: Rack外部之間的銅線高速傳輸線，偏向高速SerDes/介面IC + AEC方案 + IP授權，收入可來自晶片出貨、工程服務、IP license/royalty\n- **Astera Labs (ALAB)**: 晶片間的高速傳輸（銅+光），資料中心互連半導體平台，hyperscaler/AI 平台導入\n- **貿聯 (3665.TW)**: 系統級線束/連接解決方案整合商，產品多是各套 cable assembly、線束、連接模組，面向多元終端\n- **智邦 (2345.TW)**: 交換機\n- **嘉澤 (3533.TW)**: 機構/電性整合的連接器與線束，CPU Socket、插槽、線束、快接頭\n- **TE Connectivity (TEL)**: 全球最大工業級連接器公司之一，汽車、通訊/Data Center、工業自動化\n- **Amphenol (APH)**: 全球最大連接器廠之一，產品多元、終端涵蓋通訊、工業、汽車、航太","watchlist":[{"symbol":"CRDO","name":"Credo Technology Group Hold","market":"US"},{"symbol":"ALAB","name":"Astera Labs, Inc.","market":"US"},{"symbol":"3665.TW","name":"Bizlink Holding Inc.","market":"TW"},{"symbol":"2345.TW","name":"Accton Technology Corp.","market":"TW"},{"symbol":"3533.TW","name":"Lotes Co., Ltd","market":"TW"},{"symbol":"TEL","name":"TE Connectivity Ltd.","market":"US"},{"symbol":"APH","name":"Amphenol Corp.","market":"US"}],"analysis":[{"title":"營收占比","columns":["公司","分類口徑","業務 / 營收占比"],"rows":[["嘉澤 3533.TW","產品別","伺服器 40.3% / 桌機 24.6% / 筆電 11.0% / 策略客戶 9.8% / 車用 8.1% / 工業醫療 2.4%"],["貿聯 3665.TW","事業群","Computing & Transportation 47.1% / Industrial 36.4% / Home Appliance 16.5%"],["Credo","收入型態","產品銷售 75.2% / 工程服務 10.3% / IP 授權 14.5%"],["Astera Labs","收入型態","絕大多數為產品銷售（未透露明確%）"]]}]}]}]};
+
+    const log = document.getElementById('log');
+    function print(msg, cls) {
+      const s = document.createElement('span');
+      s.className = cls || '';
+      s.textContent = msg + '\n';
+      log.appendChild(s);
+    }
+
+    document.getElementById('btn').addEventListener('click', async () => {
+      const btn = document.getElementById('btn');
+      btn.disabled = true;
+      log.innerHTML = '';
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Sign in if needed
+      if (!auth.currentUser) {
+        try {
+          print('正在登入...');
+          await signInWithPopup(auth, new GoogleAuthProvider());
+          print('登入成功: ' + auth.currentUser.email, 'ok');
+        } catch(e) {
+          print('登入失敗: ' + e.message, 'err');
+          btn.disabled = false;
+          return;
+        }
+      } else {
+        print('已登入: ' + auth.currentUser.email, 'ok');
+      }
+
+      try {
+        for (let si = 0; si < WATCHLIST.sectors.length; si++) {
+          const sector = WATCHLIST.sectors[si];
+          const sectorId = sector.id;
+          print(`\n[Sector] ${sector.name}`);
+          await setDoc(doc(db, 'sectors', sectorId), {
+            name: sector.name,
+            ticker_overview: sector.ticker_overview || [],
+            order: si,
+          });
+          print(`  sectors/${sectorId} ✓`, 'ok');
+
+          for (let ui = 0; ui < (sector.subsectors || []).length; ui++) {
+            const sub = sector.subsectors[ui];
+            const subId = sub.id;
+            print(`  [Subsector] ${sub.name}`);
+            await setDoc(doc(db, 'subsectors', subId), {
+              sectorId,
+              name: sub.name,
+              notes: sub.notes || '',
+              order: ui,
+            });
+            print(`    subsectors/${subId} ✓`, 'ok');
+
+            for (let ti = 0; ti < (sub.watchlist || []).length; ti++) {
+              const t = sub.watchlist[ti];
+              await setDoc(doc(db, 'tickers', t.symbol), {
+                subsectorId: subId,
+                sectorId,
+                symbol: t.symbol,
+                name: t.name || '',
+                market: t.market || 'US',
+                order: ti,
+              });
+              print(`      ticker ${t.symbol} ✓`, 'ok');
+            }
+
+            for (let ai = 0; ai < (sub.analysis || []).length; ai++) {
+              const a = sub.analysis[ai];
+              const ref = await addDoc(collection(db, 'analysis'), {
+                subsectorId: subId,
+                sectorId,
+                title: a.title || '',
+                columns: a.columns || [],
+                rows: a.rows || [],
+                order: ai,
+              });
+              print(`      analysis "${a.title}" ✓`, 'ok');
+            }
+          }
+        }
+        print('\n完成！請重新整理主站。', 'ok');
+      } catch(e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>
