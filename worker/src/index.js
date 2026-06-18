@@ -153,7 +153,13 @@ async function fetchAndStorePrices(env) {
 
   // Get all tickers from Firestore
   const tickers = await firestoreGet(token, env.FIREBASE_PROJECT_ID, 'tickers');
-  const symbols  = [...new Set(tickers.map(t => t.symbol).filter(Boolean))];
+  const tickerSymbols = tickers.map(t => t.symbol).filter(Boolean);
+
+  // Also include ticker_overview symbols stored in sectors (may not be in tickers collection)
+  const sectors = await firestoreGet(token, env.FIREBASE_PROJECT_ID, 'sectors');
+  const overviewSymbols = sectors.flatMap(s => s.ticker_overview || []).filter(Boolean);
+
+  const symbols = [...new Set([...tickerSymbols, ...overviewSymbols])];
 
   if (symbols.length === 0) return 0;
 
