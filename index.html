@@ -21,13 +21,6 @@
       <h1 class="profile-name">Kuan-Wei Tang</h1>
       <p class="profile-title">NLP Researcher</p>
       <p class="profile-org">NTUST · CSIE</p>
-
-      <!-- Auth -->
-      <div class="auth-area">
-        <span class="user-info" id="userInfo"></span>
-        <button class="btn-auth" id="btnLogin">Sign in</button>
-        <button class="btn-auth btn-auth-out" id="btnLogout" style="display:none">Sign out</button>
-      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -46,12 +39,6 @@
       </a>
     </nav>
 
-    <!-- Admin toolbar -->
-    <div class="sidebar-admin admin-only" style="display:none">
-      <p class="nav-section-label">ADMIN</p>
-      <button class="btn-admin" id="btnWhitelist">Manage Whitelist</button>
-    </div>
-
     <div class="sidebar-footer">
       <p class="nav-section-label">CONTACT</p>
       <div class="social-links">
@@ -59,11 +46,11 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
           GitHub
         </a>
-        <a href="mailto:gwtang@nlp.csie.ntust.edu.tw" class="social-link">
+        <a href="mailto:kwtang8618@gmail.com" class="social-link">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Email
         </a>
-        <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-link">
+        <a href="https://tw.linkedin.com/in/kuan-wei-tang-1403431aa" target="_blank" rel="noopener" class="social-link">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
           LinkedIn
         </a>
@@ -71,228 +58,52 @@
     </div>
   </aside>
 
-  <!-- Mobile hamburger -->
-  <button class="sidebar-toggle" id="menuToggle" aria-label="Toggle sidebar">
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 
-  <!-- Main content -->
   <main class="main-content">
 
-    <!-- HOME PAGE -->
     <section id="page-home" class="page active">
       <div class="page-header">
         <h2 class="page-title">Welcome</h2>
       </div>
-
       <div class="home-grid">
         <div class="glass-card home-about">
           <h3 class="card-title">About Me</h3>
-          <p>Hi, I'm <strong>Kuan-Wei Tang (唐冠維)</strong>, a researcher in Natural Language Processing at National Taiwan University of Science and Technology (NTUST). My work focuses on speech and language technologies.</p>
-          <p style="margin-top:0.75rem">I also actively study financial markets — particularly in semiconductor and high-speed interconnect sectors. This site hosts my research notes, watchlists, and occasional blog posts.</p>
+          <p>Hi, I'm <strong>Kuan-Wei Tang (湯冠維)</strong>. </p>
+          <p>I am deeply interested in the field of deep learning and am currently engaged in related work.</p>
+          
         </div>
-
         <div class="glass-card home-interests">
           <h3 class="card-title">Research Interests</h3>
           <ul class="interest-list">
-            <li>Automatic Speech Recognition (ASR)</li>
-            <li>Machine Translation</li>
-            <li>Spoken Language Understanding</li>
-            <li>Large Language Models</li>
+            <li>Deep Learning</li>
           </ul>
         </div>
-
         <div class="glass-card home-links">
           <h3 class="card-title">Quick Links</h3>
           <div class="quick-links">
-            <a href="https://github.com/hgvf" target="_blank" rel="noopener" class="quick-link-btn">GitHub Profile</a>
-            <a href="#" data-page="watchlist" class="quick-link-btn nav-item">Stock Watchlist →</a>
+            <a href="#" data-page="watchlist" class="quick-link-btn nav-trigger">Stock Watchlist →</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- WATCHLIST PAGE -->
     <section id="page-watchlist" class="page">
       <div class="page-header">
         <h2 class="page-title">Stock Watchlist</h2>
-        <div class="page-header-actions">
-          <span class="price-status" id="priceStatus"></span>
-          <button class="btn-refresh admin-only" id="btnRefreshPrices" style="display:none" title="Fetch latest prices from Cloudflare Worker">
-            ↺ Refresh Prices
-          </button>
-          <button class="btn-refresh admin-only sector-tab-add" id="btnAddSector" style="display:none">
-            + Sector
-          </button>
-        </div>
+        <span class="last-updated" id="lastUpdated">Loading...</span>
       </div>
-
-      <!-- Sector tab bar -->
-      <div class="sector-tabbar" id="sectorTabs" role="tablist"></div>
-
-      <!-- Ticker performance bar -->
+      <div class="sector-tabbar" id="sectorTabbar" role="tablist"></div>
       <div class="ticker-bar glass-card" id="tickerBar">
         <div class="ticker-bar-inner" id="tickerBarInner"></div>
       </div>
-
-      <!-- Sector content panels -->
       <div id="sectorContent"></div>
     </section>
 
   </main>
 
-  <!-- ── Modals ──────────────────────────────────────────────────── -->
-
-  <!-- Sector modal -->
-  <div class="modal-overlay" id="modalSector">
-    <div class="modal-box">
-      <h3 class="modal-title" id="sectorModalTitle">Sector</h3>
-      <form id="formSector">
-        <label class="modal-label">Name
-          <input class="modal-input" id="inputSectorName" required />
-        </label>
-        <label class="modal-label">Order
-          <input class="modal-input" id="inputSectorOrder" type="number" value="0" />
-        </label>
-        <label class="modal-label">Ticker Overview (comma-separated)
-          <input class="modal-input" id="inputSectorOverview" placeholder="NVDA, AMD, INTC" />
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Subsector modal -->
-  <div class="modal-overlay" id="modalSubsector">
-    <div class="modal-box">
-      <h3 class="modal-title" id="subsectorModalTitle">Subsector</h3>
-      <form id="formSubsector">
-        <label class="modal-label">Name
-          <input class="modal-input" id="inputSubsectorName" required />
-        </label>
-        <label class="modal-label">Order
-          <input class="modal-input" id="inputSubsectorOrder" type="number" value="0" />
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Notes modal -->
-  <div class="modal-overlay" id="modalNotes">
-    <div class="modal-box modal-box-wide">
-      <h3 class="modal-title">Edit Notes</h3>
-      <form id="formNotes">
-        <label class="modal-label">Markdown notes
-          <textarea class="modal-input modal-textarea" id="inputNotes" rows="12" placeholder="- **CRDO**: description…"></textarea>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Ticker modal -->
-  <div class="modal-overlay" id="modalTicker">
-    <div class="modal-box">
-      <h3 class="modal-title" id="tickerModalTitle">Ticker</h3>
-      <form id="formTicker">
-        <label class="modal-label">Symbol
-          <input class="modal-input" id="inputTickerSymbol" required placeholder="NVDA" />
-        </label>
-        <label class="modal-label">Full Name
-          <input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corporation" />
-        </label>
-        <label class="modal-label">Order
-          <input class="modal-input" id="inputTickerOrder" type="number" value="0" />
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Analysis table modal -->
-  <div class="modal-overlay" id="modalAnalysis">
-    <div class="modal-box modal-box-wide">
-      <h3 class="modal-title" id="analysisModalTitle">Analysis Table</h3>
-      <form id="formAnalysis">
-        <label class="modal-label">Title
-          <input class="modal-input" id="inputAnalysisTitle" required />
-        </label>
-        <label class="modal-label">Order
-          <input class="modal-input" id="inputAnalysisOrder" type="number" value="0" />
-        </label>
-        <label class="modal-label">Columns (comma-separated)
-          <input class="modal-input" id="inputAnalysisColumns" placeholder="Company, Revenue, Notes" />
-        </label>
-        <label class="modal-label">Rows (one row per line, cells tab-separated)
-          <textarea class="modal-input modal-textarea" id="inputAnalysisRows" rows="8" placeholder="NVDA&#9;$60B&#9;Leader"></textarea>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Research note modal -->
-  <div class="modal-overlay" id="modalResearch">
-    <div class="modal-box modal-box-wide">
-      <h3 class="modal-title" id="researchModalTitle">Research Note</h3>
-      <form id="formResearch">
-        <label class="modal-label">Title
-          <input class="modal-input" id="inputResearchTitle" required />
-        </label>
-        <label class="modal-label">Order
-          <input class="modal-input" id="inputResearchOrder" type="number" value="0" />
-        </label>
-        <label class="modal-label">Content (Markdown)
-          <textarea class="modal-input modal-textarea" id="inputResearchContent" rows="14" placeholder="# Overview&#10;&#10;- **Key point**: …"></textarea>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- Whitelist modal -->
-  <div class="modal-overlay" id="modalWhitelist">
-    <div class="modal-box">
-      <h3 class="modal-title">Admin Whitelist</h3>
-      <ul class="whitelist-list" id="whitelistEmails"></ul>
-      <form id="formWhitelistEmail" style="margin-top:1rem">
-        <label class="modal-label">Add email
-          <input class="modal-input" id="inputWhitelistEmail" type="email" placeholder="user@example.com" />
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Close</button>
-          <button type="submit" class="btn-modal btn-modal-primary">Add</button>
-        </div>
-      </form>
-      <button class="modal-close" aria-label="Close">✕</button>
-    </div>
-  </div>
-
-  <script type="module" src="js/app.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
