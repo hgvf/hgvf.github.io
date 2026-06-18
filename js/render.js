@@ -1,12 +1,23 @@
 /* ── Helpers ─────────────────────────────────────────────────────── */
 export function tradingViewUrl(symbol) {
-  // Strip known suffix → map to TradingView exchange prefix
   if (symbol.endsWith('.TWO')) return `https://www.tradingview.com/chart/?symbol=TPEX:${symbol.slice(0,-4)}`;
   if (symbol.endsWith('.TW'))  return `https://www.tradingview.com/chart/?symbol=TWSE:${symbol.slice(0,-3)}`;
   if (symbol.endsWith('.KQ'))  return `https://www.tradingview.com/chart/?symbol=KOSDAQ:${symbol.slice(0,-3)}`;
   if (symbol.endsWith('.KS'))  return `https://www.tradingview.com/chart/?symbol=KRX:${symbol.slice(0,-3)}`;
   if (symbol.endsWith('.T'))   return `https://www.tradingview.com/chart/?symbol=TSE:${symbol.slice(0,-2)}`;
-  // US — no suffix, TradingView resolves the exchange automatically
+  if (symbol.endsWith('.SS'))  return `https://www.tradingview.com/chart/?symbol=SSE:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.SZ'))  return `https://www.tradingview.com/chart/?symbol=SZSE:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.HK'))  return `https://www.tradingview.com/chart/?symbol=HKEX:${symbol.slice(0,-3)}`;
+  // European suffixes: .AS=Amsterdam .PA=Paris .DE=Xetra .MI=Milan .MC=Madrid
+  //   .L=London .ST=Stockholm .CO=Copenhagen .HE=Helsinki .OL=Oslo .VX=Swiss
+  const euMatch = symbol.match(/^(.+)\.(AS|PA|DE|MI|MC|L|ST|CO|HE|OL|VX|BR|LS|IR)$/);
+  if (euMatch) {
+    const exMap = { AS:'EURONEXT', PA:'EURONEXT', DE:'XETR', MI:'MIL', MC:'BME',
+                    L:'LSE', ST:'OMX', CO:'OMX', HE:'OMX', OL:'OSL', VX:'SIX',
+                    BR:'EURONEXT', LS:'EURONEXT', IR:'EURONEXT' };
+    const ex = exMap[euMatch[2]];
+    if (ex) return `https://www.tradingview.com/chart/?symbol=${ex}:${euMatch[1]}`;
+  }
   return `https://www.tradingview.com/chart/?symbol=${symbol}`;
 }
 export function changeClass(val) {
@@ -21,7 +32,8 @@ export function fmtChg(val) {
 }
 export function formatPrice(price, symbol) {
   // TW / JP / KR markets quote in whole local-currency units → no decimals.
-  if (symbol && /\.(TW|TWO|T|KS|KQ)$/.test(symbol)) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  // Whole-unit markets: TW, JP, KR, CN A-shares, HK
+  if (symbol && /\.(TW|TWO|T|KS|KQ|SS|SZ|HK)$/.test(symbol)) return price.toLocaleString('en-US', { maximumFractionDigits: 0 });
   return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 export function fmtMarketCap(p) {
