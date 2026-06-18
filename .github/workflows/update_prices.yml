@@ -2,7 +2,7 @@ name: Update Stock Prices
 
 on:
   schedule:
-    - cron: '0 2 * * 2-6'
+    - cron: '0 10 * * 2-6'
   workflow_dispatch:
 
 permissions:
