@@ -1,4 +1,4 @@
-import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12/src/marked.js';
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12/+esm';
 marked.use({ breaks: true });
 
 /* ── Helpers ─────────────────────────────────────────────────────── */
