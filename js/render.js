@@ -5,7 +5,7 @@ marked.use({ breaks: true });
 export function tradingViewUrl(symbol) {
   if (symbol.endsWith('.TWO')) return `https://www.tradingview.com/chart/?symbol=TPEX:${symbol.slice(0,-4)}`;
   if (symbol.endsWith('.TW'))  return `https://www.tradingview.com/chart/?symbol=TWSE:${symbol.slice(0,-3)}`;
-  if (symbol.endsWith('.KQ'))  return `https://www.tradingview.com/chart/?symbol=KOSDAQ:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.KQ'))  return `https://www.tradingview.com/chart/?symbol=KRX:${symbol.slice(0,-3)}`;
   if (symbol.endsWith('.KS'))  return `https://www.tradingview.com/chart/?symbol=KRX:${symbol.slice(0,-3)}`;
   if (symbol.endsWith('.T'))   return `https://www.tradingview.com/chart/?symbol=TSE:${symbol.slice(0,-2)}`;
   if (symbol.endsWith('.SS'))  return `https://www.tradingview.com/chart/?symbol=SSE:${symbol.slice(0,-3)}`;
