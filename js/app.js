@@ -1,4 +1,4 @@
-/* ── Main application ────────────────────────────────────────────── */
+/* ── Main application ───────────────────────────────────────────── */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { firebaseConfig, WORKER_URL } from './config.js';
 import { initDB, getSectors, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices } from './db.js';
@@ -15,19 +15,19 @@ import {
   openWhitelist, submitWhitelistEmail,
 } from './admin.js';
 
-/* ── App state ───────────────────────────────────────────────────── */
+/* ── App state ─────────────────────────────────────────────── */
 let _isAdmin       = false;
 let _sectors       = [];
 let _currentSector = null;
 let _unsubPrices   = null;
 let _prices        = {};
 
-/* ── Firebase init ───────────────────────────────────────────────── */
+/* ── Firebase init ─────────────────────────────────────────────── */
 const app  = initializeApp(firebaseConfig);
 initDB(app);
 initAuth(app);
 
-/* ── Navigation ──────────────────────────────────────────────────── */
+/* ── Navigation ────────────────────────────────────────────────── */
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -49,7 +49,7 @@ document.getElementById('menuToggle')?.addEventListener('click', () => {
   document.getElementById('sidebar')?.classList.toggle('open');
 });
 
-/* ── Auth ────────────────────────────────────────────────────────── */
+/* ── Auth ────────────────────────────────────────────────────── */
 onAuthChange(({ user, isAdmin }) => {
   _isAdmin = isAdmin;
   const loginBtn  = document.getElementById('btnLogin');
@@ -76,7 +76,7 @@ onAuthChange(({ user, isAdmin }) => {
 document.getElementById('btnLogin')?.addEventListener('click',  () => signIn().catch(console.error));
 document.getElementById('btnLogout')?.addEventListener('click', () => signOutUser().catch(console.error));
 
-/* ── Watchlist loader ────────────────────────────────────────────── */
+/* ── Watchlist loader ─────────────────────────────────────────────── */
 async function loadWatchlist() {
   const sectorTabsEl = document.getElementById('sectorTabs');
   const statusEl     = document.getElementById('priceStatus');
@@ -85,7 +85,8 @@ async function loadWatchlist() {
   try {
     _sectors = await getSectors();
   } catch (err) {
-    if (statusEl) statusEl.textContent = 'Failed to load sectors.';
+    console.error('getSectors failed:', err);
+    if (statusEl) statusEl.textContent = 'Failed to load sectors: ' + err.message;
     return;
   }
 
@@ -108,8 +109,13 @@ async function loadWatchlist() {
     }
   }
 
-  if (_sectors.length > 0) await selectSector(_sectors[0].id);
-  if (statusEl) statusEl.textContent = '';
+  try {
+    if (_sectors.length > 0) await selectSector(_sectors[0].id);
+    if (statusEl) statusEl.textContent = '';
+  } catch (err) {
+    console.error('selectSector failed:', err);
+    if (statusEl) statusEl.textContent = 'Error loading sector: ' + err.message;
+  }
 }
 
 async function selectSector(sectorId) {
@@ -147,7 +153,7 @@ async function selectSector(sectorId) {
   });
 }
 
-/* ── Admin event delegation ──────────────────────────────────────── */
+/* ── Admin event delegation ──────────────────────────────────────────── */
 function bindSectorEvents(subsectorsData) {
   const container = document.getElementById('sectorContent');
   if (!container) return;
@@ -219,7 +225,7 @@ function bindSectorEvents(subsectorsData) {
   });
 }
 
-/* ── Modal form submissions ──────────────────────────────────────── */
+/* ── Modal form submissions ──────────────────────────────────────────── */
 document.getElementById('formSector')?.addEventListener('submit', async e => {
   e.preventDefault(); await submitSector(() => loadWatchlist());
 });
@@ -242,11 +248,11 @@ document.getElementById('formWhitelistEmail')?.addEventListener('submit', async 
   e.preventDefault(); await submitWhitelistEmail();
 });
 
-/* ── Admin toolbar ───────────────────────────────────────────────── */
+/* ── Admin toolbar ────────────────────────────────────────────────────── */
 document.getElementById('btnWhitelist')?.addEventListener('click', () => openWhitelist());
 document.getElementById('btnAddSector')?.addEventListener('click', () => openAddSector(_sectors.length));
 
-/* ── Manual price refresh ────────────────────────────────────────── */
+/* ── Manual price refresh ─────────────────────────────────────────────── */
 document.getElementById('btnRefreshPrices')?.addEventListener('click', async () => {
   const btn      = document.getElementById('btnRefreshPrices');
   const statusEl = document.getElementById('priceStatus');
@@ -272,6 +278,6 @@ document.getElementById('btnRefreshPrices')?.addEventListener('click', async () 
   }
 });
 
-/* ── Boot ────────────────────────────────────────────────────────── */
+/* ── Boot ───────────────────────────────────────────────────────────── */
 initAdminModals();
 showPage('home');
