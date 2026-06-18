@@ -101,13 +101,11 @@ async function loadWatchlist() {
       sectorTabsEl.appendChild(btn);
     });
     if (_isAdmin) {
-      const addSubBtn = document.createElement('button');
-      addSubBtn.className = 'sector-tab sector-tab-add admin-only';
-      addSubBtn.textContent = '+ Block';
-      addSubBtn.addEventListener('click', () => {
-        if (_currentSector) openAddSubsector(_currentSector.id, 0);
-      });
-      sectorTabsEl.appendChild(addSubBtn);
+      const addTabBtn = document.createElement('button');
+      addTabBtn.className = 'sector-tab sector-tab-add admin-only';
+      addTabBtn.textContent = '+ Tab';
+      addTabBtn.addEventListener('click', () => openAddSector(_sectors.length));
+      sectorTabsEl.appendChild(addTabBtn);
     }
   }
 
@@ -190,7 +188,10 @@ function bindSectorEvents(subsectorsData) {
     const action = t.dataset?.action;
     if (!action) return;
 
-    if (action === 'edit-subsector') {
+    if (action === 'add-subsector') {
+      const sectorId = t.dataset.sectorId;
+      if (sectorId) openAddSubsector(sectorId, subsectorsData.length);
+    } else if (action === 'edit-subsector') {
       const sub = subsectorsData.find(d => d.subsector.id === t.dataset.id)?.subsector;
       if (sub) openEditSubsector(sub);
     } else if (action === 'del-subsector') {
