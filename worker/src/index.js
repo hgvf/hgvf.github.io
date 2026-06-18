@@ -9,6 +9,11 @@
  *   ALLOWED_EMAILS         — comma-separated admin emails for Bearer-token auth (optional fallback)
  */
 
+// Bump this whenever the price-fetch logic changes so the live deployment can be
+// verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
+// call + single Firestore commit (~8 subrequests total, well under the 50 limit).
+const WORKER_VERSION = 'batched-v7-2026-06-18';
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -16,6 +21,11 @@ export default {
     // CORS preflight — browsers send OPTIONS before a POST with Authorization header
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders() });
+    }
+
+    // Unauthenticated version probe — visit in a browser to confirm which code is live.
+    if (url.pathname === '/version') {
+      return new Response(JSON.stringify({ version: WORKER_VERSION }), { headers: jsonHeaders() });
     }
 
     if (url.pathname !== '/trigger') {
@@ -41,9 +51,9 @@ export default {
 
     try {
       const updated = await fetchAndStorePrices(env);
-      return new Response(JSON.stringify({ ok: true, updated }), { headers: jsonHeaders() });
+      return new Response(JSON.stringify({ ok: true, updated, version: WORKER_VERSION }), { headers: jsonHeaders() });
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: jsonHeaders() });
+      return new Response(JSON.stringify({ error: err.message, version: WORKER_VERSION }), { status: 500, headers: jsonHeaders() });
     }
   },
 
