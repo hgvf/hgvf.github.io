@@ -179,10 +179,18 @@
         <label class="modal-label">Name<input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corp." /></label>
         <label class="modal-label">Market
           <select class="modal-input" id="inputTickerMarket">
-            <option value="US">US</option>
-            <option value="TW">TW</option>
+            <option value="US">US — 美股 (NVDA)</option>
+            <option value="TW">TW — 台灣上市 (2330.TW)</option>
+            <option value="TWO">TWO — 台灣上櫃 (6547.TWO)</option>
+            <option value="JP">JP — 日本 (7203.T)</option>
+            <option value="KS">KS — 韓國上市 (005930.KS)</option>
+            <option value="KQ">KQ — 韓國創業 (035720.KQ)</option>
+            <option value="CN">CN — 中國A股 (600519.SS)</option>
+            <option value="HK">HK — 香港 (0700.HK)</option>
+            <option value="EU">EU — 泛歐洲 (ASML.AS)</option>
           </select>
         </label>
+        <p class="modal-hint" id="tickerSymbolHint" style="margin:0 0 8px;font-size:0.78rem;color:#888;"></p>
         <label class="modal-label">Order<input class="modal-input" id="inputTickerOrder" type="number" value="0" /></label>
         <div class="modal-actions">
           <button type="button" class="btn-modal" data-modal="modalTicker">Cancel</button>
@@ -248,6 +256,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <script type="module" src="js/app.js"></script>
   <script>
     document.querySelectorAll('.nav-trigger[data-page]').forEach(el => {

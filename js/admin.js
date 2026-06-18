@@ -143,11 +143,46 @@ export async function submitNotes(onDone) {
   closeModal('modalNotes'); onDone?.();
 }
 
+// Market suffix map: market code → Yahoo Finance symbol suffix
+const MARKET_SUFFIX = {
+  US: '',   TW: '.TW', TWO: '.TWO',
+  JP: '.T', KS: '.KS', KQ: '.KQ',
+  CN: '.SS', HK: '.HK', EU: '',
+};
+
+function _marketFromSymbol(symbol) {
+  if (symbol.endsWith('.TWO')) return 'TWO';
+  if (symbol.endsWith('.TW'))  return 'TW';
+  if (symbol.endsWith('.T'))   return 'JP';
+  if (symbol.endsWith('.KS'))  return 'KS';
+  if (symbol.endsWith('.KQ'))  return 'KQ';
+  if (symbol.endsWith('.SS') || symbol.endsWith('.SZ')) return 'CN';
+  if (symbol.endsWith('.HK'))  return 'HK';
+  if (/\.(AS|PA|DE|MI|MC|L|ST|CO|HE|OL|VX|BR|LS|IR)$/.test(symbol)) return 'EU';
+  return 'US';
+}
+
+function _initTickerMarketHint() {
+  const sel  = document.getElementById('inputTickerMarket');
+  const sym  = document.getElementById('inputTickerSymbol');
+  const hint = document.getElementById('tickerSymbolHint');
+  if (!sel || !hint) return;
+  const update = () => {
+    const base = sym.value.trim().toUpperCase().replace(/\.[A-Z]+$/, '');
+    const suffix = MARKET_SUFFIX[sel.value] ?? '';
+    hint.textContent = base ? `最終代號：${base}${suffix}` : '';
+  };
+  sel.addEventListener('change', update);
+  sym.addEventListener('input', update);
+}
+
 export function openAddTicker(subsectorId, nextOrder) {
   const form = document.getElementById('formTicker');
   form.reset(); form.dataset.mode = 'add'; form.dataset.subsectorId = subsectorId; delete form.dataset.id;
   document.getElementById('tickerModalTitle').textContent = 'Add Ticker';
   document.getElementById('inputTickerOrder').value = nextOrder || 0;
+  document.getElementById('tickerSymbolHint').textContent = '';
+  _initTickerMarketHint();
   openModal('modalTicker');
 }
 
@@ -158,15 +193,23 @@ export function openEditTicker(ticker) {
   document.getElementById('inputTickerSymbol').value = ticker.symbol || '';
   document.getElementById('inputTickerName').value   = ticker.name   || '';
   document.getElementById('inputTickerOrder').value  = ticker.order  ?? 0;
+  const market = _marketFromSymbol(ticker.symbol || '');
+  document.getElementById('inputTickerMarket').value = market;
+  document.getElementById('tickerSymbolHint').textContent = ticker.symbol ? `最終代號：${ticker.symbol}` : '';
+  _initTickerMarketHint();
   openModal('modalTicker');
 }
 
 export async function submitTicker(onDone) {
   const form   = document.getElementById('formTicker');
-  const symbol = document.getElementById('inputTickerSymbol').value.trim().toUpperCase();
+  const market = document.getElementById('inputTickerMarket').value;
+  const suffix = MARKET_SUFFIX[market] ?? '';
+  // Strip any existing suffix then re-apply the selected market's suffix
+  const rawSym = document.getElementById('inputTickerSymbol').value.trim().toUpperCase().replace(/\.[A-Z]+$/, '');
+  const symbol = rawSym + suffix;
   const name   = document.getElementById('inputTickerName').value.trim();
   const order  = parseInt(document.getElementById('inputTickerOrder').value) || 0;
-  if (!symbol) return;
+  if (!rawSym) return;
   if (form.dataset.mode === 'edit') await updateTicker(form.dataset.id, { symbol, name, order });
   else await addTicker({ symbol, name, order, subsector_id: form.dataset.subsectorId });
   closeModal('modalTicker'); onDone?.();
