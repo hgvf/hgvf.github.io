@@ -1,35 +1,121 @@
 {
   "sectors": [
     {
-      "id": "high-speed-cable",
       "name": "高速傳輸/Cable",
-      "ticker_overview": ["CRDO", "ALAB", "TEL", "APH"],
+      "order": 0,
+      "ticker_overview": [
+        "CRDO",
+        "ALAB",
+        "TEL",
+        "APH"
+      ],
+      "id": "high-speed-cable",
       "subsectors": [
         {
-          "id": "switch-ic",
           "name": "高速傳輸 & 交換機",
-          "notes": "- **Credo (CRDO)**: Rack外部之間的銅線高速傳輸線，偏向高速SerDes/介面IC + AEC方案 + IP授權，收入可來自晶片出貨、工程服務、IP license/royalty\n- **Astera Labs (ALAB)**: 晶片間的高速傳輸（銅+光），資料中心互連半導體平台，hyperscaler/AI 平台導入\n- **貿聯 (3665.TW)**: 系統級線束/連接解決方案整合商，產品多是各套 cable assembly、線束、連接模組，面向多元終端\n- **智邦 (2345.TW)**: 交換機\n- **嘉澤 (3533.TW)**: 機構/電性整合的連接器與線束，CPU Socket、插槽、線束、快接頭\n- **TE Connectivity (TEL)**: 全球最大工業級連接器公司之一，汽車、通訊/Data Center、工業自動化\n- **Amphenol (APH)**: 全球最大連接器廠之一，產品多元、終端涵蓋通訊、工業、汽車、航太",
-          "watchlist": [
-            { "symbol": "CRDO",    "name": "Credo Technology Group Hold", "market": "US" },
-            { "symbol": "ALAB",    "name": "Astera Labs, Inc.",            "market": "US" },
-            { "symbol": "3665.TW", "name": "Bizlink Holding Inc.",         "market": "TW" },
-            { "symbol": "2345.TW", "name": "Accton Technology Corp.",      "market": "TW" },
-            { "symbol": "3533.TW", "name": "Lotes Co., Ltd",               "market": "TW" },
-            { "symbol": "TEL",     "name": "TE Connectivity Ltd.",          "market": "US" },
-            { "symbol": "APH",     "name": "Amphenol Corp.",                "market": "US" }
+          "order": 0,
+          "notes": "- **Credo (CRDO)**: \n    Rack外部之間的銅線高速傳輸線，偏向高速SerDes/介面IC + AEC方案 + IP授權，收入可來自晶片出貨、工程服務、IP license/royalty\n\n- **Astera Labs (ALAB)**: \n    晶片間的高速傳輸（銅+光），資料中心互連半導體平台，hyperscaler/AI 平台導入\n\n- **貿聯 (3665.TW)**: \n    系統級線束/連接解決方案整合商，產品多是各套 cable assembly、線束、連接模組，面向多元終端\n\n- **智邦 (2345.TW)**: \n    交換機\n\n- **嘉澤 (3533.TW)**: \n    機構/電性整合的連接器與線束，CPU Socket、插槽、線束、快接頭\n\n- **TE Connectivity (TEL)**: \n    全球最大工業級連接器公司之一，汽車、通訊/Data Center、工業自動化\n\n- **Amphenol (APH)**: \n    全球最大連接器廠之一，產品多元、終端涵蓋通訊、工業、汽車、航太",
+          "sector_id": "high-speed-cable",
+          "id": "switch-ic",
+          "tickers": [
+            {
+              "symbol": "CRDO",
+              "subsector_id": "switch-ic",
+              "order": 0,
+              "market": "US",
+              "name": "Credo Technology Group Hold",
+              "sector_id": "high-speed-cable",
+              "id": "CRDO"
+            },
+            {
+              "symbol": "ALAB",
+              "subsector_id": "switch-ic",
+              "order": 1,
+              "market": "US",
+              "name": "Astera Labs, Inc.",
+              "sector_id": "high-speed-cable",
+              "id": "ALAB"
+            },
+            {
+              "symbol": "3665.TW",
+              "subsector_id": "switch-ic",
+              "order": 2,
+              "market": "TW",
+              "name": "Bizlink Holding Inc.",
+              "sector_id": "high-speed-cable",
+              "id": "3665.TW"
+            },
+            {
+              "symbol": "2345.TW",
+              "subsector_id": "switch-ic",
+              "order": 3,
+              "market": "TW",
+              "name": "Accton Technology Corp.",
+              "sector_id": "high-speed-cable",
+              "id": "2345.TW"
+            },
+            {
+              "symbol": "3533.TW",
+              "subsector_id": "switch-ic",
+              "order": 4,
+              "market": "TW",
+              "name": "Lotes Co., Ltd",
+              "sector_id": "high-speed-cable",
+              "id": "3533.TW"
+            },
+            {
+              "symbol": "TEL",
+              "subsector_id": "switch-ic",
+              "order": 5,
+              "market": "US",
+              "name": "TE Connectivity Ltd.",
+              "sector_id": "high-speed-cable",
+              "id": "TEL"
+            },
+            {
+              "symbol": "APH",
+              "subsector_id": "switch-ic",
+              "order": 6,
+              "market": "US",
+              "name": "Amphenol Corp.",
+              "sector_id": "high-speed-cable",
+              "id": "APH"
+            }
           ],
           "analysis": [
             {
-              "title": "營收占比",
-              "columns": ["公司", "分類口徑", "業務 / 營收占比"],
+              "columns": [
+                "公司",
+                "分類口徑",
+                "業務 / 營收占比"
+              ],
               "rows": [
-                ["嘉澤 3533.TW", "產品別", "伺服器 40.3% / 桌機 24.6% / 筆電 11.0% / 策略客戶 9.8% / 車用 8.1% / 工業醫療 2.4%"],
-                ["貿聯 3665.TW", "事業群", "Computing & Transportation 47.1% / Industrial 36.4% / Home Appliance 16.5%"],
-                ["Credo",        "收入型態", "產品銷售 75.2% / 工程服務 10.3% / IP 授權 14.5%"],
-                ["Astera Labs",  "收入型態", "絕大多數為產品銷售（未透露明確%）"],
-                ["TE Connectivity",  "終端市場", "汽車 ≈50% / 工業 ≈30% / 通訊(含DC) ≈20%"],
-                ["Amjphenol", "終端市場", "通訊(含DC) ≈40% / 工業 ≈30% / 航太國防 ≈15% / 汽車 ≈10%"]
-              ]
+                "[\"嘉澤 3533.TW\",\"產品別\",\"伺服器 40.3% / 桌機 24.6% / 筆電 11.0% / 策略客戶 9.8% / 車用 8.1% / 工業醫療 2.4%\"]",
+                "[\"貿聯 3665.TW\",\"事業群\",\"Computing & Transportation 47.1% / Industrial 36.4% / Home Appliance 16.5%\"]",
+                "[\"Credo\",\"收入型態\",\"產品銷售 75.2% / 工程服務 10.3% / IP 授權 14.5%\"]",
+                "[\"Astera Labs\",\"收入型態\",\"絕大多數為產品銷售（未透露明確%）\"]"
+              ],
+              "subsector_id": "switch-ic",
+              "order": 0,
+              "title": "營收占比",
+              "sector_id": "high-speed-cable",
+              "id": "GvdnfsfeA5cMG0go3bpH"
+            }
+          ],
+          "research_notes": [
+            {
+              "content": "主力產品線\n\n**1. Scorpio: 把多顆 GPU/加速器/CPU/NIC/Storage 連起來的高速交換晶片**\n- 主打 PCIe 6 的 scale-out（P-Series）與 scale-up（X-Series）\n- 客戶多半是 hyperscaler, OEM\n- 主要成本通常在 晶圓代工（先進製程）+ 先進封裝/基板 + 測試\n- 技術護城河: PCIe Gen6; Software-defined 維運能力\n\n**2. Aries: PCIe/CXL Retimer + Smart Cable Module**\n- 訊號品質救星，讓 PCIe 5/6 在更長走線、更多轉接、更多拓樸下仍能跑滿速\n- Retimer 會把訊號重新定時/重時脈，等於重生一條乾淨訊號\n- Aries 也延伸到 Smart Cable Module（SCM），把 retimer + 周邊做成模組方便系統端導入\n- 主要用在 AI 伺服器、通用伺服器內部：CPU↔GPU、CPU↔NIC、GPU↔Switch、加速卡/背板/risers 等\n\n**3. Taurus: Ethernet Smart Cable Modules：AEC/ACC 800G/400G**\n- 把一般的主動銅纜（AEC/ACC）變成「可長距離、可診斷、可管理、可安全控管」的智慧線纜模組，支援到 200/400/800G（100G/lane）\n- 資料中心 switch-to-server / switch-to-switch（ToR/Spine 等）銅纜互連，CSP/OEM 都是目標客戶\n- 技術護城河: 在銅纜極限下把 400G/800G 跑穩\n\n**4. Leo: CXL Smart Memory Controller：Memory Expansion / Pooling**\n- 解決 CPU 記憶體容量/效率瓶頸\n- Leo 本體是控制器 ASIC；但整體方案會搭配 DRAM（或其他記憶體）、模組板卡\n- 目標客戶：雲端資料中心/企業伺服器平台\n\n**5. 其他產品線**\n- CPO / Opticalfiber-chip coupling 光纖到晶片耦合等封裝/光學關鍵能力去做 photonic scale-up solutions / optical engine solutions\n\n**6. 故事**\n- Scorpio 在 2H26~2027 放量\n- PCIe 6.0 技術領先\n\n7. 風險\n- 風險客戶過於集中在某幾個 hyperscalers",
+              "subsector_id": "switch-ic",
+              "order": 0,
+              "title": "Astera Lab 介紹",
+              "id": "ZRfyC0RM70y66kZBFuAD"
+            },
+            {
+              "content": "**Retimer（重定時器）**\n- 解決高頻高速傳輸的 衰減/抖動/jitter/反射/crosstalk\n- 把接收訊號解碼/重時脈後再送出\n\n**CXL (Compute Express Link)**\n- cache-coherent 的互連標準\n- 讓 CPU 與外掛記憶體/加速器之間能做一致性與資源共享，主要用在 memory expansion / pooling\n\n**UA Link (Ultra Accelerator Link)**\n- 針對 AI scale-up 的開放互連標準\n- UALink 1.0 規格宣稱可做到 200G/lane，最多連到 1,024 accelerators 的 pod 規模\n- Alibaba、AMD、Apple、Astera Labs、AWS、Cisco、Google、HPE、Intel、Meta、Microsoft、Synopsys\n- 跟 Nvidia NVLink 打對台\n\n**PCIe 世代（Gen1 → Gen6）**\n- 伺服器/PC 內部最核心的高速互連匯流排，用來連 CPU↔GPU、CPU↔NIC、GPU↔Switch、SSD 等\n- 主要推進: 每條 lane 的傳輸速率（GT/s）提升、訊號完整性、Retimer / 更好的封裝/走線/連接器\n- PCIe Gen6（PCIe 6.0）\n    - PAM4 訊號（相較 NRZ，單位時間可承載更多 bits，但每個 eye 變小，容錯更難）\n    - FLIT mode（把傳輸改成固定大小的 flit 形式）\n    - 低延遲 FEC（Forward Error Correction）+ CRC/Retry（PAM4 誤碼率較高，需要在鏈路層設計更完整的偵錯與糾錯）\n\n\n\n",
+              "subsector_id": "switch-ic",
+              "order": 1,
+              "title": "名詞解釋",
+              "id": "g9WRRcHc1qjgukwRDpCJ"
             }
           ]
         }
