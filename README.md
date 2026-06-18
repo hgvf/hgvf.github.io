@@ -173,3 +173,76 @@ firestore.rules         — Security rules
 ## 8. No Build Step
 
 The frontend uses ES modules loaded directly from CDN (Firebase v10.12.2). No webpack, no bundler. Just push to GitHub and GitHub Pages serves it.
+
+---
+
+## 9. 資料備份與合併工作流
+
+### 9.1 兩個 write path 的差異
+
+| 路徑 | 說明 |
+|------|------|
+| **UI 操作** | 直接寫入 Firestore（即時生效，但不會自動更新 JSON） |
+| **編輯 `data/watchlist.json`** | 只更新 repo 裡的冷備份，Firestore 不受影響，需手動 import 才同步 |
+
+### 9.2 ⚠️ import 之前必須先 export 一次
+
+`data/watchlist.json` 的原始種子格式（ticker 沒有 id）直接 import 會產生**重複資料**。
+必須先 export 取得帶 id 的版本，後續才能安全地 import。
+
+```bash
+pip install firebase-admin
+
+# 只做一次：把 Firestore 現況 dump 成帶 id 的 JSON
+python scripts/backup.py --export --credentials scripts/serviceAccount.json
+git commit -am "sync: rebuild watchlist.json with firestore ids"
+```
+
+做完之後 `data/watchlist.json` 每筆 sector / subsector / ticker / analysis / note 都會帶 Firestore document id，後續所有 import 都是 **merge（原地更新，不刪不覆蓋無關欄位）**。
+
+### 9.3 日常備份（Firestore → JSON）
+
+```bash
+python scripts/backup.py --export --credentials scripts/serviceAccount.json
+git commit -am "backup: $(date +%Y-%m-%d)"
+git push
+```
+
+### 9.4 同時存在 UI 修改與手動 JSON 修改時的合併流程
+
+```bash
+# 1. 把 UI 那邊（Firestore 最新狀態）匯出到暫存檔，避免覆蓋本地改動
+python scripts/backup.py --export --credentials scripts/serviceAccount.json \
+    --watchlist data/_live.json
+
+# 2. 比對兩份 JSON，把非衝突的改動合併到 data/watchlist.json
+#    （兩邊改的是不同 doc / 不同欄位 → 通常幾乎不衝突）
+#    用任何 JSON diff 工具或 git merge 合併
+
+# 3. 把合併結果推回 Firestore（帶 id → 原地更新，不會重複也不會刪東西）
+python scripts/backup.py --import --credentials scripts/serviceAccount.json
+
+# 4. 再 export 一次標準化，確保 JSON 與 Firestore 一致，然後 commit
+python scripts/backup.py --export --credentials scripts/serviceAccount.json
+git commit -am "merge: ui + manual edits"
+rm data/_live.json
+```
+
+**心智模型：Firestore 是合併點。** import 是 additive-merge：只新增 / 更新，永不刪除。兩邊各自增加不同 doc 時，import 後兩邊都會保留。
+
+### 9.5 關於刪除
+
+import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材，只能：
+- 在 UI 上點 ✕ 刪除，或
+- 到 Firebase Console → Firestore 手動刪除
+
+### 9.6 冷備援：seed.html
+
+`seed.html` 的兩個按鈕等同 `backup.py --import`，但只在瀏覽器裡跑、不需要 Python 環境。
+**注意**：使用 seed.html 之前同樣需要先確認 JSON 帶有正確的 id，否則會產生重複資料。
+
+### 9.7 serviceAccount.json 安全提醒
+
+`scripts/serviceAccount.json` 是 Firebase 最高權限金鑰，請確認：
+- 加入 `.gitignore`（`scripts/serviceAccount.json`）
+- **不要 commit 到 GitHub**，否則任何人都能讀寫整個資料庫
