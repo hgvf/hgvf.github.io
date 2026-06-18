@@ -8,7 +8,6 @@ Personal investment watchlist site hosted on GitHub Pages, backed by Firebase Fi
 
 ### 1.1 Create Firebase project
 1. Go to [Firebase Console](https://console.firebase.google.com/) → **Add project**
-2. Use project ID: `watchlist-12e29` (already set in code)
 
 ### 1.2 Enable Firestore
 1. Firebase Console → **Firestore Database** → **Create database**
@@ -22,18 +21,7 @@ Personal investment watchlist site hosted on GitHub Pages, backed by Firebase Fi
 ### 1.4 Get web app config
 1. Firebase Console → Project Settings → **Your apps** → **Add app** → Web
 2. Register the app (name it anything)
-3. Copy the config object and fill in `js/config.js`:
-
-```js
-export const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",       // ← fill in
-  authDomain:        "watchlist-12e29.firebaseapp.com",
-  projectId:         "watchlist-12e29",
-  storageBucket:     "watchlist-12e29.appspot.com",
-  messagingSenderId: "64065653725",
-  appId:             "YOUR_APP_ID",        // ← fill in
-};
-```
+3. Copy the config object and fill in `js/config.js`
 
 ### 1.5 Bootstrap config documents
 In Firebase Console → Firestore → **Start collection** → create these documents manually:
@@ -148,7 +136,7 @@ After you are in the whitelist:
 ## 6. Daily Price Update Schedule
 
 The Cloudflare Worker runs automatically via cron:
-- **Schedule**: `0 2 * * 2-6` — 02:00 UTC, Tuesday–Saturday
+- **Schedule**: `0 10 * * 2-6` — 10:00 UTC, Tuesday–Saturday
   (covers Monday–Friday US market closes, accounting for timezone)
 
 You can also trigger manually with the **Refresh Prices** button in the UI (admin only can see the secret, but the button is visible to all — you can adjust CSS if desired).
