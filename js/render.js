@@ -48,17 +48,24 @@ export function fmtVolume(v) {
 }
 export function parseMarkdown(text) {
   if (!text) return '';
+  // Use marked.js (loaded via CDN) for full Markdown support: headings, tables,
+  // links, bold/italic, code blocks, images, etc.
+  if (typeof window !== 'undefined' && window.marked) {
+    // Add loading="lazy" to all images emitted by marked
+    const html = window.marked.parse(text, { breaks: true });
+    return html.replace(/<img /g, '<img loading="lazy" ');
+  }
+  // Fallback (SSR / CDN not yet loaded): minimal line-by-line renderer
   return text.split('\n').map(line => {
-    if (line.startsWith('# '))  return `<p class="md-h2">${line.slice(2)}</p>`;
-    if (line.startsWith('## ')) return `<p class="md-h3">${line.slice(3)}</p>`;
-    // Standalone image line
+    if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`;
+    if (line.startsWith('## '))  return `<h2>${line.slice(3)}</h2>`;
+    if (line.startsWith('# '))   return `<h1>${line.slice(2)}</h1>`;
     const imgOnly = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-    if (imgOnly) return `<p class="md-img-wrap"><img class="md-img" src="${imgOnly[2]}" alt="${imgOnly[1]}" loading="lazy"></p>`;
+    if (imgOnly) return `<p><img src="${imgOnly[2]}" alt="${imgOnly[1]}" loading="lazy"></p>`;
     line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // Inline images mixed with text
-    line = line.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, `<img class="md-img-inline" src="$2" alt="$1" loading="lazy">`);
-    if (line.trim().startsWith('- ')) return `<p class="md-bullet"><span class="md-dot">·</span>${line.trim().slice(2)}</p>`;
-    return line ? `<p class="md-p">${line}</p>` : '<p class="md-spacer"></p>';
+    line = line.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, `<img src="$2" alt="$1" loading="lazy">`);
+    if (line.trim().startsWith('- ')) return `<li>${line.trim().slice(2)}</li>`;
+    return line ? `<p>${line}</p>` : '<br>';
   }).join('');
 }
 
