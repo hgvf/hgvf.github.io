@@ -51,7 +51,6 @@
       const auth = getAuth(app);
       const db = getFirestore(app);
 
-      // Sign in if needed
       if (!auth.currentUser) {
         try {
           print('正在登入...');
@@ -83,7 +82,7 @@
             const subId = sub.id;
             print(`  [Subsector] ${sub.name}`);
             await setDoc(doc(db, 'subsectors', subId), {
-              sectorId,
+              sector_id: sectorId,
               name: sub.name,
               notes: sub.notes || '',
               order: ui,
@@ -93,8 +92,8 @@
             for (let ti = 0; ti < (sub.watchlist || []).length; ti++) {
               const t = sub.watchlist[ti];
               await setDoc(doc(db, 'tickers', t.symbol), {
-                subsectorId: subId,
-                sectorId,
+                subsector_id: subId,
+                sector_id: sectorId,
                 symbol: t.symbol,
                 name: t.name || '',
                 market: t.market || 'US',
@@ -105,12 +104,13 @@
 
             for (let ai = 0; ai < (sub.analysis || []).length; ai++) {
               const a = sub.analysis[ai];
-              const ref = await addDoc(collection(db, 'analysis'), {
-                subsectorId: subId,
-                sectorId,
+              const rowsFlat = (a.rows || []).map(row => JSON.stringify(row));
+              await addDoc(collection(db, 'analysis'), {
+                subsector_id: subId,
+                sector_id: sectorId,
                 title: a.title || '',
                 columns: a.columns || [],
-                rows: a.rows || [],
+                rows: rowsFlat,
                 order: ai,
               });
               print(`      analysis "${a.title}" ✓`, 'ok');
