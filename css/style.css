@@ -176,6 +176,11 @@ img { display: block; max-width: 100%; }
 }
 .sector-tab:hover { background: rgba(139,94,60,0.14); color: var(--accent); }
 .sector-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.sector-tab-rename-input {
+  background: transparent; border: none; outline: none;
+  font: inherit; color: inherit; width: 8rem; max-width: 160px;
+  text-align: center; padding: 0;
+}
 
 .ticker-bar { padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; overflow: hidden; }
 .ticker-bar-inner {
