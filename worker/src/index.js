@@ -157,15 +157,22 @@ async function fetchAndStorePrices(env) {
 
   if (symbols.length === 0) return 0;
 
+  // A crumb/cookie session is needed for the v7 quote endpoint (P/E, market cap).
+  const session = await getYahooSession();
+
   // Fetch prices in batches of 20
   const BATCH = 20;
   let updated = 0;
   for (let i = 0; i < symbols.length; i += BATCH) {
     const batch = symbols.slice(i, i + BATCH);
+    // Chart endpoint → price + week/month/year % changes (no crumb needed).
     const prices = await fetchYahooBatch(batch);
+    // Quote endpoint → P/E, market cap, currency (works across US/TW/JP/KR).
+    const meta   = await fetchQuoteMeta(batch, session);
     await Promise.all(Object.entries(prices).map(([sym, p]) =>
       firestoreSet(token, env.FIREBASE_PROJECT_ID, `prices/${sym}`, {
         ...p,
+        ...(meta[sym] || {}),
         last_updated: new Date().toISOString(),
       })
     ));
@@ -175,6 +182,8 @@ async function fetchAndStorePrices(env) {
 }
 
 /* ── Yahoo Finance ────────────────────────── */
+const YAHOO_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
+
 async function fetchYahooBatch(symbols) {
   const result = {};
   await Promise.allSettled(symbols.map(async sym => {
@@ -186,10 +195,63 @@ async function fetchYahooBatch(symbols) {
   return result;
 }
 
+/* Obtain a cookie + crumb pair so the authenticated v7 quote endpoint works. */
+async function getYahooSession() {
+  try {
+    // Hitting fc.yahoo.com sets the consent/session cookie (responds 404 but sets it).
+    const cookieRes = await fetch('https://fc.yahoo.com/', { headers: { 'User-Agent': YAHOO_UA } });
+    const setCookies = typeof cookieRes.headers.getSetCookie === 'function'
+      ? cookieRes.headers.getSetCookie()
+      : [cookieRes.headers.get('set-cookie')].filter(Boolean);
+    const cookie = setCookies.map(c => c.split(';')[0]).join('; ');
+
+    const crumbRes = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+      headers: { 'User-Agent': YAHOO_UA, 'Cookie': cookie },
+    });
+    const crumb = (await crumbRes.text()).trim();
+    if (!crumb || crumb.includes('<')) return null;   // got an HTML error page, not a crumb
+    return { cookie, crumb };
+  } catch {
+    return null;
+  }
+}
+
+/* Batched P/E + market cap + currency via the v7 quote endpoint. */
+async function fetchQuoteMeta(symbols, session) {
+  const out = {};
+  if (!session) return out;
+  try {
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote`
+      + `?symbols=${encodeURIComponent(symbols.join(','))}`
+      + `&crumb=${encodeURIComponent(session.crumb)}`;
+    const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA, 'Cookie': session.cookie } });
+    if (!res.ok) return out;
+    const data = await res.json();
+    for (const q of data?.quoteResponse?.result || []) {
+      if (!q.symbol) continue;
+      const fields = {};
+      if (q.trailingPE != null) fields.pe_ratio = q.trailingPE;
+      if (q.marketCap != null) {
+        const mc = q.marketCap;
+        let val, suffix = '';
+        if      (mc >= 1e12) { val = (mc / 1e12).toFixed(2); suffix = 'T'; }
+        else if (mc >= 1e9)  { val = (mc / 1e9).toFixed(2);  suffix = 'B'; }
+        else if (mc >= 1e6)  { val = (mc / 1e6).toFixed(2);  suffix = 'M'; }
+        else                 { val = mc.toFixed(0); }
+        fields.market_cap          = val;
+        fields.market_cap_suffix   = suffix;
+        fields.market_cap_currency = q.currency || 'USD';
+      }
+      out[q.symbol] = fields;
+    }
+  } catch { /* skip — P/E & market cap just stay unset */ }
+  return out;
+}
+
 async function fetchYahooQuote(symbol) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1y`;
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0' },
+    headers: { 'User-Agent': YAHOO_UA },
   });
   if (!res.ok) return null;
   const data = await res.json();
@@ -208,16 +270,8 @@ async function fetchYahooQuote(symbol) {
 
   const pct = (curr, prev) => (prev && curr) ? ((curr - prev) / prev * 100) : null;
 
-  // Market cap
-  let market_cap = null, market_cap_suffix = '', market_cap_currency = meta.currency || 'USD';
-  const mc = meta.marketCap;
-  if (mc) {
-    if (mc >= 1e12)      { market_cap = (mc / 1e12).toFixed(2); market_cap_suffix = 'T'; }
-    else if (mc >= 1e9)  { market_cap = (mc / 1e9).toFixed(2);  market_cap_suffix = 'B'; }
-    else if (mc >= 1e6)  { market_cap = (mc / 1e6).toFixed(2);  market_cap_suffix = 'M'; }
-    else                 { market_cap = mc.toFixed(0); }
-  }
-
+  // Note: P/E and market cap come from the v7 quote endpoint (see fetchQuoteMeta);
+  // the chart endpoint's meta does not carry them.
   return {
     name:               meta.longName || meta.shortName || symbol,
     last:               last,
@@ -225,10 +279,6 @@ async function fetchYahooQuote(symbol) {
     week_change_pct:    pct(last, prev5),
     month_change_pct:   pct(last, prev22),
     year_change_pct:    pct(last, prev252),
-    pe_ratio:           meta.trailingPE || null,
-    market_cap,
-    market_cap_suffix,
-    market_cap_currency,
     day_volume:         meta.regularMarketVolume || null,
   };
 }
