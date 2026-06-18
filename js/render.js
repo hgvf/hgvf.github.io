@@ -1,6 +1,12 @@
 /* ── Helpers ─────────────────────────────────────────────────────── */
 export function tradingViewUrl(symbol) {
-  if (symbol.endsWith('.TW')) return `https://www.tradingview.com/chart/?symbol=TWSE:${symbol.replace('.TW', '')}`;
+  // Strip known suffix → map to TradingView exchange prefix
+  if (symbol.endsWith('.TWO')) return `https://www.tradingview.com/chart/?symbol=TPEX:${symbol.slice(0,-4)}`;
+  if (symbol.endsWith('.TW'))  return `https://www.tradingview.com/chart/?symbol=TWSE:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.KQ'))  return `https://www.tradingview.com/chart/?symbol=KOSDAQ:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.KS'))  return `https://www.tradingview.com/chart/?symbol=KRX:${symbol.slice(0,-3)}`;
+  if (symbol.endsWith('.T'))   return `https://www.tradingview.com/chart/?symbol=TSE:${symbol.slice(0,-2)}`;
+  // US — no suffix, TradingView resolves the exchange automatically
   return `https://www.tradingview.com/chart/?symbol=${symbol}`;
 }
 export function changeClass(val) {
@@ -45,7 +51,7 @@ export function parseMarkdown(text) {
 }
 
 /* ── Ticker bar card ─────────────────────────────────────────────── */
-export function buildTickerCard(symbol, p) {
+export function buildTickerCard(symbol, p, isAdmin) {
   const dayChg = p.day_change_pct ?? null;
   const cls = changeClass(dayChg);
   const colorMap = { positive: 'var(--positive)', negative: 'var(--negative)', neutral: 'var(--neutral)' };
@@ -59,7 +65,21 @@ export function buildTickerCard(symbol, p) {
   const price = p.last != null ? formatPrice(p.last, symbol) : '—';
   const chgStr = dayChg != null ? (dayChg >= 0 ? '+' : '') + dayChg.toFixed(2) + '%' : '—';
   card.innerHTML = `<span class="tc-symbol">${symbol}</span><span class="tc-name">${p.name || ''}</span><span class="tc-price">${price}</span><span class="tc-change ${cls}">${chgStr}</span>`;
-  return card;
+
+  if (!isAdmin) return card;
+
+  // Wrap in a relative container so the ✕ button can sit on top-right
+  const wrap = document.createElement('div');
+  wrap.className = 'ticker-card-wrap';
+  const del = document.createElement('button');
+  del.className = 'ticker-card-del admin-only';
+  del.dataset.action = 'del-ticker-overview';
+  del.dataset.symbol = symbol;
+  del.title = `Remove ${symbol} from overview`;
+  del.textContent = '✕';
+  wrap.appendChild(card);
+  wrap.appendChild(del);
+  return wrap;
 }
 
 /* ── Watchlist table ─────────────────────────────────────────────── */
@@ -235,7 +255,7 @@ export function renderTickerBar(symbols, prices, isAdmin, sector) {
   const bar = document.getElementById('tickerBarInner');
   if (!bar) return;
   bar.innerHTML = '';
-  symbols.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {})));
+  symbols.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {}, isAdmin)));
 
   if (isAdmin && sector) {
     const btn = document.createElement('button');
