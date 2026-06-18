@@ -170,39 +170,30 @@ async function firestoreGet(token, projectId, collPath) {
 async function fetchAndStorePrices(env) {
   const token = await getFirestoreToken(env);
 
-  // Get all tickers from Firestore
   const tickers = await firestoreGet(token, env.FIREBASE_PROJECT_ID, 'tickers');
   const tickerSymbols = tickers.map(t => t.symbol).filter(Boolean);
 
-  // Also include ticker_overview symbols stored in sectors (may not be in tickers collection)
   const sectors = await firestoreGet(token, env.FIREBASE_PROJECT_ID, 'sectors');
   const overviewSymbols = sectors.flatMap(s => s.ticker_overview || []).filter(Boolean);
 
   const symbols = [...new Set([...tickerSymbols, ...overviewSymbols])];
-
   if (symbols.length === 0) return 0;
 
-  // A crumb/cookie session is needed for the v7 quote endpoint (P/E, market cap).
+  // getYahooSession costs 2 subrequests; v7 quote batch costs ceil(N/50) requests.
+  // Total budget for N symbols: 1+1+1+2+ceil(N/50)+1 = well under 50.
   const session = await getYahooSession();
 
-  // Fetch all prices in batches of 20 (Yahoo limit), collect writes, then commit
-  // everything in a single Firestore batch request to stay under the 50-subrequest limit.
-  const BATCH = 20;
+  const BATCH = 50;
   const allWrites = [];
   const now = new Date().toISOString();
   for (let i = 0; i < symbols.length; i += BATCH) {
     const batch = symbols.slice(i, i + BATCH);
-    const prices = await fetchYahooBatch(batch);
-    const meta   = await fetchQuoteMeta(batch, session);
-    for (const [sym, p] of Object.entries(prices)) {
-      allWrites.push({
-        docPath: `prices/${sym}`,
-        fields: { ...p, ...(meta[sym] || {}), last_updated: now },
-      });
+    const quotes = await fetchAllQuoteData(batch, session);
+    for (const [sym, p] of Object.entries(quotes)) {
+      allWrites.push({ docPath: `prices/${sym}`, fields: { ...p, last_updated: now } });
     }
   }
 
-  // Single commit for all symbols — counts as 1 subrequest regardless of symbol count.
   await firestoreBatchSet(token, env.FIREBASE_PROJECT_ID, allWrites);
   return allWrites.length;
 }
@@ -210,15 +201,50 @@ async function fetchAndStorePrices(env) {
 /* ── Yahoo Finance ────────────────────────── */
 const YAHOO_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
 
-async function fetchYahooBatch(symbols) {
-  const result = {};
-  await Promise.allSettled(symbols.map(async sym => {
-    try {
-      const data = await fetchYahooQuote(sym);
-      if (data) result[sym] = data;
-    } catch { /* skip */ }
-  }));
-  return result;
+/* Single batched v7 quote call — returns price, day%, volume, P/E, market cap.
+   Avoids per-symbol v8 chart requests which would exhaust the 50-subrequest limit. */
+async function fetchAllQuoteData(symbols, session) {
+  const out = {};
+  if (!session) return out;
+  try {
+    const fields = [
+      'symbol','shortName','longName',
+      'regularMarketPrice','regularMarketChangePercent','regularMarketVolume',
+      'regularMarketPreviousClose',
+      'fiftyTwoWeekHigh','fiftyTwoWeekLow',
+      'trailingPE','marketCap','currency',
+    ].join(',');
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote`
+      + `?symbols=${encodeURIComponent(symbols.join(','))}`
+      + `&fields=${encodeURIComponent(fields)}`
+      + `&crumb=${encodeURIComponent(session.crumb)}`;
+    const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA, 'Cookie': session.cookie } });
+    if (!res.ok) return out;
+    const data = await res.json();
+    for (const q of data?.quoteResponse?.result || []) {
+      if (!q.symbol || q.regularMarketPrice == null) continue;
+      const entry = {
+        name:           q.longName || q.shortName || q.symbol,
+        last:           q.regularMarketPrice,
+        day_change_pct: q.regularMarketChangePercent ?? null,
+        day_volume:     q.regularMarketVolume ?? null,
+      };
+      if (q.trailingPE != null) entry.pe_ratio = q.trailingPE;
+      if (q.marketCap  != null) {
+        const mc = q.marketCap;
+        let val, suffix = '';
+        if      (mc >= 1e12) { val = (mc / 1e12).toFixed(2); suffix = 'T'; }
+        else if (mc >= 1e9)  { val = (mc / 1e9).toFixed(2);  suffix = 'B'; }
+        else if (mc >= 1e6)  { val = (mc / 1e6).toFixed(2);  suffix = 'M'; }
+        else                 { val = mc.toFixed(0); }
+        entry.market_cap          = val;
+        entry.market_cap_suffix   = suffix;
+        entry.market_cap_currency = q.currency || 'USD';
+      }
+      out[q.symbol] = entry;
+    }
+  } catch { /* skip */ }
+  return out;
 }
 
 /* Obtain a cookie + crumb pair so the authenticated v7 quote endpoint works. */
@@ -242,72 +268,6 @@ async function getYahooSession() {
   }
 }
 
-/* Batched P/E + market cap + currency via the v7 quote endpoint. */
-async function fetchQuoteMeta(symbols, session) {
-  const out = {};
-  if (!session) return out;
-  try {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote`
-      + `?symbols=${encodeURIComponent(symbols.join(','))}`
-      + `&crumb=${encodeURIComponent(session.crumb)}`;
-    const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA, 'Cookie': session.cookie } });
-    if (!res.ok) return out;
-    const data = await res.json();
-    for (const q of data?.quoteResponse?.result || []) {
-      if (!q.symbol) continue;
-      const fields = {};
-      if (q.trailingPE != null) fields.pe_ratio = q.trailingPE;
-      if (q.marketCap != null) {
-        const mc = q.marketCap;
-        let val, suffix = '';
-        if      (mc >= 1e12) { val = (mc / 1e12).toFixed(2); suffix = 'T'; }
-        else if (mc >= 1e9)  { val = (mc / 1e9).toFixed(2);  suffix = 'B'; }
-        else if (mc >= 1e6)  { val = (mc / 1e6).toFixed(2);  suffix = 'M'; }
-        else                 { val = mc.toFixed(0); }
-        fields.market_cap          = val;
-        fields.market_cap_suffix   = suffix;
-        fields.market_cap_currency = q.currency || 'USD';
-      }
-      out[q.symbol] = fields;
-    }
-  } catch { /* skip — P/E & market cap just stay unset */ }
-  return out;
-}
-
-async function fetchYahooQuote(symbol) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1y`;
-  const res = await fetch(url, {
-    headers: { 'User-Agent': YAHOO_UA },
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  const meta = data?.chart?.result?.[0]?.meta;
-  if (!meta) return null;
-
-  const close  = data.chart.result[0].indicators?.quote?.[0]?.close || [];
-  const prices = close.filter(v => v != null);
-  const last   = meta.regularMarketPrice ?? prices[prices.length - 1];
-  if (!last) return null;
-
-  const prev1  = prices[prices.length - 2];
-  const prev5  = prices[prices.length - 6];
-  const prev22 = prices[prices.length - 23];
-  const prev252= prices[0];
-
-  const pct = (curr, prev) => (prev && curr) ? ((curr - prev) / prev * 100) : null;
-
-  // Note: P/E and market cap come from the v7 quote endpoint (see fetchQuoteMeta);
-  // the chart endpoint's meta does not carry them.
-  return {
-    name:               meta.longName || meta.shortName || symbol,
-    last:               last,
-    day_change_pct:     pct(last, prev1),
-    week_change_pct:    pct(last, prev5),
-    month_change_pct:   pct(last, prev22),
-    year_change_pct:    pct(last, prev252),
-    day_volume:         meta.regularMarketVolume || null,
-  };
-}
 
 /* ── Firestore type helpers ──────────────────── */
 function toFirestoreFields(obj) {
