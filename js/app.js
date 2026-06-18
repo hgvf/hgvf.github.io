@@ -38,7 +38,7 @@ function showPage(pageId) {
   if (pageId === 'watchlist') loadWatchlist();
 }
 
-document.querySelectorAll('.nav-item').forEach(item => {
+document.querySelectorAll('[data-page]').forEach(item => {
   item.addEventListener('click', e => {
     e.preventDefault();
     showPage(item.dataset.page);
@@ -283,4 +283,22 @@ document.getElementById('btnRefreshPrices')?.addEventListener('click', async () 
 
 /* ── Boot ───────────────────────────────────────────────────────────── */
 initAdminModals();
+
+document.querySelectorAll('.nav-trigger').forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+
+    const pageId = item.dataset.page;
+
+    if (!pageId) return;
+
+    showPage(pageId);
+
+    if (window.innerWidth < 768) {
+      document.getElementById('sidebar')
+        ?.classList.remove('open');
+    }
+  });
+});
+
 showPage('home');
