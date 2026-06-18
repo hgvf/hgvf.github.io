@@ -50,17 +50,21 @@ def main():
 def do_export(db, watchlist_path, prices_path):
     print("Exporting from Firestore…")
 
+    def _by_order(docs):
+        # Sort in Python so we don't need composite Firestore indexes
+        # (where(...) + order_by(...) on different fields would require one).
+        return sorted(docs, key=lambda d: d.to_dict().get("order", 0))
+
     # Sectors
-    sectors_raw = list(db.collection("sectors").order_by("order").stream())
+    sectors_raw = _by_order(db.collection("sectors").stream())
     sectors = []
     for sec_doc in sectors_raw:
         sec = sec_doc.to_dict()
         sec["id"] = sec_doc.id
         # Subsectors
-        subs_raw = list(
+        subs_raw = _by_order(
             db.collection("subsectors")
             .where("sector_id", "==", sec_doc.id)
-            .order_by("order")
             .stream()
         )
         subsectors = []
@@ -70,28 +74,31 @@ def do_export(db, watchlist_path, prices_path):
             # Tickers
             tickers = [
                 dict(t.to_dict(), id=t.id)
-                for t in db.collection("tickers")
-                .where("subsector_id", "==", sub_doc.id)
-                .order_by("order")
-                .stream()
+                for t in _by_order(
+                    db.collection("tickers")
+                    .where("subsector_id", "==", sub_doc.id)
+                    .stream()
+                )
             ]
             sub["tickers"] = tickers
             # Analysis
             analysis = [
                 dict(a.to_dict(), id=a.id)
-                for a in db.collection("analysis")
-                .where("subsector_id", "==", sub_doc.id)
-                .order_by("order")
-                .stream()
+                for a in _by_order(
+                    db.collection("analysis")
+                    .where("subsector_id", "==", sub_doc.id)
+                    .stream()
+                )
             ]
             sub["analysis"] = analysis
             # Research notes
             notes = [
                 dict(n.to_dict(), id=n.id)
-                for n in db.collection("research_notes")
-                .where("subsector_id", "==", sub_doc.id)
-                .order_by("order")
-                .stream()
+                for n in _by_order(
+                    db.collection("research_notes")
+                    .where("subsector_id", "==", sub_doc.id)
+                    .stream()
+                )
             ]
             sub["research_notes"] = notes
             subsectors.append(sub)
