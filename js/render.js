@@ -32,7 +32,12 @@ export function parseMarkdown(text) {
   return text.split('\n').map(line => {
     if (line.startsWith('# '))  return `<p class="md-h2">${line.slice(2)}</p>`;
     if (line.startsWith('## ')) return `<p class="md-h3">${line.slice(3)}</p>`;
+    // Standalone image line
+    const imgOnly = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgOnly) return `<p class="md-img-wrap"><img class="md-img" src="${imgOnly[2]}" alt="${imgOnly[1]}" loading="lazy"></p>`;
     line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Inline images mixed with text
+    line = line.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, `<img class="md-img-inline" src="$2" alt="$1" loading="lazy">`);
     if (line.trim().startsWith('- ')) return `<p class="md-bullet"><span class="md-dot">·</span>${line.trim().slice(2)}</p>`;
     return line ? `<p class="md-p">${line}</p>` : '<p class="md-spacer"></p>';
   }).join('');

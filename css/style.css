@@ -336,7 +336,7 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
   transition: max-height 0.3s ease, padding var(--transition);
   padding: 0 1rem;
 }
-.research-card.open .research-body { max-height: 2000px; padding: 0 1rem 1rem; }
+.research-card.open .research-body { max-height: 9999px; padding: 0 1rem 1rem; }
 
 /* ── Markdown rendered content ───────────────────────────── */
 .md-h2    { font-size: 1rem; font-weight: 600; margin: 0.9rem 0 0.3rem; color: var(--text-primary); }
@@ -378,6 +378,17 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
 }
 .modal-input:focus { border-color: var(--accent); }
 .modal-textarea { resize: vertical; min-height: 100px; }
+.img-drop-zone { transition: border-color 0.15s, background 0.15s; }
+.img-drop-zone.img-drop-active { border-color: var(--accent); background: rgba(180,140,100,0.08); }
+.img-drop-zone.img-uploading { opacity: 0.6; pointer-events: none; }
+.img-upload-hint { display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem; }
+.img-upload-link { color: var(--accent); cursor: pointer; text-decoration: underline; }
+.img-upload-status { display: block; font-size: 0.78rem; min-height: 1.1em; }
+.img-upload-status.uploading { color: var(--text-muted); }
+.img-upload-status.ok  { color: var(--positive); }
+.img-upload-status.err { color: var(--negative); }
+.md-img-wrap { margin: 0.6rem 0; }
+.md-img, .md-img-inline { max-width: 100%; border-radius: var(--radius-sm); display: block; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.5rem; }
 .btn-modal {
   padding: 0.4rem 1.1rem; border-radius: var(--radius-sm);
