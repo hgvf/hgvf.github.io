@@ -231,11 +231,20 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
 }
 
 /* ── Ticker bar ──────────────────────────────────────────────────── */
-export function renderTickerBar(symbols, prices) {
+export function renderTickerBar(symbols, prices, isAdmin, sector) {
   const bar = document.getElementById('tickerBarInner');
   if (!bar) return;
   bar.innerHTML = '';
   symbols.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {})));
+
+  if (isAdmin && sector) {
+    const btn = document.createElement('button');
+    btn.className = 'ticker-edit-btn admin-only';
+    btn.dataset.action = 'edit-ticker-overview';
+    btn.title = 'Edit ticker overview list';
+    btn.textContent = symbols.length === 0 ? '+ Add Tickers' : '✎';
+    bar.appendChild(btn);
+  }
 }
 
 export function updatePriceCells(prices) {

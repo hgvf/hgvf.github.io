@@ -319,6 +319,14 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
   cursor: pointer; text-align: center; transition: background var(--transition);
 }
 .btn-add-row:hover { background: var(--accent-light); }
+.ticker-edit-btn {
+  flex-shrink: 0; align-self: center; padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm); border: 1px dashed var(--accent);
+  background: transparent; color: var(--accent); font-size: 0.78rem;
+  cursor: pointer; white-space: nowrap; transition: background var(--transition);
+  opacity: 0.65;
+}
+.ticker-edit-btn:hover { background: var(--accent-light); opacity: 1; }
 .btn-delete-sector {
   display: block; width: 100%; margin-top: 2rem; padding: 0.4rem;
   border-radius: var(--radius-sm); border: 1px dashed var(--negative);
