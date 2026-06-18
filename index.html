@@ -19,15 +19,8 @@
         <div class="avatar-fallback">KW</div>
       </div>
       <h1 class="profile-name">Kuan-Wei Tang</h1>
-      <p class="profile-title">NLP Researcher</p>
-      <p class="profile-org">NTUST · CSIE</p>
-
-      <!-- Auth -->
-      <div class="auth-area">
-        <span class="user-info" id="userInfo"></span>
-        <button class="btn-auth" id="btnLogin">Sign in</button>
-        <button class="btn-auth btn-auth-out" id="btnLogout" style="display:none">Sign out</button>
-      </div>
+      <p class="profile-title">AI Engineer</p>
+      <p class="profile-org">***</p>
     </div>
 
     <nav class="sidebar-nav">
@@ -46,12 +39,6 @@
       </a>
     </nav>
 
-    <!-- Admin toolbar -->
-    <div class="sidebar-admin admin-only" style="display:none">
-      <p class="nav-section-label">ADMIN</p>
-      <button class="btn-admin" id="btnWhitelist">Manage Whitelist</button>
-    </div>
-
     <div class="sidebar-footer">
       <p class="nav-section-label">CONTACT</p>
       <div class="social-links">
@@ -68,15 +55,23 @@
           LinkedIn
         </a>
       </div>
+
+      <div class="auth-area">
+        <p class="nav-section-label" style="margin-top:1rem">ACCOUNT</p>
+        <span id="userInfo" class="user-info"></span>
+        <button id="btnLogin" class="btn-auth">Sign In</button>
+        <button id="btnLogout" class="btn-auth btn-auth-out" style="display:none">Sign Out</button>
+        <div class="sidebar-admin admin-only" style="display:none">
+          <button id="btnWhitelist" class="btn-admin">Manage Access</button>
+        </div>
+      </div>
     </div>
   </aside>
 
-  <!-- Mobile hamburger -->
   <button class="sidebar-toggle" id="menuToggle" aria-label="Toggle sidebar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 
-  <!-- Main content -->
   <main class="main-content">
 
     <!-- HOME PAGE -->
@@ -99,7 +94,7 @@
         <div class="glass-card home-links">
           <h3 class="card-title">Quick Links</h3>
           <div class="quick-links">
-            <a href="#" data-page="watchlist" class="quick-link-btn nav-item">Stock Watchlist →</a>
+            <a href="#" data-page="watchlist" class="quick-link-btn nav-trigger">Stock Watchlist →</a>
           </div>
         </div>
       </div>
@@ -112,7 +107,6 @@
         <div class="page-header-actions">
           <span class="price-status" id="priceStatus"></span>
           <button class="btn-refresh admin-only" id="btnRefreshPrices" style="display:none">↺ Refresh Prices</button>
-          <button class="btn-refresh admin-only" id="btnAddSector" style="display:none">+ Sector</button>
         </div>
       </div>
 
@@ -127,117 +121,143 @@
 
   </main>
 
-  <!-- ── Modals ──────────────────────────────────────────────────── -->
+  <!-- ── Modals ──────────────────────────────────────────────────────── -->
 
   <div class="modal-overlay" id="modalSector">
     <div class="modal-box">
       <h3 class="modal-title" id="sectorModalTitle">Sector</h3>
+      <button class="modal-close" data-modal="modalSector">×</button>
       <form id="formSector">
         <label class="modal-label">Name<input class="modal-input" id="inputSectorName" required /></label>
         <label class="modal-label">Order<input class="modal-input" id="inputSectorOrder" type="number" value="0" /></label>
         <label class="modal-label">Ticker Overview (comma-separated)<input class="modal-input" id="inputSectorOverview" placeholder="NVDA, AMD, INTC" /></label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalSector">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalSubsector">
     <div class="modal-box">
       <h3 class="modal-title" id="subsectorModalTitle">Subsector</h3>
+      <button class="modal-close" data-modal="modalSubsector">×</button>
       <form id="formSubsector">
         <label class="modal-label">Name<input class="modal-input" id="inputSubsectorName" required /></label>
         <label class="modal-label">Order<input class="modal-input" id="inputSubsectorOrder" type="number" value="0" /></label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalSubsector">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalNotes">
     <div class="modal-box modal-box-wide">
       <h3 class="modal-title">Edit Notes</h3>
+      <button class="modal-close" data-modal="modalNotes">×</button>
       <form id="formNotes">
-        <label class="modal-label">Markdown notes<textarea class="modal-input modal-textarea" id="inputNotes" rows="12" placeholder="- **CRDO**: description…"></textarea></label>
+        <label class="modal-label">Notes (markdown supported)
+          <textarea class="modal-textarea" id="inputNotes" rows="10"></textarea>
+        </label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalNotes">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalTicker">
     <div class="modal-box">
       <h3 class="modal-title" id="tickerModalTitle">Ticker</h3>
+      <button class="modal-close" data-modal="modalTicker">×</button>
       <form id="formTicker">
         <label class="modal-label">Symbol<input class="modal-input" id="inputTickerSymbol" required placeholder="NVDA" /></label>
-        <label class="modal-label">Full Name<input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corporation" /></label>
+        <label class="modal-label">Name<input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corp." /></label>
+        <label class="modal-label">Market
+          <select class="modal-input" id="inputTickerMarket">
+            <option value="US">US</option>
+            <option value="TW">TW</option>
+          </select>
+        </label>
         <label class="modal-label">Order<input class="modal-input" id="inputTickerOrder" type="number" value="0" /></label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalTicker">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalAnalysis">
     <div class="modal-box modal-box-wide">
       <h3 class="modal-title" id="analysisModalTitle">Analysis Table</h3>
+      <button class="modal-close" data-modal="modalAnalysis">×</button>
       <form id="formAnalysis">
         <label class="modal-label">Title<input class="modal-input" id="inputAnalysisTitle" required /></label>
+        <label class="modal-label">Columns (comma-separated)<input class="modal-input" id="inputAnalysisColumns" placeholder="Company, Category, Notes" /></label>
+        <label class="modal-label">Rows (one per line, cells tab-separated)
+          <textarea class="modal-textarea" id="inputAnalysisRows" rows="8" placeholder="NVDA&#9;GPU&#9;Leading AI accelerator"></textarea>
+        </label>
         <label class="modal-label">Order<input class="modal-input" id="inputAnalysisOrder" type="number" value="0" /></label>
-        <label class="modal-label">Columns (comma-separated)<input class="modal-input" id="inputAnalysisColumns" placeholder="Company, Revenue, Notes" /></label>
-        <label class="modal-label">Rows (one row per line, cells tab-separated)<textarea class="modal-input modal-textarea" id="inputAnalysisRows" rows="8"></textarea></label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalAnalysis">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalResearch">
     <div class="modal-box modal-box-wide">
       <h3 class="modal-title" id="researchModalTitle">Research Note</h3>
+      <button class="modal-close" data-modal="modalResearch">×</button>
       <form id="formResearch">
         <label class="modal-label">Title<input class="modal-input" id="inputResearchTitle" required /></label>
+        <label class="modal-label">Content (markdown supported)
+          <textarea class="modal-textarea" id="inputResearchContent" rows="12"></textarea>
+        </label>
         <label class="modal-label">Order<input class="modal-input" id="inputResearchOrder" type="number" value="0" /></label>
-        <label class="modal-label">Content (Markdown)<textarea class="modal-input modal-textarea" id="inputResearchContent" rows="14" placeholder="# Overview"></textarea></label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="button" class="btn-modal" data-modal="modalResearch">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <div class="modal-overlay" id="modalWhitelist">
     <div class="modal-box">
-      <h3 class="modal-title">Admin Whitelist</h3>
-      <ul class="whitelist-list" id="whitelistEmails"></ul>
+      <h3 class="modal-title">Manage Access</h3>
+      <button class="modal-close" data-modal="modalWhitelist">×</button>
+      <div id="whitelistList" class="whitelist-list"></div>
       <form id="formWhitelistEmail" style="margin-top:1rem">
-        <label class="modal-label">Add email<input class="modal-input" id="inputWhitelistEmail" type="email" placeholder="user@example.com" /></label>
+        <label class="modal-label">Add email
+          <input class="modal-input" id="inputWhitelistEmail" type="email" required placeholder="user@example.com" />
+        </label>
         <div class="modal-actions">
-          <button type="button" class="btn-modal modal-cancel">Close</button>
+          <button type="button" class="btn-modal" data-modal="modalWhitelist">Close</button>
           <button type="submit" class="btn-modal btn-modal-primary">Add</button>
         </div>
       </form>
-      <button class="modal-close" aria-label="Close">✕</button>
     </div>
   </div>
 
   <script type="module" src="js/app.js"></script>
+  <script>
+    document.querySelectorAll('.nav-trigger[data-page]').forEach(el => {
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        const pageId = el.dataset.page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('page-' + pageId)?.classList.add('active');
+        document.querySelector('.nav-item[data-page="' + pageId + '"]')?.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>

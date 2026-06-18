@@ -28,7 +28,7 @@ function db() {
   return _db;
 }
 
-// ─── Sectors ────────────────────────────────────────────────────
+// ─── Sectors ─────────────────────────────────────────────────────────────
 export async function getSectors() {
   const snap = await getDocs(query(collection(db(), "sectors"), orderBy("order")));
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -46,15 +46,11 @@ export async function deleteSector(id) {
   return deleteDoc(doc(db(), "sectors", id));
 }
 
-// ─── Subsectors ──────────────────────────────────────────────────
+// ─── Subsectors ──────────────────────────────────────────────────────
 export async function getSubsectors(sectorId) {
-  const q = query(
-    collection(db(), "subsectors"),
-    where("sector_id", "==", sectorId),
-    orderBy("order")
-  );
+  const q = query(collection(db(), "subsectors"), where("sector_id", "==", sectorId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function addSubsector(data) {
@@ -73,15 +69,11 @@ export async function updateSubsectorNotes(id, notes) {
   return updateDoc(doc(db(), "subsectors", id), { notes });
 }
 
-// ─── Tickers ─────────────────────────────────────────────────────
+// ─── Tickers ───────────────────────────────────────────────────────────
 export async function getTickers(subsectorId) {
-  const q = query(
-    collection(db(), "tickers"),
-    where("subsector_id", "==", subsectorId),
-    orderBy("order")
-  );
+  const q = query(collection(db(), "tickers"), where("subsector_id", "==", subsectorId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function addTicker(data) {
@@ -96,15 +88,11 @@ export async function deleteTicker(id) {
   return deleteDoc(doc(db(), "tickers", id));
 }
 
-// ─── Analysis ────────────────────────────────────────────────────
+// ─── Analysis ────────────────────────────────────────────────────────────
 export async function getAnalysis(subsectorId) {
-  const q = query(
-    collection(db(), "analysis"),
-    where("subsector_id", "==", subsectorId),
-    orderBy("order")
-  );
+  const q = query(collection(db(), "analysis"), where("subsector_id", "==", subsectorId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function addAnalysis(data) {
@@ -119,15 +107,11 @@ export async function deleteAnalysis(id) {
   return deleteDoc(doc(db(), "analysis", id));
 }
 
-// ─── Research Notes ──────────────────────────────────────────────
+// ─── Research Notes ─────────────────────────────────────────────────────
 export async function getResearchNotes(subsectorId) {
-  const q = query(
-    collection(db(), "research_notes"),
-    where("subsector_id", "==", subsectorId),
-    orderBy("order")
-  );
+  const q = query(collection(db(), "research_notes"), where("subsector_id", "==", subsectorId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 export async function addResearchNote(data) {
@@ -142,7 +126,7 @@ export async function deleteResearchNote(id) {
   return deleteDoc(doc(db(), "research_notes", id));
 }
 
-// ─── Prices ──────────────────────────────────────────────────────
+// ─── Prices ───────────────────────────────────────────────────────────
 export async function getPrices(symbols) {
   const result = {};
   await Promise.all(
@@ -167,7 +151,7 @@ export function subscribePrices(symbols, callback) {
   return () => unsubs.forEach(u => u());
 }
 
-// ─── Config / Auth ───────────────────────────────────────────────
+// ─── Config / Auth ─────────────────────────────────────────────────────
 export async function getAllowedEmails() {
   const snap = await getDoc(doc(db(), "config", "auth"));
   if (!snap.exists()) return [];
