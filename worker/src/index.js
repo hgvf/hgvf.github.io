@@ -12,11 +12,17 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // CORS preflight — browsers send OPTIONS before a POST with Authorization header
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders() });
+    }
+
     if (url.pathname !== '/trigger') {
-      return new Response('Not found', { status: 404 });
+      return new Response('Not found', { status: 404, headers: corsHeaders() });
     }
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+      return new Response('Method not allowed', { status: 405, headers: corsHeaders() });
     }
 
     // Auth: accept either TRIGGER_SECRET header or a valid Firebase ID token
@@ -46,8 +52,17 @@ export default {
   },
 };
 
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Max-Age': '86400',
+  };
+}
+
 function jsonHeaders() {
-  return { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+  return { 'Content-Type': 'application/json', ...corsHeaders() };
 }
 
 /* ── Firebase token verification ────────────────────────────────── */
