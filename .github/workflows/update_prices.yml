@@ -1,0 +1,39 @@
+name: Update Stock Prices
+
+on:
+  schedule:
+    # 02:00 UTC daily Mon–Fri  (= 22:00 ET previous day, after US market close)
+    # TW market closes ~05:30 UTC, so same run catches TWD closes from prior day
+    - cron: '0 2 * * 2-6'
+  workflow_dispatch:   # allow manual trigger from GitHub Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance
+
+      - name: Fetch prices
+        run: python scripts/update_prices.py
+
+      - name: Commit & push if prices changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/prices.json
+          git diff --staged --quiet && echo "No price changes." || \
+            git commit -m "chore: update stock prices $(date -u +%Y-%m-%d)"
+          git push

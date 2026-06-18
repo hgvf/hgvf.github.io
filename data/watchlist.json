@@ -1,0 +1,37 @@
+{
+  "sectors": [
+    {
+      "id": "high-speed-cable",
+      "name": "高速傳輸/Cable",
+      "ticker_overview": ["CRDO", "ALAB", "TEL", "APH"],
+      "subsectors": [
+        {
+          "id": "switch-ic",
+          "name": "高速傳輸 & 交換機",
+          "notes": "- **Credo (CRDO)**: Rack外部之間的銅線高速傳輸線，偏向高速SerDes/介面IC + AEC方案 + IP授權，收入可來自晶片出貨、工程服務、IP license/royalty\n- **Astera Labs (ALAB)**: 晶片間的高速傳輸（銅+光），資料中心互連半導體平台，hyperscaler/AI 平台導入\n- **貿聯 (3665.TW)**: 系統級線束/連接解決方案整合商，產品多是各套 cable assembly、線束、連接模組，面向多元終端\n- **智邦 (2345.TW)**: 交換機\n- **嘉澤 (3533.TW)**: 機構/電性整合的連接器與線束，CPU Socket、插槽、線束、快接頭\n- **TE Connectivity (TEL)**: 全球最大工業級連接器公司之一，汽車、通訊/Data Center、工業自動化\n- **Amphenol (APH)**: 全球最大連接器廠之一，產品多元、終端涵蓋通訊、工業、汽車、航太",
+          "watchlist": [
+            { "symbol": "CRDO",    "name": "Credo Technology Group Hold", "market": "US" },
+            { "symbol": "ALAB",    "name": "Astera Labs, Inc.",            "market": "US" },
+            { "symbol": "3665.TW", "name": "Bizlink Holding Inc.",         "market": "TW" },
+            { "symbol": "2345.TW", "name": "Accton Technology Corp.",      "market": "TW" },
+            { "symbol": "3533.TW", "name": "Lotes Co., Ltd",               "market": "TW" },
+            { "symbol": "TEL",     "name": "TE Connectivity Ltd.",          "market": "US" },
+            { "symbol": "APH",     "name": "Amphenol Corp.",                "market": "US" }
+          ],
+          "analysis": [
+            {
+              "title": "營收占比",
+              "columns": ["公司", "分類口徑", "業務 / 營收占比"],
+              "rows": [
+                ["嘉澤 3533.TW", "產品別", "伺服器 40.3% / 桌機 24.6% / 筆電 11.0% / 策略客戶 9.8% / 車用 8.1% / 工業醫療 2.4%"],
+                ["貿聯 3665.TW", "事業群", "Computing & Transportation 47.1% / Industrial 36.4% / Home Appliance 16.5%"],
+                ["Credo",        "收入型態", "產品銷售 75.2% / 工程服務 10.3% / IP 授權 14.5%"],
+                ["Astera Labs",  "收入型態", "絕大多數為產品銷售（未透露明確%）"]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
