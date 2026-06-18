@@ -101,11 +101,13 @@ async function loadWatchlist() {
       sectorTabsEl.appendChild(btn);
     });
     if (_isAdmin) {
-      const addBtn = document.createElement('button');
-      addBtn.className = 'sector-tab sector-tab-add admin-only';
-      addBtn.textContent = '+ Sector';
-      addBtn.addEventListener('click', () => openAddSector(_sectors.length));
-      sectorTabsEl.appendChild(addBtn);
+      const addSubBtn = document.createElement('button');
+      addSubBtn.className = 'sector-tab sector-tab-add admin-only';
+      addSubBtn.textContent = '+ Block';
+      addSubBtn.addEventListener('click', () => {
+        if (_currentSector) openAddSubsector(_currentSector.id, 0);
+      });
+      sectorTabsEl.appendChild(addSubBtn);
     }
   }
 
@@ -114,7 +116,7 @@ async function loadWatchlist() {
     if (statusEl) statusEl.textContent = '';
   } catch (err) {
     console.error('selectSector failed:', err);
-    if (statusEl) statusEl.textContent = 'Error loading sector: ' + err.message;
+    if (statusEl) statusEl.textContent = 'Error: ' + err.message;
   }
 }
 
@@ -143,7 +145,11 @@ async function selectSector(sectorId) {
   const allSymbols      = [...new Set([...overviewSymbols, ...tickerSymbols])];
 
   renderTickerBar(overviewSymbols, _prices);
-  renderSectorContent(_currentSector, subsectorsData, _prices, _isAdmin);
+  const sectorContentEl = document.getElementById('sectorContent');
+  if (sectorContentEl) {
+    sectorContentEl.innerHTML = '';
+    sectorContentEl.appendChild(renderSectorContent(_currentSector, subsectorsData, _prices, _isAdmin));
+  }
   bindSectorEvents(subsectorsData);
 
   _unsubPrices = subscribePrices(allSymbols, newPrices => {
@@ -179,47 +185,45 @@ function bindSectorEvents(subsectorsData) {
   const reload = () => selectSector(_currentSector?.id);
 
   c.addEventListener('click', async e => {
-    const t = e.target;
-    if (t.matches('.btn-edit-sub')) {
+    const t = e.target.closest('button') || e.target;
+    const action = t.dataset?.action;
+    if (!action) return;
+
+    if (action === 'edit-subsector') {
       const sub = subsectorsData.find(d => d.subsector.id === t.dataset.id)?.subsector;
       if (sub) openEditSubsector(sub);
-    } else if (t.matches('.btn-delete-sub')) {
+    } else if (action === 'del-subsector') {
       await handleDeleteSubsector(t.dataset.id, reload);
-    } else if (t.matches('.btn-edit-notes')) {
+    } else if (action === 'edit-notes') {
       const sub = subsectorsData.find(d => d.subsector.id === t.dataset.id)?.subsector;
       if (sub) openEditNotes(sub);
-    } else if (t.matches('.btn-add-ticker')) {
-      const wlCard = t.closest('.wl-card');
-      const subId  = wlCard?.dataset.subsectorId;
-      const sub    = subsectorsData.find(d => d.subsector.id === subId);
+    } else if (action === 'add-ticker') {
+      const subId = t.dataset.subsectorId;
+      const sub   = subsectorsData.find(d => d.subsector.id === subId);
       if (subId) openAddTicker(subId, sub?.tickers.length || 0);
-    } else if (t.matches('.btn-edit') && t.closest('tr')) {
-      const wlCard = t.closest('.wl-card');
-      const subId  = wlCard?.dataset.subsectorId;
-      const sub    = subsectorsData.find(d => d.subsector.id === subId);
+    } else if (action === 'edit-ticker') {
+      const sub = subsectorsData.find(d => d.tickers.some(tk => tk.id === t.dataset.id));
       const ticker = sub?.tickers.find(tk => tk.id === t.dataset.id);
       if (ticker) openEditTicker(ticker);
-    } else if (t.matches('.btn-delete') && t.closest('tr')) {
+    } else if (action === 'del-ticker') {
       await handleDeleteTicker(t.dataset.id, reload);
-    } else if (t.matches('.btn-add-analysis')) {
+    } else if (action === 'add-analysis') {
       const subId = t.dataset.subsectorId;
       const sub   = subsectorsData.find(d => d.subsector.id === subId);
       openAddAnalysis(subId, sub?.analysis.length || 0);
-    } else if (t.matches('.btn-edit') && t.closest('.analysis-card')) {
-      const card = t.closest('.analysis-card');
-      const a    = subsectorsData.flatMap(d => d.analysis).find(x => x.id === card.dataset.analysisId);
+    } else if (action === 'edit-analysis') {
+      const a = subsectorsData.flatMap(d => d.analysis).find(x => x.id === t.dataset.id);
       if (a) openEditAnalysis(a);
-    } else if (t.matches('.btn-delete') && t.closest('.analysis-card')) {
+    } else if (action === 'del-analysis') {
       await handleDeleteAnalysis(t.dataset.id, reload);
-    } else if (t.matches('.btn-add-research')) {
+    } else if (action === 'add-research') {
       const subId = t.dataset.subsectorId;
       const sub   = subsectorsData.find(d => d.subsector.id === subId);
       openAddResearchNote(subId, sub?.research_notes.length || 0);
-    } else if (t.matches('.btn-edit') && t.closest('.research-card')) {
-      const card = t.closest('.research-card');
-      const note = subsectorsData.flatMap(d => d.research_notes).find(n => n.id === card.dataset.noteId);
+    } else if (action === 'edit-research') {
+      const note = subsectorsData.flatMap(d => d.research_notes).find(n => n.id === t.dataset.id);
       if (note) openEditResearchNote(note);
-    } else if (t.matches('.btn-delete') && t.closest('.research-card')) {
+    } else if (action === 'del-research') {
       await handleDeleteResearchNote(t.dataset.id, reload);
     }
   });
@@ -250,7 +254,6 @@ document.getElementById('formWhitelistEmail')?.addEventListener('submit', async 
 
 /* ── Admin toolbar ────────────────────────────────────────────────────── */
 document.getElementById('btnWhitelist')?.addEventListener('click', () => openWhitelist());
-document.getElementById('btnAddSector')?.addEventListener('click', () => openAddSector(_sectors.length));
 
 /* ── Manual price refresh ─────────────────────────────────────────────── */
 document.getElementById('btnRefreshPrices')?.addEventListener('click', async () => {
