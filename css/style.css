@@ -319,6 +319,14 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
   cursor: pointer; text-align: center; transition: background var(--transition);
 }
 .btn-add-row:hover { background: var(--accent-light); }
+.btn-delete-sector {
+  display: block; width: 100%; margin-top: 2rem; padding: 0.4rem;
+  border-radius: var(--radius-sm); border: 1px dashed var(--negative);
+  background: transparent; color: var(--negative); font-size: 0.82rem;
+  cursor: pointer; text-align: center; transition: background var(--transition);
+  opacity: 0.55;
+}
+.btn-delete-sector:hover { background: var(--negative-bg); opacity: 1; }
 
 /* ── Research note cards ─────────────────────────────────── */
 .research-section { margin-top: 1rem; }
