@@ -98,6 +98,31 @@ async function loadWatchlist() {
       btn.dataset.sectorId = s.id;
       btn.textContent      = s.name;
       btn.addEventListener('click', () => selectSector(s.id));
+      if (_isAdmin) {
+        btn.addEventListener('dblclick', e => {
+          e.stopPropagation();
+          const input = document.createElement('input');
+          input.className = 'sector-tab-rename-input';
+          input.value = s.name;
+          btn.textContent = '';
+          btn.appendChild(input);
+          input.focus();
+          input.select();
+          const commit = async () => {
+            const newName = input.value.trim();
+            if (newName && newName !== s.name) {
+              await updateSector(s.id, { name: newName });
+              s.name = newName;
+            }
+            btn.textContent = s.name;
+          };
+          input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { input.value = s.name; input.blur(); }
+          });
+          input.addEventListener('blur', commit);
+        });
+      }
       sectorTabsEl.appendChild(btn);
     });
     if (_isAdmin) {
