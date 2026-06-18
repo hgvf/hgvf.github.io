@@ -1,7 +1,7 @@
 /* ── Main application ───────────────────────────────────────────── */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { firebaseConfig, WORKER_URL } from './config.js';
-import { initDB, getSectors, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices } from './db.js';
+import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices } from './db.js';
 import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
@@ -145,13 +145,6 @@ async function selectSector(sectorId) {
 
   renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
 
-  // Wire the ✎ / "+ Add Tickers" button that renderTickerBar appends when admin.
-  document.getElementById('tickerBarInner')
-    ?.querySelector('[data-action="edit-ticker-overview"]')
-    ?.addEventListener('click', () => {
-      if (_currentSector) openEditSector(_currentSector);
-    });
-
   const sectorContentEl = document.getElementById('sectorContent');
   if (sectorContentEl) {
     sectorContentEl.innerHTML = '';
@@ -290,6 +283,32 @@ document.getElementById('btnRefreshPrices')?.addEventListener('click', async () 
     if (statusEl) { statusEl.textContent = `Failed: ${err.message}`; statusEl.className = 'price-status err'; }
   } finally {
     btn.disabled = false;
+  }
+});
+
+/* ── Ticker bar admin actions (delegated once) ─────────────────────── */
+document.getElementById('tickerBarInner')?.addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  e.preventDefault();
+  if (btn.dataset.action === 'edit-ticker-overview') {
+    if (_currentSector) openEditSector(_currentSector);
+  } else if (btn.dataset.action === 'del-ticker-overview') {
+    const sym = btn.dataset.symbol;
+    if (!_currentSector || !sym) return;
+    const updated = (_currentSector.ticker_overview || []).filter(s => s !== sym);
+    await updateSector(_currentSector.id, { ticker_overview: updated });
+    _currentSector.ticker_overview = updated;
+    // Re-render bar immediately; non-overview symbols stay in allSymbols for price subscription
+    const tickerSymbols = [...document.querySelectorAll('.wl-symbol')].map(el => el.textContent.trim());
+    const allSymbols = [...new Set([...updated, ...tickerSymbols])];
+    renderTickerBar(updated, _prices, _isAdmin, _currentSector);
+    _unsubPrices?.();
+    _unsubPrices = subscribePrices(allSymbols, newPrices => {
+      _prices = newPrices;
+      updatePriceCells(_prices);
+      renderTickerBar(_currentSector?.ticker_overview || [], _prices, _isAdmin, _currentSector);
+    });
   }
 });
 
