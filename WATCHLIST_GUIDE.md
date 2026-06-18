@@ -1,53 +1,44 @@
 # Watchlist Guide
 
-Everything the website displays is driven by two JSON files:
+Two JSON files drive everything the website displays:
 
 | File | Purpose |
 |---|---|
 | `data/watchlist.json` | Structure: sectors, subsectors, notes, symbol list |
-| `data/prices.json` | Price data updated daily by the automation script |
+| `data/prices.json` | Price data — updated daily by automation |
 
-You only ever edit `watchlist.json` by hand.  `prices.json` is written by the script.
+Only edit `watchlist.json` by hand. `prices.json` is written by the script.
 
 ---
 
-## `data/watchlist.json` — Full Schema
+## `data/watchlist.json` Schema
 
 ```jsonc
 {
   "sectors": [
     {
-      "id":             "unique-slug",          // used internally; no spaces
-      "name":           "Tab display name",     // shown in the sector tab bar
-      "ticker_overview": ["SYM1", "SYM2"],      // shown in the top ticker-performance bar
+      "id":   "unique-slug",
+      "name": "Tab label",
+      "ticker_overview": ["SYM1", "SYM2"],  // top ticker-performance bar
 
       "subsectors": [
         {
-          "id":    "subsector-slug",
-          "name":  "Subsector heading",
+          "id":   "subsector-slug",
+          "name": "Subsector heading",
 
-          // Markdown-lite notes shown in the left panel.
-          // Supported syntax: **bold**, lines starting with "- " become bullets.
-          "notes": "- **CRDO**: description…\n- **ALAB**: description…",
+          // Markdown-lite: **bold**, lines starting with "- " become bullets
+          "notes": "- **CRDO**: description...\n- **ALAB**: ...",
 
-          // The watchlist table shown in the right panel.
           "watchlist": [
-            {
-              "symbol": "CRDO",                 // must match a key in prices.json
-              "name":   "Credo Technology",     // full company name
-              "market": "US"                    // "US" or "TW"
-            }
+            { "symbol": "CRDO", "name": "Credo Technology", "market": "US" }
           ],
 
-          // Optional extra analysis tables below the two panels.
+          // Optional extra analysis tables
           "analysis": [
             {
               "title": "Table heading",
               "columns": ["Col A", "Col B", "Col C"],
-              "rows": [
-                ["row1a", "row1b", "row1c"],
-                ["row2a", "row2b", "row2c"]
-              ]
+              "rows": [["r1a", "r1b", "r1c"], ["r2a", "r2b", "r2c"]]
             }
           ]
         }
@@ -59,16 +50,14 @@ You only ever edit `watchlist.json` by hand.  `prices.json` is written by the sc
 
 ---
 
-## How to Add a New Sector (Tab)
+## Add a New Sector
 
-1. Open `data/watchlist.json`.
-2. Append a new object to the `"sectors"` array following the schema above.
-3. Set `ticker_overview` to the symbols you want in the top bar (usually 4–8).
-4. Add at least one subsector with a `watchlist`.
-5. Add the new symbols to `data/prices.json` temporarily with placeholder values
-   (or just run the update script manually — see below).
+1. Append an object to `"sectors"` in `data/watchlist.json`.
+2. Set `ticker_overview` (4–8 symbols for the top bar).
+3. Add subsectors with `notes` and `watchlist`.
+4. Run the price update script once to populate the new symbols.
 
-### Minimal new sector example
+### Minimal example
 
 ```json
 {
@@ -79,11 +68,10 @@ You only ever edit `watchlist.json` by hand.  `prices.json` is written by the sc
     {
       "id": "asic-design",
       "name": "ASIC Design & EDA",
-      "notes": "- **Broadcom (AVGO)**: Custom ASIC leader for hyperscalers (Google TPU, Meta MTIA).\n- **Arm (ARM)**: CPU IP licensor.",
+      "notes": "- **Broadcom (AVGO)**: Custom ASIC for hyperscalers.\n- **Arm (ARM)**: CPU IP licensor.",
       "watchlist": [
         { "symbol": "AVGO", "name": "Broadcom Inc.", "market": "US" },
-        { "symbol": "ARM",  "name": "Arm Holdings",  "market": "US" },
-        { "symbol": "CDNS", "name": "Cadence Design", "market": "US" }
+        { "symbol": "ARM",  "name": "Arm Holdings",  "market": "US" }
       ]
     }
   ]
@@ -92,55 +80,50 @@ You only ever edit `watchlist.json` by hand.  `prices.json` is written by the sc
 
 ---
 
-## Symbol Format
+## Symbol Formats
 
 | Market | Format | Example |
 |---|---|---|
-| US (NASDAQ/NYSE) | Plain ticker | `CRDO`, `AVGO`, `TEL` |
+| US (NASDAQ/NYSE) | Plain ticker | `CRDO`, `AVGO` |
 | Taiwan (TWSE) | `NNNN.TW` | `3665.TW`, `2330.TW` |
 
-TradingView links are auto-generated: `.TW` symbols map to `TWSE:NNNN`, others are passed as-is.
+TradingView links auto-generate: `.TW` → `TWSE:NNNN`, others pass through.
 
 ---
 
-## Updating Prices Manually
+## Update Prices Manually
 
 ```bash
 pip install yfinance
 python scripts/update_prices.py
 ```
 
-This rewrites `data/prices.json`.  Commit and push to publish.
+Commit and push `data/prices.json` to publish.
 
 ---
 
-## Automation (GitHub Actions)
+## GitHub Actions Automation
 
-The workflow `.github/workflows/update_prices.yml` runs automatically:
+- **Schedule**: weekdays at 02:00 UTC (after US market close)
+- **Manual**: Actions → Update Stock Prices → Run workflow
 
-- **Schedule**: every weekday at 02:00 UTC (≈ 10 PM ET, after US market close)
-- **Manual trigger**: go to *Actions → Update Stock Prices → Run workflow*
-
-The job fetches prices, updates `data/prices.json`, commits, and pushes.
-GitHub Pages then rebuilds the site automatically.
-
-No secrets are needed — `yfinance` uses free public data.
+No API keys needed — yfinance uses free public data.
 
 ---
 
-## Adding a New Tab (Non-Watchlist Page)
+## Add a New Tab (non-watchlist page)
 
-1. In `index.html`, add a `<nav>` link inside `.sidebar-nav`:
+1. Add nav link in `index.html` inside `.sidebar-nav`:
    ```html
    <a class="nav-item" data-page="blog" href="#">
      <span class="nav-icon"><!-- svg --></span>
      Blog
    </a>
    ```
-2. Add the corresponding page section:
+2. Add page section:
    ```html
    <section id="page-blog" class="page">
-     <!-- your content -->
+     <!-- content -->
    </section>
    ```
-   The JS router picks it up automatically via `data-page`.
+   The JS router picks it up automatically.

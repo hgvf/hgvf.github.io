@@ -37,7 +37,6 @@
         </span>
         Stock Watchlist
       </a>
-      <!-- Add more nav items here -->
     </nav>
 
     <div class="sidebar-footer">
@@ -59,27 +58,22 @@
     </div>
   </aside>
 
-  <!-- Mobile hamburger -->
   <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 
-  <!-- Main content -->
   <main class="main-content">
 
-    <!-- ── HOME PAGE ── -->
     <section id="page-home" class="page active">
       <div class="page-header">
         <h2 class="page-title">Welcome</h2>
       </div>
-
       <div class="home-grid">
         <div class="glass-card home-about">
           <h3 class="card-title">About Me</h3>
           <p>Hi, I'm <strong>Kuan-Wei Tang (唐冠維)</strong>, a researcher in Natural Language Processing at National Taiwan University of Science and Technology (NTUST). My work focuses on speech and language technologies.</p>
           <p style="margin-top:0.75rem">I also actively study financial markets — particularly in semiconductor and high-speed interconnect sectors. This site hosts my research notes, watchlists, and occasional blog posts.</p>
         </div>
-
         <div class="glass-card home-interests">
           <h3 class="card-title">Research Interests</h3>
           <ul class="interest-list">
@@ -89,7 +83,6 @@
             <li>Large Language Models</li>
           </ul>
         </div>
-
         <div class="glass-card home-links">
           <h3 class="card-title">Quick Links</h3>
           <div class="quick-links">
@@ -100,26 +93,17 @@
       </div>
     </section>
 
-    <!-- ── WATCHLIST PAGE ── -->
     <section id="page-watchlist" class="page">
       <div class="page-header">
         <h2 class="page-title">Stock Watchlist</h2>
         <span class="last-updated" id="lastUpdated">Loading...</span>
       </div>
-
-      <!-- Sector tab bar -->
       <div class="sector-tabbar" id="sectorTabbar" role="tablist"></div>
-
-      <!-- Ticker performance bar -->
       <div class="ticker-bar glass-card" id="tickerBar">
         <div class="ticker-bar-inner" id="tickerBarInner"></div>
       </div>
-
-      <!-- Sector content panels -->
       <div id="sectorContent"></div>
     </section>
-
-    <!-- Add more pages here following the same pattern -->
 
   </main>
 
