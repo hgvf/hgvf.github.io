@@ -217,6 +217,16 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     wrap.appendChild(block);
   });
 
+  if (isAdmin) {
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-delete-sector admin-only';
+    delBtn.dataset.action = 'del-sector';
+    delBtn.dataset.sectorId = sector.id;
+    delBtn.dataset.sectorName = sector.name;
+    delBtn.textContent = '🗑 Delete this tab';
+    wrap.appendChild(delBtn);
+  }
+
   return wrap;
 }
 

@@ -6,7 +6,7 @@ import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
   initAdminModals,
-  openAddSector, submitSector,
+  openAddSector, submitSector, handleDeleteSector,
   openAddSubsector, openEditSubsector, submitSubsector, handleDeleteSubsector,
   openEditNotes, submitNotes,
   openAddTicker, openEditTicker, submitTicker, handleDeleteTicker,
@@ -188,7 +188,9 @@ function bindSectorEvents(subsectorsData) {
     const action = t.dataset?.action;
     if (!action) return;
 
-    if (action === 'add-subsector') {
+    if (action === 'del-sector') {
+      await handleDeleteSector(t.dataset.sectorId, t.dataset.sectorName, () => loadWatchlist());
+    } else if (action === 'add-subsector') {
       const sectorId = t.dataset.sectorId;
       if (sectorId) openAddSubsector(sectorId, subsectorsData.length);
     } else if (action === 'edit-subsector') {
