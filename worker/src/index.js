@@ -140,23 +140,27 @@ async function firestoreSet(token, projectId, docPath, fields) {
   });
 }
 
-// Batch-write up to 500 docs in a single Firestore commit request (1 subrequest).
+// Batch-write docs via Firestore :commit. Each commit holds up to 500 writes
+// (Firestore hard limit), so chunk accordingly — 1 subrequest per 500 docs.
 async function firestoreBatchSet(token, projectId, writes) {
   if (writes.length === 0) return;
   const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:commit`;
-  const body = {
-    writes: writes.map(({ docPath, fields }) => ({
-      update: {
-        name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
-        fields: toFirestoreFields(fields),
-      },
-    })),
-  };
-  return fetch(url, {
-    method:  'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body:    JSON.stringify(body),
-  });
+  const CHUNK = 500;
+  for (let i = 0; i < writes.length; i += CHUNK) {
+    const body = {
+      writes: writes.slice(i, i + CHUNK).map(({ docPath, fields }) => ({
+        update: {
+          name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
+          fields: toFirestoreFields(fields),
+        },
+      })),
+    };
+    await fetch(url, {
+      method:  'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body),
+    });
+  }
 }
 
 async function firestoreGet(token, projectId, collPath) {

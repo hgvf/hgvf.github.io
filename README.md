@@ -101,6 +101,15 @@ export const WORKER_URL = "https://watchlist-worker.YOUR_SUBDOMAIN.workers.dev";
 wrangler deploy
 ```
 
+> ⚠️ **重要：改完 `worker/src/index.js` 一定要重新部署，程式碼進 repo 不會自動生效。**
+> 若忘記重新部署，線上 Worker 仍跑舊版（例如 "Too many subrequests" 這類已修好的錯誤會持續出現）。
+>
+> **自動部署（建議）**：repo 內含 `.github/workflows/deploy_worker.yml`，只要
+> 在 GitHub 加入 `CLOUDFLARE_API_TOKEN` secret（用 "Edit Cloudflare Workers" 範本建立
+> 於 <https://dash.cloudflare.com/profile/api-tokens>），之後每次 `worker/**` 變更推到
+> `main` 就會自動 `wrangler deploy`。也可在 Actions 分頁手動觸發（workflow_dispatch）。
+> 既有的 `wrangler secret`（service account 等）會在部署間保留，不會被清掉。
+
 ### 3.6 Test manual trigger
 
 ```bash
