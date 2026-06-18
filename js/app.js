@@ -1,316 +1,280 @@
-/* ─── Page navigation ────────────────────────────────────── */
-function initNav() {
-  const navItems = document.querySelectorAll('.nav-item[data-page]');
-  const navTriggers = document.querySelectorAll('.nav-trigger[data-page]');
+/* ── Main application ────────────────────────────────────────────── */
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { firebaseConfig, WORKER_URL } from './config.js';
+import { initDB, getSectors, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices } from './db.js';
+import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
+import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
+import {
+  initAdminModals,
+  openAddSector, submitSector,
+  openAddSubsector, openEditSubsector, submitSubsector, handleDeleteSubsector,
+  openEditNotes, submitNotes,
+  openAddTicker, openEditTicker, submitTicker, handleDeleteTicker,
+  openAddAnalysis, openEditAnalysis, submitAnalysis, handleDeleteAnalysis,
+  openAddResearchNote, openEditResearchNote, submitResearchNote, handleDeleteResearchNote,
+  openWhitelist, submitWhitelistEmail,
+} from './admin.js';
 
-  function goToPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const page = document.getElementById('page-' + pageId);
-    if (page) page.classList.add('active');
-    const navEl = document.querySelector('.nav-item[data-page="' + pageId + '"]');
-    if (navEl) navEl.classList.add('active');
+/* ── App state ───────────────────────────────────────────────────── */
+let _isAdmin       = false;
+let _sectors       = [];
+let _currentSector = null;
+let _unsubPrices   = null;
+let _prices        = {};
 
-    // Lazy-load watchlist on first visit
-    if (pageId === 'watchlist' && !window._watchlistLoaded) {
-      window._watchlistLoaded = true;
-      loadWatchlist();
-    }
+/* ── Firebase init ───────────────────────────────────────────────── */
+const app  = initializeApp(firebaseConfig);
+initDB(app);
+initAuth(app);
+
+/* ── Navigation ──────────────────────────────────────────────────── */
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page    = document.getElementById(`page-${pageId}`);
+  const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (page)    page.classList.add('active');
+  if (navItem) navItem.classList.add('active');
+  if (pageId === 'watchlist') loadWatchlist();
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    showPage(item.dataset.page);
+    if (window.innerWidth < 768) document.getElementById('sidebar')?.classList.remove('open');
+  });
+});
+document.getElementById('menuToggle')?.addEventListener('click', () => {
+  document.getElementById('sidebar')?.classList.toggle('open');
+});
+
+/* ── Auth ────────────────────────────────────────────────────────── */
+onAuthChange(({ user, isAdmin }) => {
+  _isAdmin = isAdmin;
+  const loginBtn  = document.getElementById('btnLogin');
+  const logoutBtn = document.getElementById('btnLogout');
+  const userInfo  = document.getElementById('userInfo');
+
+  if (user) {
+    if (loginBtn)  loginBtn.style.display  = 'none';
+    if (logoutBtn) logoutBtn.style.display = '';
+    if (userInfo)  userInfo.textContent    = user.displayName || user.email;
+  } else {
+    if (loginBtn)  loginBtn.style.display  = '';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (userInfo)  userInfo.textContent    = '';
   }
-
-  navItems.forEach(item => {
-    item.addEventListener('click', e => {
-      e.preventDefault();
-      goToPage(item.dataset.page);
-    });
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = isAdmin ? '' : 'none';
   });
-  navTriggers.forEach(item => {
-    item.addEventListener('click', e => {
-      e.preventDefault();
-      goToPage(item.dataset.page);
-    });
-  });
-}
 
-/* ─── Sidebar mobile toggle ──────────────────────────────── */
-function initSidebar() {
-  const btn = document.getElementById('sidebarToggle');
-  const sidebar = document.getElementById('sidebar');
-  if (!btn || !sidebar) return;
-  btn.addEventListener('click', () => sidebar.classList.toggle('open'));
-  document.addEventListener('click', e => {
-    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== btn) {
-      sidebar.classList.remove('open');
-    }
-  });
-}
+  const wlPage = document.getElementById('page-watchlist');
+  if (wlPage?.classList.contains('active')) loadWatchlist();
+});
 
-/* ─── Watchlist loading ──────────────────────────────────── */
+document.getElementById('btnLogin')?.addEventListener('click',  () => signIn().catch(console.error));
+document.getElementById('btnLogout')?.addEventListener('click', () => signOutUser().catch(console.error));
+
+/* ── Watchlist loader ────────────────────────────────────────────── */
 async function loadWatchlist() {
-  let watchlistData, priceData;
+  const sectorTabsEl = document.getElementById('sectorTabs');
+  const statusEl     = document.getElementById('priceStatus');
+  if (statusEl) statusEl.textContent = 'Loading…';
 
   try {
-    const [wlRes, prRes] = await Promise.all([
-      fetch('data/watchlist.json'),
-      fetch('data/prices.json'),
-    ]);
-    watchlistData = await wlRes.json();
-    priceData     = await prRes.json();
+    _sectors = await getSectors();
   } catch (err) {
-    document.getElementById('sectorContent').innerHTML =
-      '<p class="state-msg">Failed to load watchlist data.</p>';
-    console.error(err);
+    if (statusEl) statusEl.textContent = 'Failed to load sectors.';
     return;
   }
 
-  // Last updated
-  const upd = document.getElementById('lastUpdated');
-  if (upd && priceData.last_updated) {
-    upd.textContent = 'Updated: ' + priceData.last_updated;
-  }
-
-  renderSectors(watchlistData.sectors, priceData.prices || {});
-}
-
-/* ─── Sector tabs ────────────────────────────────────────── */
-function renderSectors(sectors, prices) {
-  const tabbar  = document.getElementById('sectorTabbar');
-  const tickerBarInner = document.getElementById('tickerBarInner');
-  const content = document.getElementById('sectorContent');
-
-  tabbar.innerHTML = '';
-  content.innerHTML = '';
-
-  if (!sectors || sectors.length === 0) {
-    content.innerHTML = '<p class="state-msg">No sectors configured.</p>';
-    return;
-  }
-
-  sectors.forEach((sector, idx) => {
-    // Tab button
-    const tab = document.createElement('button');
-    tab.className = 'sector-tab' + (idx === 0 ? ' active' : '');
-    tab.textContent = sector.name;
-    tab.setAttribute('role', 'tab');
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      showSector(sector, prices, tickerBarInner, content);
+  if (sectorTabsEl) {
+    sectorTabsEl.innerHTML = '';
+    _sectors.forEach(s => {
+      const btn = document.createElement('button');
+      btn.className        = 'sector-tab';
+      btn.dataset.sectorId = s.id;
+      btn.textContent      = s.name;
+      btn.addEventListener('click', () => selectSector(s.id));
+      sectorTabsEl.appendChild(btn);
     });
-    tabbar.appendChild(tab);
-  });
-
-  // Show first sector by default
-  showSector(sectors[0], prices, tickerBarInner, content);
-}
-
-function showSector(sector, prices, tickerBarInner, content) {
-  // Ticker performance bar
-  const overviewSymbols = sector.ticker_overview || [];
-  tickerBarInner.innerHTML = '';
-  overviewSymbols.forEach(sym => {
-    const p = prices[sym] || {};
-    tickerBarInner.appendChild(buildTickerCard(sym, p));
-  });
-
-  // Subsector blocks
-  content.innerHTML = '';
-  const subsectors = sector.subsectors || [];
-  subsectors.forEach(sub => {
-    content.appendChild(buildSubsectorBlock(sub, prices));
-  });
-}
-
-/* ─── Ticker card ────────────────────────────────────────── */
-function buildTickerCard(symbol, p) {
-  const dayChg = p.day_change_pct ?? null;
-  const cls    = changeClass(dayChg);
-  const color  = cls === 'positive' ? 'var(--positive)' : cls === 'negative' ? 'var(--negative)' : 'var(--neutral)';
-
-  const href = tradingViewUrl(symbol);
-
-  const card = document.createElement('a');
-  card.className = 'ticker-card';
-  card.href = href;
-  card.target = '_blank';
-  card.rel = 'noopener';
-  card.style.setProperty('--indicator-color', color);
-  card.title = 'Open in TradingView';
-
-  const price = p.last != null ? formatPrice(p.last, symbol) : '—';
-  const chgStr = dayChg != null ? (dayChg >= 0 ? '+' : '') + dayChg.toFixed(2) + '%' : '—';
-
-  card.innerHTML = `
-    <span class="tc-symbol">${symbol}</span>
-    <span class="tc-name">${p.name || ''}</span>
-    <span class="tc-price">${price}</span>
-    <span class="tc-change ${cls}">${chgStr}</span>
-  `;
-  return card;
-}
-
-/* ─── Subsector block ────────────────────────────────────── */
-function buildSubsectorBlock(sub, prices) {
-  const block = document.createElement('div');
-  block.className = 'subsector-block';
-
-  const title = document.createElement('h3');
-  title.className = 'subsector-title';
-  title.textContent = sub.name;
-  block.appendChild(title);
-
-  const grid = document.createElement('div');
-  grid.className = 'subsector-grid';
-
-  // Notes panel
-  if (sub.notes) {
-    const notesCard = document.createElement('div');
-    notesCard.className = 'glass-card notes-card';
-    notesCard.innerHTML = `
-      <p class="card-title">Notes</p>
-      <div class="notes-body">${parseNotes(sub.notes)}</div>
-    `;
-    grid.appendChild(notesCard);
+    if (_isAdmin) {
+      const addBtn = document.createElement('button');
+      addBtn.className = 'sector-tab sector-tab-add admin-only';
+      addBtn.textContent = '+ Sector';
+      addBtn.addEventListener('click', () => openAddSector(_sectors.length));
+      sectorTabsEl.appendChild(addBtn);
+    }
   }
 
-  // Watchlist table
-  if (sub.watchlist && sub.watchlist.length > 0) {
-    const wlCard = document.createElement('div');
-    wlCard.className = 'glass-card wl-card';
-    wlCard.innerHTML = `
-      <p class="card-title">Watchlist</p>
-      <div class="wl-table-wrapper">${buildWatchlistTable(sub.watchlist, prices)}</div>
-    `;
-    grid.appendChild(wlCard);
-  }
-
-  block.appendChild(grid);
-
-  // Extra analysis tables
-  if (sub.analysis && sub.analysis.length > 0) {
-    sub.analysis.forEach(a => {
-      const card = document.createElement('div');
-      card.className = 'glass-card analysis-card';
-      card.innerHTML = `
-        <p class="card-title">${a.title || 'Analysis'}</p>
-        <div class="wl-table-wrapper">${buildAnalysisTable(a)}</div>
-      `;
-      block.appendChild(card);
-    });
-  }
-
-  return block;
+  if (_sectors.length > 0) await selectSector(_sectors[0].id);
+  if (statusEl) statusEl.textContent = '';
 }
 
-/* ─── Watchlist table HTML ───────────────────────────────── */
-function buildWatchlistTable(watchlist, prices) {
-  const cols = ['Last', 'Day%', 'Wk%', 'Mo%', 'Yr%', 'P/E', 'Mkt Cap', 'Volume'];
+async function selectSector(sectorId) {
+  _currentSector = _sectors.find(s => s.id === sectorId) || null;
+  if (!_currentSector) return;
 
-  let rows = watchlist.map(item => {
-    const p = prices[item.symbol] || {};
-    const tvUrl  = tradingViewUrl(item.symbol);
-    const yhUrl  = yahooUrl(item.symbol);
-    const price  = p.last != null ? formatPrice(p.last, item.symbol) : '—';
+  document.querySelectorAll('.sector-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.sectorId === sectorId);
+  });
 
-    return `<tr>
-      <td>
-        <div class="wl-name-cell">
-          <a class="wl-symbol" href="${tvUrl}" target="_blank" rel="noopener" title="TradingView">${item.symbol}</a>
-          <span class="wl-fullname">${item.name || ''}</span>
-        </div>
-      </td>
-      <td>${price}</td>
-      <td class="${changeClass(p.day_change_pct)}">${fmtChg(p.day_change_pct)}</td>
-      <td class="${changeClass(p.week_change_pct)}">${fmtChg(p.week_change_pct)}</td>
-      <td class="${changeClass(p.month_change_pct)}">${fmtChg(p.month_change_pct)}</td>
-      <td class="${changeClass(p.year_change_pct)}">${fmtChg(p.year_change_pct)}</td>
-      <td>${p.pe_ratio ? p.pe_ratio.toFixed(2) : '—'}</td>
-      <td>${fmtMarketCap(p)}</td>
-      <td>${fmtVolume(p.day_volume)}</td>
-    </tr>`;
-  }).join('');
+  _unsubPrices?.();
 
-  const headers = ['Name', ...cols].map(h => `<th>${h}</th>`).join('');
+  const subsectors = await getSubsectors(sectorId);
+  const subsectorsData = await Promise.all(
+    subsectors.map(async sub => ({
+      subsector:      sub,
+      tickers:        await getTickers(sub.id),
+      analysis:       await getAnalysis(sub.id),
+      research_notes: await getResearchNotes(sub.id),
+    }))
+  );
 
-  return `<table class="wl-table">
-    <thead><tr>${headers}</tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  const tickerSymbols  = subsectorsData.flatMap(({ tickers }) => tickers.map(t => t.symbol));
+  const overviewSymbols = _currentSector.ticker_overview || [];
+  const allSymbols     = [...new Set([...overviewSymbols, ...tickerSymbols])];
+
+  renderTickerBar(overviewSymbols, _prices);
+  renderSectorContent(_currentSector, subsectorsData, _prices, _isAdmin);
+  bindSectorEvents(subsectorsData);
+
+  _unsubPrices = subscribePrices(allSymbols, newPrices => {
+    _prices = newPrices;
+    updatePriceCells(_prices);
+    renderTickerBar(overviewSymbols, _prices);
+  });
 }
 
-/* ─── Analysis table HTML ────────────────────────────────── */
-function buildAnalysisTable(a) {
-  if (!a.columns || !a.rows) return '';
-  const ths = a.columns.map(c => `<th style="text-align:left">${c}</th>`).join('');
-  const trs = a.rows.map(r => {
-    const tds = r.map(cell => `<td style="text-align:left;font-family:var(--font-sans)">${cell}</td>`).join('');
-    return `<tr>${tds}</tr>`;
-  }).join('');
-  return `<table class="wl-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+/* ── Admin event delegation ──────────────────────────────────────── */
+function bindSectorEvents(subsectorsData) {
+  const container = document.getElementById('sectorContent');
+  if (!container) return;
+
+  // Remove old listener by replacing node (simple approach)
+  const fresh = container.cloneNode(true);
+  container.parentNode.replaceChild(fresh, container);
+  const c = document.getElementById('sectorContent');
+
+  // Research expand/collapse
+  c.addEventListener('click', e => {
+    const header = e.target.closest('.research-header');
+    if (header && !e.target.closest('.card-admin-ctrls')) {
+      header.closest('.research-card')?.classList.toggle('open');
+    }
+  });
+  c.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const header = e.target.closest('.research-header[role="button"]');
+    if (header) { e.preventDefault(); header.closest('.research-card')?.classList.toggle('open'); }
+  });
+
+  if (!_isAdmin) return;
+
+  const reload = () => selectSector(_currentSector?.id);
+
+  c.addEventListener('click', async e => {
+    const t = e.target;
+
+    if (t.matches('.btn-edit-sub')) {
+      const sub = subsectorsData.find(d => d.subsector.id === t.dataset.id)?.subsector;
+      if (sub) openEditSubsector(sub);
+    } else if (t.matches('.btn-delete-sub')) {
+      await handleDeleteSubsector(t.dataset.id, reload);
+    } else if (t.matches('.btn-edit-notes')) {
+      const sub = subsectorsData.find(d => d.subsector.id === t.dataset.id)?.subsector;
+      if (sub) openEditNotes(sub);
+    } else if (t.matches('.btn-add-ticker')) {
+      const wlCard = t.closest('.wl-card');
+      const subId  = wlCard?.dataset.subsectorId;
+      const sub    = subsectorsData.find(d => d.subsector.id === subId);
+      if (subId) openAddTicker(subId, sub?.tickers.length || 0);
+    } else if (t.matches('.btn-edit') && t.closest('tr')) {
+      const wlCard = t.closest('.wl-card');
+      const subId  = wlCard?.dataset.subsectorId;
+      const sub    = subsectorsData.find(d => d.subsector.id === subId);
+      const ticker = sub?.tickers.find(tk => tk.id === t.dataset.id);
+      if (ticker) openEditTicker(ticker);
+    } else if (t.matches('.btn-delete') && t.closest('tr')) {
+      await handleDeleteTicker(t.dataset.id, reload);
+    } else if (t.matches('.btn-add-analysis')) {
+      const subId = t.dataset.subsectorId;
+      const sub   = subsectorsData.find(d => d.subsector.id === subId);
+      openAddAnalysis(subId, sub?.analysis.length || 0);
+    } else if (t.matches('.btn-edit') && t.closest('.analysis-card')) {
+      const card = t.closest('.analysis-card');
+      const a    = subsectorsData.flatMap(d => d.analysis).find(x => x.id === card.dataset.analysisId);
+      if (a) openEditAnalysis(a);
+    } else if (t.matches('.btn-delete') && t.closest('.analysis-card')) {
+      await handleDeleteAnalysis(t.dataset.id, reload);
+    } else if (t.matches('.btn-add-research')) {
+      const subId = t.dataset.subsectorId;
+      const sub   = subsectorsData.find(d => d.subsector.id === subId);
+      openAddResearchNote(subId, sub?.research_notes.length || 0);
+    } else if (t.matches('.btn-edit') && t.closest('.research-card')) {
+      const card = t.closest('.research-card');
+      const note = subsectorsData.flatMap(d => d.research_notes).find(n => n.id === card.dataset.noteId);
+      if (note) openEditResearchNote(note);
+    } else if (t.matches('.btn-delete') && t.closest('.research-card')) {
+      await handleDeleteResearchNote(t.dataset.id, reload);
+    }
+  });
 }
 
-/* ─── Helpers ────────────────────────────────────────────── */
-function tradingViewUrl(symbol) {
-  const s = symbol.replace('.TW', '');
-  if (symbol.endsWith('.TW')) return `https://www.tradingview.com/chart/?symbol=TWSE:${s}`;
-  return `https://www.tradingview.com/chart/?symbol=${symbol}`;
-}
-
-function yahooUrl(symbol) {
-  return `https://finance.yahoo.com/quote/${symbol}`;
-}
-
-function changeClass(val) {
-  if (val == null) return 'chg-neutral';
-  if (val > 0)  return 'chg-positive';
-  if (val < 0)  return 'chg-negative';
-  return 'chg-neutral';
-}
-
-function fmtChg(val) {
-  if (val == null) return '—';
-  const prefix = val >= 0 ? '+' : '';
-  return prefix + val.toFixed(2) + '%';
-}
-
-function formatPrice(price, symbol) {
-  const isTW = symbol && symbol.endsWith('.TW');
-  if (isTW) return price.toLocaleString('zh-TW', { maximumFractionDigits: 0 });
-  return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function fmtMarketCap(p) {
-  if (!p.market_cap) return '—';
-  const currency = p.market_cap_currency || '';
-  return `${p.market_cap}${p.market_cap_suffix || ''} ${currency}`.trim();
-}
-
-function fmtVolume(v) {
-  if (!v) return '—';
-  if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
-  if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
-  return v.toString();
-}
-
-// Very minimal markdown: **bold**, bullet lines starting with -
-function parseNotes(text) {
-  return text
-    .split('\n')
-    .map(line => {
-      line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      if (line.trim().startsWith('- ')) {
-        return `<p style="padding-left:0.85rem;position:relative">
-          <span style="position:absolute;left:0;color:var(--accent)">·</span>
-          ${line.trim().slice(2)}
-        </p>`;
-      }
-      return line ? `<p>${line}</p>` : '';
-    })
-    .join('');
-}
-
-/* ─── Init ───────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  initNav();
-  initSidebar();
+/* ── Modal form submissions ──────────────────────────────────────── */
+document.getElementById('formSector')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitSector(() => loadWatchlist());
 });
+document.getElementById('formSubsector')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitSubsector(() => selectSector(_currentSector?.id));
+});
+document.getElementById('formNotes')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitNotes(() => selectSector(_currentSector?.id));
+});
+document.getElementById('formTicker')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitTicker(() => selectSector(_currentSector?.id));
+});
+document.getElementById('formAnalysis')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitAnalysis(() => selectSector(_currentSector?.id));
+});
+document.getElementById('formResearch')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitResearchNote(() => selectSector(_currentSector?.id));
+});
+document.getElementById('formWhitelistEmail')?.addEventListener('submit', async e => {
+  e.preventDefault(); await submitWhitelistEmail();
+});
+
+/* ── Admin toolbar ───────────────────────────────────────────────── */
+document.getElementById('btnWhitelist')?.addEventListener('click',      () => openWhitelist());
+document.getElementById('btnAddSector')?.addEventListener('click',      () => openAddSector(_sectors.length));
+
+/* ── Manual price refresh ────────────────────────────────────────── */
+document.getElementById('btnRefreshPrices')?.addEventListener('click', async () => {
+  const btn      = document.getElementById('btnRefreshPrices');
+  const statusEl = document.getElementById('priceStatus');
+  btn.disabled   = true;
+  if (statusEl) { statusEl.textContent = 'Fetching…'; statusEl.className = 'price-status'; }
+
+  try {
+    const token = await getIdToken();
+    const res   = await fetch(`${WORKER_URL}/trigger`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      if (statusEl) { statusEl.textContent = `Updated ${data.updated ?? '?'} symbols`; statusEl.className = 'price-status ok'; }
+    } else {
+      if (statusEl) { statusEl.textContent = `Error: ${data.error || res.status}`; statusEl.className = 'price-status err'; }
+    }
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = `Failed: ${err.message}`; statusEl.className = 'price-status err'; }
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+/* ── Boot ────────────────────────────────────────────────────────── */
+initAdminModals();
+showPage('home');

@@ -1,53 +1,120 @@
 # Watchlist Guide
 
-Everything the website displays is driven by two JSON files:
-
-| File | Purpose |
-|---|---|
-| `data/watchlist.json` | Structure: sectors, subsectors, notes, symbol list |
-| `data/prices.json` | Price data updated daily by the automation script |
-
-You only ever edit `watchlist.json` by hand.  `prices.json` is written by the script.
+How to manage the stock watchlist site day-to-day.
 
 ---
 
-## `data/watchlist.json` — Full Schema
+## Two Ways to Edit Watchlist Data
 
-```jsonc
+### Option 1: Admin UI (preferred)
+
+1. Go to the site, click **Sign In** in the sidebar
+2. The site adds edit/delete buttons next to every element
+3. Changes go directly to Firestore — no rebuild needed
+4. Prices update live via real-time Firestore listener
+
+### Option 2: Edit JSON + backup.py import
+
+1. Edit `data/watchlist.json` locally
+2. Run `python scripts/backup.py --import --credentials /path/to/sa.json`
+3. To export current Firestore state: `python scripts/backup.py --export --credentials /path/to/sa.json`
+
+---
+
+## Admin UI Button Reference
+
+### Sector Tabs
+- **✎** (next to tab name) — rename the sector or change ticker_overview symbols
+- **✕** (next to tab name) — delete the sector and all its subsectors/tickers
+- **+ Add Sector** — button at the end of the tab bar
+
+### Subsector Title
+- **✎** — rename subsector
+- **✕** — delete subsector
+- **+ Add Subsector** — button at the bottom of a sector's content area
+
+### Notes Panel
+- **✎ Edit Notes** — opens a textarea for the markdown notes
+- Supports: `**bold**`, `- bullets`, `# headings`, `## subheadings`
+
+### Watchlist Table
+- **✎** (per row) — edit symbol, name, market, order
+- **✕** (per row) — remove ticker
+- **+ Add Ticker** — button in the table footer
+
+### Analysis Tables
+- **✎** (next to title) — edit title, columns (comma-separated), rows (one per line, `|` separator)
+- **✕** (next to title) — delete table
+- **+ Add Analysis** — appears below analysis tables
+
+### Research Note Cards
+- **▾** (click card header) — expand/collapse content
+- **✎** — edit title, content (full markdown), order
+- **✕** — delete note
+- **+ Add Research Note** — appears below research cards
+
+### Header Buttons
+- **Refresh Prices** — calls the Cloudflare Worker to fetch current prices; visible to all but requires the Worker secret in Firestore to work
+- **Export** (admin only) — downloads all Firestore data as `watchlist.json`
+- **Import** (admin only) — uploads a JSON file and seeds Firestore
+
+### Sidebar
+- **Manage Whitelist** — add/remove admin email addresses
+
+---
+
+## Research Notes Format
+
+Research notes are per-subsector expandable cards. Each note has:
+- **Title** — shown in the collapsed card header (e.g. "Astera Labs 介紹")
+- **Content** — full markdown:
+  ```
+  # Main Heading
+  
+  ## Subheading
+  
+  - **Company**: description here
+  - **Another point**: more detail
+  
+  Plain paragraph text.
+  ```
+- **Order** — numeric sort order within the subsector
+
+---
+
+## JSON Schema (Cold Backup)
+
+### data/watchlist.json
+```json
 {
   "sectors": [
     {
-      "id":             "unique-slug",          // used internally; no spaces
-      "name":           "Tab display name",     // shown in the sector tab bar
-      "ticker_overview": ["SYM1", "SYM2"],      // shown in the top ticker-performance bar
-
+      "id": "optional-doc-id",
+      "name": "Sector Name",
+      "order": 0,
+      "ticker_overview": ["SYM1", "SYM2"],
       "subsectors": [
         {
-          "id":    "subsector-slug",
-          "name":  "Subsector heading",
-
-          // Markdown-lite notes shown in the left panel.
-          // Supported syntax: **bold**, lines starting with "- " become bullets.
-          "notes": "- **CRDO**: description…\n- **ALAB**: description…",
-
-          // The watchlist table shown in the right panel.
-          "watchlist": [
-            {
-              "symbol": "CRDO",                 // must match a key in prices.json
-              "name":   "Credo Technology",     // full company name
-              "market": "US"                    // "US" or "TW"
-            }
+          "id": "optional-doc-id",
+          "name": "Subsector Name",
+          "order": 0,
+          "notes": "- **Co**: description\n- **Co2**: notes",
+          "tickers": [
+            { "symbol": "NVDA", "name": "NVIDIA Corp.", "market": "US", "order": 0 }
           ],
-
-          // Optional extra analysis tables below the two panels.
           "analysis": [
             {
-              "title": "Table heading",
-              "columns": ["Col A", "Col B", "Col C"],
-              "rows": [
-                ["row1a", "row1b", "row1c"],
-                ["row2a", "row2b", "row2c"]
-              ]
+              "title": "Revenue Breakdown",
+              "columns": ["Company", "Category", "Detail"],
+              "rows": [["NVDA", "Data Center", "87%"]],
+              "order": 0
+            }
+          ],
+          "research_notes": [
+            {
+              "title": "NVDA Introduction",
+              "content": "# NVIDIA\n\n- **GPU leader**: dominates AI training",
+              "order": 0
             }
           ]
         }
@@ -57,90 +124,53 @@ You only ever edit `watchlist.json` by hand.  `prices.json` is written by the sc
 }
 ```
 
----
-
-## How to Add a New Sector (Tab)
-
-1. Open `data/watchlist.json`.
-2. Append a new object to the `"sectors"` array following the schema above.
-3. Set `ticker_overview` to the symbols you want in the top bar (usually 4–8).
-4. Add at least one subsector with a `watchlist`.
-5. Add the new symbols to `data/prices.json` temporarily with placeholder values
-   (or just run the update script manually — see below).
-
-### Minimal new sector example
-
+### data/prices.json
 ```json
 {
-  "id": "asic-ip",
-  "name": "ASIC/IP",
-  "ticker_overview": ["AVGO", "ARM", "CDNS"],
-  "subsectors": [
-    {
-      "id": "asic-design",
-      "name": "ASIC Design & EDA",
-      "notes": "- **Broadcom (AVGO)**: Custom ASIC leader for hyperscalers (Google TPU, Meta MTIA).\n- **Arm (ARM)**: CPU IP licensor.",
-      "watchlist": [
-        { "symbol": "AVGO", "name": "Broadcom Inc.", "market": "US" },
-        { "symbol": "ARM",  "name": "Arm Holdings",  "market": "US" },
-        { "symbol": "CDNS", "name": "Cadence Design", "market": "US" }
-      ]
+  "last_updated": "2025-01-01 02:15 UTC",
+  "prices": {
+    "NVDA": {
+      "name": "NVIDIA Corp.",
+      "last": 875.50,
+      "day_change_pct": 2.34,
+      "week_change_pct": 5.12,
+      "month_change_pct": 12.50,
+      "year_change_pct": 180.25,
+      "pe_ratio": 65.4,
+      "market_cap": 2.15,
+      "market_cap_suffix": "T",
+      "market_cap_currency": "USD",
+      "day_volume": 42000000,
+      "last_updated": "2025-01-01 02:15:00 UTC"
     }
-  ]
+  }
 }
 ```
 
 ---
 
-## Symbol Format
+## Cloudflare Worker Manual Trigger
 
-| Market | Format | Example |
-|---|---|---|
-| US (NASDAQ/NYSE) | Plain ticker | `CRDO`, `AVGO`, `TEL` |
-| Taiwan (TWSE) | `NNNN.TW` | `3665.TW`, `2330.TW` |
+The Worker fetches prices from Yahoo Finance and writes to Firestore.
 
-TradingView links are auto-generated: `.TW` symbols map to `TWSE:NNNN`, others are passed as-is.
+**Via UI**: Click **Refresh Prices** button in the watchlist page header.
 
----
-
-## Updating Prices Manually
-
+**Via curl** (requires knowing the secret):
 ```bash
-pip install yfinance
-python scripts/update_prices.py
+curl -X POST https://watchlist-worker.YOUR_SUBDOMAIN.workers.dev/trigger \
+  -H "Authorization: Bearer YOUR_TRIGGER_SECRET"
 ```
 
-This rewrites `data/prices.json`.  Commit and push to publish.
+**Automatic schedule**: Runs at 02:00 UTC, Tuesday–Saturday (covers Mon–Fri US market closes).
 
 ---
 
-## Automation (GitHub Actions)
+## Adding a New Sector (Quick Reference)
 
-The workflow `.github/workflows/update_prices.yml` runs automatically:
-
-- **Schedule**: every weekday at 02:00 UTC (≈ 10 PM ET, after US market close)
-- **Manual trigger**: go to *Actions → Update Stock Prices → Run workflow*
-
-The job fetches prices, updates `data/prices.json`, commits, and pushes.
-GitHub Pages then rebuilds the site automatically.
-
-No secrets are needed — `yfinance` uses free public data.
-
----
-
-## Adding a New Tab (Non-Watchlist Page)
-
-1. In `index.html`, add a `<nav>` link inside `.sidebar-nav`:
-   ```html
-   <a class="nav-item" data-page="blog" href="#">
-     <span class="nav-icon"><!-- svg --></span>
-     Blog
-   </a>
-   ```
-2. Add the corresponding page section:
-   ```html
-   <section id="page-blog" class="page">
-     <!-- your content -->
-   </section>
-   ```
-   The JS router picks it up automatically via `data-page`.
+1. Click **+ Add Sector** at the end of the sector tab bar
+2. Enter name, order number, and comma-separated ticker_overview symbols
+3. Click **Save**
+4. The new sector tab appears — click it
+5. Click **+ Add Subsector**, fill in name
+6. Click **+ Add Ticker** in the watchlist table to add tickers
+7. Click **Refresh Prices** to fetch prices for the new tickers

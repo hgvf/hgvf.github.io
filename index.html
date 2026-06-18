@@ -21,6 +21,13 @@
       <h1 class="profile-name">Kuan-Wei Tang</h1>
       <p class="profile-title">NLP Researcher</p>
       <p class="profile-org">NTUST · CSIE</p>
+
+      <!-- Auth -->
+      <div class="auth-area">
+        <span class="user-info" id="userInfo"></span>
+        <button class="btn-auth" id="btnLogin">Sign in</button>
+        <button class="btn-auth btn-auth-out" id="btnLogout" style="display:none">Sign out</button>
+      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -37,8 +44,13 @@
         </span>
         Stock Watchlist
       </a>
-      <!-- Add more nav items here -->
     </nav>
+
+    <!-- Admin toolbar -->
+    <div class="sidebar-admin admin-only" style="display:none">
+      <p class="nav-section-label">ADMIN</p>
+      <button class="btn-admin" id="btnWhitelist">Manage Whitelist</button>
+    </div>
 
     <div class="sidebar-footer">
       <p class="nav-section-label">CONTACT</p>
@@ -60,14 +72,14 @@
   </aside>
 
   <!-- Mobile hamburger -->
-  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+  <button class="sidebar-toggle" id="menuToggle" aria-label="Toggle sidebar">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
 
   <!-- Main content -->
   <main class="main-content">
 
-    <!-- ── HOME PAGE ── -->
+    <!-- HOME PAGE -->
     <section id="page-home" class="page active">
       <div class="page-header">
         <h2 class="page-title">Welcome</h2>
@@ -94,21 +106,29 @@
           <h3 class="card-title">Quick Links</h3>
           <div class="quick-links">
             <a href="https://github.com/hgvf" target="_blank" rel="noopener" class="quick-link-btn">GitHub Profile</a>
-            <a href="#" data-page="watchlist" class="quick-link-btn nav-trigger">Stock Watchlist →</a>
+            <a href="#" data-page="watchlist" class="quick-link-btn nav-item">Stock Watchlist →</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ── WATCHLIST PAGE ── -->
+    <!-- WATCHLIST PAGE -->
     <section id="page-watchlist" class="page">
       <div class="page-header">
         <h2 class="page-title">Stock Watchlist</h2>
-        <span class="last-updated" id="lastUpdated">Loading...</span>
+        <div class="page-header-actions">
+          <span class="price-status" id="priceStatus"></span>
+          <button class="btn-refresh admin-only" id="btnRefreshPrices" style="display:none" title="Fetch latest prices from Cloudflare Worker">
+            ↺ Refresh Prices
+          </button>
+          <button class="btn-refresh admin-only sector-tab-add" id="btnAddSector" style="display:none">
+            + Sector
+          </button>
+        </div>
       </div>
 
       <!-- Sector tab bar -->
-      <div class="sector-tabbar" id="sectorTabbar" role="tablist"></div>
+      <div class="sector-tabbar" id="sectorTabs" role="tablist"></div>
 
       <!-- Ticker performance bar -->
       <div class="ticker-bar glass-card" id="tickerBar">
@@ -119,10 +139,160 @@
       <div id="sectorContent"></div>
     </section>
 
-    <!-- Add more pages here following the same pattern -->
-
   </main>
 
-  <script src="js/app.js"></script>
+  <!-- ── Modals ──────────────────────────────────────────────────── -->
+
+  <!-- Sector modal -->
+  <div class="modal-overlay" id="modalSector">
+    <div class="modal-box">
+      <h3 class="modal-title" id="sectorModalTitle">Sector</h3>
+      <form id="formSector">
+        <label class="modal-label">Name
+          <input class="modal-input" id="inputSectorName" required />
+        </label>
+        <label class="modal-label">Order
+          <input class="modal-input" id="inputSectorOrder" type="number" value="0" />
+        </label>
+        <label class="modal-label">Ticker Overview (comma-separated)
+          <input class="modal-input" id="inputSectorOverview" placeholder="NVDA, AMD, INTC" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Subsector modal -->
+  <div class="modal-overlay" id="modalSubsector">
+    <div class="modal-box">
+      <h3 class="modal-title" id="subsectorModalTitle">Subsector</h3>
+      <form id="formSubsector">
+        <label class="modal-label">Name
+          <input class="modal-input" id="inputSubsectorName" required />
+        </label>
+        <label class="modal-label">Order
+          <input class="modal-input" id="inputSubsectorOrder" type="number" value="0" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Notes modal -->
+  <div class="modal-overlay" id="modalNotes">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title">Edit Notes</h3>
+      <form id="formNotes">
+        <label class="modal-label">Markdown notes
+          <textarea class="modal-input modal-textarea" id="inputNotes" rows="12" placeholder="- **CRDO**: description…"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Ticker modal -->
+  <div class="modal-overlay" id="modalTicker">
+    <div class="modal-box">
+      <h3 class="modal-title" id="tickerModalTitle">Ticker</h3>
+      <form id="formTicker">
+        <label class="modal-label">Symbol
+          <input class="modal-input" id="inputTickerSymbol" required placeholder="NVDA" />
+        </label>
+        <label class="modal-label">Full Name
+          <input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corporation" />
+        </label>
+        <label class="modal-label">Order
+          <input class="modal-input" id="inputTickerOrder" type="number" value="0" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Analysis table modal -->
+  <div class="modal-overlay" id="modalAnalysis">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="analysisModalTitle">Analysis Table</h3>
+      <form id="formAnalysis">
+        <label class="modal-label">Title
+          <input class="modal-input" id="inputAnalysisTitle" required />
+        </label>
+        <label class="modal-label">Order
+          <input class="modal-input" id="inputAnalysisOrder" type="number" value="0" />
+        </label>
+        <label class="modal-label">Columns (comma-separated)
+          <input class="modal-input" id="inputAnalysisColumns" placeholder="Company, Revenue, Notes" />
+        </label>
+        <label class="modal-label">Rows (one row per line, cells tab-separated)
+          <textarea class="modal-input modal-textarea" id="inputAnalysisRows" rows="8" placeholder="NVDA&#9;$60B&#9;Leader"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Research note modal -->
+  <div class="modal-overlay" id="modalResearch">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title" id="researchModalTitle">Research Note</h3>
+      <form id="formResearch">
+        <label class="modal-label">Title
+          <input class="modal-input" id="inputResearchTitle" required />
+        </label>
+        <label class="modal-label">Order
+          <input class="modal-input" id="inputResearchOrder" type="number" value="0" />
+        </label>
+        <label class="modal-label">Content (Markdown)
+          <textarea class="modal-input modal-textarea" id="inputResearchContent" rows="14" placeholder="# Overview&#10;&#10;- **Key point**: …"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Whitelist modal -->
+  <div class="modal-overlay" id="modalWhitelist">
+    <div class="modal-box">
+      <h3 class="modal-title">Admin Whitelist</h3>
+      <ul class="whitelist-list" id="whitelistEmails"></ul>
+      <form id="formWhitelistEmail" style="margin-top:1rem">
+        <label class="modal-label">Add email
+          <input class="modal-input" id="inputWhitelistEmail" type="email" placeholder="user@example.com" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel">Close</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Add</button>
+        </div>
+      </form>
+      <button class="modal-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
