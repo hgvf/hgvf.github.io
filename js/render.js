@@ -124,9 +124,10 @@ export function buildWatchlistTable(tickers, prices, isAdmin) {
 export function buildAnalysisTable(a, isAdmin) {
   if (!a.columns || !a.rows) return '';
   const ths = a.columns.map(c => `<th style="text-align:left">${c}</th>`).join('');
-  const trs = a.rows.map(r =>
-    `<tr>${r.map(cell => `<td style="text-align:left;font-family:var(--font-sans)">${cell}</td>`).join('')}</tr>`
-  ).join('');
+  const trs = a.rows.map(r => {
+    const cells = typeof r === 'string' ? JSON.parse(r) : r;
+    return `<tr>${cells.map(cell => `<td style="text-align:left;font-family:var(--font-sans)">${cell}</td>`).join('')}</tr>`;
+  }).join('');
   const adminBtns = isAdmin ? `
     <div class="card-admin-ctrls">
       <button class="btn-icon btn-edit" data-id="${a.id}" title="Edit table">✎</button>
