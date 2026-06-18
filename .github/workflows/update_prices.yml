@@ -1,9 +1,8 @@
-name: Update Stock Prices
+name: Update Stock Prices (disabled)
+# Superseded by sync_firestore.yml — prices.json is now synced from Firestore.
 
 on:
-  schedule:
-    - cron: '0 10 * * 2-6'
-  workflow_dispatch:
+  workflow_dispatch:   # keep available for manual one-off runs if needed
 
 permissions:
   contents: write
