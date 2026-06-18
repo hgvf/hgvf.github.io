@@ -1,4 +1,5 @@
 /* ── Admin modal UI ───────────────────────────────────────────────── */
+import { uploadResearchImage } from './storage.js';
 import {
   addSector, updateSector, deleteSector,
   addSubsector, updateSubsector, deleteSubsector, updateSubsectorNotes,
@@ -19,6 +20,57 @@ export function initAdminModals() {
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
   });
+  _initImageUpload();
+}
+
+function _initImageUpload() {
+  const textarea  = document.getElementById('inputResearchContent');
+  const fileInput = document.getElementById('inputResearchImage');
+  const status    = document.getElementById('imgUploadStatus');
+  if (!textarea || !fileInput) return;
+
+  async function handleImageFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    status.textContent = '上傳中…';
+    status.className = 'img-upload-status uploading';
+    textarea.classList.add('img-uploading');
+    try {
+      const url = await uploadResearchImage(file);
+      const alt = file.name.replace(/\.[^.]+$/, '');
+      const md  = `![${alt}](${url})`;
+      const start = textarea.selectionStart;
+      const before = textarea.value.slice(0, start);
+      const after  = textarea.value.slice(textarea.selectionEnd);
+      // Insert on its own line
+      const prefix = before && !before.endsWith('\n') ? '\n' : '';
+      const suffix = after  && !after.startsWith('\n') ? '\n' : '';
+      textarea.value = before + prefix + md + suffix + after;
+      textarea.selectionStart = textarea.selectionEnd = start + prefix.length + md.length;
+      textarea.focus();
+      status.textContent = '✓ 上傳完成';
+      status.className = 'img-upload-status ok';
+      setTimeout(() => { status.textContent = ''; status.className = 'img-upload-status'; }, 3000);
+    } catch (e) {
+      status.textContent = '上傳失敗: ' + e.message;
+      status.className = 'img-upload-status err';
+    } finally {
+      textarea.classList.remove('img-uploading');
+      fileInput.value = '';
+    }
+  }
+
+  // Drag and drop
+  textarea.addEventListener('dragover', e => { e.preventDefault(); textarea.classList.add('img-drop-active'); });
+  textarea.addEventListener('dragleave', () => textarea.classList.remove('img-drop-active'));
+  textarea.addEventListener('drop', e => {
+    e.preventDefault();
+    textarea.classList.remove('img-drop-active');
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleImageFile(file);
+  });
+
+  // Click-to-browse
+  fileInput.addEventListener('change', () => handleImageFile(fileInput.files[0]));
 }
 
 export function openAddSector(nextOrder) {

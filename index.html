@@ -218,7 +218,9 @@
       <form id="formResearch">
         <label class="modal-label">Title<input class="modal-input" id="inputResearchTitle" required /></label>
         <label class="modal-label">Content (markdown supported)
-          <textarea class="modal-textarea" id="inputResearchContent" rows="12"></textarea>
+          <textarea class="modal-textarea img-drop-zone" id="inputResearchContent" rows="12"></textarea>
+          <span class="img-upload-hint">拖曳圖片至此，或 <label class="img-upload-link">點此上傳<input type="file" id="inputResearchImage" accept="image/*" hidden></label></span>
+          <span class="img-upload-status" id="imgUploadStatus"></span>
         </label>
         <label class="modal-label">Order<input class="modal-input" id="inputResearchOrder" type="number" value="0" /></label>
         <div class="modal-actions">
