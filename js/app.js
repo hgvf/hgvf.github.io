@@ -108,8 +108,13 @@ async function loadWatchlist() {
     }
   }
 
-  if (_sectors.length > 0) await selectSector(_sectors[0].id);
-  if (statusEl) statusEl.textContent = '';
+  try {
+    if (_sectors.length > 0) await selectSector(_sectors[0].id);
+    if (statusEl) statusEl.textContent = '';
+  } catch (err) {
+    console.error('selectSector failed:', err);
+    if (statusEl) statusEl.textContent = 'Error: ' + err.message;
+  }
 }
 
 async function selectSector(sectorId) {
