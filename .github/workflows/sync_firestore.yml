@@ -1,0 +1,36 @@
+name: Sync Firestore to JSON
+
+on:
+  schedule:
+    # 12:00 UTC daily (= 00:00 in UTC+12)
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install firebase-admin
+      - name: Write service account credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+      - name: Export Firestore → JSON
+        run: python scripts/backup.py --export --credentials "$RUNNER_TEMP/sa.json"
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/watchlist.json data/prices.json
+          git diff --staged --quiet && echo "No changes." || \
+            git commit -m "chore: sync firestore $(date -u +%Y-%m-%d)"
+          git push
