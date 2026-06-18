@@ -77,14 +77,15 @@ function showSector(sector, prices, tickerBarInner, content) {
 
 function buildTickerCard(symbol, p) {
   const dayChg = p.day_change_pct ?? null;
+  // cls is 'positive' | 'negative' | 'neutral' — used directly in CSS
   const cls = changeClass(dayChg);
-  const color = cls === 'positive' ? 'var(--positive)' : cls === 'negative' ? 'var(--negative)' : 'var(--neutral)';
+  const colorMap = { positive: 'var(--positive)', negative: 'var(--negative)', neutral: 'var(--neutral)' };
   const card = document.createElement('a');
   card.className = 'ticker-card';
   card.href = tradingViewUrl(symbol);
   card.target = '_blank';
   card.rel = 'noopener';
-  card.style.setProperty('--indicator-color', color);
+  card.style.setProperty('--indicator-color', colorMap[cls]);
   card.title = 'Open in TradingView';
   const price = p.last != null ? formatPrice(p.last, symbol) : '—';
   const chgStr = dayChg != null ? (dayChg >= 0 ? '+' : '') + dayChg.toFixed(2) + '%' : '—';
@@ -130,7 +131,18 @@ function buildWatchlistTable(watchlist, prices) {
   const rows = watchlist.map(item => {
     const p = prices[item.symbol] || {};
     const price = p.last != null ? formatPrice(p.last, item.symbol) : '—';
-    return `<tr><td><div class="wl-name-cell"><a class="wl-symbol" href="${tradingViewUrl(item.symbol)}" target="_blank" rel="noopener" title="TradingView">${item.symbol}</a><span class="wl-fullname">${item.name || ''}</span></div></td><td>${price}</td><td class="${changeClass(p.day_change_pct)}">${fmtChg(p.day_change_pct)}</td><td class="${changeClass(p.week_change_pct)}">${fmtChg(p.week_change_pct)}</td><td class="${changeClass(p.month_change_pct)}">${fmtChg(p.month_change_pct)}</td><td class="${changeClass(p.year_change_pct)}">${fmtChg(p.year_change_pct)}</td><td>${p.pe_ratio ? p.pe_ratio.toFixed(2) : '—'}</td><td>${fmtMarketCap(p)}</td><td>${fmtVolume(p.day_volume)}</td></tr>`;
+    // changeClass returns 'positive'|'negative'|'neutral' matching CSS .chg-positive etc via td class
+    return `<tr>
+      <td><div class="wl-name-cell"><a class="wl-symbol" href="${tradingViewUrl(item.symbol)}" target="_blank" rel="noopener" title="TradingView">${item.symbol}</a><span class="wl-fullname">${item.name || ''}</span></div></td>
+      <td>${price}</td>
+      <td class="chg-${changeClass(p.day_change_pct)}">${fmtChg(p.day_change_pct)}</td>
+      <td class="chg-${changeClass(p.week_change_pct)}">${fmtChg(p.week_change_pct)}</td>
+      <td class="chg-${changeClass(p.month_change_pct)}">${fmtChg(p.month_change_pct)}</td>
+      <td class="chg-${changeClass(p.year_change_pct)}">${fmtChg(p.year_change_pct)}</td>
+      <td>${p.pe_ratio ? p.pe_ratio.toFixed(2) : '—'}</td>
+      <td>${fmtMarketCap(p)}</td>
+      <td>${fmtVolume(p.day_volume)}</td>
+    </tr>`;
   }).join('');
   const headers = ['Name', ...cols].map(h => `<th>${h}</th>`).join('');
   return `<table class="wl-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
@@ -143,15 +155,17 @@ function buildAnalysisTable(a) {
   return `<table class="wl-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
 }
 
+/* ── Helpers ── */
 function tradingViewUrl(symbol) {
   if (symbol.endsWith('.TW')) return `https://www.tradingview.com/chart/?symbol=TWSE:${symbol.replace('.TW', '')}`;
   return `https://www.tradingview.com/chart/?symbol=${symbol}`;
 }
+// Returns 'positive' | 'negative' | 'neutral'
 function changeClass(val) {
-  if (val == null) return 'chg-neutral';
-  if (val > 0) return 'chg-positive';
-  if (val < 0) return 'chg-negative';
-  return 'chg-neutral';
+  if (val == null) return 'neutral';
+  if (val > 0) return 'positive';
+  if (val < 0) return 'negative';
+  return 'neutral';
 }
 function fmtChg(val) {
   if (val == null) return '—';
