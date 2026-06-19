@@ -23,7 +23,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, doc, setDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey:            "AIzaSyDT4eEQZXnqTBn17LGrg9isYFRFFNCbI-I",
@@ -80,8 +80,8 @@
           await setDoc(doc(db, 'sectors', sectorId), {
             name: sector.name,
             ticker_overview: sector.ticker_overview || [],
-            order: si,
-          });
+            order: sector.order ?? si,
+          }, { merge: true });
           print(`  sectors/${sectorId} ✓`, 'ok');
 
           for (let ui = 0; ui < (sector.subsectors || []).length; ui++) {
@@ -92,35 +92,50 @@
               sector_id: sectorId,
               name: sub.name,
               notes: sub.notes || '',
-              order: ui,
-            });
+              order: sub.order ?? ui,
+            }, { merge: true });
             print(`    subsectors/${subId} ✓`, 'ok');
 
-            for (let ti = 0; ti < (sub.watchlist || []).length; ti++) {
-              const t = sub.watchlist[ti];
-              await setDoc(doc(db, 'tickers', t.symbol), {
+            for (let ti = 0; ti < (sub.tickers || []).length; ti++) {
+              const t = sub.tickers[ti];
+              const tickerId = t.id || t.symbol;
+              await setDoc(doc(db, 'tickers', tickerId), {
                 subsector_id: subId,
                 sector_id: sectorId,
                 symbol: t.symbol,
                 name: t.name || '',
                 market: t.market || 'US',
-                order: ti,
-              });
+                order: t.order ?? ti,
+              }, { merge: true });
               print(`      ticker ${t.symbol} ✓`, 'ok');
             }
 
             for (let ai = 0; ai < (sub.analysis || []).length; ai++) {
               const a = sub.analysis[ai];
-              const rowsFlat = (a.rows || []).map(row => JSON.stringify(row));
-              await addDoc(collection(db, 'analysis'), {
+              const rowsFlat = (a.rows || []).map(row =>
+                typeof row === 'string' ? row : JSON.stringify(row)
+              );
+              await setDoc(doc(db, 'analysis', a.id), {
                 subsector_id: subId,
                 sector_id: sectorId,
                 title: a.title || '',
                 columns: a.columns || [],
                 rows: rowsFlat,
-                order: ai,
-              });
+                order: a.order ?? ai,
+              }, { merge: true });
               print(`      analysis "${a.title}" ✓`, 'ok');
+            }
+
+            for (let ri = 0; ri < (sub.research_notes || []).length; ri++) {
+              const r = sub.research_notes[ri];
+              await setDoc(doc(db, 'research_notes', r.id), {
+                subsector_id: subId,
+                sector_id: sectorId,
+                title: r.title || '',
+                content: r.content || '',
+                order: r.order ?? ri,
+              }, { merge: true });
+              print(`      research_note "${r.title}" ✓`, 'ok');
             }
           }
         }
