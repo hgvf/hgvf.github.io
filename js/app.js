@@ -16,11 +16,12 @@ import {
 } from './admin.js';
 
 /* ── App state ─────────────────────────────────────────────── */
-let _isAdmin       = false;
-let _sectors       = [];
-let _currentSector = null;
-let _unsubPrices   = null;
-let _prices        = {};
+let _isAdmin          = false;
+let _sectors          = [];
+let _currentSector    = null;
+let _unsubPrices      = null;
+let _prices           = {};
+let _subsectorSymbols = [];  // symbols from subsector watchlist tables, kept in sync with selectSector
 
 /* ── Firebase init ─────────────────────────────────────────────── */
 const app  = initializeApp(firebaseConfig);
@@ -163,10 +164,10 @@ async function selectSector(sectorId) {
     }))
   );
 
-  const tickerSymbols   = subsectorsData.flatMap(({ tickers }) => tickers.map(t => t.symbol));
+  _subsectorSymbols     = subsectorsData.flatMap(({ tickers }) => tickers.map(t => t.symbol));
   const overviewSymbols = _currentSector.ticker_overview || [];
   // Ticker bar shows every ticker in the sector (US/TW/JP/KR), overview first.
-  const allSymbols      = [...new Set([...overviewSymbols, ...tickerSymbols])];
+  const allSymbols      = [...new Set([...overviewSymbols, ..._subsectorSymbols])];
 
   renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
 
@@ -325,13 +326,10 @@ document.getElementById('tickerBarInner')?.addEventListener('click', async e => 
   } else if (btn.dataset.action === 'del-ticker-overview') {
     const sym = btn.dataset.symbol;
     if (!_currentSector || !sym) return;
-    // Dedupe overview when removing so stored data stays clean
     const updated = [...new Set((_currentSector.ticker_overview || []).filter(s => s !== sym))];
     await updateSector(_currentSector.id, { ticker_overview: updated });
     _currentSector.ticker_overview = updated;
-    // Rebuild the same allSymbols set selectSector uses so the bar composition stays consistent
-    const tickerSymbols = [...document.querySelectorAll('.wl-symbol')].map(el => el.textContent.trim());
-    const allSymbols = [...new Set([...updated, ...tickerSymbols])];
+    const allSymbols = [...new Set([...updated, ..._subsectorSymbols])];
     renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
     _unsubPrices?.();
     _unsubPrices = subscribePrices(allSymbols, newPrices => {
