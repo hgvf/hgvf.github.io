@@ -98,7 +98,8 @@
 
             for (let ti = 0; ti < (sub.tickers || []).length; ti++) {
               const t = sub.tickers[ti];
-              const tickerId = t.id || t.symbol;
+              // Use composite key so the same symbol can exist in multiple subsectors
+              const tickerId = `${subId}_${t.symbol}`;
               await setDoc(doc(db, 'tickers', tickerId), {
                 subsector_id: subId,
                 sector_id: sectorId,
