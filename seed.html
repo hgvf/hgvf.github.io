@@ -23,7 +23,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFirestore, doc, setDoc, getDocs, deleteDoc, collection, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey:            "AIzaSyDT4eEQZXnqTBn17LGrg9isYFRFFNCbI-I",
@@ -96,9 +96,14 @@
             }, { merge: true });
             print(`    subsectors/${subId} ✓`, 'ok');
 
+            // Delete ALL existing ticker docs for this subsector (cleans up stale IDs)
+            const oldTickers = await getDocs(query(collection(db, 'tickers'), where('subsector_id', '==', subId)));
+            for (const d of oldTickers.docs) await deleteDoc(d.ref);
+            if (oldTickers.size) print(`    🗑 deleted ${oldTickers.size} stale tickers for ${sub.name}`, '');
+
             for (let ti = 0; ti < (sub.tickers || []).length; ti++) {
               const t = sub.tickers[ti];
-              // Use composite key so the same symbol can exist in multiple subsectors
+              // Composite key: same symbol can exist in multiple subsectors without conflict
               const tickerId = `${subId}_${t.symbol}`;
               await setDoc(doc(db, 'tickers', tickerId), {
                 subsector_id: subId,
@@ -107,7 +112,7 @@
                 name: t.name || '',
                 market: t.market || 'US',
                 order: t.order ?? ti,
-              }, { merge: true });
+              });
               print(`      ticker ${t.symbol} ✓`, 'ok');
             }
 
