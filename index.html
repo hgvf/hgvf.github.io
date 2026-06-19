@@ -130,7 +130,12 @@
       <form id="formSector">
         <label class="modal-label">Name<input class="modal-input" id="inputSectorName" required /></label>
         <label class="modal-label">Order<input class="modal-input" id="inputSectorOrder" type="number" value="0" /></label>
-        <label class="modal-label">Ticker Overview (comma-separated)<input class="modal-input" id="inputSectorOverview" placeholder="NVDA, AMD, INTC" /></label>
+        <div class="modal-label">Ticker Overview
+          <div class="tag-input-wrap" id="sectorOverviewWrap">
+            <div class="tag-list" id="sectorOverviewTags"></div>
+            <input class="tag-input-field" id="inputSectorOverview" placeholder="輸入代號後按 Enter" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
         <div class="modal-actions">
           <button type="button" class="btn-modal" data-modal="modalSector">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
@@ -179,15 +184,15 @@
         <label class="modal-label">Name<input class="modal-input" id="inputTickerName" placeholder="NVIDIA Corp." /></label>
         <label class="modal-label">Market
           <select class="modal-input" id="inputTickerMarket">
-            <option value="US">US — 美股 (NVDA)</option>
-            <option value="TW">TW — 台灣上市 (2330.TW)</option>
-            <option value="TWO">TWO — 台灣上櫃 (6547.TWO)</option>
-            <option value="JP">JP — 日本 (7203.T)</option>
-            <option value="KS">KS — 韓國上市 (005930.KS)</option>
-            <option value="KQ">KQ — 韓國創業 (035720.KQ)</option>
-            <option value="CN">CN — 中國A股 (600519.SS)</option>
-            <option value="HK">HK — 香港 (0700.HK)</option>
-            <option value="EU">EU — 泛歐洲 (ASML.AS)</option>
+            <option value="US">US — 美股</option>
+            <option value="TW">TW — 台灣上市</option>
+            <option value="TWO">TWO — 台灣上櫃</option>
+            <option value="JP">JP — 日本</option>
+            <option value="KS">KS — 韓國上市</option>
+            <option value="KQ">KQ — 韓國創業</option>
+            <option value="CN">CN — 中國A股</option>
+            <option value="HK">HK — 香港</option>
+            <option value="EU">EU — 泛歐洲</option>
           </select>
         </label>
         <p class="modal-hint" id="tickerSymbolHint" style="margin:0 0 8px;font-size:0.78rem;color:#888;"></p>

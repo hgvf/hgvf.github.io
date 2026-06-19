@@ -463,6 +463,33 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
 .img-upload-status.err { color: var(--negative); }
 .md-img-wrap { margin: 0.6rem 0; }
 .md-img, .md-img-inline { max-width: 100%; border-radius: var(--radius-sm); display: block; }
+/* ── Tag input (ticker overview) ─────────────────────────── */
+.tag-input-wrap {
+  display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;
+  padding: 0.35rem 0.5rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border); background: rgba(255,255,255,0.5);
+  cursor: text; transition: border-color var(--transition);
+}
+.tag-input-wrap:focus-within { border-color: var(--accent); }
+.tag-list { display: contents; }
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.1rem 0.45rem; border-radius: 999px;
+  background: var(--accent); color: var(--text-on-accent);
+  font-size: 0.78rem; font-family: var(--font-mono, monospace);
+  line-height: 1.6; white-space: nowrap;
+}
+.tag-chip-remove {
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: inherit; font-size: 0.85rem; line-height: 1; opacity: 0.75;
+}
+.tag-chip-remove:hover { opacity: 1; }
+.tag-input-field {
+  border: none; outline: none; background: transparent;
+  color: var(--text-primary); font-size: 0.88rem; font-family: var(--font-sans);
+  min-width: 9rem; flex: 1;
+}
+
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.5rem; }
 .btn-modal {
   padding: 0.4rem 1.1rem; border-radius: var(--radius-sm);

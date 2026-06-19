@@ -13,6 +13,48 @@ function openModal(id) { document.getElementById(id)?.classList.add('open'); }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
 function confirmDialog(msg) { return window.confirm(msg); }
 
+/* ── Tag input helpers (sector ticker overview) ─────────────── */
+function _renderOverviewTags(tags) {
+  const list = document.getElementById('sectorOverviewTags');
+  if (!list) return;
+  list.innerHTML = '';
+  tags.forEach((sym, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.textContent = sym;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'tag-chip-remove'; btn.textContent = '×';
+    btn.addEventListener('click', () => { _overviewTags.splice(i, 1); _renderOverviewTags(_overviewTags); });
+    chip.appendChild(btn);
+    list.appendChild(chip);
+  });
+}
+const _overviewTags = [];
+function _initOverviewInput() {
+  const input = document.getElementById('inputSectorOverview');
+  const wrap  = document.getElementById('sectorOverviewWrap');
+  if (!input || wrap._tagInited) return;
+  wrap._tagInited = true;
+  wrap.addEventListener('click', () => input.focus());
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = input.value.trim().toUpperCase().replace(/,/g, '');
+      if (val && !_overviewTags.includes(val)) { _overviewTags.push(val); _renderOverviewTags(_overviewTags); }
+      input.value = '';
+    } else if (e.key === 'Backspace' && input.value === '' && _overviewTags.length) {
+      _overviewTags.pop(); _renderOverviewTags(_overviewTags);
+    }
+  });
+}
+function _setOverviewTags(arr) {
+  _overviewTags.length = 0; _overviewTags.push(...arr);
+  _renderOverviewTags(_overviewTags);
+  _initOverviewInput();
+  const input = document.getElementById('inputSectorOverview');
+  if (input) input.value = '';
+}
+
 export function initAdminModals() {
   document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
     btn.addEventListener('click', () => btn.closest('.modal-overlay')?.classList.remove('open'));
@@ -78,6 +120,7 @@ export function openAddSector(nextOrder) {
   form.reset(); form.dataset.mode = 'add'; delete form.dataset.id;
   document.getElementById('sectorModalTitle').textContent = 'Add Sector';
   document.getElementById('inputSectorOrder').value = nextOrder || 0;
+  _setOverviewTags([]);
   openModal('modalSector');
 }
 
@@ -87,7 +130,7 @@ export function openEditSector(sector) {
   document.getElementById('sectorModalTitle').textContent = 'Edit Sector';
   document.getElementById('inputSectorName').value = sector.name || '';
   document.getElementById('inputSectorOrder').value = sector.order ?? 0;
-  document.getElementById('inputSectorOverview').value = (sector.ticker_overview || []).join(', ');
+  _setOverviewTags(sector.ticker_overview || []);
   openModal('modalSector');
 }
 
@@ -95,7 +138,10 @@ export async function submitSector(onDone) {
   const form  = document.getElementById('formSector');
   const name  = document.getElementById('inputSectorName').value.trim();
   const order = parseInt(document.getElementById('inputSectorOrder').value) || 0;
-  const ticker_overview = document.getElementById('inputSectorOverview').value.split(',').map(s => s.trim()).filter(Boolean);
+  // flush any pending text in the input field
+  const pending = document.getElementById('inputSectorOverview')?.value.trim().toUpperCase().replace(/,/g, '');
+  if (pending && !_overviewTags.includes(pending)) _overviewTags.push(pending);
+  const ticker_overview = [..._overviewTags];
   if (!name) return;
   if (form.dataset.mode === 'edit') await updateSector(form.dataset.id, { name, order, ticker_overview });
   else await addSector({ name, order, ticker_overview });
