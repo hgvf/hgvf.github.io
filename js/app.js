@@ -261,7 +261,11 @@ function bindSectorEvents(subsectorsData) {
 
 /* ── Modal form submissions ──────────────────────────────────────────── */
 document.getElementById('formSector')?.addEventListener('submit', async e => {
-  e.preventDefault(); await submitSector(() => loadWatchlist());
+  e.preventDefault(); await submitSector(async () => {
+    const prevId = _currentSector?.id;
+    await loadWatchlist();
+    if (prevId && _sectors.find(s => s.id === prevId)) await selectSector(prevId);
+  });
 });
 document.getElementById('formSubsector')?.addEventListener('submit', async e => {
   e.preventDefault(); await submitSubsector(() => selectSector(_currentSector?.id));
