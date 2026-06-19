@@ -116,7 +116,8 @@ export function buildAnalysisTable(a, isAdmin) {
   if (!a.columns || !a.rows) return '';
   const ths = a.columns.map(c => `<th style="text-align:left">${c}</th>`).join('');
   const trs = a.rows.map(r => {
-    const cells = typeof r === 'string' ? JSON.parse(r) : r;
+    let cells = typeof r === 'string' ? (() => { try { return JSON.parse(r); } catch { return []; } })() : r;
+    if (!Array.isArray(cells)) cells = [];
     return `<tr>${cells.map(cell => `<td style="text-align:left;font-family:var(--font-sans)">${cell}</td>`).join('')}</tr>`;
   }).join('');
   const adminBtns = isAdmin
