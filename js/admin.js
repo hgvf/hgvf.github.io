@@ -214,9 +214,15 @@ function _initTickerMarketHint() {
   const hint = document.getElementById('tickerSymbolHint');
   if (!sel || !hint) return;
   const update = () => {
-    const base = sym.value.trim().toUpperCase().replace(/\.[A-Z]+$/, '');
+    const raw    = sym.value.trim().toUpperCase();
     const suffix = MARKET_SUFFIX[sel.value] ?? '';
-    hint.textContent = base ? `最終代號：${base}${suffix}` : '';
+    if (!raw) { hint.textContent = ''; return; }
+    if (suffix === '') {
+      hint.textContent = `最終代號：${raw}（EU 請自行帶後綴，如 .L .AS .DE .PA）`;
+    } else {
+      const base = raw.replace(/\.[A-Z0-9]+$/, '');
+      hint.textContent = `最終代號：${base}${suffix}`;
+    }
   };
   sel.addEventListener('change', update);
   sym.addEventListener('input', update);
@@ -250,12 +256,15 @@ export async function submitTicker(onDone) {
   const form   = document.getElementById('formTicker');
   const market = document.getElementById('inputTickerMarket').value;
   const suffix = MARKET_SUFFIX[market] ?? '';
-  // Strip any existing suffix then re-apply the selected market's suffix
-  const rawSym = document.getElementById('inputTickerSymbol').value.trim().toUpperCase().replace(/\.[A-Z]+$/, '');
-  const symbol = rawSym + suffix;
+  const input  = document.getElementById('inputTickerSymbol').value.trim().toUpperCase();
+  // For markets with a fixed suffix, strip any existing suffix then re-apply.
+  // For EU (suffix=''), keep whatever the user typed (e.g. IQE.L, ASML.AS).
+  const symbol = suffix === ''
+    ? input
+    : input.replace(/\.[A-Z0-9]+$/, '') + suffix;
   const name   = document.getElementById('inputTickerName').value.trim();
   const order  = parseInt(document.getElementById('inputTickerOrder').value) || 0;
-  if (!rawSym) return;
+  if (!symbol) return;
   if (form.dataset.mode === 'edit') await updateTicker(form.dataset.id, { symbol, name, order });
   else await addTicker({ symbol, name, order, subsector_id: form.dataset.subsectorId });
   closeModal('modalTicker'); onDone?.();

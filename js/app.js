@@ -325,18 +325,19 @@ document.getElementById('tickerBarInner')?.addEventListener('click', async e => 
   } else if (btn.dataset.action === 'del-ticker-overview') {
     const sym = btn.dataset.symbol;
     if (!_currentSector || !sym) return;
-    const updated = (_currentSector.ticker_overview || []).filter(s => s !== sym);
+    // Dedupe overview when removing so stored data stays clean
+    const updated = [...new Set((_currentSector.ticker_overview || []).filter(s => s !== sym))];
     await updateSector(_currentSector.id, { ticker_overview: updated });
     _currentSector.ticker_overview = updated;
-    // Re-render bar immediately; non-overview symbols stay in allSymbols for price subscription
+    // Rebuild the same allSymbols set selectSector uses so the bar composition stays consistent
     const tickerSymbols = [...document.querySelectorAll('.wl-symbol')].map(el => el.textContent.trim());
     const allSymbols = [...new Set([...updated, ...tickerSymbols])];
-    renderTickerBar(updated, _prices, _isAdmin, _currentSector);
+    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
     _unsubPrices?.();
     _unsubPrices = subscribePrices(allSymbols, newPrices => {
       _prices = newPrices;
       updatePriceCells(_prices);
-      renderTickerBar(_currentSector?.ticker_overview || [], _prices, _isAdmin, _currentSector);
+      renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
     });
   }
 });
