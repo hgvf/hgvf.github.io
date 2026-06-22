@@ -163,6 +163,13 @@ async function firestoreBatchSet(token, projectId, writes) {
           name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
           fields: toFirestoreFields(fields),
         },
+        // Only touch the fields we actually computed this run. Without a mask a
+        // commit *replaces* the whole document, which would wipe the
+        // week/month/year change % owned by scripts/update_changes.py whenever
+        // the Worker's own spark fetch comes back empty (Yahoo frequently blocks
+        // the spark endpoint from Cloudflare IPs). The mask makes the write a
+        // partial merge so those fields survive a manual price refresh.
+        updateMask: { fieldPaths: Object.keys(fields) },
       })),
     };
     await fetch(url, {
