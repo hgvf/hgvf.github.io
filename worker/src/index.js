@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark-2026-06-18';
+const WORKER_VERSION = 'batched-v7+spark50-2026-06-22';
 
 export default {
   async fetch(request, env) {
@@ -193,8 +193,9 @@ async function fetchAndStorePrices(env) {
   const symbols = [...new Set([...tickerSymbols, ...overviewSymbols])];
   if (symbols.length === 0) return 0;
 
-  // getYahooSession costs 2 subrequests; v7 quote = ceil(N/50); spark = ceil(N/15).
-  // Total for N≈45: 1+1+1+2+1+3+1 ≈ 10 — comfortably under the 50 limit.
+  // Sub-request budget for N≈600 symbols (Cloudflare cap = 50/invocation):
+  //   token 1 + tickers 1 + sectors 1 + session 2 + quote ceil(N/50)=12
+  //   + spark ceil(N/50)=12 + writes ceil(N/500)=2  ≈ 31 — safely under 50.
   const session = await getYahooSession();
 
   // v7 quote → price, day%, P/E, market cap, volume (batched 50/req)
@@ -204,7 +205,7 @@ async function fetchAndStorePrices(env) {
     Object.assign(quotes, await fetchAllQuoteData(symbols.slice(i, i + QBATCH), session));
   }
 
-  // v8 spark → week/month/year % from historical closes (batched ~15/req)
+  // v8 spark → week/month/year % from historical closes (batched 50/req)
   const spark = await fetchSparkData(symbols, session);
 
   const now = new Date().toISOString();
@@ -271,7 +272,11 @@ async function fetchAllQuoteData(symbols, session) {
    endpoint which is one symbol per request. Computes changes from daily closes. */
 async function fetchSparkData(symbols, session) {
   const out = {};
-  const CHUNK = 15;
+  // 50/req keeps the sub-request count bounded for large watchlists: at ~600
+  // symbols that's 12 spark calls (vs 40 at 15/req), leaving plenty of room
+  // under Cloudflare's 50 sub-request-per-invocation cap once quote + session +
+  // Firestore writes are added in.
+  const CHUNK = 50;
   for (let i = 0; i < symbols.length; i += CHUNK) {
     const batch = symbols.slice(i, i + CHUNK);
     try {

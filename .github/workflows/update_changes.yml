@@ -1,0 +1,31 @@
+name: Update Week/Month/Year Changes
+
+# Computes week/month/year change % for every watchlist symbol via yfinance and
+# merges them into Firestore (merge=True, so the Worker-owned intraday fields are
+# preserved). Runs shortly BEFORE sync_firestore.yml (12:00 UTC) so the daily
+# JSON export picks the values up the same cycle.
+
+on:
+  schedule:
+    - cron: '30 11 * * *'   # 11:30 UTC, ~30 min before the Firestore→JSON sync
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install yfinance firebase-admin
+      - name: Write service account credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+      - name: Compute & merge changes into Firestore
+        run: python scripts/update_changes.py --credentials "$RUNNER_TEMP/sa.json"
