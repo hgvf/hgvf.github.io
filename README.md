@@ -142,13 +142,24 @@ After you are in the whitelist:
 
 ---
 
-## 6. Daily Price Update Schedule
+## 6. Scheduled Automation (Workflow Execution Times)
 
-The Cloudflare Worker runs automatically via cron:
-- **Schedule**: `0 10 * * 2-6` — 10:00 UTC, Tuesday–Saturday
-  (covers Monday–Friday US market closes, accounting for timezone)
+All times are **UTC** (台灣時間 = UTC+8). The two daily Actions are ordered so
+`update_changes` writes the week/month/year % **before** `sync_firestore`
+exports the JSON, so the backup picks up the fresh values the same cycle.
 
-You can also trigger manually with the **Refresh Prices** button in the UI (admin only can see the secret, but the button is visible to all — you can adjust CSS if desired).
+| Automation | File | Schedule (cron) | Runs at | What it does |
+|---|---|---|---|---|
+| Intraday prices | `worker/wrangler.toml` (Cloudflare cron) | `0 10 * * 2-6` | **10:00 UTC, Tue–Sat** (18:00 台灣) | Worker fetches price, day %, P/E, market cap, volume (covers Mon–Fri US closes) |
+| Week/Month/Year % | `.github/workflows/update_changes.yml` | `30 11 * * *` | **11:30 UTC daily** (19:30 台灣) | yfinance computes wk/mo/yr change % and **merges** into Firestore |
+| Firestore → JSON backup | `.github/workflows/sync_firestore.yml` | `0 12 * * *` | **12:00 UTC daily** (20:00 台灣) | Exports `data/watchlist.json` + `data/prices.json` and commits |
+| Worker deploy | `.github/workflows/deploy_worker.yml` | on push to `main` (`worker/**`) + manual | on demand | `wrangler deploy` when Worker code changes |
+| Legacy price push | `.github/workflows/update_prices.yml` | manual only (disabled) | — | Superseded by `sync_firestore.yml` |
+
+You can also trigger an intraday refresh on demand with the **Refresh Prices**
+button in the UI (admin only). The manual refresh writes only the Worker-owned
+intraday fields (via a Firestore `updateMask`), so it **preserves** the
+week/month/year % written by `update_changes.yml`.
 
 ---
 
