@@ -1,3 +1,5 @@
 .claude/
 test.sh
 secret.txt
+__pycache__/
+*.pyc

@@ -1,0 +1,47 @@
+name: Deploy Cloudflare Worker
+
+# Deploys worker/ to Cloudflare whenever the worker code changes on main.
+# This closes the gap where merging a worker fix to the repo did NOT update
+# the live Worker (which must be redeployed for changes to take effect).
+#
+# Required repo secret (Settings → Secrets and variables → Actions → New secret):
+#   CLOUDFLARE_API_TOKEN  — a token created from the "Edit Cloudflare Workers"
+#                           template at https://dash.cloudflare.com/profile/api-tokens
+#
+# If the secret is absent the deploy step is skipped (the job stays green) so
+# this workflow never blocks CI before the token has been configured.
+#
+# Existing Worker secrets set via `wrangler secret put`
+# (SERVICE_ACCOUNT_EMAIL, SERVICE_ACCOUNT_KEY, TRIGGER_SECRET, ...) are
+# preserved across deploys — `wrangler deploy` never clears them.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+  workflow_dispatch:   # allows a manual one-click deploy from the Actions tab
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for Cloudflare API token
+        id: check
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::CLOUDFLARE_API_TOKEN secret is not set — skipping Worker deploy. Add it under Settings → Secrets and variables → Actions."
+          fi
+      - name: Deploy to Cloudflare Workers
+        if: steps.check.outputs.has_token == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: worker
+          command: deploy
