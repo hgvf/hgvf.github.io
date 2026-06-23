@@ -213,15 +213,6 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
       card.innerHTML = `<p class="card-title">${a.title || 'Analysis'}</p><div class="wl-table-wrapper">${buildAnalysisTable(a, isAdmin)}</div>`;
       block.appendChild(card);
     });
-    if (isAdmin) {
-      const addAnalysisBtn = document.createElement('button');
-      addAnalysisBtn.className = 'btn-add-row admin-only';
-      addAnalysisBtn.dataset.action = 'add-analysis';
-      addAnalysisBtn.dataset.subsectorId = subsector.id;
-      addAnalysisBtn.classList.add('btn-add-analysis');
-      addAnalysisBtn.textContent = '+ Add Analysis Table';
-      block.appendChild(addAnalysisBtn);
-    }
 
     // Research notes
     if (research_notes && research_notes.length > 0) {
