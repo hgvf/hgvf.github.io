@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>財報電話會議分析 · Earnings Calls</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/reports.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="report">
+  <div class="rp-wrap">
+    <div class="rp-top">
+      <a class="rp-back" href="../index.html">← 回首頁</a>
+      <span class="rp-updated" id="updated"></span>
+    </div>
+
+    <header>
+      <h1 class="rp-title">財報電話會議分析</h1>
+      <p class="rp-sub">每場電話會議一張卡片，重點以偏多／偏空標色。點時間軸節點可跳到該場會議。</p>
+    </header>
+
+    <div class="rp-filters" id="filters"></div>
+    <div class="glass-card rp-chart" id="chart"></div>
+    <div class="rp-list" id="list"><div class="rp-empty">載入中…</div></div>
+
+    <p class="rp-foot">分析由 Claude 節錄並存於 Firebase，僅供參考，非投資建議。</p>
+  </div>
+
+  <script type="module">
+    import { loadDocs, renderTimeline, sent, esc, fmtDate } from "../js/reports.js";
+
+    const listEl = document.getElementById("list");
+    const chartEl = document.getElementById("chart");
+    const filtersEl = document.getElementById("filters");
+    let all = [], activeTicker = "__all__", chart = null;
+
+    // Overall sentiment of a call = net of its highlights.
+    function overall(call) {
+      let net = 0;
+      (call.highlights || []).forEach(h => {
+        if (h.sentiment === "bullish") net++;
+        else if (h.sentiment === "bearish") net--;
+      });
+      return net > 0 ? "bullish" : net < 0 ? "bearish" : "neutral";
+    }
+
+    function hlHTML(h) {
+      const s = sent(h.sentiment);
+      const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
+      return `<div class="ec-hl ${s.cls}">
+        <span class="sent-tag ${s.cls}">${icon}</span>
+        <span>${esc(h.text)}</span>
+      </div>`;
+    }
+
+    function cardHTML(c) {
+      const s = sent(overall(c));
+      const summary = c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : "";
+      const hls = (c.highlights || []).length
+        ? `<div class="ec-hls">${c.highlights.map(hlHTML).join("")}</div>`
+        : "";
+      return `<article class="glass-card rp-card ${s.cls}" id="card-${esc(c.id)}">
+        <div class="ec-head">
+          <span class="ec-ticker">${esc(c.ticker)}</span>
+          <span class="ec-company">${esc(c.company || "")}</span>
+          <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
+        </div>
+        ${summary}
+        ${hls}
+      </article>`;
+    }
+
+    function render() {
+      const items = activeTicker === "__all__" ? all : all.filter(c => c.ticker === activeTicker);
+      listEl.innerHTML = items.length
+        ? items.map(cardHTML).join("")
+        : `<div class="rp-empty">目前沒有符合的會議。</div>`;
+      chart = renderTimeline(chartEl, items.map(c => ({
+        id: c.id, date: c.date, sentiment: overall(c),
+        tipTitle: `${c.ticker} ${c.year} ${c.quarter}`,
+      })), {
+        onSelect(id) {
+          const card = document.getElementById("card-" + id);
+          if (!card) return;
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
+        },
+      });
+    }
+
+    function buildFilters() {
+      const set = new Set(all.map(c => c.ticker).filter(Boolean));
+      const chips = [`<button class="rp-chip active" data-t="__all__">全部</button>`,
+        ...[...set].sort().map(t => `<button class="rp-chip" data-t="${esc(t)}">${esc(t)}</button>`)];
+      filtersEl.innerHTML = chips.join("");
+      filtersEl.querySelectorAll(".rp-chip").forEach(btn => btn.addEventListener("click", () => {
+        activeTicker = btn.dataset.t;
+        filtersEl.querySelectorAll(".rp-chip").forEach(b => b.classList.toggle("active", b === btn));
+        render();
+      }));
+    }
+
+    (async () => {
+      try {
+        all = await loadDocs("earnings_calls", "date", "desc");
+        if (!all.length) { listEl.innerHTML = `<div class="rp-empty">尚無分析。在 Claude Code 貼上 transcript 並發布到 Firebase 後就會出現。</div>`; return; }
+        document.getElementById("updated").textContent = "最新：" + fmtDate(all[0].date);
+        buildFilters();
+        render();
+        window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 200); });
+      } catch (e) {
+        console.error(e);
+        listEl.innerHTML = `<div class="rp-empty">載入失敗，請稍後再試。</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
