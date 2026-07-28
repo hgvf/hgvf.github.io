@@ -56,6 +56,8 @@ You curate the supply-chain news feed for a personal dashboard. Steps:
      "headline": "<concise headline in Traditional Chinese>",
      "content": "<1-3 sentence summary + why it matters, Traditional Chinese>",
      "sentiment": "bullish | bearish | neutral  (for the related names)",
+     "effect": "<下游如何被影響、哪些產品成本被堆高，Traditional Chinese; \"\" if unknown>",
+     "advise": "<簡短投資建議, Traditional Chinese; \"\" if none>",
      "sources": [{"title": "<source name>", "url": "<link>"}]
    }
 3. Write the array to /tmp/news.json as {"items": [ ... ]}.
@@ -87,7 +89,7 @@ You curate the supply-chain news feed for a personal dashboard. Steps:
 
 ## 資料格式速查（`scripts/publish.py`）
 
-- **news**：`{"items": [ {date, tickers[], headline, content, sentiment, sources[]} ]}`
+- **news**：`{"items": [ {date, tickers[], headline, content, sentiment, effect?, advise?, sources[]} ]}`（`effect`／`advise` 選填，舊資料沒有也不影響）
 - **earnings**：`{"calls": [ {ticker, company, year, quarter, date, summary, highlights:[{text, sentiment}]} ]}`
 - doc id 由內容決定（news = date+headline、earnings = ticker-year-quarter），**重跑會更新、不會重複**。
 - `sentiment` 只接受 `bullish` / `bearish` / `neutral`，其他值一律當 `neutral`。

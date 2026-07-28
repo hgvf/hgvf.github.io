@@ -74,6 +74,15 @@
 .rv-detail-body { color: var(--text-secondary); font-size: 1rem; line-height: 1.75; }
 .rv-detail .ec-summary { font-size: 1.02rem; }
 
+/* Optional effect / advice sub-cards under the news body */
+.rp-subcard { margin-top: 0.9rem; padding: 0.85rem 1.05rem; border-radius: var(--radius-md); border: 1px solid; border-left-width: 4px; }
+.rp-subcard-head { display: flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.35rem; }
+.rp-subcard-body { font-size: 0.92rem; line-height: 1.65; color: var(--text-secondary); white-space: pre-wrap; }
+.rp-effect { background: rgba(217,150,60,0.10); border-color: rgba(217,150,60,0.45); }
+.rp-effect .rp-subcard-head { color: #B5731F; }
+.rp-advise { background: rgba(79,114,182,0.10); border-color: rgba(79,114,182,0.42); }
+.rp-advise .rp-subcard-head { color: #3E6AB0; }
+
 /* (legacy centered layout — kept for reference, no longer used) */
 .rp-wrap { max-width: 960px; margin: 0 auto; padding: 2.75rem 1.25rem 5rem; }
 .rp-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
