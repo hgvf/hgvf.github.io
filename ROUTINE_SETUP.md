@@ -42,29 +42,66 @@
 
 ### Routine prompt（直接複製）
 
-```
-You curate the supply-chain news feed for a personal dashboard. Steps:
+> 完整格式規格另存於 [`SUPPLY_CHAIN_NEWS_SCHEMA.md`](SUPPLY_CHAIN_NEWS_SCHEMA.md)。
 
-1. Use WebSearch (and WebFetch for detail) to find the most important
-   supply-chain bottleneck news from the last 24-48 hours: shipping/port
-   congestion, semiconductor and component shortages, freight rates,
-   key-material supply disruptions, export controls affecting supply.
-2. Select the 5-8 most material items. For EACH item build an object:
-   {
-     "date": "<ISO date the news refers to, YYYY-MM-DD>",
-     "tickers": ["<related stock tickers, e.g. NVDA, TSM; [] if none>"],
-     "headline": "<concise headline in Traditional Chinese>",
-     "content": "<1-3 sentence summary + why it matters, Traditional Chinese>",
-     "sentiment": "bullish | bearish | neutral  (for the related names)",
-     "effect": "<下游如何被影響、哪些產品成本被堆高，Traditional Chinese; \"\" if unknown>",
-     "advise": "<簡短投資建議, Traditional Chinese; \"\" if none>",
-     "sources": [{"title": "<source name>", "url": "<link>"}]
-   }
-3. Write the array to /tmp/news.json as {"items": [ ... ]}.
-4. Run: python scripts/publish.py --type news --file /tmp/news.json
+```
+You build a SUPPLY-CHAIN BOTTLENECK news feed for a personal investing
+dashboard. This is NOT a general market/price-move feed — only include news
+that is about a genuine supply-chain BOTTLENECK or a STRUCTURAL change to a
+supply chain.
+
+SELECTION (last 24-48h). Include an item only if it is one of:
+  - a bottleneck: shortage, capacity/throughput constraint, lead-time blowout,
+    single-source or chokepoint risk, key material/equipment disruption,
+    export controls that restrict supply; OR
+  - a structural shift that rewrites industry rules or a traditional supply
+    chain: a new entrant, domestic substitution breaking a monopoly, or new
+    tech that reroutes the chain. Example: "China DUV immersion litho reaches
+    volume shipment; SMIC / Hua Hong / CXMT place orders within the year."
+Skip generic index moves, earnings beats/misses, and price commentary that
+carry no supply-chain angle. Pick the 5-8 most material items.
+
+For EACH item, RESEARCH beyond the headline and build this object. Every field
+except date/headline/content is OPTIONAL — use "" or [] when unknown; never
+fabricate. Try to fill "chain", "alternatives" and "signals" whenever the
+story is about a real bottleneck.
+
+{
+  "date": "<YYYY-MM-DD the news refers to>",
+  "headline": "<concise headline, Traditional Chinese>",
+  "content": "<1-3 sentence summary + why it matters, Traditional Chinese>",
+  "tickers": ["<related tickers, e.g. TSM, 2317.TW; [] if none>"],
+  "sentiment": "bullish | bearish | neutral  (for the related names)",
+  "credibility": "高 | 中 | 低  (source reliability + corroboration)",
+  "tags": ["<bottleneck keywords/themes, e.g. CoWoS, ABF substrate>"],
+  "effect": "<下游如何被影響、哪些產品成本被墊高，Traditional Chinese>",
+  "advise": "<簡短投資建議，Traditional Chinese>",
+  "chain": {
+    "upstream":   [{"name": "<company/material>", "note": "<how affected>"}],
+    "midstream":  [{"name": "<company>", "note": "<how affected>"}],
+    "downstream": [{"name": "<company>", "note": "<how affected>"}]
+  },
+  "alternatives": [
+    {"name": "<incumbent>", "share": "<e.g. 95%>", "incumbent": true, "note": "..."},
+    {"name": "<substitute company/product>", "share": "<e.g. ~5%>", "note": "..."}
+  ],
+  "signals": "<clues from recent earnings/revenue/call transcripts that
+              corroborate the bottleneck, Traditional Chinese>",
+  "sources": [{"title": "<source>", "url": "<link>"}]
+}
+
+To fill "chain" / "alternatives", trace who is upstream/mid/downstream of the
+bottleneck, whether a substitute product or company exists, and the market
+share of the incumbent vs the substitute. For "signals", check the last few
+quarters' earnings / revenue / call transcripts of the named companies for
+corroborating evidence.
+
+STEPS:
+1. Write the array to /tmp/news.json as {"items": [ ... ]}.
+2. Run: python scripts/publish.py --type news --file /tmp/news.json
    (credentials come from the FIREBASE_SERVICE_ACCOUNT env var).
-5. Confirm the script printed "Published N news item(s)". Do NOT commit or
-   push anything — the data lives in Firestore and the page reads it live.
+3. Confirm it printed "Published N news document(s)". Do NOT commit or push —
+   the data lives in Firestore and the page reads it live.
 ```
 
 ---
@@ -89,7 +126,7 @@ You curate the supply-chain news feed for a personal dashboard. Steps:
 
 ## 資料格式速查（`scripts/publish.py`）
 
-- **news**：`{"items": [ {date, tickers[], headline, content, sentiment, effect?, advise?, sources[]} ]}`（`effect`／`advise` 選填，舊資料沒有也不影響）
+- **news**：`{"items": [ {date, headline, content, tickers[], sentiment, credibility?, tags[]?, effect?, advise?, chain?, alternatives[]?, signals?, sources[]} ]}` — 完整規格見 [`SUPPLY_CHAIN_NEWS_SCHEMA.md`](SUPPLY_CHAIN_NEWS_SCHEMA.md)；選填欄位不溯及既往、舊資料沒有也不影響。
 - **earnings**：`{"calls": [ {ticker, company, year, quarter, date, summary, highlights:[{text, sentiment}]} ]}`
 - doc id 由內容決定（news = date+headline、earnings = ticker-year-quarter），**重跑會更新、不會重複**。
 - `sentiment` 只接受 `bullish` / `bearish` / `neutral`，其他值一律當 `neutral`。

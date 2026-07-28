@@ -82,6 +82,40 @@
 .rp-effect .rp-subcard-head { color: #B5731F; }
 .rp-advise { background: rgba(79,114,182,0.10); border-color: rgba(79,114,182,0.42); }
 .rp-advise .rp-subcard-head { color: #3E6AB0; }
+.rp-tags { background: rgba(139,94,60,0.08); border-color: rgba(139,94,60,0.35); }
+.rp-tags .rp-subcard-head { color: var(--accent); }
+.rp-chain { background: rgba(46,139,133,0.09); border-color: rgba(46,139,133,0.38); }
+.rp-chain .rp-subcard-head { color: #2E8B85; }
+.rp-alt { background: rgba(124,92,191,0.09); border-color: rgba(124,92,191,0.38); }
+.rp-alt .rp-subcard-head { color: #7C5CBF; }
+.rp-signals { background: rgba(91,107,122,0.10); border-color: rgba(91,107,122,0.38); }
+.rp-signals .rp-subcard-head { color: #5B6B7A; }
+
+/* Credibility badge (top-right of the detail meta) */
+.rp-cred { margin-left: auto; font-size: 0.74rem; font-weight: 600; padding: 0.16rem 0.55rem; border-radius: var(--radius-sm); white-space: nowrap; }
+.rp-cred.pos { color: var(--positive); background: var(--positive-bg); }
+.rp-cred.neu { color: #B5731F; background: rgba(217,150,60,0.15); }
+.rp-cred.neg { color: var(--neutral); background: var(--neutral-bg); }
+
+/* Tag chips */
+.rp-chiprow { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.rp-chipk { font-size: 0.76rem; font-weight: 500; padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--glass-bg-solid); border: 1px solid var(--glass-border); color: var(--text-secondary); }
+
+/* Supply-chain up/mid/downstream */
+.rp-chain-seg { display: flex; gap: 0.6rem; margin-top: 0.45rem; }
+.rp-chain-label { flex-shrink: 0; width: 2.4rem; padding-top: 0.1rem; font-size: 0.76rem; font-weight: 700; color: #2E8B85; }
+.rp-chain-items { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+.rp-chain-item { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+.rp-chain-item b { color: var(--text-primary); font-weight: 600; }
+.rp-chain-item span { margin-left: 0.4rem; color: var(--text-muted); }
+
+/* Alternatives / market share */
+.rp-alt-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.2rem; }
+.rp-alt-row { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; font-size: 0.88rem; }
+.rp-alt-name { font-weight: 600; color: var(--text-primary); }
+.rp-alt-tag { font-size: 0.66rem; font-weight: 600; color: #7C5CBF; background: rgba(124,92,191,0.15); padding: 0.02rem 0.35rem; border-radius: 4px; }
+.rp-alt-share { font-family: var(--font-mono); font-size: 0.82rem; color: #7C5CBF; }
+.rp-alt-note { color: var(--text-muted); font-size: 0.82rem; }
 
 /* (legacy centered layout — kept for reference, no longer used) */
 .rp-wrap { max-width: 960px; margin: 0 auto; padding: 2.75rem 1.25rem 5rem; }

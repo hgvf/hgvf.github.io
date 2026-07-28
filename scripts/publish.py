@@ -153,8 +153,13 @@ def news_docs(items, now_iso):
             "headline": headline,
             "content": it.get("content", ""),
             "sentiment": norm_sentiment(it.get("sentiment")),
+            "credibility": it.get("credibility", ""),
+            "tags": it.get("tags", []),
             "effect": it.get("effect", ""),
             "advise": it.get("advise", ""),
+            "chain": it.get("chain", {}),
+            "alternatives": it.get("alternatives", []),
+            "signals": it.get("signals", ""),
             "sources": it.get("sources", []),
             "updated_at": now_iso,
         }
