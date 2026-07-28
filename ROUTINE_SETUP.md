@@ -1,87 +1,97 @@
 # 自動化：供應鏈新聞（每日）＋ 財報分析（手動）
 
-本站有兩個由 Claude 維護的區塊：
+兩個區塊的**資料都存在 Firebase Firestore**，頁面是靜態外殼、在瀏覽器端即時讀取渲染。
+→ 新增／更新內容只要寫進 Firestore，**頁面立即反映，不需 rebuild、不需 git push**。
 
-| 區塊 | 目錄 | 更新方式 | 誰維護 |
-|------|------|----------|--------|
-| 供應鏈瓶頸新聞 | `supply-chain/` | **每日自動** | Claude Code **Routine**（排程） |
-| 財報電話會議分析 | `earnings/` | **手動** | Claude Code **web session**（你觸發） |
+| 區塊 | 頁面 | Firestore collection | 更新方式 |
+|------|------|----------------------|----------|
+| 供應鏈瓶頸新聞 | `supply-chain/index.html` | `supply_chain_news` | **每日自動**（Routine） |
+| 財報電話會議分析 | `earnings/index.html` | `earnings_calls` | **手動**（Claude Code web session） |
 
-兩者各自 commit 到不同目錄，靠 Git 協調，永遠不會互相衝突。GitHub Pages 服務 `main` 分支根目錄，push 後即上線。
+每個頁面都有：時間軸圖（節點依日期排列、點節點跳到對應卡片、日後可疊股價線）＋ 可讀卡片＋ ticker 標註＋ 偏多/偏空標色。首頁 **Quick Links** 有兩個入口。
 
-> 皆使用 **claude.ai 訂閱額度**，不需要 Claude API。
+> 全程使用 claude.ai 訂閱額度，不需 Claude API。
+
+---
+
+## 0. 一次性前置
+
+1. **部署 Firestore 規則**（新增了 `supply_chain_news`、`earnings_calls` 兩個 collection，公開讀、白名單寫）：
+   ```
+   firebase deploy --only firestore:rules
+   ```
+   或把 `firestore.rules` 內容貼到 Firebase Console → Firestore → Rules → Publish。
+2. 準備 **service account JSON**（Firebase Console → 專案設定 → 服務帳戶 → 產生新的私密金鑰）。
+   寫入 Firestore 用 Admin SDK，會繞過安全規則。
 
 ---
 
 ## A. 供應鏈新聞 — 設定 Routine（一次性）
 
-在 **[claude.ai/code/routines](https://claude.ai/code/routines) → New routine**（或任一 CLI session 打 `/schedule`）：
+在 **[claude.ai/code/routines](https://claude.ai/code/routines) → New routine**（或 CLI `/schedule`）：
 
-1. **Repository**：`hgvf/hgvf.github.io`
-2. **Trigger → Schedule → Daily**，挑當地早上、避開 `12:00 UTC`（firestore sync 時間），例如台北 **08:07**。
-3. **環境 → Network access → Full**（或 Custom 加新聞網域）。
-   預設 *Trusted* 會擋掉抓任意新聞網站（`403 host_not_allowed`），一定要改。
-4. **Permissions → 開啟「Allow unrestricted branch pushes」** for this repo（才能直接 push `main`）。
-5. **Prompt**：貼下方那段。
-6. **Create** → 可先按 **Run now** 測一次，點進 run 確認有抓到新聞、有 push。
+1. **Repository**：`hgvf/hgvf.github.io`（用來取得 `scripts/publish.py`；本流程**不需 push**）。
+2. **Trigger → Schedule → Daily**，挑當地早上、避開 `12:00 UTC`（例如台北 **08:07**）。
+3. **環境設定**：
+   - **Network access → Full**（要抓任意新聞網站，也要連 `firestore.googleapis.com`）。
+   - **Environment variable**：`FIREBASE_SERVICE_ACCOUNT` = 整包 service account JSON（貼原文）。
+   - **Setup script**：`pip install firebase-admin`
+4. **Prompt**：貼下方那段。
+5. **Create** → 先按 **Run now** 測一次，點進 run 確認新聞有抓到、`publish.py` 有成功寫入，再開網頁看是否出現。
 
 ### Routine prompt（直接複製）
 
 ```
-You maintain the supply-chain news section of the hgvf.github.io static site.
-Do ONLY the following, and ONLY touch files under supply-chain/:
+You curate the supply-chain news feed for a personal dashboard. Steps:
 
-1. Use WebSearch (and WebFetch for detail) to find today's most important
-   supply-chain bottleneck news: shipping/port congestion, semiconductor and
-   component shortages, freight rates, key-material supply disruptions,
-   export controls affecting supply. Focus on the last 24-48 hours.
-2. Select the 5-8 most material items. For each: headline, 1-2 sentence
-   summary in Traditional Chinese, why it matters for supply chains, and the
-   source link.
-3. Write supply-chain/YYYY-MM-DD.html (today's date, Asia/Taipei) by copying
-   the structure of the existing supply-chain/2026-07-28.html placeholder:
-   reuse ../css/style.css, keep the same layout, fill the items between the
-   ITEMS_START / ITEMS_END markers, and remove the yellow placeholder banner.
-4. Update supply-chain/index.html: add today's entry as the FIRST child inside
-   the DIGEST_LIST_START / DIGEST_LIST_END block (newest first), keeping all
-   existing entries. Use the same <a class="glass-card digest-item"> markup.
-5. Commit directly to main with message "chore: supply-chain digest YYYY-MM-DD"
-   and push. If the push is rejected, run `git pull --rebase` then push again.
-6. Do NOT modify any file outside supply-chain/. Do NOT open a pull request.
+1. Use WebSearch (and WebFetch for detail) to find the most important
+   supply-chain bottleneck news from the last 24-48 hours: shipping/port
+   congestion, semiconductor and component shortages, freight rates,
+   key-material supply disruptions, export controls affecting supply.
+2. Select the 5-8 most material items. For EACH item build an object:
+   {
+     "date": "<ISO date the news refers to, YYYY-MM-DD>",
+     "tickers": ["<related stock tickers, e.g. NVDA, TSM; [] if none>"],
+     "headline": "<concise headline in Traditional Chinese>",
+     "content": "<1-3 sentence summary + why it matters, Traditional Chinese>",
+     "sentiment": "bullish | bearish | neutral  (for the related names)",
+     "sources": [{"title": "<source name>", "url": "<link>"}]
+   }
+3. Write the array to /tmp/news.json as {"items": [ ... ]}.
+4. Run: python scripts/publish.py --type news --file /tmp/news.json
+   (credentials come from the FIREBASE_SERVICE_ACCOUNT env var).
+5. Confirm the script printed "Published N news item(s)". Do NOT commit or
+   push anything — the data lives in Firestore and the page reads it live.
 ```
-
-### 管理
-- 暫停：routine 詳情頁 **Repeats** 的開關。
-- 改時間 / 改 prompt：**Edit routine**，或 CLI `/schedule update`。
-- 手動補跑：**Run now**。
 
 ---
 
 ## B. 財報分析 — 手動流程（每份 transcript 一次）
 
-開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io` 上，貼上／上傳 transcript，說：
+開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io`（環境同樣設 `FIREBASE_SERVICE_ACCOUNT` 與 `pip install firebase-admin`），貼上／上傳 transcript，說：
 
-> 分析這份 transcript，依 `earnings/_template.html` 的版面產生
-> `earnings/<公司>-<季度>.html`（例如 `earnings/TSMC-2026Q2.html`），
-> 節錄：一句話總結、營運財務重點、財測展望、**供應鏈訊號**、風險。
-> 然後在 `earnings/index.html` 的 CALL_LIST 區塊最上面新增一條連結
-> （若還是「尚無分析」的空狀態就整個取代掉）。commit 到 main 並 push。
+> 分析這份 transcript，整理成一個 earnings call 物件：ticker、company、year、
+> quarter、date、summary（一句話總結），以及 highlights 陣列——每個重點含
+> text 與 sentiment（bullish／bearish／neutral），涵蓋營運財務、財測展望、
+> **供應鏈訊號**、風險。寫成 `/tmp/call.json`（格式 `{"calls":[ ... ]}`），
+> 再執行 `python scripts/publish.py --type earnings --file /tmp/call.json`。
+> 不要 commit / push，資料進 Firestore 即可。
 
-一站式：同一個 session 完成分析 + 產生 HTML + push。
+> 若想沿用 claude.ai **Project**：在 Project 裡分析完，把整理好的 JSON 貼進
+> Claude Code web session 執行 `publish.py`（Project 聊天本身無法寫 Firestore）。
 
-> 若想沿用你現有的 claude.ai **Project**：在 Project 裡分析完，把成品貼進一個 Claude Code web session 轉 HTML 並 push（Project 聊天本身無法 push GitHub）。
+也可在本機跑：`python scripts/publish.py --type earnings --file call.json --credentials sa.json`
 
 ---
 
-## 檔案結構
+## 資料格式速查（`scripts/publish.py`）
 
-```
-supply-chain/
-  index.html         # 總覽，DIGEST_LIST_START/END 之間插每日條目
-  2026-07-28.html    # 每日頁範本（placeholder）
-earnings/
-  index.html         # 總覽，CALL_LIST_START/END 之間插每份分析
-  _template.html     # 每份分析的版面範本
-```
+- **news**：`{"items": [ {date, tickers[], headline, content, sentiment, sources[]} ]}`
+- **earnings**：`{"calls": [ {ticker, company, year, quarter, date, summary, highlights:[{text, sentiment}]} ]}`
+- doc id 由內容決定（news = date+headline、earnings = ticker-year-quarter），**重跑會更新、不會重複**。
+- `sentiment` 只接受 `bullish` / `bearish` / `neutral`，其他值一律當 `neutral`。
 
-首頁 `index.html` 側欄「Reports」資料夾已加入兩個入口連結。
+## 之後想加股價線？
+`js/reports.js` 的 `renderTimeline(host, items, { priceSeries })` 已支援：
+只要傳入 `priceSeries: [{date, close}]`，節點就會落在股價線上（圖一那樣）。
+目前 worker 只存漲跌%、沒存整條收盤序列；要畫線需另外提供每日收盤資料。

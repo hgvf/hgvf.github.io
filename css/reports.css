@@ -1,0 +1,88 @@
+/* reports.css — shared styles for the supply-chain & earnings report pages */
+
+body.report { display: block; }
+.rp-wrap { max-width: 960px; margin: 0 auto; padding: 2.75rem 1.25rem 5rem; }
+.rp-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+.rp-back { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+.rp-back:hover { color: var(--accent); }
+.rp-title { font-size: 1.95rem; font-weight: 700; letter-spacing: -0.01em; }
+.rp-sub { color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.95rem; }
+.rp-updated { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); }
+
+/* Ticker filter chips */
+.rp-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.4rem 0 0.4rem; }
+.rp-chip { font-size: 0.8rem; font-weight: 500; padding: 0.28rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-secondary); cursor: pointer;
+  transition: all var(--transition); font-family: var(--font-mono); }
+.rp-chip:hover { color: var(--accent); }
+.rp-chip.active { background: var(--accent); color: var(--text-on-accent); border-color: transparent; }
+
+/* Timeline chart */
+.rp-chart { padding: 0.75rem 0.5rem 0.25rem; margin: 1.1rem 0 2rem; overflow-x: auto; }
+.tl-svg { min-width: 100%; }
+.tl-grid { stroke: rgba(139,94,60,0.10); stroke-width: 1; }
+.tl-baseline { stroke: rgba(139,94,60,0.35); stroke-width: 1.5; }
+.tl-stem { stroke: rgba(139,94,60,0.30); stroke-width: 1.5; }
+.tl-axis { fill: var(--text-muted); font-size: 11px; font-family: var(--font-mono); }
+.tl-year { font-weight: 600; fill: var(--text-secondary); }
+.tl-price { fill: none; stroke: var(--accent); stroke-width: 2; }
+.tl-price-area { fill: var(--accent-light); stroke: none; }
+.tl-node { cursor: pointer; }
+.tl-halo { fill: transparent; transition: fill var(--transition); }
+.tl-node:hover .tl-halo, .tl-node:focus .tl-halo { fill: rgba(139,94,60,0.15); }
+.tl-node:focus { outline: none; }
+.tl-dot { stroke: #fff; stroke-width: 2; transition: r var(--transition); }
+.tl-dot.pos { fill: var(--positive); }
+.tl-dot.neg { fill: var(--negative); }
+.tl-dot.neu { fill: var(--neutral); }
+.tl-node:hover .tl-dot { r: 8; }
+.tl-dot.sel { r: 9; stroke: var(--accent); }
+.tl-tip { position: absolute; display: none; max-width: 240px; z-index: 20; pointer-events: none;
+  background: var(--glass-bg-solid); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  box-shadow: var(--glass-shadow); padding: 0.5rem 0.7rem; font-size: 0.82rem; line-height: 1.4; color: var(--text-primary); }
+.tl-tip-date { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.15rem; }
+
+/* Shared card bits */
+.rp-list { display: flex; flex-direction: column; gap: 1rem; }
+.rp-empty { padding: 2.5rem 1.25rem; text-align: center; color: var(--text-muted); }
+.rp-date { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+.rp-tickers { display: inline-flex; gap: 0.35rem; flex-wrap: wrap; }
+.rp-ticker { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent); }
+.sent-tag { font-size: 0.72rem; font-weight: 600; padding: 0.12rem 0.5rem; border-radius: var(--radius-sm); white-space: nowrap; }
+.sent-tag.pos { color: var(--positive); background: var(--positive-bg); }
+.sent-tag.neg { color: var(--negative); background: var(--negative-bg); }
+.sent-tag.neu { color: var(--neutral); background: var(--neutral-bg); }
+
+/* Highlight / flash when jumped to from a timeline node */
+.rp-card { padding: 1.15rem 1.35rem; scroll-margin-top: 1.5rem; border-left: 4px solid transparent; }
+.rp-card.pos { border-left-color: var(--positive); }
+.rp-card.neg { border-left-color: var(--negative); }
+.rp-card.neu { border-left-color: var(--neutral); }
+.rp-card.flash { animation: rpflash 1.4s ease; }
+@keyframes rpflash { 0%,100% { box-shadow: var(--glass-shadow); } 25% { box-shadow: 0 0 0 3px var(--accent-light), var(--glass-shadow-hover); } }
+
+/* News card */
+.news-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.news-title { font-size: 1.08rem; font-weight: 600; line-height: 1.45; margin: 0.15rem 0 0.35rem; }
+.news-body { color: var(--text-secondary); font-size: 0.94rem; line-height: 1.65; }
+.news-src { margin-top: 0.7rem; font-size: 0.8rem; font-family: var(--font-mono); display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.news-src a { color: var(--accent); }
+
+/* Earnings call card */
+.ec-head { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+.ec-ticker { font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem; color: var(--accent); }
+.ec-company { color: var(--text-secondary); font-size: 0.9rem; }
+.ec-qtr { margin-left: auto; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary);
+  background: var(--accent-light); padding: 0.2rem 0.6rem; border-radius: var(--radius-sm); }
+.ec-summary { color: var(--text-primary); font-size: 0.96rem; line-height: 1.6; margin: 0.6rem 0 0.9rem;
+  padding-left: 0.7rem; border-left: 3px solid var(--accent); }
+.ec-hls { display: flex; flex-direction: column; gap: 0.5rem; }
+.ec-hl { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);
+  border: 1px solid; font-size: 0.92rem; line-height: 1.55; }
+.ec-hl.pos { border-color: rgba(22,163,74,0.35); background: var(--positive-bg); }
+.ec-hl.neg { border-color: rgba(220,38,38,0.35); background: var(--negative-bg); }
+.ec-hl.neu { border-color: rgba(120,113,108,0.25); background: var(--neutral-bg); }
+.ec-hl .sent-tag { flex-shrink: 0; margin-top: 0.05rem; }
+
+.rp-foot { margin-top: 2.75rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
