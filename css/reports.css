@@ -85,4 +85,29 @@ body.report { display: block; }
 .ec-hl.neu { border-color: rgba(120,113,108,0.25); background: var(--neutral-bg); }
 .ec-hl .sent-tag { flex-shrink: 0; margin-top: 0.05rem; }
 
+/* Auth + admin importer */
+.rp-auth { display: inline-flex; align-items: center; gap: 0.6rem; }
+.rp-who { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); }
+.rp-btn { font-size: 0.85rem; font-weight: 600; padding: 0.4rem 0.9rem; border-radius: var(--radius-sm);
+  border: 1px solid transparent; background: var(--accent); color: var(--text-on-accent); cursor: pointer;
+  transition: background var(--transition); }
+.rp-btn:hover { background: var(--accent-hover); }
+.rp-btn.ghost { background: transparent; color: var(--text-secondary); border-color: var(--glass-border); }
+.rp-btn.ghost:hover { color: var(--accent); background: var(--accent-light); }
+
+.rp-import { margin: 1.4rem 0 0.5rem; padding: 0.9rem 1.1rem; border-radius: var(--radius-md);
+  background: var(--glass-bg); border: 1px solid var(--glass-border); }
+.rp-import > summary { cursor: pointer; font-weight: 600; color: var(--accent); font-size: 0.95rem; list-style: none; }
+.rp-import > summary::-webkit-details-marker { display: none; }
+.rp-hint { font-size: 0.82rem; color: var(--text-secondary); margin: 0.7rem 0; line-height: 1.55; }
+.rp-hint code { font-family: var(--font-mono); font-size: 0.78rem; background: var(--accent-light); padding: 0.05rem 0.3rem; border-radius: 4px; }
+.rp-textarea { width: 100%; min-height: 150px; resize: vertical; padding: 0.75rem 0.9rem; box-sizing: border-box;
+  font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.5; color: var(--text-primary);
+  background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); }
+.rp-textarea:focus { outline: none; border-color: var(--accent); }
+.rp-import-actions { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.7rem; flex-wrap: wrap; }
+.rp-status { font-size: 0.82rem; color: var(--text-secondary); }
+.rp-status.ok { color: var(--positive); }
+.rp-status.err { color: var(--negative); }
+
 .rp-foot { margin-top: 2.75rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
