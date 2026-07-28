@@ -10,99 +10,54 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
-<body class="report">
-  <div class="rp-wrap">
-    <div class="rp-top">
-      <a class="rp-back" href="../index.html">← 回首頁</a>
-      <span class="rp-updated" id="updated"></span>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head">
+      <h2 class="page-title">供應鏈瓶頸新聞</h2>
     </div>
+    <p class="rp-sub">每日由 Claude 自動彙整的供應鏈瓶頸、缺料、航運壅塞重點。點左側節點，內容顯示在右側。</p>
 
-    <header>
-      <h1 class="rp-title">供應鏈瓶頸新聞</h1>
-      <p class="rp-sub">每日由 Claude 自動彙整的供應鏈瓶頸、缺料、航運壅塞重點。點時間軸節點可跳到該則新聞。</p>
-    </header>
-
-    <div class="rp-filters" id="filters"></div>
-    <div class="glass-card rp-chart" id="chart"></div>
-    <div class="rp-list" id="list"><div class="rp-empty">載入中…</div></div>
-
+    <div id="reportRoot" class="rv-root"></div>
     <p class="rp-foot">資料由 Claude 自動彙整並存於 Firebase，僅供參考，非投資建議。</p>
-  </div>
+  </main>
 
   <script type="module">
-    import { loadDocs, renderTimeline, sent, esc, fmtDate } from "../js/reports.js";
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountReportView } from "../js/reportview.js";
+    import { sent, esc, fmtDate } from "../js/reports.js";
 
-    const listEl = document.getElementById("list");
-    const chartEl = document.getElementById("chart");
-    const filtersEl = document.getElementById("filters");
-    let all = [], activeTicker = "__all__", chart = null;
+    mountSidebar("supply-chain");
 
-    function tickerChips(t) {
-      if (!t || !t.length) return "";
-      return `<span class="rp-tickers">${t.map(x => `<span class="rp-ticker">${esc(x)}</span>`).join("")}</span>`;
-    }
-    function sources(s) {
-      if (!s || !s.length) return "";
-      return `<div class="news-src">來源：${s.map(o =>
-        `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`;
-    }
-    function cardHTML(it) {
+    function detail(it) {
       const s = sent(it.sentiment);
-      return `<article class="glass-card rp-card ${s.cls}" id="card-${esc(it.id)}">
-        <div class="news-head">
+      const tickers = (it.tickers || []).map(t => `<span class="rp-ticker">${esc(t)}</span>`).join("");
+      const sources = (it.sources || []).length
+        ? `<div class="news-src">來源：${it.sources.map(o => `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`
+        : "";
+      return `<article class="rv-detail ${s.cls}">
+        <div class="rv-detail-meta">
           <span class="rp-date">${esc(fmtDate(it.date))}</span>
-          ${tickerChips(it.tickers)}
+          ${tickers}
           <span class="sent-tag ${s.cls}">${s.label}</span>
         </div>
-        <h3 class="news-title">${esc(it.headline)}</h3>
-        <p class="news-body">${esc(it.content)}</p>
-        ${sources(it.sources)}
+        <h2 class="rv-detail-title">${esc(it.headline)}</h2>
+        <p class="rv-detail-body">${esc(it.content)}</p>
+        ${sources}
       </article>`;
     }
 
-    function render() {
-      const items = activeTicker === "__all__"
-        ? all
-        : all.filter(i => (i.tickers || []).includes(activeTicker));
-      listEl.innerHTML = items.length
-        ? items.map(cardHTML).join("")
-        : `<div class="rp-empty">目前沒有符合的新聞。</div>`;
-      chart = renderTimeline(chartEl, items.map(i => ({ ...i, tipTitle: i.headline })), {
-        onSelect(id) {
-          const card = document.getElementById("card-" + id);
-          if (!card) return;
-          card.scrollIntoView({ behavior: "smooth", block: "center" });
-          card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
-        },
-      });
-    }
-
-    function buildFilters() {
-      const set = new Set();
-      all.forEach(i => (i.tickers || []).forEach(t => set.add(t)));
-      const chips = [`<button class="rp-chip active" data-t="__all__">全部</button>`,
-        ...[...set].sort().map(t => `<button class="rp-chip" data-t="${esc(t)}">${esc(t)}</button>`)];
-      filtersEl.innerHTML = chips.join("");
-      filtersEl.querySelectorAll(".rp-chip").forEach(btn => btn.addEventListener("click", () => {
-        activeTicker = btn.dataset.t;
-        filtersEl.querySelectorAll(".rp-chip").forEach(b => b.classList.toggle("active", b === btn));
-        render();
-      }));
-    }
-
-    (async () => {
-      try {
-        all = await loadDocs("supply_chain_news", "date", "desc");
-        if (!all.length) { listEl.innerHTML = `<div class="rp-empty">尚無資料。排程首次執行後就會出現每日新聞。</div>`; return; }
-        document.getElementById("updated").textContent = "最新：" + fmtDate(all[0].date);
-        buildFilters();
-        render();
-        window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 200); });
-      } catch (e) {
-        console.error(e);
-        listEl.innerHTML = `<div class="rp-empty">載入失敗，請稍後再試。</div>`;
-      }
-    })();
+    mountReportView({
+      root: document.getElementById("reportRoot"),
+      collection: "supply_chain_news",
+      tickersOf: it => it.tickers || [],
+      sentimentOf: it => it.sentiment || "neutral",
+      nodeTitle: it => it.headline,
+      chipLabel: it => (it.tickers && it.tickers[0]) || "•",
+      renderDetail: detail,
+      emptyHint: "點選左側新聞節點，內容會顯示在這裡",
+    }).catch(e => { console.error(e); document.getElementById("reportRoot").innerHTML = '<div class="rv-empty">載入失敗，請稍後再試。</div>'; });
   </script>
 </body>
 </html>

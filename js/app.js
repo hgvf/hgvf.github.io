@@ -50,6 +50,15 @@ document.getElementById('menuToggle')?.addEventListener('click', () => {
   document.getElementById('sidebar')?.classList.toggle('open');
 });
 
+// Deep-link support: open a page from a URL hash (e.g. index.html#watchlist),
+// used by the Reports pages' sidebar links back into the SPA.
+function showPageFromHash() {
+  const id = location.hash.replace('#', '');
+  if (id && document.getElementById(`page-${id}`)) showPage(id);
+}
+showPageFromHash();
+window.addEventListener('hashchange', showPageFromHash);
+
 /* ── Auth ────────────────────────────────────────────────────── */
 onAuthChange(({ user, isAdmin }) => {
   _isAdmin = isAdmin;
