@@ -10,22 +10,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
-<body class="report">
-  <div class="rp-wrap">
-    <div class="rp-top">
-      <a class="rp-back" href="../index.html">← 回首頁</a>
-      <span class="rp-auth" id="authZone"></span>
-    </div>
+<body>
+  <div id="siteSidebar"></div>
 
-    <header>
-      <h1 class="rp-title">財報電話會議分析</h1>
-      <p class="rp-sub">每場電話會議一張卡片，重點以偏多／偏空標色。點時間軸節點可跳到該場會議。</p>
-    </header>
+  <main class="main-content">
+    <div class="rp-head">
+      <h2 class="page-title">財報電話會議分析</h2>
+    </div>
+    <p class="rp-sub">每場電話會議一個節點，重點以偏多／偏空標色。點左側節點，內容顯示在右側。</p>
 
     <!-- Admin-only importer (visible only when signed in as a whitelisted user) -->
     <details class="rp-import" id="importPanel" hidden>
       <summary>＋ 匯入 / 更新財報 JSON</summary>
-      <p class="rp-hint">貼上 claude.ai Project 產生的 JSON —— 接受 <code>{"calls":[...]}</code>、陣列、或單一 call 物件。發布後頁面會自動刷新，資料存於 Firebase。</p>
+      <p class="rp-hint">貼上 claude.ai Project 產生的 JSON —— 接受 <code>{"calls":[...]}</code>、陣列、或單一 call 物件。發布後自動刷新，資料存於 Firebase。</p>
       <textarea id="jsonInput" class="rp-textarea" spellcheck="false"
         placeholder='{"calls":[{"ticker":"NVDA","company":"NVIDIA Corp","year":2026,"quarter":"Q2","date":"2026-05-28","summary":"...","highlights":[{"text":"...","sentiment":"bullish"}]}]}'></textarea>
       <div class="rp-import-actions">
@@ -34,99 +31,56 @@
       </div>
     </details>
 
-    <div class="rp-filters" id="filters"></div>
-    <div class="glass-card rp-chart" id="chart"></div>
-    <div class="rp-list" id="list"><div class="rp-empty">載入中…</div></div>
-
+    <div id="reportRoot" class="rv-root"></div>
     <p class="rp-foot">分析由 Claude 節錄並存於 Firebase，僅供參考，非投資建議。</p>
-  </div>
+  </main>
 
   <script type="module">
-    import {
-      loadDocs, renderTimeline, renderTickerFilter, sent, esc, fmtDate,
-      onAuth, signInGoogle, signOutUser, parseCalls, saveEarnings,
-    } from "../js/reports.js";
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountReportView } from "../js/reportview.js";
+    import { sent, esc, fmtDate, onAuth, parseCalls, saveEarnings } from "../js/reports.js";
 
-    const listEl = document.getElementById("list");
-    const chartEl = document.getElementById("chart");
-    const filtersEl = document.getElementById("filters");
-    const authZone = document.getElementById("authZone");
-    const importPanel = document.getElementById("importPanel");
-    const pubStatus = document.getElementById("pubStatus");
-    let all = [], activeTicker = "__all__";
+    mountSidebar("earnings");
 
-    function overall(call) {
+    function overall(c) {
       let net = 0;
-      (call.highlights || []).forEach(h => {
-        if (h.sentiment === "bullish") net++;
-        else if (h.sentiment === "bearish") net--;
-      });
+      (c.highlights || []).forEach(h => { if (h.sentiment === "bullish") net++; else if (h.sentiment === "bearish") net--; });
       return net > 0 ? "bullish" : net < 0 ? "bearish" : "neutral";
     }
-    function hlHTML(h) {
-      const s = sent(h.sentiment);
-      const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
-      return `<div class="ec-hl ${s.cls}"><span class="sent-tag ${s.cls}">${icon}</span><span>${esc(h.text)}</span></div>`;
-    }
-    function cardHTML(c) {
+    function detail(c) {
       const s = sent(overall(c));
-      const summary = c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : "";
-      const hls = (c.highlights || []).length ? `<div class="ec-hls">${c.highlights.map(hlHTML).join("")}</div>` : "";
-      return `<article class="glass-card rp-card ${s.cls}" id="card-${esc(c.id)}">
+      const hls = (c.highlights || []).map(h => {
+        const hs = sent(h.sentiment);
+        const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
+        return `<div class="ec-hl ${hs.cls}"><span class="sent-tag ${hs.cls}">${icon}</span><span>${esc(h.text)}</span></div>`;
+      }).join("");
+      return `<article class="rv-detail ${s.cls}">
         <div class="ec-head">
           <span class="ec-ticker">${esc(c.ticker)}</span>
           <span class="ec-company">${esc(c.company || "")}</span>
           <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
         </div>
-        ${summary}${hls}
+        ${c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : ""}
+        ${hls ? `<div class="ec-hls">${hls}</div>` : ""}
       </article>`;
     }
 
-    function render() {
-      const items = activeTicker === "__all__" ? all : all.filter(c => c.ticker === activeTicker);
-      listEl.innerHTML = items.length ? items.map(cardHTML).join("") : `<div class="rp-empty">目前沒有符合的會議。</div>`;
-      renderTimeline(chartEl, items.map(c => ({
-        id: c.id, date: c.date, sentiment: overall(c),
-        tipTitle: `${c.ticker} ${c.year} ${c.quarter}`,
-      })), {
-        onSelect(id) {
-          const card = document.getElementById("card-" + id);
-          if (!card) return;
-          card.scrollIntoView({ behavior: "smooth", block: "center" });
-          card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
-        },
-      });
-    }
+    let view;
+    mountReportView({
+      root: document.getElementById("reportRoot"),
+      collection: "earnings_calls",
+      tickersOf: c => (c.ticker ? [c.ticker] : []),
+      sentimentOf: overall,
+      nodeTitle: c => `${c.ticker} ${c.year} ${c.quarter}`,
+      chipLabel: c => c.ticker,
+      renderDetail: detail,
+      emptyHint: "點選左側會議節點，重點會顯示在這裡",
+    }).then(v => { view = v; }).catch(e => { console.error(e); });
 
-    function buildFilters() {
-      const set = new Set(all.map(c => c.ticker).filter(Boolean));
-      renderTickerFilter(filtersEl, [...set].sort(), t => { activeTicker = t; render(); });
-    }
-
-    async function reload() {
-      all = await loadDocs("earnings_calls", "date", "desc");
-      document.querySelector(".rp-updated")?.remove();
-      if (!all.length) {
-        listEl.innerHTML = `<div class="rp-empty">尚無分析。以管理員登入後，於上方貼上 JSON 發布即可。</div>`;
-        filtersEl.innerHTML = ""; chartEl.innerHTML = ""; return;
-      }
-      buildFilters();
-      render();
-    }
-
-    // ── Auth + admin importer ──────────────────────────────────────────
-    onAuth(({ user, isAdmin }) => {
-      if (!user) {
-        authZone.innerHTML = `<button class="rp-btn ghost" id="signinBtn">管理員登入</button>`;
-        document.getElementById("signinBtn").onclick = () => signInGoogle().catch(e => alert("登入失敗：" + e.message));
-        importPanel.hidden = true;
-        return;
-      }
-      authZone.innerHTML = `<span class="rp-who">${esc(user.email)}${isAdmin ? "" : "（非管理員）"}</span>
-        <button class="rp-btn ghost" id="signoutBtn">登出</button>`;
-      document.getElementById("signoutBtn").onclick = () => signOutUser();
-      importPanel.hidden = !isAdmin;
-    });
+    // Admin importer (sign-in handled in the sidebar)
+    const importPanel = document.getElementById("importPanel");
+    const pubStatus = document.getElementById("pubStatus");
+    onAuth(({ isAdmin }) => { importPanel.hidden = !isAdmin; });
 
     document.getElementById("publishBtn").addEventListener("click", async () => {
       const raw = document.getElementById("jsonInput").value.trim();
@@ -138,26 +92,15 @@
       pubStatus.textContent = "發布中…";
       try {
         const n = await saveEarnings(calls);
-        pubStatus.className = "rp-status ok";
-        pubStatus.textContent = `已發布 ${n} 場會議，刷新中…`;
         document.getElementById("jsonInput").value = "";
-        await reload();
+        if (view) await view.reload();
+        pubStatus.className = "rp-status ok";
         pubStatus.textContent = `已發布 ${n} 場會議。`;
       } catch (e) {
         pubStatus.className = "rp-status err";
         pubStatus.textContent = "發布失敗：" + (e.code === "permission-denied" ? "帳號不在白名單，無寫入權限。" : e.message);
       }
     });
-
-    (async () => {
-      try {
-        await reload();
-        window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 200); });
-      } catch (e) {
-        console.error(e);
-        listEl.innerHTML = `<div class="rp-empty">載入失敗，請稍後再試。</div>`;
-      }
-    })();
   </script>
 </body>
 </html>
