@@ -35,7 +35,8 @@
 3. **環境設定**：
    - **Network access → Full**（要抓任意新聞網站，也要連 `firestore.googleapis.com`）。
    - **Environment variable**：`FIREBASE_SERVICE_ACCOUNT` = 整包 service account JSON（貼原文）。
-   - **Setup script**：`pip install firebase-admin`
+   - **Setup script**：`pip install google-auth requests`
+     （改用 Firestore REST API，**不裝 firebase-admin**，避開 grpcio 安裝失敗。）
 4. **Prompt**：貼下方那段。
 5. **Create** → 先按 **Run now** 測一次，點進 run 確認新聞有抓到、`publish.py` 有成功寫入，再開網頁看是否出現。
 
@@ -68,7 +69,7 @@ You curate the supply-chain news feed for a personal dashboard. Steps:
 
 ## B. 財報分析 — 手動流程（每份 transcript 一次）
 
-開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io`（環境同樣設 `FIREBASE_SERVICE_ACCOUNT` 與 `pip install firebase-admin`），貼上／上傳 transcript，說：
+開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io`（環境同樣設 `FIREBASE_SERVICE_ACCOUNT` 與 `pip install google-auth requests`），貼上／上傳 transcript，說：
 
 > 分析這份 transcript，整理成一個 earnings call 物件：ticker、company、year、
 > quarter、date、summary（一句話總結），以及 highlights 陣列——每個重點含

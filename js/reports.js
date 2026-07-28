@@ -4,13 +4,67 @@
 import { firebaseConfig } from "./config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, query, orderBy,
+  getFirestore, collection, getDocs, getDoc, query, orderBy, doc, setDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-let _db = null;
-function db() {
-  if (!_db) _db = getFirestore(initializeApp(firebaseConfig));
-  return _db;
+let _app = null, _db = null, _auth = null;
+function app() { if (!_app) _app = initializeApp(firebaseConfig); return _app; }
+function db() { if (!_db) _db = getFirestore(app()); return _db; }
+function auth() { if (!_auth) _auth = getAuth(app()); return _auth; }
+
+// ─── Auth (Google sign-in + whitelist check) ───────────────────────────
+export function onAuth(cb) {
+  return onAuthStateChanged(auth(), async user => {
+    if (!user) { cb({ user: null, isAdmin: false }); return; }
+    let isAdmin = false;
+    try {
+      const snap = await getDoc(doc(db(), "config", "auth"));
+      isAdmin = snap.exists() && (snap.data().allowed_emails || []).includes(user.email);
+    } catch { /* not whitelisted / read denied */ }
+    cb({ user, isAdmin });
+  });
+}
+export function signInGoogle() { return signInWithPopup(auth(), new GoogleAuthProvider()); }
+export function signOutUser() { return signOut(auth()); }
+
+// ─── Writes (whitelisted users only; enforced by Firestore rules) ──────
+function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60); }
+function normSent(v) { v = (v || "neutral").toLowerCase(); return ["bullish", "bearish", "neutral"].includes(v) ? v : "neutral"; }
+
+// Accepts {calls:[...]}, a bare array, or a single call object.
+export function parseCalls(input) {
+  let data = typeof input === "string" ? JSON.parse(input) : input;
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.calls)) return data.calls;
+  if (data && data.ticker) return [data];
+  throw new Error('格式需為 {"calls":[...]}、陣列、或單一 call 物件');
+}
+
+export async function saveEarnings(calls) {
+  const now = new Date().toISOString();
+  let n = 0;
+  for (const c of calls) {
+    if (!c.ticker || !c.year || !c.quarter) throw new Error(`每筆需含 ticker/year/quarter：${JSON.stringify(c).slice(0, 80)}`);
+    const id = `${slug(c.ticker)}-${c.year}-${slug(c.quarter)}`;
+    const highlights = (c.highlights || [])
+      .filter(h => h && h.text)
+      .map(h => ({ text: String(h.text), sentiment: normSent(h.sentiment) }));
+    await setDoc(doc(db(), "earnings_calls", id), {
+      ticker: String(c.ticker),
+      company: c.company || c.ticker,
+      year: parseInt(c.year, 10),
+      quarter: String(c.quarter),
+      date: c.date || "",
+      summary: c.summary || "",
+      highlights,
+      updated_at: now,
+    }, { merge: true });
+    n++;
+  }
+  return n;
 }
 
 export async function loadDocs(name, orderField = "date", dir = "desc") {
