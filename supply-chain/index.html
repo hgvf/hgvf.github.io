@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>供應鏈瓶頸新聞 · Supply Chain Digest</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { display: block; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.75rem; }
+    .back { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+    .back:hover { color: var(--accent); }
+    .page-title { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; }
+    .page-sub { color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.95rem; }
+    .digest-list { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 1.75rem; }
+    .digest-item { display: flex; align-items: center; justify-content: space-between; padding: 1.05rem 1.25rem; gap: 1rem; }
+    .digest-item .date { font-family: var(--font-mono); font-weight: 500; }
+    .digest-item .arrow { color: var(--text-muted); }
+    .digest-item:hover .arrow { color: var(--accent); }
+    .empty { padding: 2.5rem 1.25rem; text-align: center; color: var(--text-muted); }
+    .foot { margin-top: 2.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="../index.html">← 回首頁</a>
+    </div>
+
+    <header>
+      <h1 class="page-title">供應鏈瓶頸新聞</h1>
+      <p class="page-sub">每日由 Claude 自動彙整的供應鏈瓶頸／缺料／航運壅塞重點。</p>
+    </header>
+
+    <!-- DIGEST_LIST_START · Routine 會在此區塊「最新在上」插入每日條目 -->
+    <div class="digest-list">
+      <a class="glass-card digest-item" href="2026-07-28.html">
+        <span class="date">2026-07-28</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+    <!-- DIGEST_LIST_END -->
+
+    <p class="foot">資料由 Claude 自動彙整，僅供參考，非投資建議。</p>
+  </div>
+</body>
+</html>

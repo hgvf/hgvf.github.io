@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>財報電話會議分析 · Earnings Calls</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { display: block; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.75rem; }
+    .back { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+    .back:hover { color: var(--accent); }
+    .page-title { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; }
+    .page-sub { color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.95rem; }
+    .call-list { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 1.75rem; }
+    .call-item { display: flex; align-items: center; justify-content: space-between; padding: 1.05rem 1.25rem; gap: 1rem; }
+    .call-item .meta { display: flex; flex-direction: column; gap: 0.15rem; }
+    .call-item .co { font-weight: 600; }
+    .call-item .qtr { font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); }
+    .call-item .arrow { color: var(--text-muted); }
+    .call-item:hover .arrow { color: var(--accent); }
+    .empty { padding: 2.5rem 1.25rem; text-align: center; color: var(--text-muted); }
+    .foot { margin-top: 2.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="../index.html">← 回首頁</a>
+    </div>
+
+    <header>
+      <h1 class="page-title">財報電話會議分析</h1>
+      <p class="page-sub">每份 transcript 一頁，重點／財測／供應鏈訊號由 Claude 節錄。手動更新。</p>
+    </header>
+
+    <!-- CALL_LIST_START · 每份分析在此區塊「最新在上」新增一條 -->
+    <div class="call-list">
+      <div class="glass-card empty">尚無分析。在 Claude Code web session 貼上 transcript 即可產生第一頁。</div>
+    </div>
+    <!-- CALL_LIST_END -->
+
+    <p class="foot">分析由 Claude 節錄，僅供參考，非投資建議。</p>
+  </div>
+</body>
+</html>

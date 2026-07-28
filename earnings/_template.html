@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>財報分析 · 〈公司〉 〈季度〉</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { display: block; }
+    .wrap { max-width: 800px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.75rem; }
+    .back { color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; }
+    .back:hover { color: var(--accent); }
+    .qtr-badge { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); background: var(--accent-light); padding: 0.25rem 0.7rem; border-radius: var(--radius-sm); }
+    .page-title { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; }
+    .page-sub { color: var(--text-muted); margin-top: 0.3rem; font-size: 0.85rem; font-family: var(--font-mono); }
+    section.block { margin-top: 1.5rem; padding: 1.35rem 1.5rem; }
+    section.block h2 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin-bottom: 0.75rem; }
+    section.block ul { display: flex; flex-direction: column; gap: 0.55rem; }
+    section.block li { position: relative; padding-left: 1.1rem; font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary); }
+    section.block li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); }
+    section.block li b { color: var(--text-primary); font-weight: 600; }
+    .tag { display: inline-block; font-size: 0.75rem; padding: 0.15rem 0.55rem; border-radius: var(--radius-sm); font-weight: 500; }
+    .tag.pos { color: var(--positive); background: var(--positive-bg); }
+    .tag.neg { color: var(--negative); background: var(--negative-bg); }
+    .tag.neu { color: var(--neutral); background: var(--neutral-bg); }
+    .foot { margin-top: 2.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="index.html">← 所有分析</a>
+      <span class="qtr-badge">〈季度，如 2026 Q2〉</span>
+    </div>
+
+    <h1 class="page-title">〈公司名稱〉</h1>
+    <p class="page-sub">電話會議日期：〈YYYY-MM-DD〉 · 分析：Claude</p>
+
+    <section class="glass-card block">
+      <h2>一句話總結</h2>
+      <ul><li>〈整場最重要的一件事。〉</li></ul>
+    </section>
+
+    <section class="glass-card block">
+      <h2>營運與財務重點</h2>
+      <ul>
+        <li><b>營收／獲利：</b>〈數字與 YoY/QoQ。〉</li>
+        <li><b>毛利率：</b>〈變化與原因。〉</li>
+      </ul>
+    </section>
+
+    <section class="glass-card block">
+      <h2>財測 / 展望 <span class="tag neu">Guidance</span></h2>
+      <ul>
+        <li>〈下季／全年指引，管理層語氣。〉</li>
+      </ul>
+    </section>
+
+    <section class="glass-card block">
+      <h2>供應鏈訊號 <span class="tag pos">利多</span> / <span class="tag neg">利空</span></h2>
+      <ul>
+        <li>〈缺料、產能、庫存、交期、地緣風險等與供應鏈相關的表述。〉</li>
+      </ul>
+    </section>
+
+    <section class="glass-card block">
+      <h2>值得追蹤 / 風險</h2>
+      <ul>
+        <li>〈後續要留意的點。〉</li>
+      </ul>
+    </section>
+
+    <p class="foot">分析由 Claude 節錄自公開 transcript，僅供參考，非投資建議。</p>
+  </div>
+</body>
+</html>
