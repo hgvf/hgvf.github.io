@@ -9,13 +9,19 @@ body.report { display: block; }
 .rp-sub { color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.95rem; }
 .rp-updated { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); }
 
-/* Ticker filter chips */
-.rp-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.4rem 0 0.4rem; }
-.rp-chip { font-size: 0.8rem; font-weight: 500; padding: 0.28rem 0.7rem; border-radius: 999px;
-  border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-secondary); cursor: pointer;
-  transition: all var(--transition); font-family: var(--font-mono); }
-.rp-chip:hover { color: var(--accent); }
-.rp-chip.active { background: var(--accent); color: var(--text-on-accent); border-color: transparent; }
+/* Ticker filter (dropdown) */
+.rp-filters { margin: 1.4rem 0 0.4rem; }
+.rp-filter-label { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.85rem; color: var(--text-secondary); }
+.rp-select-wrap { position: relative; display: inline-block; }
+.rp-select-wrap::after { content: "▾"; position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: var(--text-muted); font-size: 0.75rem; }
+.rp-select { appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--text-primary);
+  padding: 0.4rem 2rem 0.4rem 0.8rem; min-width: 8.5rem; cursor: pointer;
+  background: var(--glass-bg-solid); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5); transition: border-color var(--transition); }
+.rp-select:hover { border-color: var(--accent); }
+.rp-select:focus { outline: none; border-color: var(--accent); }
 
 /* Timeline chart */
 .rp-chart { padding: 0.75rem 0.5rem 0.25rem; margin: 1.1rem 0 2rem; overflow-x: auto; }

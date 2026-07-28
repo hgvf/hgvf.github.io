@@ -43,7 +43,7 @@
 
   <script type="module">
     import {
-      loadDocs, renderTimeline, sent, esc, fmtDate,
+      loadDocs, renderTimeline, renderTickerFilter, sent, esc, fmtDate,
       onAuth, signInGoogle, signOutUser, parseCalls, saveEarnings,
     } from "../js/reports.js";
 
@@ -100,13 +100,7 @@
 
     function buildFilters() {
       const set = new Set(all.map(c => c.ticker).filter(Boolean));
-      filtersEl.innerHTML = [`<button class="rp-chip active" data-t="__all__">全部</button>`,
-        ...[...set].sort().map(t => `<button class="rp-chip" data-t="${esc(t)}">${esc(t)}</button>`)].join("");
-      filtersEl.querySelectorAll(".rp-chip").forEach(btn => btn.addEventListener("click", () => {
-        activeTicker = btn.dataset.t;
-        filtersEl.querySelectorAll(".rp-chip").forEach(b => b.classList.toggle("active", b === btn));
-        render();
-      }));
+      renderTickerFilter(filtersEl, [...set].sort(), t => { activeTicker = t; render(); });
     }
 
     async function reload() {

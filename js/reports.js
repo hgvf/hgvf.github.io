@@ -94,6 +94,15 @@ export function esc(s) {
   ));
 }
 
+// Ticker filter as a <select> (scales better than chips when there are many).
+export function renderTickerFilter(container, tickers, onChange) {
+  const opts = ['<option value="__all__">全部</option>',
+    ...tickers.map(t => `<option value="${esc(t)}">${esc(t)}</option>`)].join("");
+  container.innerHTML = `<label class="rp-filter-label">篩選 ticker
+    <span class="rp-select-wrap"><select class="rp-select">${opts}</select></span></label>`;
+  container.querySelector("select").addEventListener("change", e => onChange(e.target.value));
+}
+
 export function fmtDate(iso) {
   if (!iso) return "";
   const d = new Date(iso + (iso.length <= 10 ? "T00:00:00" : ""));
