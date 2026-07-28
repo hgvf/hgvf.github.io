@@ -28,6 +28,8 @@ news:     a list of items, or {"items": [...]}. Each item:
       "headline": "...",                    # required
       "content": "...",                     # required, 1-3 sentences
       "sentiment": "bullish|bearish|neutral",
+      "effect": "...",                      # optional, downstream impact / costs
+      "advise": "...",                      # optional, investment takeaway
       "sources": [{"title": "...", "url": "..."}]
     }
 
@@ -151,6 +153,8 @@ def news_docs(items, now_iso):
             "headline": headline,
             "content": it.get("content", ""),
             "sentiment": norm_sentiment(it.get("sentiment")),
+            "effect": it.get("effect", ""),
+            "advise": it.get("advise", ""),
             "sources": it.get("sources", []),
             "updated_at": now_iso,
         }

@@ -36,6 +36,13 @@
       const sources = (it.sources || []).length
         ? `<div class="news-src">來源：${it.sources.map(o => `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`
         : "";
+      // Optional cards — only shown when the (newer) fields exist; blank/absent = omit.
+      const effect = it.effect
+        ? `<div class="rp-subcard rp-effect"><div class="rp-subcard-head">⛓️ 下游影響</div><div class="rp-subcard-body">${esc(it.effect)}</div></div>`
+        : "";
+      const advise = it.advise
+        ? `<div class="rp-subcard rp-advise"><div class="rp-subcard-head">💡 投資建議</div><div class="rp-subcard-body">${esc(it.advise)}</div></div>`
+        : "";
       return `<article class="rv-detail ${s.cls}">
         <div class="rv-detail-meta">
           <span class="rp-date">${esc(fmtDate(it.date))}</span>
@@ -44,6 +51,7 @@
         </div>
         <h2 class="rv-detail-title">${esc(it.headline)}</h2>
         <p class="rv-detail-body">${esc(it.content)}</p>
+        ${effect}${advise}
         ${sources}
       </article>`;
     }
