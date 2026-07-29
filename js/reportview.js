@@ -3,7 +3,7 @@
 // = detail of the node the user clicks. Nothing is shown on the right until a
 // node is selected. A toggle switches the left column between the two layouts.
 
-import { loadDocs, sent, esc, fmtDate } from "./reports.js";
+import { loadDocs, deleteReport, sent, esc, fmtDate } from "./reports.js";
 
 const DOW = ["日", "一", "二", "三", "四", "五", "六"];
 
@@ -17,6 +17,7 @@ export async function mountReportView(opts) {
 
   let all = [], view = "timeline", ticker = "__all__", year = "__all__", selectedId = null;
   let calY, calM; // calendar's current month
+  let canDelete = false;
 
   root.innerHTML = `
     <div class="rv-controls">
@@ -64,11 +65,12 @@ export async function mountReportView(opts) {
       const [y, m] = k.split("-");
       const rows = groups[k].map(it => {
         const s = sent(sentimentOf(it));
-        return `<button class="rv-row" data-id="${esc(it.id)}">
+        return `<div class="rv-row" data-id="${esc(it.id)}" role="button" tabindex="0">
           <span class="rv-dot ${s.cls}"></span>
           <span class="rv-row-date">${esc((fmtDate(it.date) || "").slice(5))}</span>
           <span class="rv-row-title">${esc(nodeTitle(it))}</span>
-        </button>`;
+          <span class="rv-row-del" data-del="${esc(it.id)}" role="button" title="刪除" aria-label="刪除">×</span>
+        </div>`;
       }).join("");
       return `<section class="rv-month">
         <h3 class="rv-month-h">${esc(y)} 年 ${esc(String(parseInt(m, 10)))} 月<span class="rv-month-n">${groups[k].length}</span></h3>
@@ -121,7 +123,23 @@ export async function mountReportView(opts) {
   }
 
   // ── Wiring ────────────────────────────────────────────────────────
+  async function handleDelete(id) {
+    if (!canDelete) return;
+    const it = all.find(x => x.id === id);
+    const label = it ? (nodeTitle(it) || id) : id;
+    if (!window.confirm(`確定刪除「${label}」？此動作無法復原。`)) return;
+    try {
+      await deleteReport(collection, id);
+      if (selectedId === id) { selectedId = null; rightEl.innerHTML = emptyRight(); }
+      await reload();
+    } catch (e) {
+      window.alert("刪除失敗：" + (e.code === "permission-denied" ? "需以白名單管理員登入。" : e.message));
+    }
+  }
+
   leftEl.addEventListener("click", e => {
+    const del = e.target.closest("[data-del]");
+    if (del) { e.stopPropagation(); handleDelete(del.dataset.del); return; }
     const nav = e.target.closest("[data-nav]");
     if (nav) {
       calM += parseInt(nav.dataset.nav, 10);
@@ -163,6 +181,11 @@ export async function mountReportView(opts) {
     renderLeft();
   }
 
+  function setAdmin(v) {
+    canDelete = !!v;
+    root.classList.toggle("rv-can-delete", canDelete);
+  }
+
   await reload();
-  return { reload };
+  return { reload, setAdmin };
 }

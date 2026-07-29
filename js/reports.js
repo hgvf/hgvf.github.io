@@ -4,7 +4,7 @@
 import { firebaseConfig } from "./config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, getDoc, query, orderBy, doc, setDoc,
+  getFirestore, collection, getDocs, getDoc, query, orderBy, doc, setDoc, deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
@@ -41,6 +41,11 @@ export function parseCalls(input) {
   if (data && Array.isArray(data.calls)) return data.calls;
   if (data && data.ticker) return [data];
   throw new Error('格式需為 {"calls":[...]}、陣列、或單一 call 物件');
+}
+
+// Delete a document (whitelisted users only; enforced by Firestore rules).
+export async function deleteReport(collectionName, id) {
+  return deleteDoc(doc(db(), collectionName, id));
 }
 
 export async function saveEarnings(calls) {

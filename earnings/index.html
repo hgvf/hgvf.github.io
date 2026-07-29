@@ -75,12 +75,13 @@
       chipLabel: c => c.ticker,
       renderDetail: detail,
       emptyHint: "點選左側會議節點，重點會顯示在這裡",
-    }).then(v => { view = v; }).catch(e => { console.error(e); });
+    }).then(v => { view = v; view.setAdmin(lastAdmin); }).catch(e => { console.error(e); });
 
-    // Admin importer (sign-in handled in the sidebar)
+    // Admin importer + delete (sign-in handled in the sidebar)
     const importPanel = document.getElementById("importPanel");
     const pubStatus = document.getElementById("pubStatus");
-    onAuth(({ isAdmin }) => { importPanel.hidden = !isAdmin; });
+    let lastAdmin = false;
+    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; importPanel.hidden = !isAdmin; if (view) view.setAdmin(isAdmin); });
 
     document.getElementById("publishBtn").addEventListener("click", async () => {
       const raw = document.getElementById("jsonInput").value.trim();
