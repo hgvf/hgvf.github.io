@@ -108,6 +108,27 @@ export function renderTickerFilter(container, tickers, onChange) {
   container.querySelector("select").addEventListener("change", e => onChange(e.target.value));
 }
 
+// TradingView chart URL for a symbol (mirrors js/render.js tradingViewUrl).
+export function chartUrl(symbol) {
+  const s = String(symbol || "").trim();
+  if (!s) return "";
+  if (s.endsWith(".TWO")) return `https://www.tradingview.com/chart/?symbol=TPEX:${s.slice(0, -4)}`;
+  if (s.endsWith(".TW")) return `https://www.tradingview.com/chart/?symbol=TWSE:${s.slice(0, -3)}`;
+  if (s.endsWith(".KQ")) return `https://www.tradingview.com/chart/?symbol=KRX:${s.slice(0, -3)}`;
+  if (s.endsWith(".KS")) return `https://www.tradingview.com/chart/?symbol=KRX:${s.slice(0, -3)}`;
+  if (s.endsWith(".T")) return `https://www.tradingview.com/chart/?symbol=TSE:${s.slice(0, -2)}`;
+  if (s.endsWith(".SS")) return `https://www.tradingview.com/chart/?symbol=SSE:${s.slice(0, -3)}`;
+  if (s.endsWith(".SZ")) return `https://www.tradingview.com/chart/?symbol=SZSE:${s.slice(0, -3)}`;
+  if (s.endsWith(".HK")) return `https://www.tradingview.com/chart/?symbol=HKEX:${s.slice(0, -3)}`;
+  const eu = s.match(/^(.+)\.(AS|PA|DE|MI|MC|L|ST|CO|HE|OL|VX|BR|LS|IR)$/);
+  if (eu) {
+    const ex = { AS: "EURONEXT", PA: "EURONEXT", DE: "XETR", MI: "MIL", MC: "BME", L: "LSE",
+      ST: "OMX", CO: "OMX", HE: "OMX", OL: "OSL", VX: "SIX", BR: "EURONEXT", LS: "EURONEXT", IR: "EURONEXT" }[eu[2]];
+    if (ex) return `https://www.tradingview.com/chart/?symbol=${ex}:${eu[1]}`;
+  }
+  return `https://www.tradingview.com/chart/?symbol=${encodeURIComponent(s)}`;
+}
+
 export function fmtDate(iso) {
   if (!iso) return "";
   const d = new Date(iso + (iso.length <= 10 ? "T00:00:00" : ""));

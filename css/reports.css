@@ -176,6 +176,14 @@
 .rp-tickers { display: inline-flex; gap: 0.35rem; flex-wrap: wrap; }
 .rp-ticker { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.45rem;
   border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent); }
+a.rp-ticker { text-decoration: none; cursor: pointer; transition: all var(--transition); }
+a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
+
+/* Earnings "K線" chart button next to company name */
+.ec-kbtn { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.74rem; font-weight: 600;
+  padding: 0.16rem 0.55rem; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent);
+  text-decoration: none; white-space: nowrap; transition: all var(--transition); }
+.ec-kbtn:hover { background: var(--accent); color: var(--text-on-accent); }
 .sent-tag { font-size: 0.72rem; font-weight: 600; padding: 0.12rem 0.5rem; border-radius: var(--radius-sm); white-space: nowrap; }
 .sent-tag.pos { color: var(--positive); background: var(--positive-bg); }
 .sent-tag.neg { color: var(--negative); background: var(--negative-bg); }
