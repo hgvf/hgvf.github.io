@@ -26,7 +26,7 @@
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { sent, esc, fmtDate, onAuth } from "../js/reports.js";
+    import { sent, esc, fmtDate, chartUrl, onAuth } from "../js/reports.js";
 
     mountSidebar("supply-chain");
 
@@ -63,7 +63,7 @@
 
     function detail(it) {
       const s = sent(it.sentiment);
-      const tickers = (it.tickers || []).map(t => `<span class="rp-ticker">${esc(t)}</span>`).join("");
+      const tickers = (it.tickers || []).map(t => `<a class="rp-ticker" href="${esc(chartUrl(t))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(t)} 線圖">${esc(t)}</a>`).join("");
       const sources = (it.sources || []).length
         ? `<div class="news-src">來源：${it.sources.map(o => `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`
         : "";

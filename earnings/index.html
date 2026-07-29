@@ -38,7 +38,7 @@
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { sent, esc, fmtDate, onAuth, parseCalls, saveEarnings } from "../js/reports.js";
+    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings } from "../js/reports.js";
 
     mountSidebar("earnings");
 
@@ -58,6 +58,7 @@
         <div class="ec-head">
           <span class="ec-ticker">${esc(c.ticker)}</span>
           <span class="ec-company">${esc(c.company || "")}</span>
+          <a class="ec-kbtn" href="${esc(chartUrl(c.ticker))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(c.ticker)} 線圖">📈 K線</a>
           <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
         </div>
         ${c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : ""}
