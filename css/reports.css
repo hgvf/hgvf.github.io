@@ -20,7 +20,7 @@
 .rv-tab.active { background: var(--accent); color: var(--text-on-accent); }
 
 .rv-split { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 1.25rem; align-items: start; margin-top: 0.9rem; }
-.rv-cal-mode .rv-split { grid-template-columns: 1fr minmax(260px, 340px); }
+.rv-cal-mode .rv-split { grid-template-columns: minmax(350px, 0.8fr) 1.2fr; }
 .rv-left { max-height: calc(100vh - 210px); overflow-y: auto; padding-right: 0.35rem; }
 .rv-right { position: sticky; top: 1rem; }
 @media (max-width: 900px) {
