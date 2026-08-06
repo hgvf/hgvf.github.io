@@ -246,9 +246,16 @@ function tabRevenue(d) {
     bar(s.segment_name || "", s.revenue_percentage,
       [s.growth_status && `<span class="ar-mini">${esc(s.growth_status)}</span>`, s.operating_margin_pct != null && `營益率 ${esc(s.operating_margin_pct)}%`, yoyTag(s.revenue_yoy_change_pct)].filter(Boolean).join(" "))
   ).join("");
-  const mixBars = mix.map(m =>
-    bar(`${m.name || ""}${m.dimension ? `（${m.dimension}）` : ""}`, m.percentage, yoyTag(m.yoy_change_pct))
-  ).join("");
+  // Revenue mix is split by dimension (product / geography / …) — group each
+  // dimension into its own labelled block so different 100%-bases never mix.
+  const DIM = { product: "依產品", segment: "依部門", customer: "依客戶", geography: "依地區",
+    channel: "依通路", application: "依應用", end_market: "依終端市場", other: "其他" };
+  const mixGroups = {};
+  mix.forEach(m => { const k = m.dimension || "其他"; (mixGroups[k] = mixGroups[k] || []).push(m); });
+  const mixBars = Object.keys(mixGroups).map(k => {
+    const bars = mixGroups[k].map(m => bar(m.name || "", m.percentage, yoyTag(m.yoy_change_pct))).join("");
+    return `<div class="ar-mixgroup"><div class="ar-mixgroup-h">${esc(DIM[k] || k)}</div>${bars}</div>`;
+  }).join("");
   const fhKpis = kpiGrid([
     kpi("營收", moneyStr(is.revenue), yoyTag(is.revenue && is.revenue.yoy_change_pct)),
     kpi("毛利", moneyStr(is.gross_profit), yoyTag(is.gross_profit && is.gross_profit.yoy_change_pct)),
@@ -564,8 +571,11 @@ export async function mountAnnualView(opts) {
     return [d._company, d._company_en, d._ticker, d._industry].filter(Boolean).some(x => String(x).toLowerCase().includes(q));
   }
 
+  const DIR_LIMIT = 20; // when not searching, only show the newest N reports
   function renderLeft() {
-    const items = all.filter(matches);
+    const filtered = all.filter(matches); // `all` is already _date-desc
+    const truncated = !search && filtered.length > DIR_LIMIT;
+    const items = truncated ? filtered.slice(0, DIR_LIMIT) : filtered;
     if (!items.length) { dirEl.innerHTML = `<div class="rv-empty">${all.length ? "找不到符合的公司。" : "尚無年報資料。"}</div>`; return; }
     const groups = {};
     items.forEach(d => { const k = groupKey(d); (groups[k] = groups[k] || { name: d._company, ticker: d._ticker, industry: d._industry, market: d._market, items: [] }).items.push(d); });
@@ -588,11 +598,13 @@ export async function mountAnnualView(opts) {
           <span class="ar-group-chev">▾</span>
           <span class="ar-group-name">${esc(g.name)}</span>
           ${g.ticker ? `<span class="ar-group-tk">${esc(g.ticker)}</span>` : ""}
+          ${g.market ? `<span class="ar-group-mk">${esc(g.market)}</span>` : ""}
           <span class="ar-group-n">${g.items.length}</span>
         </button>
         <div class="ar-group-body">${rows}</div>
       </section>`;
     }).join("");
+    if (truncated) dirEl.innerHTML += `<div class="ar-dir-more">僅顯示最新 ${DIR_LIMIT} 筆（共 ${filtered.length} 筆），用上方搜尋可找更多。</div>`;
   }
 
   function selectItem(id) {
