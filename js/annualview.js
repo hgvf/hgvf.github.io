@@ -549,6 +549,9 @@ function detailHTML(d) {
 export async function mountAnnualView(opts) {
   const { root, compareRoot, compareSelect, onData } = opts;
   let all = [], selectedId = null, search = "", canDelete = false;
+  // Groups start collapsed; this Set remembers which the user opened so a
+  // reload (e.g. after importing JSON) never forces them back open.
+  const expanded = new Set();
 
   root.innerHTML = `
     <div class="ar-split">
@@ -593,7 +596,8 @@ export async function mountAnnualView(opts) {
           <span class="ar-del" data-del="${esc(d.id)}" role="button" title="刪除" aria-label="刪除">×</span>
         </div>`;
       }).join("");
-      return `<section class="ar-group open" data-key="${esc(k)}">
+      const isOpen = search ? true : expanded.has(k);
+      return `<section class="ar-group${isOpen ? " open" : ""}" data-key="${esc(k)}">
         <button type="button" class="ar-group-h">
           <span class="ar-group-chev">▾</span>
           <span class="ar-group-name">${esc(g.name)}</span>
@@ -633,7 +637,13 @@ export async function mountAnnualView(opts) {
     const del = e.target.closest("[data-del]");
     if (del) { e.stopPropagation(); handleDelete(del.dataset.del); return; }
     const gh = e.target.closest(".ar-group-h");
-    if (gh) { gh.closest(".ar-group").classList.toggle("open"); return; }
+    if (gh) {
+      const sec = gh.closest(".ar-group");
+      const nowOpen = sec.classList.toggle("open");
+      const key = sec.dataset.key;
+      if (nowOpen) expanded.add(key); else expanded.delete(key);
+      return;
+    }
     const row = e.target.closest("[data-id]");
     if (row) selectItem(row.dataset.id);
   });
