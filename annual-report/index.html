@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>年報重點 · Annual Report Highlights</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260806" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260806" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head">
+      <h2 class="page-title">年報重點</h2>
+    </div>
+    <p class="rp-sub">貼上 Claude 產生的年報摘要 JSON，即可生成公司年報重點卡片。左側依公司分組、可搜尋；右側以分頁呈現各面向。下方可做單一公司多年度比較。</p>
+
+    <!-- Admin-only importer (visible only when signed in as a whitelisted user) -->
+    <details class="rp-import" id="importPanel" hidden>
+      <summary>＋ 匯入 / 更新年報 JSON</summary>
+      <p class="rp-hint">貼上 <code>annual_report_summary</code> schema 的 JSON —— 接受 <code>{"reports":[...]}</code>、陣列、或單一年報物件。以 <code>ticker</code>（或公司名）+ <code>fiscal_year</code> 為主鍵，重覆匯入會覆蓋更新。發布後自動刷新，資料存於 Firebase。</p>
+      <textarea id="jsonInput" class="rp-textarea" spellcheck="false"
+        placeholder='{"schema_version":"annual_report_summary_v2","document":{"market":"TW","fiscal_year":"2024",...},"company":{"name":"...","ticker":"..."},"headline":{"stance":"slightly_bullish",...}, ...}'></textarea>
+      <div class="rp-import-actions">
+        <button id="publishBtn" class="rp-btn">發布到 Firebase</button>
+        <span id="pubStatus" class="rp-status"></span>
+      </div>
+    </details>
+
+    <div id="reportRoot" class="ar-root"></div>
+
+    <!-- Single-company multi-year comparison -->
+    <section class="ar-compare" id="compare" hidden>
+      <div class="ar-compare-head">
+        <h3 class="ar-compare-title">單一公司 · 多年度比較</h3>
+        <label class="rv-ctl">公司 <span class="rv-sel-wrap"><select class="rv-select" id="cmpCompany"></select></span></label>
+      </div>
+      <div class="ar-compare-row" id="compareRow"></div>
+    </section>
+
+    <p class="rp-foot">年報重點由 Claude 節錄並存於 Firebase，僅供參考，非投資建議。</p>
+  </main>
+
+  <script type="module">
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountAnnualView } from "../js/annualview.js";
+    import { onAuth, parseAnnualReports, saveAnnualReports } from "../js/reports.js";
+
+    mountSidebar("annual-report");
+
+    const compareSec = document.getElementById("compare");
+
+    let view = null, lastAdmin = false;
+    mountAnnualView({
+      root: document.getElementById("reportRoot"),
+      compareRoot: document.getElementById("compareRow"),
+      compareSelect: document.getElementById("cmpCompany"),
+      onData: reports => {
+        const companies = new Set(reports.map(r => r._ticker || r._company).filter(Boolean));
+        compareSec.hidden = companies.size === 0;
+      },
+    }).then(v => { view = v; view.setAdmin(lastAdmin); })
+      .catch(e => { console.error(e); document.getElementById("reportRoot").innerHTML = '<div class="rv-empty">載入失敗，請稍後再試。</div>'; });
+
+    // Admin importer + delete (sign-in handled in the sidebar)
+    const importPanel = document.getElementById("importPanel");
+    const pubStatus = document.getElementById("pubStatus");
+    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; importPanel.hidden = !isAdmin; if (view) view.setAdmin(isAdmin); });
+
+    document.getElementById("publishBtn").addEventListener("click", async () => {
+      const raw = document.getElementById("jsonInput").value.trim();
+      pubStatus.className = "rp-status";
+      if (!raw) { pubStatus.textContent = "請先貼上 JSON。"; return; }
+      let reports;
+      try { reports = parseAnnualReports(raw); }
+      catch (e) { pubStatus.className = "rp-status err"; pubStatus.textContent = "JSON 解析失敗：" + e.message; return; }
+      pubStatus.textContent = "發布中…";
+      try {
+        const n = await saveAnnualReports(reports);
+        document.getElementById("jsonInput").value = "";
+        if (view) await view.reload();
+        pubStatus.className = "rp-status ok";
+        pubStatus.textContent = `已發布 ${n} 份年報。`;
+      } catch (e) {
+        pubStatus.className = "rp-status err";
+        pubStatus.textContent = "發布失敗：" + (e.code === "permission-denied" ? "帳號不在白名單，無寫入權限。" : e.message);
+      }
+    });
+  </script>
+</body>
+</html>
