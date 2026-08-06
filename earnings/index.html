@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>財報電話會議分析 · Earnings Calls</title>
-  <link rel="stylesheet" href="../css/style.css?v=20260728" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260728" />
+  <link rel="stylesheet" href="../css/style.css?v=20260806e" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260806e" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -17,7 +17,17 @@
     <div class="rp-head">
       <h2 class="page-title">財報電話會議分析</h2>
     </div>
-    <p class="rp-sub">每場電話會議一個節點，重點以偏多／偏空標色。點左側節點，內容顯示在右側。</p>
+    <div class="ar-sources">
+      <span class="ar-sources-label">財報行事曆</span>
+      <a class="ar-src" href="https://finmoconf.diveinvest.net/" target="_blank" rel="noopener">
+        <span class="ar-src-mk">台股</span><span class="ar-src-nm">FinMo</span></a>
+      <a class="ar-src" href="https://earningshub.com/earnings-list/this-week" target="_blank" rel="noopener">
+        <span class="ar-src-mk">美股</span><span class="ar-src-nm">EarningsHub</span></a>
+      <a class="ar-src" href="https://tradingeconomics.com/japan/earnings" target="_blank" rel="noopener">
+        <span class="ar-src-mk">日股</span><span class="ar-src-nm">TradingEconomics</span></a>
+      <a class="ar-src" href="https://tradingeconomics.com/south-korea/earnings" target="_blank" rel="noopener">
+        <span class="ar-src-mk">韓股</span><span class="ar-src-nm">TradingEconomics</span></a>
+    </div>
 
     <!-- Admin-only importer (visible only when signed in as a whitelisted user) -->
     <details class="rp-import" id="importPanel" hidden>
@@ -42,7 +52,6 @@
       <div class="ec-compare-row" id="compareRow"></div>
     </section>
 
-    <p class="rp-foot">分析由 Claude 節錄並存於 Firebase，僅供參考，非投資建議。</p>
   </main>
 
   <script type="module">
