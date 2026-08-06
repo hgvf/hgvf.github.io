@@ -4,6 +4,10 @@
 // (one per company per year), so grouping by company scales cleanly and stays
 // tidy. Right column = a tabbed rich-card view of the selected report. A
 // separate section renders a single-company multi-year comparison.
+//
+// Renderers target the annual_report_summary_v2 schema and are defensive: all
+// list access goes through asArray() so an object-where-array (or vice-versa)
+// mismatch never throws and blanks the whole panel.
 
 import { loadDocs, deleteReport, esc, chartUrl } from "./reports.js";
 
@@ -18,6 +22,7 @@ export const STANCE = {
 export function stanceInfo(v) { return STANCE[v] || STANCE.neutral; }
 
 // ── Small formatting helpers ───────────────────────────────────────────
+function asArray(x) { return Array.isArray(x) ? x : []; }
 const UNIT = { thousand: "千", million: "百萬", billion: "十億" };
 export function moneyStr(m) {
   if (!m || m.value == null || m.value === "") return "";
@@ -39,17 +44,19 @@ function yoyTag(n) {
   const arr = num > 0 ? "▲" : num < 0 ? "▼" : "—";
   return `<span class="ar-yoy ${cls}">${arr} ${Math.abs(num)}% YoY</span>`;
 }
-const SEV = { high: { t: "高", c: "neg" }, medium: { t: "中", c: "neu" }, low: { t: "低", c: "pos" } };
+const SEV = { high: { t: "高", c: "neg" }, medium: { t: "中", c: "neu" }, low: { t: "低", c: "pos" },
+  medium_to_high: { t: "中高", c: "neg" }, none: { t: "無", c: "pos" } };
 function sevTag(v, prefix = "") { const s = SEV[v]; return s ? `<span class="ar-badge ${s.c}">${prefix}${s.t}</span>` : ""; }
-const IMPACT = { high: "高", medium: "中", low: "低", unknown: "?" };
+const IMPACT = { high: "高", medium: "中", low: "低", medium_to_high: "中高", unknown: "?" };
+function impactWord(v) { return IMPACT[v] || v || ""; }
 
 function chips(arr, cls = "") {
-  const a = (arr || []).filter(x => x != null && String(x).trim());
+  const a = asArray(arr).filter(x => x != null && String(x).trim());
   if (!a.length) return "";
   return `<div class="ar-chips">${a.map(x => `<span class="ar-chip ${cls}">${esc(x)}</span>`).join("")}</div>`;
 }
 function bullets(arr) {
-  const a = (arr || []).filter(x => x != null && String(x).trim());
+  const a = asArray(arr).filter(x => x != null && String(x).trim());
   if (!a.length) return "";
   return `<ul class="ar-ul">${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
 }
@@ -57,6 +64,7 @@ function para(label, text) {
   if (!text || !String(text).trim()) return "";
   return `<p class="ar-para">${label ? `<b>${esc(label)}</b>` : ""}${esc(text)}</p>`;
 }
+function joinArr(arr, sep = "、") { return asArray(arr).filter(x => x != null && String(x).trim()).map(String).join(sep); }
 function bar(label, pct, sub) {
   const p = Number(pct);
   const w = Number.isFinite(p) ? Math.max(0, Math.min(100, p)) : 0;
@@ -75,8 +83,18 @@ function kpi(label, value, sub) {
   return `<div class="ar-kpi"><span class="ar-kpi-label">${esc(label)}</span>
     <span class="ar-kpi-val">${value}</span>${sub ? `<span class="ar-kpi-sub">${sub}</span>` : ""}</div>`;
 }
+function kpiGrid(pairs, cls = "") {
+  const inner = pairs.filter(Boolean).join("");
+  return inner ? `<div class="ar-kpis ${cls}">${inner}</div>` : "";
+}
+// Compact "label — body [badges]" row.
+function row(title, body, badges = "") {
+  if (!title && !body && !badges) return "";
+  return `<div class="ar-row">${title ? `<span class="ar-row-t">${esc(title)}</span>` : ""}${badges}
+    ${body ? `<div class="ar-row-b">${esc(body)}</div>` : ""}</div>`;
+}
 
-// ── Detail: hero + tabs ────────────────────────────────────────────────
+// ── Detail: hero ───────────────────────────────────────────────────────
 function heroHTML(d) {
   const data = d.data || {};
   const c = data.company || {}, doc = data.document || {}, h = data.headline || {};
@@ -105,34 +123,38 @@ function heroHTML(d) {
   </div>`;
 }
 
+// ── Tabs ───────────────────────────────────────────────────────────────
 function tabOverview(d) {
   const data = d.data || {};
-  const h = data.headline || {}, fh = data.financial_highlights || {}, iv = data.investment_view || {};
-  const kpis = [
-    kpi("營收", moneyStr(fh.revenue), yoyTag(fh.revenue && fh.revenue.yoy_change_pct)),
-    kpi("毛利率", pctStr(fh.gross_margin_pct), fh.gross_margin_yoy_change_ppt != null && fh.gross_margin_yoy_change_ppt !== "" ? `${Number(fh.gross_margin_yoy_change_ppt) > 0 ? "+" : ""}${esc(fh.gross_margin_yoy_change_ppt)} ppt` : ""),
-    kpi("營益率", pctStr(fh.operating_margin_pct)),
-    kpi("淨利", moneyStr(fh.net_income), yoyTag(fh.net_income && fh.net_income.yoy_change_pct)),
-    kpi("EPS", fh.eps != null && fh.eps !== "" ? esc(fh.eps) : ""),
-    kpi("營運現金流", moneyStr(fh.operating_cash_flow)),
-    kpi("自由現金流", moneyStr(fh.free_cash_flow)),
-    kpi("資本支出", moneyStr(fh.capital_expenditure)),
-  ].filter(Boolean).join("");
-  const kpiGrid = kpis ? `<div class="ar-kpis">${kpis}</div>` : "";
-  const changeBody = [
-    para("較去年關鍵變化：", h.key_change_vs_prior_year),
-    para("核心投資問題：", h.main_investment_question),
-    para("信心理由：", h.confidence_reason),
-  ].join("");
-  return kpiGrid
+  const h = data.headline || {}, fh = data.financial_highlights || {}, is = fh.income_statement || {}, iv = data.investment_view || {};
+  const kpis = kpiGrid([
+    kpi("營收", moneyStr(is.revenue), yoyTag(is.revenue && is.revenue.yoy_change_pct)),
+    kpi("毛利率", pctStr(is.gross_margin_pct)),
+    kpi("營業利益率", pctStr(is.operating_margin_pct)),
+    kpi("淨利", moneyStr(is.net_income), yoyTag(is.net_income && is.net_income.yoy_change_pct)),
+    kpi("毛利", moneyStr(is.gross_profit), yoyTag(is.gross_profit && is.gross_profit.yoy_change_pct)),
+    kpi("營業利益", moneyStr(is.operating_profit), yoyTag(is.operating_profit && is.operating_profit.yoy_change_pct)),
+  ]);
+  const changeBody = para("較去年關鍵變化：", h.key_change_vs_prior_year)
+    + para("核心投資問題：", h.main_investment_question)
+    + para("信心理由：", h.confidence_reason);
+  const review = asArray(data.operating_review).map(o => {
+    const badge = o.impact ? `<span class="ar-badge ${o.impact === "positive" ? "pos" : o.impact === "negative" ? "neg" : "neu"}">${esc(o.impact)}</span>` : "";
+    const detail = [o.change, o.sustainability && `永續性：${o.sustainability}`].filter(Boolean).join(" ");
+    const drv = joinArr(o.driver), off = joinArr(o.offset);
+    return `<div class="ar-row"><span class="ar-row-t">${esc(o.topic || "")}</span>${badge}
+      <div class="ar-row-b">${esc(detail)}${drv ? ` <span class="ar-pos-sub">＋ ${esc(drv)}</span>` : ""}${off ? ` <span class="ar-neg-sub">－ ${esc(off)}</span>` : ""}</div></div>`;
+  }).join("");
+  return kpis
     + card("t-key", "🔑", "本期焦點", changeBody)
-    + card("t-invest", "🎯", "投資主軸", para("", iv.core_thesis) + bullets(iv.thesis));
+    + card("t-invest", "🎯", "投資主軸", para("", iv.core_thesis))
+    + card("t-review", "📋", "經營回顧", review);
 }
 
 function tabPositioning(d) {
   const data = d.data || {};
   const c = data.company || {}, im = data.industry_and_market || {};
-  const moats = (c.competitive_moats || []).map(m =>
+  const moats = asArray(c.competitive_moats).map(m =>
     `<div class="ar-row"><span class="ar-row-t">${esc(m.type || "")}</span>
       ${m.strength ? `<span class="ar-badge ${m.strength === "strong" ? "pos" : m.strength === "weak" ? "neg" : "neu"}">${esc(m.strength)}</span>` : ""}
       <div class="ar-row-b">${esc(m.description || "")}${m.evidence ? ` <span class="ar-muted">（${esc(m.evidence)}）</span>` : ""}</div></div>`).join("");
@@ -141,69 +163,85 @@ function tabPositioning(d) {
     para("", c.industry_description),
     para("", c.business_summary),
     para("商業模式：", c.business_model),
-    c.value_chain_position && c.value_chain_position.length ? `<div class="ar-sub">價值鏈定位${chips(c.value_chain_position, "v")}</div>` : "",
-    c.core_competencies && c.core_competencies.length ? `<div class="ar-sub">核心競爭力${bullets(c.core_competencies)}</div>` : "",
+    asArray(c.value_chain_position).length ? `<div class="ar-sub">價值鏈定位${chips(c.value_chain_position, "v")}</div>` : "",
+    asArray(c.core_competencies).length ? `<div class="ar-sub">核心競爭力${bullets(c.core_competencies)}</div>` : "",
   ].join("");
-  const techTrends = (im.technology_trends || []).map(t =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(t.technology || "")}</span>
-      ${t.company_position ? `<span class="ar-badge neu">${esc(t.company_position)}</span>` : ""}
-      <div class="ar-row-b">${esc(t.impact_on_company || "")}</div></div>`).join("");
-  const share = (im.market_size_and_share || []).map(s =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(s.market || "")}</span>
-      <div class="ar-row-b">${[s.market_size && `規模 ${esc(s.market_size)}`, s.company_market_share_pct != null && `市占 ${esc(s.company_market_share_pct)}%`, s.company_ranking && `排名 ${esc(s.company_ranking)}`].filter(Boolean).join("　")}</div></div>`).join("");
+  const indMetrics = kpiGrid([
+    kpi("產業成長(2025)", pctStr(im.market_growth_2025_pct)),
+    kpi("公司美元營收成長", pctStr(im.tsmc_revenue_growth_usd_pct)),
+    kpi(`長期CAGR${im.long_term_target_year ? "→" + esc(im.long_term_target_year) : ""}`, pctStr(im.long_term_semiconductor_cagr_ex_memory_pct)),
+  ]);
+  const markets = asArray(im.major_end_markets).map(m =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(m.market || "")}</span>
+      ${m.status ? `<span class="ar-badge neu">${esc(m.status)}</span>` : ""}
+      <div class="ar-row-b">${esc(m.outlook || "")}</div></div>`).join("");
   return card("t-pos", "🧭", "公司與產業定位", companyBody)
     + card("t-moat", "🛡️", "競爭護城河", moats)
-    + card("t-ind", "📊", "產業現況與技術趨勢", para("", im.industry_current_status) + techTrends + share);
+    + card("t-ind", "📊", "產業與終端市場", para("", im.industry_definition) + indMetrics + markets);
 }
 
 function productCard(p) {
-  const custs = (p.main_customers || []).map(x => x.company_name).filter(Boolean);
+  const custs = asArray(p.main_customers).map(x => (x && x.company_name) || x).filter(Boolean);
   return `<div class="ar-item">
     <div class="ar-item-h"><span class="ar-item-t">${esc(p.product_name || "")}</span>
       ${p.product_status ? `<span class="ar-badge neu">${esc(p.product_status)}</span>` : ""}
       ${p.strategic_role ? `<span class="ar-tagk">${esc(p.strategic_role)}</span>` : ""}
       ${p.revenue_percentage != null ? `<span class="ar-item-pct">營收占比 ${esc(p.revenue_percentage)}%</span>` : ""}</div>
     ${p.product_description ? `<p class="ar-para">${esc(p.product_description)}</p>` : ""}
-    ${p.main_applications && p.main_applications.length ? `<div class="ar-sub">應用${chips(p.main_applications)}</div>` : ""}
+    ${asArray(p.main_applications).length ? `<div class="ar-sub">應用${chips(p.main_applications)}</div>` : ""}
+    ${asArray(p.end_markets).length ? `<div class="ar-sub">終端市場${chips(p.end_markets, "v")}</div>` : ""}
     ${custs.length ? `<div class="ar-sub">主要客戶${chips(custs, "c")}</div>` : ""}
-    ${p.competitive_advantages && p.competitive_advantages.length ? `<div class="ar-sub ar-pos-sub">優勢${bullets(p.competitive_advantages)}</div>` : ""}
-    ${p.competitive_weaknesses && p.competitive_weaknesses.length ? `<div class="ar-sub ar-neg-sub">弱點${bullets(p.competitive_weaknesses)}</div>` : ""}
+    ${asArray(p.competitive_advantages).length ? `<div class="ar-sub ar-pos-sub">優勢${bullets(p.competitive_advantages)}</div>` : ""}
+    ${asArray(p.competitive_weaknesses).length ? `<div class="ar-sub ar-neg-sub">弱點${bullets(p.competitive_weaknesses)}</div>` : ""}
   </div>`;
 }
 function tabProducts(d) {
   const data = d.data || {};
   const pp = data.product_portfolio || {}, rd = data.research_and_development || {};
-  const core = (pp.current_core_products || []).map(productCard).join("");
-  const neu = (pp.newly_commercialized_products || []).map(p =>
+  const core = asArray(pp.current_core_products).map(productCard).join("");
+  const neu = asArray(pp.newly_commercialized_products).map(p =>
     `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(p.product_name || "")}</span>
       ${p.current_stage ? `<span class="ar-badge neu">${esc(p.current_stage)}</span>` : ""}
-      ${p.expected_contribution ? `<span class="ar-tagk">貢獻 ${esc(IMPACT[p.expected_contribution] || p.expected_contribution)}</span>` : ""}</div>
+      ${p.expected_contribution ? `<span class="ar-tagk">貢獻 ${esc(impactWord(p.expected_contribution))}</span>` : ""}
+      ${p.product_category ? `<span class="ar-tagk">${esc(p.product_category)}</span>` : ""}</div>
       ${para("時程：", p.commercialization_timing)}${para("進度：", p.actual_progress)}
       ${chips(p.target_application)}</div>`).join("");
-  const dev = (pp.products_under_development || []).map(p =>
+  const dev = asArray(pp.products_under_development).map(p =>
     `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(p.product_name || "")}</span>
-      ${p.development_stage ? `<span class="ar-badge neu">${esc(p.development_stage)}</span>` : ""}</div>
+      ${p.development_stage ? `<span class="ar-badge neu">${esc(p.development_stage)}</span>` : ""}
+      ${p.product_category ? `<span class="ar-tagk">${esc(p.product_category)}</span>` : ""}</div>
       ${para("", p.technology_description)}${para("量產時程：", p.expected_mass_production_timing)}
-      ${p.technical_or_commercial_risks && p.technical_or_commercial_risks.length ? `<div class="ar-sub ar-neg-sub">風險${bullets(p.technical_or_commercial_risks)}</div>` : ""}</div>`).join("");
+      ${asArray(p.technical_or_commercial_risks).length ? `<div class="ar-sub ar-neg-sub">風險${bullets(p.technical_or_commercial_risks)}</div>` : ""}</div>`).join("");
+  const roadmap = asArray(pp.product_roadmap).map(r =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(r.direction || "")}</span>
+      ${r.time_horizon ? `<span class="ar-mini">${esc(r.time_horizon)}</span>` : ""}
+      <div class="ar-row-b">${esc(r.strategic_objective || "")}${asArray(r.related_products_or_technologies).length ? "" : ""}</div>
+      ${chips(r.related_products_or_technologies)}</div>`).join("");
   const rdExp = rd.rd_expense || {};
-  const rdKpis = [
+  const rdKpis = kpiGrid([
     kpi("研發費用", moneyStr(rdExp), yoyTag(rdExp.yoy_change_pct)),
     kpi("佔營收比", pctStr(rdExp.percentage_of_revenue)),
     kpi("研發人數", rd.rd_headcount != null ? esc(rd.rd_headcount) : ""),
-  ].filter(Boolean).join("");
-  const rdDone = (rd.successfully_developed_products_last_year || []).map(x =>
+  ]);
+  const rdLoc = asArray(rd.rd_locations).length ? `<div class="ar-sub">研發據點${chips(rd.rd_locations, "v")}</div>` : "";
+  const rdDone = asArray(rd.successfully_developed_products_last_year).map(x =>
     `<div class="ar-row"><span class="ar-row-t">${esc(x.product_or_technology || "")}</span>
       ${x.commercial_status ? `<span class="ar-badge neu">${esc(x.commercial_status)}</span>` : ""}
-      <div class="ar-row-b">${esc(x.achievement_description || "")}</div></div>`).join("");
+      <div class="ar-row-b">${esc(x.achievement_description || "")}${x.strategic_significance ? ` <span class="ar-muted">（${esc(x.strategic_significance)}）</span>` : ""}</div></div>`).join("");
+  const patents = rd.patents_and_intellectual_property || {};
+  const rdBody = rdKpis + rdLoc + rdDone
+    + (asArray(patents.recognition).length ? `<div class="ar-sub">專利與獎項${bullets(patents.recognition)}</div>` : "");
   return card("t-prod", "📦", "主力產品", core)
     + card("t-new", "✨", "新產品與商業化", neu)
     + card("t-dev", "🔬", "研發中產品", dev)
-    + card("t-rd", "🧪", "研發投入", (rdKpis ? `<div class="ar-kpis">${rdKpis}</div>` : "") + rdDone);
+    + card("t-road", "🗺️", "產品路線圖", roadmap)
+    + card("t-rd", "🧪", "研發投入", rdBody);
 }
 
 function tabRevenue(d) {
   const data = d.data || {};
-  const segs = data.business_segments || [], mix = data.revenue_mix || [], fh = data.financial_highlights || {};
+  const segs = asArray(data.business_segments), mix = asArray(data.revenue_mix);
+  const fh = data.financial_highlights || {}, is = fh.income_statement || {}, bs = fh.balance_sheet || {};
   const segBars = segs.map(s =>
     bar(s.segment_name || "", s.revenue_percentage,
       [s.growth_status && `<span class="ar-mini">${esc(s.growth_status)}</span>`, s.operating_margin_pct != null && `營益率 ${esc(s.operating_margin_pct)}%`, yoyTag(s.revenue_yoy_change_pct)].filter(Boolean).join(" "))
@@ -211,146 +249,185 @@ function tabRevenue(d) {
   const mixBars = mix.map(m =>
     bar(`${m.name || ""}${m.dimension ? `（${m.dimension}）` : ""}`, m.percentage, yoyTag(m.yoy_change_pct))
   ).join("");
-  const fhKpis = [
-    kpi("營收", moneyStr(fh.revenue), yoyTag(fh.revenue && fh.revenue.yoy_change_pct)),
-    kpi("毛利", moneyStr(fh.gross_profit), yoyTag(fh.gross_profit && fh.gross_profit.yoy_change_pct)),
-    kpi("毛利率", pctStr(fh.gross_margin_pct)),
-    kpi("營業利益", moneyStr(fh.operating_income), yoyTag(fh.operating_income && fh.operating_income.yoy_change_pct)),
-    kpi("淨利", moneyStr(fh.net_income), yoyTag(fh.net_income && fh.net_income.yoy_change_pct)),
-    kpi("EPS", fh.eps != null && fh.eps !== "" ? esc(fh.eps) : ""),
-    kpi("在手訂單", moneyStr(fh.backlog_or_order_book), fh.backlog_or_order_book && fh.backlog_or_order_book.coverage_period ? esc(fh.backlog_or_order_book.coverage_period) : ""),
-    kpi("存貨天數", fh.inventory && fh.inventory.inventory_days != null ? esc(fh.inventory.inventory_days) : ""),
-  ].filter(Boolean).join("");
+  const fhKpis = kpiGrid([
+    kpi("營收", moneyStr(is.revenue), yoyTag(is.revenue && is.revenue.yoy_change_pct)),
+    kpi("毛利", moneyStr(is.gross_profit), yoyTag(is.gross_profit && is.gross_profit.yoy_change_pct)),
+    kpi("毛利率", pctStr(is.gross_margin_pct)),
+    kpi("營業利益", moneyStr(is.operating_profit), yoyTag(is.operating_profit && is.operating_profit.yoy_change_pct)),
+    kpi("營益率", pctStr(is.operating_margin_pct)),
+    kpi("淨利", moneyStr(is.net_income), yoyTag(is.net_income && is.net_income.yoy_change_pct)),
+    kpi("總資產", moneyStr(bs.total_assets), yoyTag(bs.total_assets && bs.total_assets.yoy_change_pct)),
+    kpi("股東權益", moneyStr(bs.total_equity), yoyTag(bs.total_equity && bs.total_equity.yoy_change_pct)),
+    kpi("總負債", moneyStr(bs.total_liabilities), yoyTag(bs.total_liabilities && bs.total_liabilities.yoy_change_pct)),
+    kpi("不動產廠房設備", moneyStr(bs.property_plant_and_equipment), yoyTag(bs.property_plant_and_equipment && bs.property_plant_and_equipment.yoy_change_pct)),
+  ]);
+  const drivers = asArray(fh.performance_drivers).length ? `<div class="ar-sub">績效驅動${chips(fh.performance_drivers, "k")}</div>` : "";
   return card("t-seg", "🏢", "營運部門", segBars)
     + card("t-mix", "🥧", "營收組成", mixBars)
-    + card("t-fin", "💰", "財務重點", fhKpis ? `<div class="ar-kpis">${fhKpis}</div>` : "");
+    + card("t-fin", "💰", "財務重點", fhKpis + drivers);
 }
 
 function tabCustomers(d) {
   const data = d.data || {};
   const cu = data.customers || {};
-  const named = (cu.named_customers || []).map(x =>
+  const types = asArray(cu.customer_types).map(x =>
+    row(x.type || "", x.importance || "", "")).join("");
+  const named = asArray(cu.named_customers).map(x =>
     `<div class="ar-row"><span class="ar-row-t">${esc(x.company_name || "")}</span>
-      ${x.importance ? `<span class="ar-badge ${x.importance === "high" ? "neg" : "neu"}">重要度 ${esc(IMPACT[x.importance] || x.importance)}</span>` : ""}
+      ${x.importance ? `<span class="ar-badge ${x.importance === "high" ? "neg" : "neu"}">重要度 ${esc(impactWord(x.importance))}</span>` : ""}
       ${x.revenue_percentage != null ? `<span class="ar-item-pct">${esc(x.revenue_percentage)}%</span>` : ""}
-      <div class="ar-row-b">${[x.customer_type, x.country_or_region, x.relationship_status].filter(Boolean).map(esc).join(" · ")}${x.description ? " — " + esc(x.description) : ""}</div></div>`).join("");
-  const conc = (cu.customer_concentration || []).map(x =>
-    bar(x.customer_name_or_label || "", x.revenue_percentage,
+      <div class="ar-row-b">${[x.customer_type, x.country_or_region].filter(Boolean).map(esc).join(" · ")}${x.description ? " — " + esc(x.description) : ""}</div></div>`).join("");
+  // customer_concentration may be an object (summary) or an array (per-customer).
+  let conc = "";
+  const cc = cu.customer_concentration;
+  if (Array.isArray(cc)) {
+    conc = cc.map(x => bar(x.customer_name_or_label || "", x.revenue_percentage,
       [x.trend && `<span class="ar-mini">${esc(x.trend)}</span>`, x.prior_year_percentage != null && `去年 ${esc(x.prior_year_percentage)}%`].filter(Boolean).join(" "))).join("");
-  const regions = (cu.customer_regions || []).map(r =>
-    bar(r.region || "", r.revenue_percentage, yoyTag(r.yoy_change_pct))).join("");
-  const changes = (cu.customer_changes || []).map(x =>
-    `<div class="ar-row"><span class="ar-tagk">${esc(x.event || "")}</span>
-      <div class="ar-row-b">${esc(x.customer_name_or_description || "")}${x.financial_impact ? " — " + esc(x.financial_impact) : ""}</div></div>`).join("");
-  return card("t-cust", "🤝", "主要客戶", named)
+  } else if (cc && typeof cc === "object") {
+    conc = para("狀態：", cc.status)
+      + (cc.largest_customer_name ? para("最大客戶：", cc.largest_customer_name) : "")
+      + (cc.largest_customer_percentage != null ? para("最大客戶占比：", `${cc.largest_customer_percentage}%`) : "")
+      + (cc.disclosure_status ? `<span class="ar-tagk">${esc(cc.disclosure_status)}</span>` : "");
+  }
+  const geo = asArray(cu.geographic_distribution || cu.customer_regions).map(r =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(r.region || "")}</span>
+      ${r.percentage != null ? `<span class="ar-item-pct">${esc(r.percentage)}%</span>` : (r.revenue_percentage != null ? `<span class="ar-item-pct">${esc(r.revenue_percentage)}%</span>` : "")}
+      <div class="ar-row-b">${asArray(r.main_demand).length ? "需求：" + esc(joinArr(r.main_demand)) : ""}${r.risk ? ` <span class="ar-neg-sub">風險：${esc(r.risk)}</span>` : ""}</div></div>`).join("");
+  const changes = bullets(cu.key_changes);
+  return card("t-ctype", "👥", "客戶類型", types)
+    + card("t-cust", "🤝", "主要客戶", named)
     + card("t-conc", "⚠️", "客戶集中度", conc)
-    + card("t-region", "🌏", "客戶地區分布", regions)
+    + card("t-region", "🌏", "客戶地區分布", geo)
     + card("t-cchg", "🔁", "客戶變動", changes);
 }
 
 // Supply chain — an upstream → company → downstream flow diagram.
 function flowNode(title, subs) {
-  const s = (subs || []).filter(x => x != null && String(x).trim());
+  const s = asArray(subs).filter(x => x != null && String(x).trim());
   return `<div class="ar-fnode"><span class="ar-fnode-t">${esc(title)}</span>${
     s.map(x => `<span class="ar-fnode-s">${esc(x)}</span>`).join("")}</div>`;
 }
 function tabSupply(d) {
   const data = d.data || {};
-  const sc = data.supply_chain || {}, c = data.company || {};
-  const up = sc.upstream_materials_and_components || [];
-  const mfg = sc.manufacturing_and_operations || [];
-  const down = sc.downstream_channels_and_customers || [];
+  const sc = data.supply_chain || {}, c = data.company || {}, im = data.industry_and_market || {};
+  // Upstream: real schema `upstream_materials`, older `upstream_materials_and_components`.
+  const up = asArray(sc.upstream_materials).length ? asArray(sc.upstream_materials) : asArray(sc.upstream_materials_and_components);
+  // Midstream: real schema `manufacturing_nodes` (strings), older objects.
+  const nodes = asArray(sc.manufacturing_nodes);
+  const mfgObjs = asArray(sc.manufacturing_and_operations);
+  // Downstream: no explicit field in v2 — use industry end markets as demand side.
+  const down = asArray(im.major_end_markets).length ? asArray(im.major_end_markets)
+    : asArray(sc.downstream_channels_and_customers);
   let flow = "";
-  if (up.length || mfg.length || down.length) {
-    const upNodes = up.map(m => flowNode(m.material_or_component || "",
-      [m.category, (m.major_suppliers || []).map(s => s.company_name).filter(Boolean).join("、"),
-       m.supply_status && `供給:${m.supply_status}`])).join("") || `<div class="ar-fnode empty">—</div>`;
-    const midNodes = mfg.length
-      ? mfg.map(m => flowNode(m.site_name || m.country_or_region || "製造",
-          [m.country_or_region, (m.main_products_or_processes || []).join("、"),
-           m.utilization_rate_pct != null && `稼動率 ${m.utilization_rate_pct}%`])).join("")
-      : flowNode(c.name || d._company, [c.business_model]);
-    const downNodes = down.map(x => flowNode(x.company_or_channel || "",
-      [x.type, x.region, x.importance && `重要度:${IMPACT[x.importance] || x.importance}`])).join("") || `<div class="ar-fnode empty">—</div>`;
+  if (up.length || nodes.length || mfgObjs.length || down.length) {
+    const upNodes = up.map(m => flowNode(m.name || m.material_or_component || "",
+      [m.role || m.category, joinArr((m.major_suppliers || []).map(s => s.company_name)), m.supply_status && `供給:${m.supply_status}`])).join("")
+      || `<div class="ar-fnode empty">—</div>`;
+    let midNodes;
+    if (nodes.length) midNodes = nodes.map(n => flowNode(n, [])).join("");
+    else if (mfgObjs.length) midNodes = mfgObjs.map(m => flowNode(m.site_name || m.country_or_region || "製造",
+      [m.country_or_region, joinArr(m.main_products_or_processes), m.utilization_rate_pct != null && `稼動率 ${m.utilization_rate_pct}%`])).join("");
+    else midNodes = flowNode(c.name || d._company, [c.business_model]);
+    const downNodes = down.map(x => flowNode(x.market || x.company_or_channel || "",
+      [x.status || x.type, x.region])).join("") || `<div class="ar-fnode empty">—</div>`;
     flow = `<div class="ar-flow">
-      <div class="ar-fcol"><div class="ar-fcol-h up">上游 · 材料/供應商</div>${upNodes}</div>
+      <div class="ar-fcol"><div class="ar-fcol-h up">上游 · 材料/供應</div>${upNodes}</div>
       <div class="ar-farrow">→</div>
-      <div class="ar-fcol"><div class="ar-fcol-h mid">本公司 · 製造/營運</div><div class="ar-fcompany">${esc(c.name || d._company)}</div>${midNodes}</div>
+      <div class="ar-fcol"><div class="ar-fcol-h mid">本公司 · 製造據點</div><div class="ar-fcompany">${esc(c.name || d._company)}</div>${midNodes}</div>
       <div class="ar-farrow">→</div>
-      <div class="ar-fcol"><div class="ar-fcol-h down">下游 · 通路/客戶</div>${downNodes}</div>
+      <div class="ar-fcol"><div class="ar-fcol-h down">下游 · 終端需求</div>${downNodes}</div>
     </div>`;
   }
-  const outsourcing = chips((sc.outsourcing_partners || []).map(o => `${o.company_name || ""}${o.service_type ? "（" + o.service_type + "）" : ""}`), "c");
-  const risks = (sc.supply_chain_risks || []).map(r =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(r.risk || "")}</span>${sevTag(r.severity, "嚴重度 ")}
-      ${r.trend ? `<span class="ar-mini">${esc(r.trend)}</span>` : ""}
-      <div class="ar-row-b">${[r.affected_material_product_or_site, r.mitigation && `因應：${r.mitigation}`].filter(Boolean).map(esc).join(" · ")}</div></div>`).join("");
+  // Supplier concentration (anonymised) as bars.
+  const supConc = asArray(sc.supplier_concentration).map(s =>
+    bar(s.supplier || "", s.percentage, moneyStr({ value: s.purchase_amount, unit: s.unit, currency: s.currency }))).join("");
+  // Design ecosystem partner counts.
+  const de = sc.design_ecosystem || {};
+  const deKpis = kpiGrid([
+    kpi("EDA", de.eda_partners), kpi("雲端", de.cloud_partners), kpi("IP", de.ip_partners),
+    kpi("設計中心", de.design_center_partners), kpi("VCA", de.value_chain_aggregators), kpi("3DIC", de.three_dic_partners),
+  ], "sm");
+  const measures = bullets(sc.management_measures);
+  const risks = asArray(sc.supply_chain_risks).length
+    ? asArray(sc.supply_chain_risks).map(r =>
+        `<div class="ar-row"><span class="ar-row-t">${esc(r.risk || "")}</span>${sevTag(r.severity, "嚴重度 ")}
+          <div class="ar-row-b">${[r.affected_material_product_or_site, r.mitigation && `因應：${r.mitigation}`].filter(Boolean).map(esc).join(" · ")}</div></div>`).join("")
+    : bullets(sc.key_risks);
   return (flow ? `<div class="ar-card t-supply"><div class="ar-card-h">🔗 供應鏈流向</div><div class="ar-card-b">${flow}</div></div>` : "")
-    + card("t-out", "🏭", "委外夥伴", outsourcing)
+    + card("t-supconc", "📦", "主要供應商採購集中度", supConc)
+    + card("t-eco", "🌐", "設計生態系夥伴", deKpis)
+    + card("t-meas", "🧰", "供應鏈管理措施", measures)
     + card("t-scrisk", "🚨", "供應鏈風險", risks);
 }
 
 function tabCapacity(d) {
   const data = d.data || {};
   const sc = data.supply_chain || {}, fs = data.future_strategy || {};
-  const sites = (sc.manufacturing_and_operations || []).map(m =>
+  // v2: future_strategy.capacity_expansion (location/technology/status/expected_timing)
+  const exp = asArray(fs.capacity_expansion).length ? asArray(fs.capacity_expansion) : asArray(fs.capacity_expansion_plans);
+  const expItems = exp.map(x =>
+    `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.location || x.site_or_project || "")}</span>
+      ${(x.technology) ? `<span class="ar-tagk">${esc(x.technology)}</span>` : ""}
+      ${x.country_or_region ? `<span class="ar-tagk">${esc(x.country_or_region)}</span>` : ""}
+      ${x.expected_timing || x.completion_timing || x.mass_production_timing ? `<span class="ar-mini">${esc(x.expected_timing || x.completion_timing || x.mass_production_timing)}</span>` : ""}</div>
+      ${para("狀態：", x.status)}${para("投資：", x.investment_amount)}${para("新增產能：", x.capacity_increase)}${para("預期影響：", x.expected_impact)}
+      ${asArray(x.risks).length ? `<div class="ar-sub ar-neg-sub">風險${bullets(x.risks)}</div>` : ""}</div>`).join("");
+  const nodes = asArray(sc.manufacturing_nodes).length ? `<div class="ar-sub">全球製造據點${chips(sc.manufacturing_nodes, "v")}</div>` : "";
+  const sites = asArray(sc.manufacturing_and_operations).map(m =>
     `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(m.site_name || m.country_or_region || "")}</span>
       ${m.current_status ? `<span class="ar-badge neu">${esc(m.current_status)}</span>` : ""}
       ${m.utilization_rate_pct != null ? `<span class="ar-item-pct">稼動率 ${esc(m.utilization_rate_pct)}%</span>` : ""}</div>
-      ${para("產能：", m.capacity)}${para("擴產：", m.expansion_plan)}
-      ${m.bottlenecks && m.bottlenecks.length ? `<div class="ar-sub ar-neg-sub">瓶頸${bullets(m.bottlenecks)}</div>` : ""}</div>`).join("");
-  const exp = (fs.capacity_expansion_plans || []).map(x =>
-    `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.site_or_project || "")}</span>
-      ${x.country_or_region ? `<span class="ar-tagk">${esc(x.country_or_region)}</span>` : ""}</div>
-      ${para("投資：", x.investment_amount)}${para("新增產能：", x.capacity_increase)}
-      ${para("量產時程：", x.mass_production_timing || x.completion_timing)}${para("預期影響：", x.expected_impact)}
-      ${x.risks && x.risks.length ? `<div class="ar-sub ar-neg-sub">風險${bullets(x.risks)}</div>` : ""}</div>`).join("");
-  const ma = (fs.ma_and_partnerships || []).map(x =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(x.partner_or_target || "")}</span>
-      <span class="ar-tagk">${esc(x.type || "")}</span>${x.current_status ? `<span class="ar-badge neu">${esc(x.current_status)}</span>` : ""}
-      <div class="ar-row-b">${esc(x.purpose || "")}${x.expected_impact ? " — " + esc(x.expected_impact) : ""}</div></div>`).join("");
-  return card("t-cap", "🏗️", "產能與營運據點", sites)
-    + card("t-exp", "📈", "擴產計畫", exp)
-    + card("t-ma", "🤝", "併購與策略合作", ma);
+      ${para("產能：", m.capacity)}${para("擴產：", m.expansion_plan)}</div>`).join("");
+  return card("t-exp", "🏗️", "擴產計畫", expItems + nodes)
+    + card("t-cap", "🏭", "營運據點", sites);
 }
 
 function tabCompetition(d) {
   const data = d.data || {};
   const cp = data.competition || {};
-  const comps = (cp.named_competitors || []).map(x =>
+  const landscape = asArray(cp.competitive_landscape).map(x =>
+    `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.area || "")}</span>
+      ${x.risk_level ? `<span class="ar-badge ${x.risk_level === "high" ? "neg" : x.risk_level === "low" ? "pos" : "neu"}">競爭風險 ${esc(impactWord(x.risk_level))}</span>` : ""}</div>
+      ${para("", x.company_position)}
+      ${asArray(x.competition_factors).length ? `<div class="ar-sub">競爭要素${chips(x.competition_factors)}</div>` : ""}</div>`).join("");
+  const comps = asArray(cp.named_competitors).map(x =>
     `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.company_name || "")}</span>
       ${x.ticker ? `<span class="ar-tagk">${esc(x.ticker)}</span>` : ""}
       ${x.relative_position ? `<span class="ar-badge ${x.relative_position === "stronger" ? "neg" : x.relative_position === "weaker" ? "pos" : "neu"}">相對 ${esc(x.relative_position)}</span>` : ""}</div>
-      ${x.competing_products_or_markets && x.competing_products_or_markets.length ? `<div class="ar-sub">競爭領域${chips(x.competing_products_or_markets)}</div>` : ""}
-      ${x.company_advantages_vs_competitor && x.company_advantages_vs_competitor.length ? `<div class="ar-sub ar-pos-sub">我方優勢${bullets(x.company_advantages_vs_competitor)}</div>` : ""}
-      ${x.company_disadvantages_vs_competitor && x.company_disadvantages_vs_competitor.length ? `<div class="ar-sub ar-neg-sub">我方劣勢${bullets(x.company_disadvantages_vs_competitor)}</div>` : ""}</div>`).join("");
-  const factors = (cp.competitive_factors || []).map(f =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(f.factor || "")}</span>
-      <span class="ar-badge ${f.company_position === "strong" ? "pos" : f.company_position === "weak" ? "neg" : "neu"}">${esc(f.company_position || "")}</span>
-      <div class="ar-row-b">${esc(f.description || "")}</div></div>`).join("");
-  return card("t-comp", "⚔️", "競爭格局", para("", cp.competitive_environment_summary) + comps)
-    + card("t-factor", "🎚️", "競爭要素定位", factors);
+      ${asArray(x.company_advantages_vs_competitor).length ? `<div class="ar-sub ar-pos-sub">我方優勢${bullets(x.company_advantages_vs_competitor)}</div>` : ""}
+      ${asArray(x.company_disadvantages_vs_competitor).length ? `<div class="ar-sub ar-neg-sub">我方劣勢${bullets(x.company_disadvantages_vs_competitor)}</div>` : ""}</div>`).join("");
+  const rel = (asArray(cp.relative_strengths).length ? `<div class="ar-sub ar-pos-sub">相對優勢${bullets(cp.relative_strengths)}</div>` : "")
+    + (asArray(cp.relative_weaknesses).length ? `<div class="ar-sub ar-neg-sub">相對劣勢${bullets(cp.relative_weaknesses)}</div>` : "");
+  return card("t-comp", "⚔️", "競爭格局", para("", cp.competitive_environment_summary) + landscape + comps)
+    + card("t-rel", "⚖️", "相對優劣勢", rel);
 }
 
 function tabChallenges(d) {
   const data = d.data || {};
-  const challenges = (data.company_challenges || []).map(x =>
-    `<div class="ar-item ${SEV[x.severity] ? "sev-" + SEV[x.severity].c : ""}"><div class="ar-item-h">
-      <span class="ar-item-t">${esc(x.title || "")}</span>${sevTag(x.severity, "嚴重 ")}
-      ${x.trend ? `<span class="ar-mini">${esc(x.trend)}</span>` : ""}</div>
-      ${para("", x.description)}${para("影響：", x.financial_or_operational_impact)}${para("因應：", x.management_response)}
-      ${chips(x.affected_products_or_segments)}</div>`).join("");
-  const risks = (data.risks || []).map(x =>
-    `<div class="ar-item ${SEV[x.severity] ? "sev-" + SEV[x.severity].c : ""}"><div class="ar-item-h">
-      <span class="ar-item-t">${esc(x.title || "")}</span>${sevTag(x.severity, "嚴重 ")}
-      ${x.probability ? `<span class="ar-mini">機率 ${esc(IMPACT[x.probability] || x.probability)}</span>` : ""}</div>
-      ${para("", x.detail)}${para("潛在影響：", x.potential_impact)}${para("因應：", x.mitigation)}</div>`).join("");
-  const flags = (data.financial_and_accounting_flags || []).map(x =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(x.title || "")}</span>${sevTag(x.severity)}
-      <div class="ar-row-b">${esc(x.detail || "")}${x.quantitative_evidence ? ` <span class="ar-muted">（${esc(x.quantitative_evidence)}）</span>` : ""}</div></div>`).join("");
-  const gov = (data.governance_flags || []).map(x =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(x.title || "")}</span>${sevTag(x.severity)}
-      <div class="ar-row-b">${esc(x.detail || "")}</div></div>`).join("");
+  const challenges = asArray(data.company_challenges).map(x => {
+    const sev = SEV[x.severity];
+    return `<div class="ar-item ${sev ? "sev-" + sev.c : ""}"><div class="ar-item-h">
+      <span class="ar-item-t">${esc(x.challenge || x.title || "")}</span>${sevTag(x.severity, "嚴重 ")}</div>
+      ${para("", x.current_impact || x.description)}${para("影響：", x.financial_or_operational_impact)}${para("因應：", x.management_response)}
+      ${chips(x.affected_business || x.affected_products_or_segments)}</div>`;
+  }).join("");
+  const risks = asArray(data.risks).map(x => {
+    const sevKey = x.impact || x.severity;
+    const sev = SEV[sevKey];
+    return `<div class="ar-item ${sev ? "sev-" + sev.c : ""}"><div class="ar-item-h">
+      <span class="ar-item-t">${esc(x.risk || x.title || "")}</span>${sevTag(sevKey, "衝擊 ")}
+      ${x.probability ? `<span class="ar-mini">機率 ${esc(impactWord(x.probability))}</span>` : ""}
+      ${x.category ? `<span class="ar-tagk">${esc(x.category)}</span>` : ""}</div>
+      ${para("", x.impact_path || x.detail)}${para("潛在影響：", x.potential_impact)}
+      ${joinArr(x.mitigation) ? para("因應：", joinArr(x.mitigation)) : ""}
+      ${chips(x.affected_products)}</div>`;
+  }).join("");
+  const flags = asArray(data.financial_and_accounting_flags).map(x =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(x.flag || x.title || "")}</span>${sevTag(x.severity)}
+      <div class="ar-row-b">${esc(x.observation || x.detail || "")}${x.potential_implication ? ` <span class="ar-muted">→ ${esc(x.potential_implication)}</span>` : ""}${x.quantitative_evidence ? ` <span class="ar-muted">（${esc(x.quantitative_evidence)}）</span>` : ""}</div></div>`).join("");
+  const gov = asArray(data.governance_flags).map(x =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(x.flag || x.title || "")}</span>${sevTag(x.severity)}
+      <div class="ar-row-b">${esc(x.observation || x.detail || "")}${x.mitigating_factor ? ` <span class="ar-pos-sub">緩解：${esc(x.mitigating_factor)}</span>` : ""}</div></div>`).join("");
   return card("t-chal", "🧗", "公司目前困境", challenges)
     + card("t-risk", "⚠️", "風險", risks)
     + card("t-flag", "🚩", "財務 / 會計紅旗", flags)
@@ -360,56 +437,72 @@ function tabChallenges(d) {
 function tabOutlook(d) {
   const data = d.data || {};
   const im = data.industry_and_market || {}, fs = data.future_strategy || {};
-  const outlook = (im.industry_outlook || []).map(o =>
+  const drivers = asArray(data.growth_drivers).map(x =>
+    `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.driver || x.title || "")}</span>
+      ${(x.impact_level || x.expected_impact) ? `<span class="ar-badge pos">影響 ${esc(impactWord(x.impact_level || x.expected_impact))}</span>` : ""}
+      ${(x.expected_timing || x.time_horizon) ? `<span class="ar-mini">${esc(x.expected_timing || x.time_horizon)}</span>` : ""}
+      ${x.current_stage ? `<span class="ar-tagk">${esc(x.current_stage)}</span>` : ""}</div>
+      ${para("", x.potential_impact || x.detail)}${para("量化目標：", x.quantitative_target)}
+      ${asArray(x.success_conditions).length ? `<div class="ar-sub">成立條件${bullets(x.success_conditions)}</div>` : ""}
+      ${chips(x.related_products || x.related_products_or_segments)}</div>`).join("");
+  const priorities = bullets(fs.management_priorities);
+  const partners = bullets(fs.partnership_strategy);
+  const tech = chips(im.technology_trends, "v");
+  const policy = bullets(im.policy_factors);
+  // Older schema: industry_outlook array of objects.
+  const outlookRows = asArray(im.industry_outlook).map(o =>
     `<div class="ar-row"><span class="ar-row-t">${esc(o.theme || "")}</span>
       <span class="ar-badge ${o.direction === "positive" ? "pos" : o.direction === "negative" ? "neg" : "neu"}">${esc(o.direction || "")}</span>
-      ${o.time_horizon ? `<span class="ar-mini">${esc(o.time_horizon)}</span>` : ""}
       <div class="ar-row-b">${esc(o.description || "")}</div></div>`).join("");
-  const drivers = (data.growth_drivers || []).map(x =>
-    `<div class="ar-item"><div class="ar-item-h"><span class="ar-item-t">${esc(x.title || "")}</span>
-      ${x.expected_impact ? `<span class="ar-badge pos">影響 ${esc(IMPACT[x.expected_impact] || x.expected_impact)}</span>` : ""}
-      ${x.time_horizon ? `<span class="ar-mini">${esc(x.time_horizon)}</span>` : ""}
-      ${x.current_stage ? `<span class="ar-tagk">${esc(x.current_stage)}</span>` : ""}</div>
-      ${para("", x.detail)}${para("量化目標：", x.quantitative_target)}${chips(x.related_products_or_segments)}</div>`).join("");
-  const priorities = (fs.management_priorities || []).map(p =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(p.priority || "")}</span>
-      ${p.time_horizon ? `<span class="ar-mini">${esc(p.time_horizon)}</span>` : ""}
-      <div class="ar-row-b">${[p.target, p.progress].filter(Boolean).map(esc).join(" · ")}</div></div>`).join("");
-  return card("t-outlook", "🔭", "產業前景", outlook)
-    + card("t-driver", "🚀", "成長題材", drivers)
-    + card("t-prio", "📌", "管理層優先事項", priorities);
+  return card("t-driver", "🚀", "成長題材", drivers)
+    + card("t-prio", "📌", "管理層優先事項", priorities)
+    + card("t-partner", "🤝", "夥伴策略", partners)
+    + card("t-tech", "🧠", "技術趨勢", tech)
+    + card("t-policy", "🏛️", "政策因素", policy)
+    + card("t-outlook", "🔭", "產業前景", outlookRows);
 }
 
-function scenarioList(arr, cls) {
-  return (arr || []).map(s => `<div class="ar-scn ${cls}">
-    <div class="ar-scn-t">${esc(s.scenario || "")}</div>
-    ${s.expected_impact ? `<div class="ar-scn-b">${esc(s.expected_impact)}</div>` : ""}
-    ${s.expected_outcome ? `<div class="ar-scn-b">${esc(s.expected_outcome)}</div>` : ""}
-    ${(s.required_conditions || s.trigger_conditions) ? chips(s.required_conditions || s.trigger_conditions) : ""}
-  </div>`).join("");
+// Investment scenario column from an object {conditions/triggers, beneficiaries,
+// financial_path, expected_outcome, confirmation/negative indicators}.
+function caseCol(title, cls, obj) {
+  if (!obj || typeof obj !== "object") return "";
+  const body = [
+    bullets(obj.conditions || obj.triggers),
+    obj.beneficiaries || obj.affected_products ? `<div class="ar-sub">${obj.beneficiaries ? "受惠" : "受影響"}${chips(obj.beneficiaries || obj.affected_products)}</div>` : "",
+    para("", obj.financial_path || obj.expected_outcome),
+    asArray(obj.confirmation_indicators || obj.negative_indicators).length
+      ? `<div class="ar-sub">${obj.negative_indicators ? "警訊指標" : "確認指標"}${chips(obj.confirmation_indicators || obj.negative_indicators)}</div>` : "",
+  ].join("");
+  if (!body.trim()) return "";
+  return `<div class="ar-case-col"><div class="ar-case-h ${cls}">${title}</div><div class="ar-scn ${cls}">${body}</div></div>`;
 }
 function tabInvest(d) {
   const data = d.data || {};
   const iv = data.investment_view || {};
-  const bull = scenarioList(iv.bull_case, "pos"), base = scenarioList(iv.base_case, "neu"), bear = scenarioList(iv.bear_case, "neg");
+  // v2 cases are objects; older schema used arrays of {scenario}. Handle both.
+  const mkCol = (title, cls, v) => Array.isArray(v)
+    ? (v.length ? `<div class="ar-case-col"><div class="ar-case-h ${cls}">${title}</div>${v.map(s => `<div class="ar-scn ${cls}"><div class="ar-scn-t">${esc(s.scenario || "")}</div>${para("", s.expected_impact || s.expected_outcome)}${chips(s.required_conditions || s.trigger_conditions)}</div>`).join("")}</div>` : "")
+    : caseCol(title, cls, v);
   const casesInner = [
-    bull && `<div class="ar-case-col"><div class="ar-case-h pos">🐂 多方</div>${bull}</div>`,
-    base && `<div class="ar-case-col"><div class="ar-case-h neu">⚖️ 基本</div>${base}</div>`,
-    bear && `<div class="ar-case-col"><div class="ar-case-h neg">🐻 空方</div>${bear}</div>`,
+    mkCol("🐂 多方", "pos", iv.bull_case),
+    mkCol("⚖️ 基本", "neu", iv.base_case),
+    mkCol("🐻 空方", "neg", iv.bear_case),
   ].filter(Boolean).join("");
-  const cases = `<div class="ar-cases">${casesInner}</div>`;
-  const catalysts = (iv.catalysts || []).map(x =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(x.event || "")}</span>
+  const catalysts = asArray(iv.catalysts).map(x =>
+    `<div class="ar-row"><span class="ar-row-t">${esc(x.catalyst || x.event || "")}</span>
       ${x.expected_timing ? `<span class="ar-mini">${esc(x.expected_timing)}</span>` : ""}
-      ${x.potential_impact ? `<span class="ar-badge neu">影響 ${esc(IMPACT[x.potential_impact] || x.potential_impact)}</span>` : ""}</div>`).join("");
-  const metrics = (iv.monitoring_metrics || []).map(m =>
-    `<div class="ar-row"><span class="ar-row-t">${esc(m.metric || "")}</span>
-      <div class="ar-row-b">${esc(m.reason || "")}${m.positive_signal ? ` <span class="ar-pos-sub">↑ ${esc(m.positive_signal)}</span>` : ""}${m.negative_signal ? ` <span class="ar-neg-sub">↓ ${esc(m.negative_signal)}</span>` : ""}</div></div>`).join("");
-  return card("t-thesis", "🎯", "核心論點", para("", iv.core_thesis) + bullets(iv.thesis))
-    + (casesInner ? `<div class="ar-card t-cases"><div class="ar-card-h">🎲 情境分析</div><div class="ar-card-b">${cases}</div></div>` : "")
+      ${(x.impact || x.potential_impact) ? `<span class="ar-badge neu">影響 ${esc(impactWord(x.impact || x.potential_impact))}</span>` : ""}</div>`).join("");
+  const metrics = asArray(iv.monitoring_indicators).length
+    ? chips(iv.monitoring_indicators, "k")
+    : asArray(iv.monitoring_metrics).map(m =>
+        `<div class="ar-row"><span class="ar-row-t">${esc(m.metric || "")}</span>
+          <div class="ar-row-b">${esc(m.reason || "")}</div></div>`).join("");
+  const questions = bullets(iv.questions_for_next_report || iv.key_questions_for_next_report);
+  return card("t-thesis", "🎯", "核心論點", para("", iv.core_thesis))
+    + (casesInner ? `<div class="ar-card t-cases"><div class="ar-card-h">🎲 情境分析</div><div class="ar-card-b"><div class="ar-cases">${casesInner}</div></div></div>` : "")
     + card("t-cat", "⏰", "催化劑", catalysts)
     + card("t-metric", "📡", "追蹤指標", metrics)
-    + card("t-q", "❓", "下期年報要看的問題", bullets(iv.key_questions_for_next_report))
+    + card("t-q", "❓", "下期年報要看的問題", questions)
     + card("t-final", "✅", "總評", para("", iv.final_assessment));
 }
 
@@ -428,7 +521,12 @@ const TABS = [
 ];
 
 function detailHTML(d) {
-  const tabs = TABS.map(t => ({ ...t, html: t.fn(d) })).filter(t => t.html && t.html.trim());
+  // Each renderer is wrapped so a single bad section can't blank the panel.
+  const tabs = TABS.map(t => {
+    let html = "";
+    try { html = t.fn(d); } catch (e) { console.error("tab render failed:", t.key, e); }
+    return { ...t, html };
+  }).filter(t => t.html && t.html.trim());
   const nav = tabs.map((t, i) =>
     `<button class="ar-tab${i === 0 ? " active" : ""}" data-tab="${t.key}">${t.label}</button>`).join("");
   const bodies = tabs.map((t, i) =>
@@ -538,7 +636,8 @@ export async function mountAnnualView(opts) {
     const pane = tab.dataset.tab;
     rightEl.querySelectorAll(".ar-tab").forEach(t => t.classList.toggle("active", t === tab));
     rightEl.querySelectorAll(".ar-tabpane").forEach(p => p.classList.toggle("active", p.dataset.pane === pane));
-    rightEl.querySelector(".ar-tabbody").scrollTop = 0;
+    const body = rightEl.querySelector(".ar-tabbody");
+    if (body) body.scrollTop = 0;
   });
 
   let searchTimer;
@@ -550,23 +649,25 @@ export async function mountAnnualView(opts) {
   // ── Multi-year comparison ────────────────────────────────────────────
   let cmpKey = null;
   function cmpCol(d) {
-    const data = d.data || {}, fh = data.financial_highlights || {}, h = data.headline || {};
+    const data = d.data || {}, fh = data.financial_highlights || {}, is = fh.income_statement || {}, h = data.headline || {};
     const st = stanceInfo(d._stance);
-    const kpis = [
-      kpi("營收", moneyStr(fh.revenue), yoyTag(fh.revenue && fh.revenue.yoy_change_pct)),
-      kpi("毛利率", pctStr(fh.gross_margin_pct)),
-      kpi("營益率", pctStr(fh.operating_margin_pct)),
-      kpi("EPS", fh.eps != null && fh.eps !== "" ? esc(fh.eps) : ""),
-    ].filter(Boolean).join("");
-    const topChal = (data.company_challenges || [])[0];
-    const topDrv = (data.growth_drivers || [])[0];
+    const kpis = kpiGrid([
+      kpi("營收", moneyStr(is.revenue), yoyTag(is.revenue && is.revenue.yoy_change_pct)),
+      kpi("毛利率", pctStr(is.gross_margin_pct)),
+      kpi("營益率", pctStr(is.operating_margin_pct)),
+      kpi("淨利", moneyStr(is.net_income), yoyTag(is.net_income && is.net_income.yoy_change_pct)),
+    ], "sm");
+    const topChal = asArray(data.company_challenges)[0];
+    const topDrv = asArray(data.growth_drivers)[0];
+    const drvTxt = topDrv && (topDrv.driver || topDrv.title);
+    const chalTxt = topChal && (topChal.challenge || topChal.title);
     return `<div class="ar-cmp-col ${st.cls}">
       <div class="ar-cmp-top"><span class="ar-cmp-fy">FY ${esc(d._year)}</span><span class="ar-stance ${st.cls}">${st.icon} ${st.label}</span></div>
       ${h.one_sentence_summary ? `<p class="ar-cmp-sum">${esc(h.one_sentence_summary)}</p>` : ""}
-      ${kpis ? `<div class="ar-kpis sm">${kpis}</div>` : ""}
+      ${kpis}
       ${h.key_change_vs_prior_year ? `<div class="ar-cmp-chg"><b>年度變化</b>${esc(h.key_change_vs_prior_year)}</div>` : ""}
-      ${topDrv ? `<div class="ar-cmp-line pos">🚀 ${esc(topDrv.title || "")}</div>` : ""}
-      ${topChal ? `<div class="ar-cmp-line neg">🧗 ${esc(topChal.title || "")}</div>` : ""}
+      ${drvTxt ? `<div class="ar-cmp-line pos">🚀 ${esc(drvTxt)}</div>` : ""}
+      ${chalTxt ? `<div class="ar-cmp-line neg">🧗 ${esc(chalTxt)}</div>` : ""}
     </div>`;
   }
   function renderCompare() {
