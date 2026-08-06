@@ -32,6 +32,16 @@
     </details>
 
     <div id="reportRoot" class="rv-root"></div>
+
+    <!-- Single-company last-4-quarters comparison -->
+    <section class="ec-compare" id="compare" hidden>
+      <div class="ec-compare-head">
+        <h3 class="ec-compare-title">近四季比較</h3>
+        <label class="rv-ctl">公司 <span class="rv-sel-wrap"><select class="rv-select" id="cmpTicker"></select></span></label>
+      </div>
+      <div class="ec-compare-row" id="compareRow"></div>
+    </section>
+
     <p class="rp-foot">分析由 Claude 節錄並存於 Firebase，僅供參考，非投資建議。</p>
   </main>
 
@@ -55,13 +65,14 @@
       if (r > b + n) return "bearish";
       return "neutral";
     }
+    function hlHTML(h) {
+      const hs = sent(h.sentiment);
+      const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
+      return `<div class="ec-hl ${hs.cls}"><span class="sent-tag ${hs.cls}">${icon}</span><span>${esc(h.text)}</span></div>`;
+    }
     function detail(c) {
       const s = sent(overall(c));
-      const hls = (c.highlights || []).map(h => {
-        const hs = sent(h.sentiment);
-        const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
-        return `<div class="ec-hl ${hs.cls}"><span class="sent-tag ${hs.cls}">${icon}</span><span>${esc(h.text)}</span></div>`;
-      }).join("");
+      const hls = (c.highlights || []).map(hlHTML).join("");
       const watch = (c.watch || []).filter(w => w);
       const watchCard = watch.length
         ? `<div class="rp-subcard ec-watch"><div class="rp-subcard-head">🔮 未來重點看點</div>
@@ -80,6 +91,50 @@
       </article>`;
     }
 
+    // ── Last-4-quarters comparison section ──────────────────────────────
+    const compareSec = document.getElementById("compare");
+    const cmpSel = document.getElementById("cmpTicker");
+    const cmpRow = document.getElementById("compareRow");
+    let cmpAll = [], cmpTicker = null;
+
+    function cmpCard(c) {
+      const s = sent(overall(c));
+      const hls = (c.highlights || []).map(hlHTML).join("");
+      const watch = (c.watch || []).filter(w => w);
+      const watchCard = watch.length
+        ? `<div class="ec-cmp-watch"><div class="ec-cmp-watch-h">🔮 未來看點</div><ul class="ec-watch-list">${watch.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>`
+        : "";
+      return `<div class="ec-cmp-card ${s.cls}">
+        <div class="ec-cmp-top">
+          <span class="ec-cmp-fy">${esc(c.year)} ${esc(c.quarter)}</span>
+          <span class="ec-cmp-date">${c.date ? esc(fmtDate(c.date)) : ""}</span>
+        </div>
+        ${c.summary ? `<p class="ec-cmp-summary">${esc(c.summary)}</p>` : ""}
+        ${hls ? `<div class="ec-hls">${hls}</div>` : ""}
+        ${watchCard}
+      </div>`;
+    }
+
+    function renderCompare() {
+      if (!cmpTicker) { cmpRow.innerHTML = ""; return; }
+      const calls = cmpAll.filter(c => c.ticker === cmpTicker)
+        .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+      const last4 = calls.slice(-4); // most recent 4, chronological (old → new)
+      if (!last4.length) { cmpRow.innerHTML = `<div class="rv-empty">此公司尚無會議紀錄。</div>`; return; }
+      cmpRow.innerHTML = last4.map(cmpCard).join('<div class="ec-cmp-arrow">→</div>');
+    }
+
+    function onEarningsData(calls) {
+      cmpAll = calls;
+      const tickers = [...new Set(calls.map(c => c.ticker).filter(Boolean))].sort();
+      compareSec.hidden = tickers.length === 0;
+      if (!tickers.includes(cmpTicker)) cmpTicker = tickers[0] || null;
+      cmpSel.innerHTML = tickers.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join("");
+      if (cmpTicker) cmpSel.value = cmpTicker;
+      renderCompare();
+    }
+    cmpSel.addEventListener("change", () => { cmpTicker = cmpSel.value; renderCompare(); });
+
     let view;
     mountReportView({
       root: document.getElementById("reportRoot"),
@@ -90,6 +145,7 @@
       chipLabel: c => c.ticker,
       renderDetail: detail,
       emptyHint: "點選左側會議節點，重點會顯示在這裡",
+      onData: onEarningsData,
     }).then(v => { view = v; view.setAdmin(lastAdmin); }).catch(e => { console.error(e); });
 
     // Admin importer + delete (sign-in handled in the sidebar)
