@@ -77,6 +77,55 @@ export async function saveEarnings(calls) {
   return n;
 }
 
+// ─── Annual reports ────────────────────────────────────────────────────
+// Accepts {reports:[...]}, a bare array, or a single annual-report object
+// (the annual_report_summary schema, detected by schema_version/document/company).
+export function parseAnnualReports(input) {
+  let data = typeof input === "string" ? JSON.parse(input) : input;
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.reports)) return data.reports;
+  if (data && (data.schema_version || data.document || data.company)) return [data];
+  throw new Error('格式需為 {"reports":[...]}、陣列、或單一年報 JSON 物件');
+}
+
+const STANCES = ["bullish", "slightly_bullish", "neutral", "slightly_bearish", "bearish"];
+function normStance(v) { v = (v || "neutral").toLowerCase(); return STANCES.includes(v) ? v : "neutral"; }
+
+// Save one-or-more annual reports. Each doc keeps the full schema object plus
+// a few flattened index fields (prefixed `_`) used for grouping / ordering /
+// filtering, so rendering can read the rich nested data straight back.
+export async function saveAnnualReports(reports) {
+  const now = new Date().toISOString();
+  let n = 0;
+  for (const r of reports) {
+    const company = r.company || {};
+    const document = r.document || {};
+    const headline = r.headline || {};
+    const ticker = (company.ticker || "").toString().trim();
+    const name = (company.name || company.name_english || "").toString().trim();
+    const year = (document.fiscal_year || r.fiscal_year || "").toString().trim();
+    if (!name && !ticker) throw new Error(`每筆需含 company.name 或 company.ticker：${JSON.stringify(r).slice(0, 80)}`);
+    if (!year) throw new Error(`每筆需含 document.fiscal_year：${name || ticker}`);
+    const key = ticker || name;
+    const id = `${slug(key)}-${slug(year)}`;
+    const date = document.filing_date || document.fiscal_period_end || `${year}-12-31`;
+    await setDoc(doc(db(), "annual_reports", id), {
+      _ticker: ticker || null,
+      _company: name || ticker,
+      _company_en: company.name_english || null,
+      _year: year,
+      _market: document.market || null,
+      _industry: company.industry || null,
+      _stance: normStance(headline.stance),
+      _date: date,
+      updated_at: now,
+      data: r,
+    }, { merge: false });
+    n++;
+  }
+  return n;
+}
+
 export async function loadDocs(name, orderField = "date", dir = "desc") {
   try {
     const snap = await getDocs(query(collection(db(), name), orderBy(orderField, dir)));

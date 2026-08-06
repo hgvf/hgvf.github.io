@@ -48,6 +48,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    match /annual_reports/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
     match /config/auth {
       allow read: if isSignedIn();
       allow write: if isWhitelisted();
