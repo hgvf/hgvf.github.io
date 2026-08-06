@@ -12,6 +12,7 @@ export async function mountReportView(opts) {
     root, collection, orderField = "date",
     tickersOf, sentimentOf, nodeTitle, chipLabel, renderDetail,
     emptyHint = "點選左側節點，內容會顯示在這裡",
+    onData,
   } = opts;
   const chip = chipLabel || (it => (tickersOf(it)[0] || "•"));
 
@@ -179,6 +180,7 @@ export async function mountReportView(opts) {
     if (selectedId && !all.some(x => x.id === selectedId)) selectedId = null;
     rightEl.innerHTML = selectedId ? renderDetail(all.find(x => x.id === selectedId)) : emptyRight();
     renderLeft();
+    if (onData) onData(all);
   }
 
   function setAdmin(v) {

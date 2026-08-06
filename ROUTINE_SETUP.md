@@ -108,14 +108,37 @@ STEPS:
 
 ## B. 財報分析 — 手動流程（每份 transcript 一次）
 
-開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io`（環境同樣設 `FIREBASE_SERVICE_ACCOUNT` 與 `pip install google-auth requests`），貼上／上傳 transcript，說：
+開一個 **Claude Code web session** 在 `hgvf/hgvf.github.io`（環境同樣設 `FIREBASE_SERVICE_ACCOUNT` 與 `pip install google-auth requests`），貼上／上傳 transcript，也可直接在 earnings 頁的「匯入 JSON」面板貼上。要求 AI 產生的格式：
 
-> 分析這份 transcript，整理成一個 earnings call 物件：ticker、company、year、
-> quarter、date、summary（一句話總結），以及 highlights 陣列——每個重點含
-> text 與 sentiment（bullish／bearish／neutral），涵蓋營運財務、財測展望、
-> **供應鏈訊號**、風險。寫成 `/tmp/call.json`（格式 `{"calls":[ ... ]}`），
-> 再執行 `python scripts/publish.py --type earnings --file /tmp/call.json`。
-> 不要 commit / push，資料進 Firestore 即可。
+```json
+{
+  "calls": [
+    {
+      "ticker": "IONQ",
+      "company": "IonQ, Inc.",
+      "year": 2026,
+      "quarter": "Q2",
+      "date": "2026-08-05",
+      "summary": "一句話總結（繁中）。",
+      "highlights": [
+        { "text": "Q2 營收年增 287%，創新高。", "sentiment": "bullish" },
+        { "text": "調整後 EBITDA 虧損擴大。", "sentiment": "bearish" },
+        { "text": "管理層對 Q-Day 時間點描述保守。", "sentiment": "neutral" }
+      ],
+      "watch": [
+        "9/8 Investor Day：確認合併財測、客戶訂單、256-qubit 細節",
+        "SkyWater 合併財測與整合進度、內部交易抵銷影響",
+        "256-qubit 系統 2027 上半年 commissioning 進度"
+      ]
+    }
+  ]
+}
+```
+
+- `highlights`：每個重點含 `text` 與 `sentiment`（`bullish`／`bearish`／`neutral`），涵蓋營運財務、財測展望、**供應鏈訊號**、風險。
+- `watch`（選填）：**未來重點看點**字串陣列——之後該追蹤的催化劑／待確認事項；介面上會獨立成一張卡片。舊資料沒有也不影響。
+
+寫成 `/tmp/call.json` 後執行 `python scripts/publish.py --type earnings --file /tmp/call.json`，不要 commit / push，資料進 Firestore 即可。
 
 > 若想沿用 claude.ai **Project**：在 Project 裡分析完，把整理好的 JSON 貼進
 > Claude Code web session 執行 `publish.py`（Project 聊天本身無法寫 Firestore）。
@@ -127,7 +150,7 @@ STEPS:
 ## 資料格式速查（`scripts/publish.py`）
 
 - **news**：`{"items": [ {date, headline, content, tickers[], sentiment, credibility?, tags[]?, effect?, advise?, chain?, alternatives[]?, signals?, sources[]} ]}` — 完整規格見 [`SUPPLY_CHAIN_NEWS_SCHEMA.md`](SUPPLY_CHAIN_NEWS_SCHEMA.md)；選填欄位不溯及既往、舊資料沒有也不影響。
-- **earnings**：`{"calls": [ {ticker, company, year, quarter, date, summary, highlights:[{text, sentiment}]} ]}`
+- **earnings**：`{"calls": [ {ticker, company, year, quarter, date, summary, highlights:[{text, sentiment}], watch[]?} ]}`（`watch` 未來重點看點選填，舊資料沒有也不影響）
 - doc id 由內容決定（news = date+headline、earnings = ticker-year-quarter），**重跑會更新、不會重複**。
 - `sentiment` 只接受 `bullish` / `bearish` / `neutral`，其他值一律當 `neutral`。
 

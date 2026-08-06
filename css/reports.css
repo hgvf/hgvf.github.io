@@ -179,6 +179,13 @@
 a.rp-ticker { text-decoration: none; cursor: pointer; transition: all var(--transition); }
 a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 
+/* Earnings future-watch card */
+.ec-watch { background: rgba(124,92,191,0.09); border-color: rgba(124,92,191,0.38); }
+.ec-watch .rp-subcard-head { color: #7C5CBF; }
+.ec-watch-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.35rem; }
+.ec-watch-list li { position: relative; padding-left: 1rem; font-size: 0.92rem; line-height: 1.6; color: var(--text-secondary); }
+.ec-watch-list li::before { content: "▸"; position: absolute; left: 0; color: #7C5CBF; }
+
 /* Earnings "K線" chart button next to company name */
 .ec-kbtn { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.74rem; font-weight: 600;
   padding: 0.16rem 0.55rem; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent);
@@ -244,5 +251,26 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 .rp-status { font-size: 0.82rem; color: var(--text-secondary); }
 .rp-status.ok { color: var(--positive); }
 .rp-status.err { color: var(--negative); }
+
+/* Last-4-quarters comparison */
+.ec-compare { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); }
+.ec-compare-head { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.ec-compare-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+.ec-compare-row { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 0.5rem; }
+.ec-cmp-card { flex: 1 1 0; min-width: 240px; padding: 1rem 1.1rem; border-radius: var(--radius-md);
+  background: var(--glass-bg); border: 1px solid var(--glass-border); border-top: 4px solid transparent; box-shadow: var(--glass-shadow); }
+.ec-cmp-card.pos { border-top-color: var(--positive); }
+.ec-cmp-card.neg { border-top-color: var(--negative); }
+.ec-cmp-card.neu { border-top-color: var(--neutral); }
+.ec-cmp-arrow { flex: 0 0 auto; align-self: center; padding: 0 0.55rem; color: var(--accent); font-size: 1.4rem; font-weight: 700; }
+.ec-cmp-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.55rem; }
+.ec-cmp-fy { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; color: var(--accent); }
+.ec-cmp-date { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
+.ec-cmp-summary { font-size: 0.9rem; line-height: 1.55; color: var(--text-primary); padding-left: 0.6rem; border-left: 3px solid var(--accent); margin-bottom: 0.7rem; }
+.ec-cmp-card .ec-hls { gap: 0.4rem; }
+.ec-cmp-card .ec-hl { font-size: 0.84rem; padding: 0.45rem 0.6rem; line-height: 1.5; }
+.ec-cmp-watch { margin-top: 0.7rem; }
+.ec-cmp-watch-h { font-size: 0.8rem; font-weight: 600; color: #7C5CBF; margin-bottom: 0.3rem; }
+@media (max-width: 700px) { .ec-cmp-arrow { transform: rotate(90deg); } }
 
 .rp-foot { margin-top: 2.75rem; font-size: 0.8rem; color: var(--text-muted); text-align: center; }

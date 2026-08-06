@@ -43,7 +43,8 @@ earnings: a list of calls, or {"calls": [...]}. Each call:
       "summary": "one-line takeaway",
       "highlights": [                       # required
         {"text": "...", "sentiment": "bullish|bearish|neutral"}
-      ]
+      ],
+      "watch": ["future watch point", ...]  # optional; [] or missing = none
     }
 
 Docs use deterministic IDs so re-running is idempotent (upsert, not duplicate).
@@ -176,6 +177,10 @@ def earnings_docs(calls, now_iso):
             {"text": h.get("text", ""), "sentiment": norm_sentiment(h.get("sentiment"))}
             for h in c.get("highlights", []) if h.get("text")
         ]
+        raw_watch = c.get("watch", [])
+        if isinstance(raw_watch, str):
+            raw_watch = [raw_watch] if raw_watch.strip() else []
+        watch = [str(w) for w in raw_watch if str(w).strip()]
         yield doc_id, {
             "ticker": ticker,
             "company": c.get("company", ticker),
@@ -184,6 +189,7 @@ def earnings_docs(calls, now_iso):
             "date": c.get("date", ""),
             "summary": c.get("summary", ""),
             "highlights": highlights,
+            "watch": watch,
             "updated_at": now_iso,
         }
 
