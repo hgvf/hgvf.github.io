@@ -278,6 +278,17 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 /* ══════════════════════════════════════════════════════════════════════
    Annual-report highlights page (annual-report/index.html, js/annualview.js)
    ══════════════════════════════════════════════════════════════════════ */
+/* Annual-report source links (per market) */
+.ar-sources { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.ar-sources-label { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-right: 0.15rem; }
+.ar-src { display: inline-flex; align-items: baseline; gap: 0.4rem; text-decoration: none; padding: 0.3rem 0.6rem;
+  border: 1px solid var(--glass-border); border-radius: var(--radius-sm); background: var(--glass-bg); transition: all var(--transition); }
+.ar-src:hover { border-color: var(--accent); background: var(--accent-light); }
+.ar-src-mk { font-size: 0.68rem; font-weight: 700; color: var(--text-on-accent); background: var(--accent); padding: 0.05rem 0.35rem; border-radius: 4px; }
+.ar-src-nm { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--accent); }
+.ar-src-path { font-size: 0.72rem; color: var(--text-muted); }
+@media (max-width: 640px) { .ar-src-path { display: none; } }
+
 .ar-root { margin-top: 1.1rem; }
 .ar-split { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 1.25rem; align-items: start; }
 .ar-left { position: sticky; top: 1rem; max-height: calc(100vh - 120px); display: flex; flex-direction: column; }
@@ -303,6 +314,8 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 .ar-group.open .ar-group-chev { transform: rotate(0deg); }
 .ar-group-name { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ar-group-tk { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; color: var(--accent); background: var(--accent-light); padding: 0.05rem 0.4rem; border-radius: var(--radius-sm); }
+.ar-group-mk { font-size: 0.64rem; font-weight: 700; color: var(--text-on-accent); background: var(--accent); padding: 0.05rem 0.38rem; border-radius: 4px; letter-spacing: 0.02em; }
+.ar-dir-more { margin-top: 0.5rem; padding: 0.5rem 0.4rem; font-size: 0.74rem; color: var(--text-muted); text-align: center; border-top: 1px dashed var(--glass-border); }
 .ar-group-n { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-muted); background: var(--accent-light); padding: 0.05rem 0.4rem; border-radius: 999px; }
 .ar-group-body { display: none; flex-direction: column; gap: 0.25rem; padding: 0.35rem 0 0.1rem 0.4rem; }
 .ar-group.open .ar-group-body { display: flex; }
@@ -404,6 +417,9 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 .ar-bar-sub { color: var(--text-muted); }
 .ar-bar-track { height: 8px; border-radius: 999px; background: var(--accent-light); overflow: hidden; }
 .ar-bar-fill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); }
+.ar-mixgroup { margin-bottom: 1rem; }
+.ar-mixgroup:last-child { margin-bottom: 0; }
+.ar-mixgroup-h { font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--glass-border); }
 
 /* Item cards (products, competitors, drivers, challenges…) */
 .ar-item { margin-bottom: 0.7rem; padding: 0.75rem 0.9rem; border-radius: var(--radius-sm); background: var(--glass-bg); border: 1px solid var(--glass-border); }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>年報重點 · Annual Report Highlights</title>
   <link rel="stylesheet" href="../css/style.css?v=20260806" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260806" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260806c" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -17,7 +17,21 @@
     <div class="rp-head">
       <h2 class="page-title">年報重點</h2>
     </div>
-    <p class="rp-sub">貼上 Claude 產生的年報摘要 JSON，即可生成公司年報重點卡片。左側依公司分組、可搜尋；右側以分頁呈現各面向。下方可做單一公司多年度比較。</p>
+    <div class="ar-sources">
+      <span class="ar-sources-label">年報來源</span>
+      <a class="ar-src" href="https://mops.twse.com.tw/mops/#/web/t57sb01_q1" target="_blank" rel="noopener">
+        <span class="ar-src-mk">台股</span><span class="ar-src-nm">MOPS</span>
+        <span class="ar-src-path">財務報告書 → 查詢股東會年報 → 股東會年報</span></a>
+      <a class="ar-src" href="https://www.sec.gov/edgar/search/" target="_blank" rel="noopener">
+        <span class="ar-src-mk">美股</span><span class="ar-src-nm">SEC EDGAR</span>
+        <span class="ar-src-path">10-K</span></a>
+      <a class="ar-src" href="https://disclosure2.edinet-fsa.go.jp/WEEK0010.aspx" target="_blank" rel="noopener">
+        <span class="ar-src-mk">日股</span><span class="ar-src-nm">EDINET</span>
+        <span class="ar-src-path">有価証券報告書</span></a>
+      <a class="ar-src" href="https://dart.fss.or.kr/" target="_blank" rel="noopener">
+        <span class="ar-src-mk">韓股</span><span class="ar-src-nm">DART</span>
+        <span class="ar-src-path">商業報告書</span></a>
+    </div>
 
     <!-- Admin-only importer (visible only when signed in as a whitelisted user) -->
     <details class="rp-import" id="importPanel" hidden>
@@ -47,7 +61,7 @@
 
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
-    import { mountAnnualView } from "../js/annualview.js?v=20260806b";
+    import { mountAnnualView } from "../js/annualview.js?v=20260806c";
     import { onAuth, parseAnnualReports, saveAnnualReports } from "../js/reports.js";
 
     mountSidebar("annual-report");
