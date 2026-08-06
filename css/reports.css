@@ -179,6 +179,13 @@
 a.rp-ticker { text-decoration: none; cursor: pointer; transition: all var(--transition); }
 a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 
+/* Earnings future-watch card */
+.ec-watch { background: rgba(124,92,191,0.09); border-color: rgba(124,92,191,0.38); }
+.ec-watch .rp-subcard-head { color: #7C5CBF; }
+.ec-watch-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.35rem; }
+.ec-watch-list li { position: relative; padding-left: 1rem; font-size: 0.92rem; line-height: 1.6; color: var(--text-secondary); }
+.ec-watch-list li::before { content: "▸"; position: absolute; left: 0; color: #7C5CBF; }
+
 /* Earnings "K線" chart button next to company name */
 .ec-kbtn { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.74rem; font-weight: 600;
   padding: 0.16rem 0.55rem; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent);

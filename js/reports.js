@@ -57,6 +57,10 @@ export async function saveEarnings(calls) {
     const highlights = (c.highlights || [])
       .filter(h => h && h.text)
       .map(h => ({ text: String(h.text), sentiment: normSent(h.sentiment) }));
+    // future watch points — accept an array of strings, or a single string; "" / missing = none
+    const watch = Array.isArray(c.watch)
+      ? c.watch.filter(w => w != null && String(w).trim()).map(w => String(w))
+      : (c.watch ? [String(c.watch)] : []);
     await setDoc(doc(db(), "earnings_calls", id), {
       ticker: String(c.ticker),
       company: c.company || c.ticker,
@@ -65,6 +69,7 @@ export async function saveEarnings(calls) {
       date: c.date || "",
       summary: c.summary || "",
       highlights,
+      watch,
       updated_at: now,
     }, { merge: true });
     n++;

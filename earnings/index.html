@@ -42,10 +42,18 @@
 
     mountSidebar("earnings");
 
+    // Overall = bullish only if bullish count exceeds bearish + neutral combined
+    // (and symmetrically for bearish); otherwise neutral.
     function overall(c) {
-      let net = 0;
-      (c.highlights || []).forEach(h => { if (h.sentiment === "bullish") net++; else if (h.sentiment === "bearish") net--; });
-      return net > 0 ? "bullish" : net < 0 ? "bearish" : "neutral";
+      let b = 0, r = 0, n = 0;
+      (c.highlights || []).forEach(h => {
+        if (h.sentiment === "bullish") b++;
+        else if (h.sentiment === "bearish") r++;
+        else n++;
+      });
+      if (b > r + n) return "bullish";
+      if (r > b + n) return "bearish";
+      return "neutral";
     }
     function detail(c) {
       const s = sent(overall(c));
@@ -54,6 +62,11 @@
         const icon = h.sentiment === "bullish" ? "▲" : h.sentiment === "bearish" ? "▼" : "—";
         return `<div class="ec-hl ${hs.cls}"><span class="sent-tag ${hs.cls}">${icon}</span><span>${esc(h.text)}</span></div>`;
       }).join("");
+      const watch = (c.watch || []).filter(w => w);
+      const watchCard = watch.length
+        ? `<div class="rp-subcard ec-watch"><div class="rp-subcard-head">🔮 未來重點看點</div>
+            <ul class="ec-watch-list">${watch.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>`
+        : "";
       return `<article class="rv-detail ${s.cls}">
         <div class="ec-head">
           <span class="ec-ticker">${esc(c.ticker)}</span>
@@ -63,6 +76,7 @@
         </div>
         ${c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : ""}
         ${hls ? `<div class="ec-hls">${hls}</div>` : ""}
+        ${watchCard}
       </article>`;
     }
 
