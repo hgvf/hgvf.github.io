@@ -361,8 +361,9 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
 /* ── Page header actions ─────────────────────────────────── */
 .page-header-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-left: auto; }
 .price-status { font-size: 0.78rem; color: var(--text-muted); }
-.price-status.ok  { color: var(--positive); }
-.price-status.err { color: var(--negative); }
+.price-status.ok   { color: var(--positive); }
+.price-status.warn { color: #b8860b; }
+.price-status.err  { color: var(--negative); }
 .btn-refresh {
   padding: 0.3rem 0.8rem; border-radius: var(--radius-sm);
   border: 1px solid var(--accent); background: var(--accent-light);
