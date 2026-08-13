@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50-2026-06-22';
+const WORKER_VERSION = 'batched-v7+spark50+retry-2026-08-13';
 
 export default {
   async fetch(request, env) {
@@ -50,8 +50,8 @@ export default {
     }
 
     try {
-      const updated = await fetchAndStorePrices(env);
-      return new Response(JSON.stringify({ ok: true, updated, version: WORKER_VERSION }), { headers: jsonHeaders() });
+      const { updated, failed } = await fetchAndStorePrices(env);
+      return new Response(JSON.stringify({ ok: true, updated, failed, version: WORKER_VERSION }), { headers: jsonHeaders() });
     } catch (err) {
       return new Response(JSON.stringify({ error: err.message, version: WORKER_VERSION }), { status: 500, headers: jsonHeaders() });
     }
@@ -172,11 +172,17 @@ async function firestoreBatchSet(token, projectId, writes) {
         updateMask: { fieldPaths: Object.keys(fields) },
       })),
     };
-    await fetch(url, {
+    const res = await fetch(url, {
       method:  'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body:    JSON.stringify(body),
     });
+    // Don't report success for writes that never landed — a silently-ignored
+    // commit error is exactly what made a failed refresh look like it worked.
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      throw new Error(`Firestore commit failed (${res.status}): ${detail.slice(0, 300)}`);
+    }
   }
 }
 
@@ -198,19 +204,40 @@ async function fetchAndStorePrices(env) {
   const overviewSymbols = sectors.flatMap(s => s.ticker_overview || []).filter(Boolean);
 
   const symbols = [...new Set([...tickerSymbols, ...overviewSymbols])];
-  if (symbols.length === 0) return 0;
+  if (symbols.length === 0) return { updated: 0, failed: [] };
 
   // Sub-request budget for N≈600 symbols (Cloudflare cap = 50/invocation):
   //   token 1 + tickers 1 + sectors 1 + session 2 + quote ceil(N/50)=12
-  //   + spark ceil(N/50)=12 + writes ceil(N/500)=2  ≈ 31 — safely under 50.
-  const session = await getYahooSession();
+  //   + spark ceil(N/50)=12 + writes ceil(N/500)=2  ≈ 31 — leaves ~19 spare
+  //   sub-requests, enough to retry the occasional dropped quote batch below.
+  let session = await getYahooSession();
 
-  // v7 quote → price, day%, P/E, market cap, volume (batched 50/req)
+  // v7 quote → price, day%, P/E, market cap, volume (batched 50/req).
+  //
+  // Yahoo intermittently returns a non-OK response (401 stale-crumb / 429
+  // rate-limit) for a batch when many batches are fired back-to-back from a
+  // Cloudflare IP. Previously such a batch was silently dropped, wiping all ~50
+  // of its symbols from a refresh — which is why a freshly-added sector whose
+  // tickers cluster in one batch would show almost no updates while the rest of
+  // the watchlist refreshed fine. Retry an empty batch once with a refreshed
+  // session so a single transient failure doesn't drop 50 symbols.
   const quotes = {};
   const QBATCH = 50;
   for (let i = 0; i < symbols.length; i += QBATCH) {
-    Object.assign(quotes, await fetchAllQuoteData(symbols.slice(i, i + QBATCH), session));
+    const batch = symbols.slice(i, i + QBATCH);
+    let got = await fetchAllQuoteData(batch, session);
+    if (Object.keys(got).length === 0 && batch.length > 0) {
+      await sleep(400);                                   // let a rate-limit cool off
+      session = (await getYahooSession()) || session;      // refresh cookie + crumb
+      got = await fetchAllQuoteData(batch, session);
+    }
+    Object.assign(quotes, got);
   }
+
+  // Symbols Yahoo returned no quote for (delisted, wrong ticker, or a batch that
+  // failed even after the retry). Surfaced to the caller so the UI can report it
+  // instead of silently showing a stale/blank card.
+  const failed = symbols.filter(s => !(s in quotes));
 
   // v8 spark → week/month/year % from historical closes (batched 50/req)
   const spark = await fetchSparkData(symbols, session);
@@ -222,8 +249,10 @@ async function fetchAndStorePrices(env) {
   }));
 
   await firestoreBatchSet(token, env.FIREBASE_PROJECT_ID, allWrites);
-  return allWrites.length;
+  return { updated: allWrites.length, failed };
 }
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* ── Yahoo Finance ────────────────────────── */
 const YAHOO_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';

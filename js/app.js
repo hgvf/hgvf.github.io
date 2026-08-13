@@ -314,7 +314,14 @@ document.getElementById('btnRefreshPrices')?.addEventListener('click', async () 
     });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      if (statusEl) { statusEl.textContent = `Updated ${data.updated ?? '?'} symbols`; statusEl.className = 'price-status ok'; }
+      if (statusEl) {
+        const failed = Array.isArray(data.failed) ? data.failed : [];
+        let msg = `Updated ${data.updated ?? '?'} symbols`;
+        if (failed.length) msg += ` · ${failed.length} not updated: ${failed.slice(0, 8).join(', ')}${failed.length > 8 ? '…' : ''}`;
+        statusEl.textContent = msg;
+        statusEl.className   = `price-status ${failed.length ? 'warn' : 'ok'}`;
+        if (failed.length) statusEl.title = failed.join(', ');
+      }
     } else {
       if (statusEl) { statusEl.textContent = `Error: ${data.error || res.status}`; statusEl.className = 'price-status err'; }
     }
