@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry-2026-08-13';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate-2026-08-13';
 
 export default {
   async fetch(request, env) {
@@ -186,11 +186,28 @@ async function firestoreBatchSet(token, projectId, writes) {
   }
 }
 
+// List every document in a collection. The Firestore REST list endpoint is
+// PAGINATED: without following nextPageToken it returns only the first page, so
+// once a collection (e.g. `tickers`) grows past one page the tail is silently
+// dropped. That is exactly how a newly-added theme could be missing from the
+// price refresh — its symbols fell past page 1 and were never fetched. Loop on
+// nextPageToken so the whole collection is always read.
 async function firestoreGet(token, projectId, collPath) {
-  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collPath}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  const data = await res.json();
-  return (data.documents || []).map(d => fromFirestoreDoc(d));
+  const base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collPath}`;
+  const docs = [];
+  let pageToken = '';
+  do {
+    const url = `${base}?pageSize=300${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      throw new Error(`Firestore list ${collPath} failed (${res.status}): ${detail.slice(0, 200)}`);
+    }
+    const data = await res.json();
+    for (const d of data.documents || []) docs.push(fromFirestoreDoc(d));
+    pageToken = data.nextPageToken || '';
+  } while (pageToken);
+  return docs;
 }
 
 /* ── Main price fetch ─────────────────────────── */
@@ -207,9 +224,10 @@ async function fetchAndStorePrices(env) {
   if (symbols.length === 0) return { updated: 0, failed: [] };
 
   // Sub-request budget for N≈600 symbols (Cloudflare cap = 50/invocation):
-  //   token 1 + tickers 1 + sectors 1 + session 2 + quote ceil(N/50)=12
-  //   + spark ceil(N/50)=12 + writes ceil(N/500)=2  ≈ 31 — leaves ~19 spare
-  //   sub-requests, enough to retry the occasional dropped quote batch below.
+  //   token 1 + tickers ceil(N/300)=2 + sectors 1 + session 2
+  //   + quote ceil(N/50)=12 + spark ceil(N/50)=12 + writes ceil(N/500)=2 ≈ 32
+  //   — leaves ~18 spare sub-requests, enough to retry the occasional dropped
+  //   quote batch below.
   let session = await getYahooSession();
 
   // v7 quote → price, day%, P/E, market cap, volume (batched 50/req).
