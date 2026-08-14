@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-2026-08-14';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8-2026-08-14b';
 
 export default {
   async fetch(request, env) {
@@ -384,47 +384,63 @@ async function fetchSparkData(symbols, session) {
   return out;
 }
 
-/* Batched date+close series via the v8 spark endpoint, for the Highlight News
-   trend charts. Returns { SYMBOL: { name, currency, series:[{date, close}] } }.
-   Reuses the spark endpoint (many symbols per request) to stay well under the
-   Cloudflare sub-request cap. */
+/* Date+close series for the Highlight News trend charts.
+   Returns { SYMBOL: { name, currency, series:[{date, close}] } }.
+
+   Uses the authenticated v8 *chart* endpoint (one symbol per request) rather
+   than the v8 spark endpoint. Spark is frequently blocked for Cloudflare IPs
+   (see fetchSparkData's note) and returns empty — which surfaced as
+   "查無股價資料" in the UI — whereas the crumb-authenticated chart endpoint works
+   like the v7 quote path. Highlight News only ever passes a handful of tickers
+   (capped at 25), so per-symbol requests stay well under the 50-subrequest cap. */
 async function fetchChartSeries(symbols, range, interval, session) {
   const out = {};
-  const CHUNK = 25;
-  for (let i = 0; i < symbols.length; i += CHUNK) {
-    const batch = symbols.slice(i, i + CHUNK);
-    try {
-      let url = `https://query1.finance.yahoo.com/v8/finance/spark`
-        + `?symbols=${encodeURIComponent(batch.join(','))}`
-        + `&range=${encodeURIComponent(range)}&interval=${encodeURIComponent(interval)}`;
-      if (session?.crumb) url += `&crumb=${encodeURIComponent(session.crumb)}`;
-      const res = await fetch(url, {
-        headers: { 'User-Agent': YAHOO_UA, ...(session?.cookie ? { Cookie: session.cookie } : {}) },
-      });
-      if (!res.ok) continue;
-      const data = await res.json();
-      for (const r of data?.spark?.result || []) {
-        const sym  = r.symbol;
-        const resp = r.response?.[0];
-        if (!sym || !resp) continue;
-        const ts     = resp.timestamp || [];
-        const closes = resp.indicators?.quote?.[0]?.close || [];
-        const meta   = resp.meta || {};
-        const series = [];
-        for (let j = 0; j < ts.length; j++) {
-          const c = closes[j];
-          if (c == null) continue;
-          series.push({ date: new Date(ts[j] * 1000).toISOString().slice(0, 10), close: Math.round(c * 100) / 100 });
-        }
-        out[sym] = {
-          name: meta.shortName || meta.symbol || sym,
-          currency: meta.currency || null,
-          series,
-        };
-      }
-    } catch { /* skip this chunk */ }
+  for (const sym of symbols) {
+    let entry = await fetchOneChart(sym, range, interval, session);
+    // A single transient 401 (stale crumb) / 429 shouldn't blank a symbol —
+    // refresh the session once and retry, mirroring the quote-batch retry.
+    if (!entry) {
+      await sleep(200);
+      session = (await getYahooSession()) || session;
+      entry = await fetchOneChart(sym, range, interval, session);
+    }
+    if (entry) out[sym] = entry;
   }
   return out;
+}
+
+/* Single-symbol v8 chart fetch → { name, currency, series:[{date, close}] } or
+   null on any failure/empty response. */
+async function fetchOneChart(symbol, range, interval, session) {
+  try {
+    let url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`
+      + `?range=${encodeURIComponent(range)}&interval=${encodeURIComponent(interval)}`;
+    if (session?.crumb) url += `&crumb=${encodeURIComponent(session.crumb)}`;
+    const res = await fetch(url, {
+      headers: { 'User-Agent': YAHOO_UA, ...(session?.cookie ? { Cookie: session.cookie } : {}) },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const r = data?.chart?.result?.[0];
+    if (!r) return null;
+    const ts     = r.timestamp || [];
+    const closes = r.indicators?.quote?.[0]?.close || [];
+    const meta   = r.meta || {};
+    const series = [];
+    for (let j = 0; j < ts.length; j++) {
+      const c = closes[j];
+      if (c == null) continue;
+      series.push({ date: new Date(ts[j] * 1000).toISOString().slice(0, 10), close: Math.round(c * 100) / 100 });
+    }
+    if (!series.length) return null;
+    return {
+      name: meta.shortName || meta.longName || meta.symbol || symbol,
+      currency: meta.currency || null,
+      series,
+    };
+  } catch {
+    return null;
+  }
 }
 
 /* Obtain a cookie + crumb pair so the authenticated v7 quote endpoint works. */
