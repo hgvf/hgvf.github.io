@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>供應鏈瓶頸新聞 · Supply Chain Digest</title>
-  <link rel="stylesheet" href="../css/style.css?v=20260806e" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260806e" />
+  <link rel="stylesheet" href="../css/style.css?v=20260814a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260814a" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -18,11 +18,21 @@
       <h2 class="page-title">供應鏈瓶頸新聞</h2>
     </div>
     <div id="reportRoot" class="rv-root"></div>
+
+    <section id="highlightSection" class="hl-section">
+      <div class="rp-head hl-head">
+        <h2 class="page-title">重點新聞 · Highlight News</h2>
+        <p class="hl-sub">收藏的重點新聞會列在這裡，可挑選查看新聞卡片與相關個股走勢。</p>
+      </div>
+      <div id="highlightRoot" class="hl-root"></div>
+    </section>
   </main>
 
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
+    import { mountHighlight } from "../js/highlight.js";
+    import { toggleCollected, isCollected, onCollectChange } from "../js/collect.js";
     import { sent, esc, fmtDate, chartUrl, onAuth } from "../js/reports.js";
 
     mountSidebar("supply-chain");
@@ -83,6 +93,12 @@
       </article>`;
     }
 
+    // Lower "Highlight News" section — collected items + per-ticker price trends.
+    const highlight = mountHighlight({
+      root: document.getElementById("highlightRoot"),
+      renderDetail: detail,
+    });
+
     let view = null, lastAdmin = false;
     onAuth(({ isAdmin }) => { lastAdmin = isAdmin; if (view) view.setAdmin(isAdmin); });
     mountReportView({
@@ -94,7 +110,16 @@
       chipLabel: it => (it.tickers && it.tickers[0]) || "•",
       renderDetail: detail,
       emptyHint: "點選左側新聞節點，內容會顯示在這裡",
+      isCollected,
+      onCollect: (it) => {                 // toggle; return true when now collected
+        const now = toggleCollected(it);
+        if (now) highlight.focusItem(it.id);
+        return now;
+      },
     }).then(v => { view = v; view.setAdmin(lastAdmin); }).catch(e => { console.error(e); document.getElementById("reportRoot").innerHTML = '<div class="rv-empty">載入失敗，請稍後再試。</div>'; });
+
+    // Keep the sidebar bookmark icons in sync when items are removed elsewhere.
+    onCollectChange(() => { if (view) view.refreshCollectStates(); });
   </script>
 </body>
 </html>

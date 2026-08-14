@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry+paginate-2026-08-13';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-2026-08-14';
 
 export default {
   async fetch(request, env) {
@@ -26,6 +26,29 @@ export default {
     // Unauthenticated version probe — visit in a browser to confirm which code is live.
     if (url.pathname === '/version') {
       return new Response(JSON.stringify({ version: WORKER_VERSION }), { headers: jsonHeaders() });
+    }
+
+    // Public read-only price-series endpoint for the supply-chain Highlight News
+    // trend charts. GET /chart?symbols=2330.TW,AMKR&range=6mo&interval=1d
+    // Returns { ok, range, interval, data: { SYMBOL: { name, currency, series:[{date,close}] } } }.
+    if (url.pathname === '/chart') {
+      if (request.method !== 'GET') {
+        return new Response('Method not allowed', { status: 405, headers: corsHeaders() });
+      }
+      const symbols = (url.searchParams.get('symbols') || '')
+        .split(',').map(s => s.trim()).filter(Boolean).slice(0, 25);
+      const range    = url.searchParams.get('range')    || '6mo';
+      const interval = url.searchParams.get('interval') || '1d';
+      if (!symbols.length) {
+        return new Response(JSON.stringify({ ok: false, error: 'no symbols' }), { status: 400, headers: jsonHeaders() });
+      }
+      try {
+        const session = await getYahooSession();
+        const data = await fetchChartSeries(symbols, range, interval, session);
+        return new Response(JSON.stringify({ ok: true, range, interval, data }), { headers: jsonHeaders() });
+      } catch (err) {
+        return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: jsonHeaders() });
+      }
     }
 
     if (url.pathname !== '/trigger') {
@@ -65,7 +88,7 @@ export default {
 function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Authorization, Content-Type',
     'Access-Control-Max-Age': '86400',
   };
@@ -354,6 +377,49 @@ async function fetchSparkData(symbols, session) {
           week_change_pct:  pct(closes[closes.length - 6]),
           month_change_pct: pct(closes[closes.length - 23]),
           year_change_pct:  pct(closes[0]),
+        };
+      }
+    } catch { /* skip this chunk */ }
+  }
+  return out;
+}
+
+/* Batched date+close series via the v8 spark endpoint, for the Highlight News
+   trend charts. Returns { SYMBOL: { name, currency, series:[{date, close}] } }.
+   Reuses the spark endpoint (many symbols per request) to stay well under the
+   Cloudflare sub-request cap. */
+async function fetchChartSeries(symbols, range, interval, session) {
+  const out = {};
+  const CHUNK = 25;
+  for (let i = 0; i < symbols.length; i += CHUNK) {
+    const batch = symbols.slice(i, i + CHUNK);
+    try {
+      let url = `https://query1.finance.yahoo.com/v8/finance/spark`
+        + `?symbols=${encodeURIComponent(batch.join(','))}`
+        + `&range=${encodeURIComponent(range)}&interval=${encodeURIComponent(interval)}`;
+      if (session?.crumb) url += `&crumb=${encodeURIComponent(session.crumb)}`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': YAHOO_UA, ...(session?.cookie ? { Cookie: session.cookie } : {}) },
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      for (const r of data?.spark?.result || []) {
+        const sym  = r.symbol;
+        const resp = r.response?.[0];
+        if (!sym || !resp) continue;
+        const ts     = resp.timestamp || [];
+        const closes = resp.indicators?.quote?.[0]?.close || [];
+        const meta   = resp.meta || {};
+        const series = [];
+        for (let j = 0; j < ts.length; j++) {
+          const c = closes[j];
+          if (c == null) continue;
+          series.push({ date: new Date(ts[j] * 1000).toISOString().slice(0, 10), close: Math.round(c * 100) / 100 });
+        }
+        out[sym] = {
+          name: meta.shortName || meta.symbol || sym,
+          currency: meta.currency || null,
+          series,
         };
       }
     } catch { /* skip this chunk */ }

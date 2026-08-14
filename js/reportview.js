@@ -13,6 +13,8 @@ export async function mountReportView(opts) {
     tickersOf, sentimentOf, nodeTitle, chipLabel, renderDetail,
     emptyHint = "點選左側節點，內容會顯示在這裡",
     onData,
+    onCollect,                       // (item) => boolean  — return true if now collected
+    isCollected = () => false,       // (id)   => boolean
   } = opts;
   const chip = chipLabel || (it => (tickersOf(it)[0] || "•"));
 
@@ -40,6 +42,21 @@ export async function mountReportView(opts) {
   const yearSel = root.querySelector('[data-role="year"]');
 
   function emptyRight() { return `<div class="rv-empty rv-empty-right">← ${esc(emptyHint)}</div>`; }
+
+  // Collect ("bookmark") toggle shown next to the delete ×. Always available.
+  const BOOKMARK = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 3.5h12a1 1 0 0 1 1 1v16l-7-4.2L5 20.5v-16a1 1 0 0 1 1-1z"/></svg>`;
+  function collectBtn(id) {
+    const on = isCollected(id) ? " on" : "";
+    return `<span class="rv-row-collect${on}" data-collect="${esc(id)}" role="button" tabindex="0" title="收藏到重點新聞" aria-label="收藏到重點新聞">${BOOKMARK}</span>`;
+  }
+
+  // Reflect the current collection state onto every collect button (called when
+  // the store changes elsewhere, e.g. an item removed from the highlight panel).
+  function refreshCollectStates() {
+    leftEl.querySelectorAll("[data-collect]").forEach(n => {
+      n.classList.toggle("on", isCollected(n.dataset.collect));
+    });
+  }
 
   function itYear(it) { return String(it.date || "").slice(0, 4); }
 
@@ -70,6 +87,7 @@ export async function mountReportView(opts) {
           <span class="rv-dot ${s.cls}"></span>
           <span class="rv-row-date">${esc((fmtDate(it.date) || "").slice(5))}</span>
           <span class="rv-row-title">${esc(nodeTitle(it))}</span>
+          ${collectBtn(it.id)}
           <span class="rv-row-del" data-del="${esc(it.id)}" role="button" title="刪除" aria-label="刪除">×</span>
         </div>`;
       }).join("");
@@ -138,7 +156,17 @@ export async function mountReportView(opts) {
     }
   }
 
+  function handleCollect(id) {
+    const it = all.find(x => x.id === id);
+    if (!it) return;
+    const now = onCollect ? onCollect(it) : false;
+    const btn = leftEl.querySelector(`[data-collect="${CSS.escape(id)}"]`);
+    if (btn) btn.classList.toggle("on", !!now);
+  }
+
   leftEl.addEventListener("click", e => {
+    const col = e.target.closest("[data-collect]");
+    if (col) { e.stopPropagation(); handleCollect(col.dataset.collect); return; }
     const del = e.target.closest("[data-del]");
     if (del) { e.stopPropagation(); handleDelete(del.dataset.del); return; }
     const nav = e.target.closest("[data-nav]");
@@ -189,5 +217,5 @@ export async function mountReportView(opts) {
   }
 
   await reload();
-  return { reload, setAdmin };
+  return { reload, setAdmin, refreshCollectStates, selectItem };
 }
