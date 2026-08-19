@@ -191,10 +191,10 @@ img { display: block; max-width: 100%; }
   padding: 0.4rem 0.75rem; background: var(--accent-light);
   border-radius: var(--radius-sm); border-left: 3px solid var(--accent);
 }
-.quick-links { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
 .quick-link-btn {
-  display: inline-block; padding: 0.55rem 1rem; border-radius: var(--radius-sm);
-  font-size: 0.83rem; font-weight: 500; background: rgba(139,94,60,0.1);
+  flex: 1 1 auto; display: inline-block; padding: 0.4rem 0.55rem; border-radius: var(--radius-sm);
+  font-size: 0.72rem; font-weight: 500; white-space: nowrap; background: rgba(139,94,60,0.1);
   color: var(--accent); border: 1px solid rgba(139,94,60,0.2);
   transition: background var(--transition), transform var(--transition);
   cursor: pointer; text-align: center;
