@@ -46,6 +46,7 @@ const CALL_DAYS = 90;      // earnings-call lookback (~one quarter)
 const TOP_N = 8;           // strongest / weakest columns
 const CHART_RANGE = "6mo"; // per-ticker trend when a theme is expanded
 const CHART_KEY = "st_price_series_v1";
+const STATE_KEY = "st_state_v1"; // last computed board, restored on reload
 const SMALL_SAMPLE = 3;    // < this many members ⇒ 樣本小
 
 // ─── Small helpers ─────────────────────────────────────────────────────────
@@ -113,13 +114,22 @@ function buildSignalIndex(news, calls, now) {
   const bySym = {};
   const ensure = s => (bySym[s] ||= { news: [], calls: [] });
 
+  // Keep only the fields the page renders — so the computed board stays small
+  // enough to persist to localStorage across reloads.
   for (const it of news) {
     if (daysBetween(it.date, now) > NEWS_DAYS) continue;
-    for (const sym of (it.tickers || [])) ensure(sym).news.push(it);
+    const slim = { id: it.id, date: it.date || "", headline: it.headline || "", sentiment: it.sentiment || "neutral" };
+    for (const sym of (it.tickers || [])) ensure(sym).news.push(slim);
   }
   for (const c of calls) {
     if (daysBetween(c.date, now) > CALL_DAYS) continue;
-    if (c.ticker) ensure(c.ticker).calls.push({ ...c, _sent: callSentiment(c) });
+    if (!c.ticker) continue;
+    ensure(c.ticker).calls.push({
+      quarter: c.quarter || "", year: c.year || "", date: c.date || "",
+      summary: String(c.summary || "").slice(0, 120),
+      watch: (c.watch || []).slice(0, 2).map(String),
+      _sent: callSentiment(c),
+    });
   }
   // newest-first within each symbol
   for (const s in bySym) {
@@ -150,7 +160,17 @@ function computeThemes(data) {
 
     const rows = members.map(t => {
       const sym = t.symbol || t.id;            // symbol field, fallback to doc id
-      const p = prices[sym] || null;
+      const full = prices[sym];
+      // keep only the fields the board + detail table render, so the computed
+      // result persists compactly to localStorage
+      const p = full ? {
+        last: full.last ?? null,
+        day_change_pct: full.day_change_pct ?? null,
+        week_change_pct: full.week_change_pct ?? null,
+        month_change_pct: full.month_change_pct ?? null,
+        year_change_pct: full.year_change_pct ?? null,
+        day_volume: full.day_volume ?? null,
+      } : null;
       return { symbol: sym, name: t.name || "", market: t.market || "", p };
     });
 
@@ -472,8 +492,10 @@ export function mountStrength(opts) {
       themes = computeThemes({ sectors, subsectors, tickers, prices, signalIdx });
       skipped = themes.filter(t => t.scores.overall == null).length;
 
-      renderPriceAge(priceDocs);
+      const meta = priceMetaOf(priceDocs);
+      renderPriceAge(meta);
       renderBoard();
+      saveState(meta, now);   // persist so a reload restores this board
 
       const rankable = themes.length - skipped;
       let msg = `已計算 ${rankable} 個題材`;
@@ -488,19 +510,50 @@ export function mountStrength(opts) {
     }
   }
 
-  // Freshness line: newest + oldest price timestamp actually seen.
-  function renderPriceAge(priceDocs) {
+  // Newest + oldest price timestamp actually seen (persisted with the board).
+  function priceMetaOf(priceDocs) {
     const times = priceDocs.map(priceTime).filter(Boolean).sort();
-    if (!times.length) {
+    if (!times.length) return null;
+    return { newest: times[times.length - 1], oldest: times[0] };
+  }
+  // Freshness line, rendered from the {newest, oldest} meta.
+  function renderPriceAge(meta) {
+    if (!meta) {
       ageEl.innerHTML = `<span class="st-age-warn">⚠ 價格資料無時間戳（未知新鮮度）— 請確認已按 Refresh Prices</span>`;
       return;
     }
-    const oldest = times[0], newest = times[times.length - 1];
     const fmt = iso => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString("en-GB"); };
-    const same = oldest === newest;
-    ageEl.innerHTML = `<span class="st-age-icon">🕑</span> 價格資料時間：最新 <b>${esc(fmt(newest))}</b>`
-      + (same ? "" : ` · 最舊 <b>${esc(fmt(oldest))}</b>`)
+    const same = meta.oldest === meta.newest;
+    ageEl.innerHTML = `<span class="st-age-icon">🕑</span> 價格資料時間：最新 <b>${esc(fmt(meta.newest))}</b>`
+      + (same ? "" : ` · 最舊 <b>${esc(fmt(meta.oldest))}</b>`)
       + ` <span class="st-age-hint">（若過舊，請先到 Watchlist 按 Refresh Prices）</span>`;
+  }
+
+  // ── Persist the last computed board so reopening the page restores it
+  //    instead of showing an empty list (and without re-reading Firestore). ──
+  function saveState(priceMeta, computedAt) {
+    try {
+      localStorage.setItem(STATE_KEY, JSON.stringify({ v: 1, themes, skipped, priceMeta, computedAt, dim }));
+    } catch { /* quota — skip persisting */ }
+  }
+  function loadState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STATE_KEY) || "null");
+      return s && Array.isArray(s.themes) ? s : null;
+    } catch { return null; }
+  }
+  // Restore a saved board on mount: paint it immediately, flagged as cached.
+  function restoreState() {
+    const s = loadState();
+    if (!s) return;
+    themes = s.themes;
+    skipped = s.skipped || 0;
+    dim = s.dim || "overall";
+    dimsEl.querySelectorAll(".st-dim").forEach(b => b.classList.toggle("on", b.dataset.dim === dim));
+    renderPriceAge(s.priceMeta);
+    renderBoard();
+    const when = s.computedAt ? new Date(s.computedAt).toLocaleString("en-GB") : "";
+    setStatus(`顯示上次計算結果${when ? " · " + when : ""} · 按 ↻ Update 重新讀取`, "warn");
   }
 
   // ── Wiring ───────────────────────────────────────────────────────────────
@@ -520,6 +573,9 @@ export function mountStrength(opts) {
     else { openId = id; renderDetail(id); detailEl.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
     boardEl.querySelectorAll(".st-card").forEach(c => c.classList.toggle("open", c.dataset.theme === openId));
   });
+
+  // Restore the last computed board (if any) so reopening the page isn't empty.
+  restoreState();
 
   return { update };
 }
