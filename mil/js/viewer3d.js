@@ -1,0 +1,274 @@
+// viewer3d.js — 程序化武器 3D 檢視器（Three.js）。
+// 依 model_3d.shape 參數以基本幾何組出「可辨識輪廓」的近似模型（fidelity C，識別用途）。
+// 支援：旋轉/縮放/平移、零件標註熱點、爆炸視圖、高亮。不載入外部 GLB。
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const COL = {
+  allied: 0x6fa8c7, brass: 0xc9a227, panel: 0x161c24, rule: 0x2c3743, paper: 0xe6e0d2,
+};
+
+export class WeaponViewer {
+  constructor(container) {
+    this.container = container;
+    this.selectCbs = [];
+    this.exploded = false;
+    this.markers = [];
+    this._targets = new Map();      // object -> {base:Vec3, explode:Vec3}
+    this._init();
+  }
+
+  _init() {
+    const w = this.container.clientWidth || 600, h = this.container.clientHeight || 420;
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x0b0e12);
+    this.scene.fog = new THREE.Fog(0x0b0e12, 14, 34);
+
+    this.camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 200);
+    this.camera.position.set(6, 3.4, 8);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setSize(w, h);
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    this.container.appendChild(this.renderer.domElement);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.08;
+    this.controls.minDistance = 3;
+    this.controls.maxDistance = 30;
+
+    // 燈光
+    this.scene.add(new THREE.AmbientLight(0x8494a0, 0.75));
+    const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(5, 8, 6); this.scene.add(key);
+    const rim = new THREE.DirectionalLight(0x6fa8c7, 0.7); rim.position.set(-6, 2, -4); this.scene.add(rim);
+    const fill = new THREE.DirectionalLight(0xc9a227, 0.35); fill.position.set(0, -4, 3); this.scene.add(fill);
+
+    // 網格底盤（海圖刻度感）
+    const grid = new THREE.GridHelper(24, 24, COL.rule, 0x1a2530);
+    grid.position.y = -1.6; this.scene.add(grid);
+
+    this.model = new THREE.Group();
+    this.scene.add(this.model);
+
+    // 互動
+    this.raycaster = new THREE.Raycaster();
+    this.pointer = new THREE.Vector2();
+    this.renderer.domElement.addEventListener("pointerdown", e => this._onPointer(e));
+    this.renderer.domElement.style.cursor = "grab";
+    this.renderer.domElement.addEventListener("pointermove", e => this._hover(e));
+
+    this._ro = new ResizeObserver(() => this._resize());
+    this._ro.observe(this.container);
+
+    this._loop = this._loop.bind(this);
+    this.renderer.setAnimationLoop(this._loop);
+  }
+
+  onSelect(cb) { this.selectCbs.push(cb); }
+
+  // 依 shape 參數建模。s 單位為公尺，內部再統一縮放到視野。
+  setModel(model3d) {
+    // 清空
+    this.model.clear(); this.markers = []; this._targets.clear();
+    const s = (model3d && model3d.shape) || { bodyLen: 4, bodyDia: 0.35, color: "#cdd2d8", nose: "ogive", tailFins: { span: 0.5, chord: 0.4, count: 4 } };
+    const R = (s.bodyDia || 0.35) / 2;
+    const L = s.bodyLen || 4;
+    const bodyColor = new THREE.Color(s.color || "#cdd2d8");
+    const mat = new THREE.MeshStandardMaterial({ color: bodyColor, metalness: 0.55, roughness: 0.45, flatShading: !!s.faceted });
+    const darkMat = new THREE.MeshStandardMaterial({ color: bodyColor.clone().multiplyScalar(0.7), metalness: 0.6, roughness: 0.5 });
+    const finMat = new THREE.MeshStandardMaterial({ color: bodyColor.clone().multiplyScalar(0.85), metalness: 0.4, roughness: 0.55, side: THREE.DoubleSide });
+
+    // 座標：沿 X 軸擺放，機鼻在 +X。0 = 機鼻尖，L = 尾端。
+    const noseLen = R * (s.nose === "cone" ? 3.2 : s.nose === "chisel" ? 2.2 : s.nose === "blunt" ? 0.9 : 2.6);
+    const bodyLen = Math.max(0.1, L - noseLen);
+
+    // 本體
+    const bodyGeo = new THREE.CylinderGeometry(R, R, bodyLen, s.faceted ? 8 : 28);
+    bodyGeo.rotateZ(Math.PI / 2);
+    const body = new THREE.Mesh(bodyGeo, mat);
+    body.position.x = L - noseLen - bodyLen / 2;   // 尾端在 x=0 側
+    this.model.add(body);
+
+    // 機鼻
+    let noseGeo;
+    if (s.nose === "blunt") { noseGeo = new THREE.SphereGeometry(R, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2); noseGeo.rotateZ(-Math.PI / 2); }
+    else { noseGeo = new THREE.ConeGeometry(R, noseLen, s.faceted ? 8 : 26); noseGeo.rotateZ(-Math.PI / 2); }
+    const nose = new THREE.Mesh(noseGeo, mat);
+    nose.position.x = L - noseLen / 2;
+    this.model.add(nose);
+
+    // 尾焰噴嘴
+    const nozGeo = new THREE.CylinderGeometry(R * 0.75, R * 0.55, R * 0.6, 20); nozGeo.rotateZ(Math.PI / 2);
+    const noz = new THREE.Mesh(nozGeo, darkMat); noz.position.x = -R * 0.3; this.model.add(noz);
+
+    const axAt = f => f * L;   // 0..1 (nose→tail measured from nose) → x 位置（x 由尾0到鼻L）
+    const xFromAxial = f => L - f * L;
+
+    // 彈翼
+    if (s.wings) {
+      this._ring(s.wings.count || 4, s.wings, xFromAxial(s.wings.axial ?? 0.5), R, finMat, s.wings.sweep || 0.2, "wing");
+    }
+    // 尾翼
+    if (s.tailFins) {
+      this._ring(s.tailFins.count || 4, s.tailFins, R * 0.9 + (s.tailFins.chord || 0.4) / 2, R, finMat, 0.15, "tail");
+      if (s.tailFins.strakes) this._ring(s.tailFins.count || 4, { span: (s.tailFins.span||0.5)*0.5, chord: (s.tailFins.chord||0.4)*1.6 }, xFromAxial(0.6), R, finMat, 0.05, "strake");
+    }
+    // 前翼 / 控制面
+    if (s.canards) this._ring(4, s.canards, xFromAxial(s.canards.axial ?? 0.2), R, finMat, 0.1, "canard");
+
+    // 衝壓/渦扇進氣道
+    if (s.intake) this._intakes(s.intake, xFromAxial(0.55), R, L, darkMat);
+
+    // 串列助推器（爆炸視圖分離）
+    if (s.booster) {
+      const bR = (s.booster.dia || s.bodyDia) / 2, bL = s.booster.len || 1;
+      const bGeo = new THREE.CylinderGeometry(bR, bR * 0.9, bL, 22); bGeo.rotateZ(Math.PI / 2);
+      const boost = new THREE.Mesh(bGeo, darkMat);
+      boost.position.x = -bL / 2 - 0.02;
+      this.model.add(boost);
+      this._targets.set(boost, { base: boost.position.clone(), explode: boost.position.clone().add(new THREE.Vector3(-bL * 1.1, 0, 0)) });
+      // 助推尾翼
+      this._ring(4, { span: bR * 1.6, chord: bL * 0.35 }, -bL * 0.85, bR, finMat, 0.1, "bfin", boost);
+    }
+
+    // 標註熱點
+    (model3d?.annotations || []).forEach(a => this._addMarker(a, R, L));
+
+    // 縮放置中：讓最長邊 ~ 8 單位
+    const box = new THREE.Box3().setFromObject(this.model);
+    const size = new THREE.Vector3(); box.getSize(size);
+    const center = new THREE.Vector3(); box.getCenter(center);
+    const scale = 8 / Math.max(size.x, size.y, size.z, 0.001);
+    this.model.scale.setScalar(scale);
+    this.model.position.sub(center.multiplyScalar(scale));
+    this._modelScale = scale;
+
+    this.setExploded(false);
+  }
+
+  _ring(count, fin, x, R, mat, sweep, kind, parent) {
+    const span = fin.span || 0.5, chord = fin.chord || 0.4;
+    const geo = new THREE.BoxGeometry(chord, span, 0.02);
+    // 後掠：以簡單平行四邊形近似（沿 x 位移頂點）
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      pos.setX(i, pos.getX(i) - (y > 0 ? 0 : 0) - Math.abs(y) * sweep);
+    }
+    geo.computeVertexNormals();
+    const host = parent || this.model;
+    for (let i = 0; i < count; i++) {
+      const ang = (i / count) * Math.PI * 2 + (count === 4 ? Math.PI / 4 : 0);
+      const fmesh = new THREE.Mesh(geo, mat);
+      fmesh.position.set(x, 0, 0);
+      const pivot = new THREE.Group();
+      pivot.add(fmesh);
+      fmesh.position.y = span / 2 + R * 0.85;
+      pivot.rotation.x = ang;
+      host.add(pivot);
+      if (kind === "wing" || kind === "tail" || kind === "canard") {
+        this._targets.set(pivot, { base: pivot.scale.clone(), explode: pivot.scale.clone() });
+      }
+    }
+  }
+
+  _intakes(kind, x, R, L, mat) {
+    const mk = (y, z) => {
+      const g = new THREE.BoxGeometry(L * 0.28, R * 0.8, R * 0.9);
+      const m = new THREE.Mesh(g, mat);
+      m.position.set(x, y, z);
+      this.model.add(m);
+    };
+    if (kind === "belly") mk(-R * 1.1, 0);
+    else if (kind === "dorsal") mk(R * 1.1, 0);
+    else if (kind === "side2") { mk(0, R * 1.1); mk(0, -R * 1.1); }
+    else if (kind === "side") mk(0, R * 1.1);
+    else if (kind === "nose") { /* 頭錐進氣：加一個環 */
+      const g = new THREE.TorusGeometry(R * 0.55, R * 0.18, 12, 24);
+      const m = new THREE.Mesh(g, mat); m.position.x = L - R * 0.3; m.rotation.y = Math.PI / 2; this.model.add(m);
+    }
+  }
+
+  _addMarker(a, R, L) {
+    const f = a.axial ?? 0.5;
+    const x = L - f * L;
+    const off = R * 1.7 + 0.12;
+    let y = 0, z = 0;
+    switch (a.radial) {
+      case "nose": y = R * 0.8; z = 0; break;
+      case "dorsal": y = off; break;
+      case "belly": y = -off; break;
+      case "side": z = off; break;
+      case "tail": y = off * 0.7; break;
+      default: y = off;
+    }
+    const geo = new THREE.SphereGeometry(R * 0.55 + 0.06, 16, 16);
+    const mat = new THREE.MeshBasicMaterial({ color: COL.brass });
+    const dot = new THREE.Mesh(geo, mat);
+    dot.position.set(x, y, z);
+    dot.userData = { anno: a, base: dot.material.color.getHex() };
+    // 引線
+    const lineMat = new THREE.LineBasicMaterial({ color: COL.brass, transparent: true, opacity: 0.5 });
+    const lg = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, y * 0.3, z * 0.3), new THREE.Vector3(x, y, z)]);
+    this.model.add(new THREE.Line(lg, lineMat));
+    this.model.add(dot);
+    this.markers.push(dot);
+  }
+
+  _onPointer(e) {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+    const hits = this.raycaster.intersectObjects(this.markers, false);
+    if (hits.length) {
+      const a = hits[0].object.userData.anno;
+      this.highlight(a.id);
+      this.selectCbs.forEach(cb => cb(a));
+    }
+  }
+  _hover(e) {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+    const hit = this.raycaster.intersectObjects(this.markers, false).length > 0;
+    this.renderer.domElement.style.cursor = hit ? "pointer" : "grab";
+  }
+
+  highlight(id) {
+    this.markers.forEach(m => {
+      const on = m.userData.anno.id === id;
+      m.material.color.setHex(on ? 0xffffff : m.userData.base);
+      m.scale.setScalar(on ? 1.6 : 1);
+    });
+  }
+
+  setExploded(on) {
+    this.exploded = on;
+    this._targets.forEach((t, obj) => {
+      if (t.base && t.explode && t.base.isVector3) obj.position.copy(on ? t.explode : t.base);
+    });
+  }
+  toggleExploded() { this.setExploded(!this.exploded); }
+  resetView() { this.camera.position.set(6, 3.4, 8); this.controls.target.set(0, 0, 0); this.controls.update(); }
+
+  _resize() {
+    const w = this.container.clientWidth, h = this.container.clientHeight;
+    if (!w || !h) return;
+    this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+  }
+  _loop() {
+    this.model.rotation.y += 0.0016;   // 緩慢自轉
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+  }
+  dispose() {
+    this.renderer.setAnimationLoop(null);
+    this._ro.disconnect();
+    this.renderer.dispose();
+    this.container.innerHTML = "";
+  }
+}

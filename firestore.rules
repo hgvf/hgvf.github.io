@@ -52,6 +52,20 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // ── Military zone ──────────────────────────────────────────
+    // Daily procurement/contract events. Whitelisted users publish via the
+    // "ADD JSON" importer (mirrors earnings_calls / annual_reports).
+    match /mil_defense_daily/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+    // Daily LLM digest. Written ONLY by the Cloudflare Worker via a Google
+    // service account (which bypasses these rules); clients are read-only.
+    match /mil_feeds/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /config/auth {
       allow read: if isSignedIn();
       allow write: if isWhitelisted();

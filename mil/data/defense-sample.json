@@ -1,0 +1,627 @@
+{
+  "run": {
+    "run_date": "2026-08-18",
+    "generated_at": "2026-08-19T16:57:00+08:00",
+    "status": "success",
+    "countries": [
+      "US",
+      "JP",
+      "KR",
+      "TW"
+    ],
+    "sources": [
+      {
+        "source_id": "us_war_contracts",
+        "status": "checked",
+        "new_documents": 1,
+        "relevant_events": 7
+      },
+      {
+        "source_id": "jp_atla_contracts",
+        "status": "checked",
+        "new_documents": 0,
+        "relevant_events": 0
+      },
+      {
+        "source_id": "jp_atla_tenders_plans",
+        "status": "checked",
+        "new_documents": 0,
+        "relevant_events": 0
+      },
+      {
+        "source_id": "kr_dapa_press",
+        "status": "checked",
+        "new_documents": 0,
+        "relevant_events": 0
+      },
+      {
+        "source_id": "tw_mnd_press",
+        "status": "checked",
+        "new_documents": 1,
+        "relevant_events": 0
+      }
+    ],
+    "errors": []
+  },
+  "events": [
+    {
+      "event_id": "us_2026-08-18_mk41_bae_canister",
+      "country": "US",
+      "agency": "Naval Sea Systems Command",
+      "service": "Navy",
+      "event_type": "contract_modification",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "BAE Systems MK 41 VLS canister production contract modification",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "BAE Systems Land & Armaments received a $169.22 million modification exercising options for production of MK 41 Vertical Launching System canisters and ancillary equipment for the United States and FMS customers Australia, Japan and the Netherlands.",
+      "programs": [
+        {
+          "program_id": "mk-41-vls",
+          "canonical_name": "MK 41 Vertical Launching System",
+          "program_name_raw": "MK 41 Vertical Launching System canister and ancillary equipment",
+          "variant": null,
+          "category": "weapon_component",
+          "aliases": [
+            "MK 41 VLS"
+          ],
+          "name_zh": "MK 41 垂直發射系統"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "bae-systems-land-armaments",
+        "name": "BAE Systems Land & Armaments",
+        "name_raw": "BAE Systems Land & Armaments L.P",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": "BAE Systems",
+        "parent_ticker": "BA.",
+        "ticker_basis": "listed_parent"
+      },
+      "contract": {
+        "contract_number": "N00024-24-C-5324",
+        "amount": 169216659,
+        "currency": "USD",
+        "amount_raw": "$169,216,659",
+        "amount_type": "modification_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "production",
+        "description": "Exercise contract options for MK 41 VLS canister and ancillary equipment production for U.S. and FMS requirements.",
+        "expected_completion_date": "2031-04-30",
+        "description_zh": "執行既有合約選擇權，生產 MK 41 垂直發射系統發射筒及相關附屬設備，供美軍及澳洲、日本、荷蘭等 FMS 客戶使用。"
+      },
+      "importance_score": 82,
+      "tags": [
+        "mk-41",
+        "vls",
+        "navy",
+        "production",
+        "fms",
+        "missile-launcher"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|n00024-24-c-5324|169216659",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "BAE Systems 獲 1.692 億美元 MK 41 VLS 發射筒增購合約",
+      "summary_zh": "BAE Systems Land & Armaments 獲得 1.692 億美元固定價格合約修改，執行 MK 41 垂直發射系統發射筒及附屬設備的生產選擇權。採購分配為美國 53%、澳洲 23%、日本 13%、荷蘭 11%，其中後三者透過 FMS 執行，預計 2031 年 4 月完成。對應上市母公司為 BAE Systems，LSE ticker：BA.。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_f35_lockheed_pilot_equipment",
+      "country": "US",
+      "agency": "Naval Air Systems Command",
+      "service": "Joint",
+      "event_type": "contract_award",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "Lockheed Martin F-35 Lot 18-19 pilot flight equipment order",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "Lockheed Martin Aeronautics received a $29.6 million order for F-35 pilot flight equipment supporting Lot 18-19 deliveries, operational aircraft, FMS customers and international program participants.",
+      "programs": [
+        {
+          "program_id": "f-35-lightning-ii",
+          "canonical_name": "F-35 Lightning II",
+          "program_name_raw": "F-35 pilot flight equipment",
+          "variant": "Lot 18-19",
+          "category": "aircraft",
+          "aliases": [
+            "F-35",
+            "Joint Strike Fighter"
+          ],
+          "name_zh": "F-35 Lightning II 聯合攻擊戰鬥機"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "lockheed-martin",
+        "name": "Lockheed Martin",
+        "name_raw": "Lockheed Martin Corp., Lockheed Martin Aeronautics Co.",
+        "country": "US",
+        "public_company": true,
+        "ticker": "LMT",
+        "exchange": "NYSE",
+        "parent_company": null,
+        "parent_ticker": null,
+        "ticker_basis": "direct"
+      },
+      "contract": {
+        "contract_number": "N0001926F0236",
+        "amount": 29600000,
+        "currency": "USD",
+        "amount_raw": "$29,600,000",
+        "amount_type": "award_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "new_procurement",
+        "description": "Procure pilot flight equipment for F-35 Lot 18-19 deliveries and operational aircraft across U.S. services and international customers.",
+        "expected_completion_date": "2029-07-31",
+        "description_zh": "採購 F-35 Lot 18-19 新交付及現役機隊所需飛行員飛行裝備，涵蓋美國空軍、海軍陸戰隊、海軍、FMS 客戶及其他國際計畫參與國。"
+      },
+      "importance_score": 65,
+      "tags": [
+        "f-35",
+        "fighter",
+        "lot-18",
+        "lot-19",
+        "pilot-equipment",
+        "fms"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|n0001926f0236|29600000",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "Lockheed Martin 獲 2,960 萬美元 F-35 飛行員裝備訂單",
+      "summary_zh": "Lockheed Martin Aeronautics 獲得 2,960 萬美元訂單，採購 F-35 Lot 18-19 交付批次與現役機隊使用的飛行員飛行裝備，涵蓋美國空軍、海軍陸戰隊、海軍，以及 FMS 與非美國國防部計畫參與者。預計 2029 年 7 月完成。廠商 ticker：LMT（NYSE）。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_gdms_shipset_systems",
+      "country": "US",
+      "agency": "Naval Sea Systems Command",
+      "service": "Navy",
+      "event_type": "contract_modification",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "General Dynamics Mission Systems shipset systems development and production modification",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "General Dynamics Mission Systems received a $15.63 million modification for shipset production, engineering and installation support covering software and hardware systems development, production and platform installation.",
+      "programs": [
+        {
+          "program_id": null,
+          "canonical_name": null,
+          "program_name_raw": "shipset production, engineering, and installation support",
+          "variant": null,
+          "category": "c4isr",
+          "aliases": [],
+          "name_zh": "艦載軟硬體系統套件"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "general-dynamics-mission-systems",
+        "name": "General Dynamics Mission Systems",
+        "name_raw": "General Dynamics Mission Systems, Manassas, Virginia",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": "General Dynamics",
+        "parent_ticker": "GD",
+        "ticker_basis": "listed_parent"
+      },
+      "contract": {
+        "contract_number": "N00024-25-C-6260",
+        "amount": 15631811,
+        "currency": "USD",
+        "amount_raw": "$15,631,811",
+        "amount_type": "modification_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "production",
+        "description": "Exercise options for shipset production plus engineering and installation support for software and hardware system development, production and platform installations.",
+        "expected_completion_date": "2027-08-31",
+        "description_zh": "執行合約選擇權，進行艦載系統套件生產，並提供軟硬體系統開發、生產、工程及平台安裝支援。"
+      },
+      "importance_score": 58,
+      "tags": [
+        "navy",
+        "shipset",
+        "c4isr",
+        "hardware",
+        "software",
+        "integration"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": true,
+        "issues": [
+          "Official contract notice does not identify the specific platform or named weapon program."
+        ]
+      },
+      "fingerprint": "us|2026-08-18|n00024-25-c-6260|15631811",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "General Dynamics Mission Systems 獲 1,563 萬美元艦載系統生產與整合合約修改",
+      "summary_zh": "General Dynamics Mission Systems 獲得 1,563 萬美元合約修改，執行艦載系統套件生產、工程與安裝支援，包括軟體與硬體系統開發、生產及平台安裝。預計 2027 年 8 月完成。其上市母公司為 General Dynamics，ticker：GD（NYSE）。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_overland_ai_autonomous_breaching",
+      "country": "US",
+      "agency": "Naval Air Warfare Center Aircraft Division",
+      "service": "Army",
+      "event_type": "development",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "Overland AI Autonomous Breaching Capability development contract",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "Overland AI received a $14.31 million SBIR Phase II contract to integrate and test modular formation-based autonomy on six heavy commercial trucks for combat engineer autonomous breaching operations, including MICLIC, mine roller, lane marking and counter-UAS payloads.",
+      "programs": [
+        {
+          "program_id": "autonomous-breaching-capability",
+          "canonical_name": "Autonomous Breaching Capability",
+          "program_name_raw": "Autonomous Breaching Capability",
+          "variant": "SBIR Phase II A244-003",
+          "category": "ground_vehicle",
+          "aliases": [
+            "A244-003"
+          ],
+          "name_zh": "自主破障能力"
+        },
+        {
+          "program_id": "m58-miclic",
+          "canonical_name": "M58 Mine Clearing Line Charge",
+          "program_name_raw": "M58 Mine Clearing Line Charge",
+          "variant": null,
+          "category": "munition",
+          "aliases": [
+            "M58 MICLIC"
+          ],
+          "name_zh": "M58 掃雷爆破索"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "overland-ai",
+        "name": "Overland AI",
+        "name_raw": "Overland AI Inc.",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": null,
+        "parent_ticker": null,
+        "ticker_basis": "private"
+      },
+      "contract": {
+        "contract_number": "N6833526C1060",
+        "amount": 14305444,
+        "currency": "USD",
+        "amount_raw": "$14,305,444",
+        "amount_type": "award_value",
+        "quantity": 6,
+        "quantity_unit": "heavy-duty trucks"
+      },
+      "action": {
+        "type": "development",
+        "description": "Develop, integrate and test modular formation-based autonomous driving and mission payload capability on six heavy-duty commercial trucks for combat engineer breaching missions.",
+        "expected_completion_date": "2027-10-31",
+        "description_zh": "在 6 輛商用重型卡車上整合成熟自主駕駛技術，開發、整合並測試編隊式任務自主能力，用於戰鬥工兵越野自主破障；任務模組包括 M58 MICLIC、商規滾輪式掃雷器、車道標記系統及反無人機系統。"
+      },
+      "importance_score": 86,
+      "tags": [
+        "autonomy",
+        "unmanned-ground-vehicle",
+        "combat-engineer",
+        "breaching",
+        "miclic",
+        "counter-uas",
+        "sbir"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|n6833526c1060|14305444",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "Overland AI 獲 1,431 萬美元自主破障系統開發合約",
+      "summary_zh": "Overland AI 獲得 1,431 萬美元 SBIR Phase II 合約，在 6 輛重型商用卡車上整合自主駕駛與編隊任務能力，支援戰鬥工兵自主破障。系統將整合 M58 MICLIC 掃雷爆破索、掃雷滾輪、車道標記與反無人機任務模組，預計 2027 年 10 月完成。Overland AI 為私人公司，無公開 ticker。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_uconn_undersea_vehicle_research",
+      "country": "US",
+      "agency": "Office of Naval Research",
+      "service": "Navy",
+      "event_type": "development",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "University of Connecticut undersea vehicle technology research contract",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "The University of Connecticut received a $13.62 million research contract through the National Institute for Undersea Vehicle Technology partnership with the University of Rhode Island to advance acoustics, sensors, materials, propulsion, systems engineering and underwater energy technologies.",
+      "programs": [
+        {
+          "program_id": "niuvt",
+          "canonical_name": "National Institute for Undersea Vehicle Technology",
+          "program_name_raw": "undersea vehicle technologies",
+          "variant": null,
+          "category": "submarine",
+          "aliases": [
+            "NIUVT"
+          ],
+          "name_zh": "國家水下載具技術研究院計畫"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "university-of-connecticut",
+        "name": "University of Connecticut",
+        "name_raw": "The University of Connecticut (UConn)",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": null,
+        "parent_ticker": null,
+        "ticker_basis": "government"
+      },
+      "contract": {
+        "contract_number": "N0001426C2217",
+        "amount": 13617790,
+        "currency": "USD",
+        "amount_raw": "$13,617,790",
+        "amount_type": "award_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "research",
+        "description": "Conduct applied research advancing undersea vehicle technologies including acoustics, sensing, signal processing, materials, structures, propulsion, systems engineering and underwater energy systems.",
+        "expected_completion_date": "2031-08-31",
+        "description_zh": "透過 UConn 與 URI 的 NIUVT 合作進行水下載具應用研究，涵蓋聲學、感測器與訊號處理、先進材料與結構、人因、推進技術、系統工程及水下能源系統。"
+      },
+      "importance_score": 72,
+      "tags": [
+        "undersea",
+        "uuv",
+        "submarine",
+        "sensor",
+        "propulsion",
+        "acoustics",
+        "research"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|n0001426c2217|13617790",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "康乃狄克大學獲 1,362 萬美元水下載具技術研究合約",
+      "summary_zh": "康乃狄克大學獲美國海軍研究辦公室 1,362 萬美元研究合約，與羅德島大學透過 NIUVT 推進水下載具技術，研究範圍包含聲學、感測與訊號處理、先進材料、推進、水下能源及系統工程，預計持續至 2031 年 8 月。此承包單位為大學，無公開 ticker。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_nikira_submarine_air_monitor",
+      "country": "US",
+      "agency": "Naval Sea Systems Command",
+      "service": "Navy",
+      "event_type": "contract_modification",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "Nikira Labs submarine spectroscopic total air monitor development and production modification",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "Nikira Labs received a $12.92 million modification for continued development, production and installation of spectroscopic total air monitoring equipment on U.S. Navy submarines.",
+      "programs": [
+        {
+          "program_id": "submarine-spectroscopic-total-air-monitor",
+          "canonical_name": "Spectroscopic Total Air Monitor",
+          "program_name_raw": "spectroscopic total air monitor on U.S. Navy submarines",
+          "variant": null,
+          "category": "radar_sensor",
+          "aliases": [],
+          "name_zh": "潛艦光譜式總空氣監測系統"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "nikira-labs",
+        "name": "Nikira Labs",
+        "name_raw": "Nikira Labs, Inc.",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": null,
+        "parent_ticker": null,
+        "ticker_basis": "private"
+      },
+      "contract": {
+        "contract_number": "N00024-25-C-4303",
+        "amount": 12924874,
+        "currency": "USD",
+        "amount_raw": "$12,924,874",
+        "amount_type": "modification_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "production",
+        "description": "Continue development, production and installation of spectroscopic total air monitoring systems aboard U.S. Navy submarines.",
+        "expected_completion_date": "2030-04-30",
+        "description_zh": "持續開發、生產並在美國海軍潛艦上安裝光譜式總空氣監測系統。"
+      },
+      "importance_score": 62,
+      "tags": [
+        "submarine",
+        "sensor",
+        "air-monitoring",
+        "navy",
+        "production"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|n00024-25-c-4303|12924874",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "Nikira Labs 獲 1,292 萬美元美軍潛艦空氣監測系統合約修改",
+      "summary_zh": "Nikira Labs 獲得 1,292 萬美元合約修改，用於持續開發、生產與安裝美國海軍潛艦的光譜式總空氣監測系統，預計 2030 年 4 月完成。Nikira Labs 為私人公司，無公開 ticker。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    },
+    {
+      "event_id": "us_2026-08-18_gbsd_maintenance_facility",
+      "country": "US",
+      "agency": "U.S. Army Corps of Engineers",
+      "service": "Air Force",
+      "event_type": "contract_award",
+      "publication_date": "2026-08-18",
+      "event_date": "2026-08-18",
+      "event_date_basis": "publication_date",
+      "title": "Ground Based Strategic Deterrent consolidated maintenance facility construction contract",
+      "title_original": "Contracts for Aug. 18, 2026",
+      "summary": "Federal Contracting Inc. received a $143.18 million action for design-bid-build construction of a consolidated maintenance facility supporting the Ground Based Strategic Deterrent program at Cheyenne, Wyoming.",
+      "programs": [
+        {
+          "program_id": "sentinel-icbm",
+          "canonical_name": "LGM-35A Sentinel",
+          "program_name_raw": "ground-based strategic deterrent",
+          "variant": null,
+          "category": "missile",
+          "aliases": [
+            "Ground Based Strategic Deterrent",
+            "GBSD"
+          ],
+          "name_zh": "LGM-35A Sentinel 哨兵洲際彈道飛彈"
+        }
+      ],
+      "contractor": {
+        "contractor_id": "federal-contracting-inc",
+        "name": "Federal Contracting Inc.",
+        "name_raw": "Federal Contracting Inc.",
+        "country": "US",
+        "public_company": false,
+        "ticker": null,
+        "exchange": null,
+        "parent_company": null,
+        "parent_ticker": null,
+        "ticker_basis": "private"
+      },
+      "contract": {
+        "contract_number": "W9128F-26-C-A039",
+        "amount": 143178782,
+        "currency": "USD",
+        "amount_raw": "$143,178,782",
+        "amount_type": "award_value",
+        "quantity": null,
+        "quantity_unit": null
+      },
+      "action": {
+        "type": "support",
+        "description": "Design-bid-build construction of a consolidated maintenance facility for the Ground Based Strategic Deterrent program.",
+        "expected_completion_date": "2029-12-31",
+        "description_zh": "在懷俄明州 Cheyenne 建造 Ground Based Strategic Deterrent 計畫的整合維修設施，支援新一代陸基核威懾／LGM-35A Sentinel 洲際彈道飛彈體系。"
+      },
+      "importance_score": 70,
+      "tags": [
+        "sentinel",
+        "gbsd",
+        "icbm",
+        "nuclear-deterrent",
+        "maintenance-facility",
+        "infrastructure"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4576619/contracts-for-aug-18-2026/",
+          "source_type": "contract",
+          "official": true,
+          "publication_date": "2026-08-18"
+        }
+      ],
+      "source_excerpt": null,
+      "quality": {
+        "needs_review": false,
+        "issues": []
+      },
+      "fingerprint": "us|2026-08-18|w9128f-26-c-a039|143178782",
+      "ingested_at": "2026-08-19T16:57:00+08:00",
+      "title_zh": "Federal Contracting 獲 1.432 億美元 Sentinel／GBSD 維修設施工程合約",
+      "summary_zh": "Federal Contracting Inc. 獲得 1.432 億美元合約行動，在懷俄明州 Cheyenne 建造 Ground Based Strategic Deterrent 整合維修設施，合約累計面額為 1.483 億美元，預計 2029 年底完成。GBSD 即後續發展為 LGM-35A Sentinel 的美國新一代陸基核威懾計畫。該承包商為私人公司，無公開 ticker。",
+      "source_text_original": "Official contract text is available at the linked War.gov source."
+    }
+  ]
+}

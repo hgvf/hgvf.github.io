@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>軍事專區 · Military</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260819a" />
+  <link rel="stylesheet" href="mil.css?v=20260819a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="mil">
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <header class="mil-hero">
+      <div class="mil-eyebrow">MILITARY RESEARCH ZONE</div>
+      <h1 class="mil-title">Military<span class="zh">軍事專區 · 情報 / 戰史 / 系統研究</span></h1>
+      <p class="mil-sub">以「實體研究（Research Entity）」為核心的互動式軍事情報站。整合武器系統 3D 探索、
+      戰史消耗分析、系統譜系、台海活動基線、文件敘事漂移與每日官方採購動態。所有重要資訊皆可追溯來源。</p>
+    </header>
+
+    <nav id="milnav"></nav>
+
+    <section class="mil-cards" id="cards"></section>
+
+    <section class="mil-panel" style="margin-top:1.4rem">
+      <div class="mil-panel-head"><h2 class="mil-panel-title">資料與真實性原則</h2></div>
+      <ul style="color:var(--dim);font-size:0.88rem;line-height:1.9;padding-left:0">
+        <li>· <b style="color:var(--brass)">能靜態就不進 Firestore</b>：戰史 / 武器 / 文件 / 演習皆為版本控管的靜態 JSON，零配額成本。</li>
+        <li>· <b style="color:var(--brass)">只有每日變動、需 LLM 判讀者才用 DB</b>：每日軍武動態（採購合約）與每日彙整。</li>
+        <li>· <b style="color:var(--brass)">來源優先序</b>：一級官方（DoD / 各國國防部 / 原廠 / GAO）＞ 研究機構（CSIS / IISS / CRS）＞ 專業媒體。</li>
+        <li>· 合成 / 示意資料的頁面頂端皆有橘色警示條標明；每則新聞皆保留官方來源連結。</li>
+      </ul>
+    </section>
+  </main>
+
+  <script type="module">
+    import { mountMilSidebar, renderMilnav, MIL_PAGES } from "./js/milcore.js";
+    mountMilSidebar("../");
+    renderMilnav("#milnav", "hub", "");
+
+    const meta = {
+      explorer:  { desc: "武器系統 3D 探索：旋轉/縮放、零件標註→技術 Tag→相似武器→武器比較。內建雄三、Tomahawk、Harpoon、BrahMos 等現代飛彈實體。" },
+      war:       { desc: "太平洋戰爭雙方消耗帳：時序與海圖雙視圖、平方根尺度陣亡量、轉捩點標記，並可下鑽至各戰役參戰武器。" },
+      arsenal:   { desc: "二戰武器系統譜系：依家族排出繼承鏈與服役區間，反查參戰戰役與規格變更紀錄。與戰役消耗帳互通。" },
+      strait:    { desc: "台海共機活動基線：滾動中位數 ± k·MAD 穩健基線、事件圖層、逾越中線與公務船組成副圖。示意資料。" },
+      doctrine:  { desc: "國防文件敘事漂移：威脅排序流動圖、措辭升降（新舊原文並列）、章節增刪。示意資料。" },
+      exercises: { desc: "區域演習年度甘特圖：多國聯合 / 單國常態 / 雙年舉行分色，月度密度條，作為台海季節性先驗。示意排程。" },
+      defense:   { desc: "每日官方軍武採購動態：貼上 skill 產出的 JSON 即發布至 Firestore，中文為主、英文原文為輔，可依國別/軍種/題材/上市狀態篩選。" },
+      digest:    { desc: "每日情報彙整（LLM → Worker → Firestore）：按日分組，每則附官方來源連結、可信度與情緒色條。唯讀。" },
+    };
+    const cards = document.getElementById("cards");
+    cards.innerHTML = MIL_PAGES.filter(p => p.key !== "hub").map(p => `
+      <a class="mil-card" href="${p.href}">
+        <span class="card-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="card-num">${p.num || "◆"} MODULE</span>
+        <div class="card-title">${p.label}</div>
+        <div class="card-en">${p.key}</div>
+        <p class="card-desc">${meta[p.key]?.desc || ""}</p>
+      </a>`).join("");
+  </script>
+</body>
+</html>

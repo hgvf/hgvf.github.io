@@ -3,3 +3,8 @@ test.sh
 secret.txt
 __pycache__/
 *.pyc
+
+# Cloudflare Worker local secrets — never commit
+.dev.vars
+mil/worker/.dev.vars
+.wrangler/
