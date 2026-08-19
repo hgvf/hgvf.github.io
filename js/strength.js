@@ -241,9 +241,7 @@ export function mountStrength(opts) {
   root.innerHTML = `
     <div class="st-note">
       <span class="st-note-icon">ⓘ</span>
-      這裡是<b>研究與觀察</b>工具，不是交易訊號。排名依成分股報酬<b>中位數</b>，本質偏「追高」——
-      它告訴你什麼<b>已經在動</b>，不是什麼<b>將要動</b>。請先到
-      <a href="../index.html#watchlist">Stock Watchlist</a> 按 <b>↺ Refresh Prices</b> 更新行情，再回此頁按下方 <b>↻ Update</b>。
+      請先到 <a href="../index.html#watchlist">Stock Watchlist</a> 按 <b>↺ Refresh Prices</b> 更新行情，再回此頁按下方 <b>↻ Update</b>。
     </div>
     <div class="st-bar">
       <button class="st-update" data-role="update">↻ Update</button>
