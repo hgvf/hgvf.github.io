@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>題材強弱 · Theme Strength</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260819a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260819a" />
+  <link rel="stylesheet" href="../css/strength.css?v=20260819a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head">
+      <h2 class="page-title">題材強弱 · Theme Strength</h2>
+      <a class="rp-skill-link" href="../index.html#watchlist" title="回到 Stock Watchlist">
+        <span>← Watchlist</span>
+      </a>
+    </div>
+
+    <div id="strengthRoot"></div>
+  </main>
+
+  <script type="module">
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountStrength } from "../js/strength.js";
+
+    mountSidebar("strength");
+    mountStrength({ root: document.getElementById("strengthRoot") });
+  </script>
+</body>
+</html>
