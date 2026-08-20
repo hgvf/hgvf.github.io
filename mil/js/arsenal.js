@@ -1,80 +1,167 @@
-// arsenal.js — ③ 系統譜系。依 family 分組排出繼承鏈 + 服役年份橫條；
-// 點節點看規格 / 設計取捨 / 家族位置 / 參戰戰役 / 變更紀錄（示意）。與①共用 weapons.json。
+// arsenal.js — ③ 系統譜系（全時代）。依 family 分組排出繼承鏈 + 服役年份橫條，
+// era / bloc / 搜尋篩選；ADD JSON 插入（Firestore mil_weapons）。
 import { loadJSON, showErr, esc } from "../js/milcore.js";
 
-let WPN, BW, BYW = new Map();
+let FAMILIES = [], WEAPONS = [], BYW = new Map();
+let era = "all", bloc = "all", q = "";
+let YR0 = 1935, YR1 = 2030;
+let isAdmin = false, store = null;
 const root = document.getElementById("app");
-const YR0 = 1935, YR1 = 1946;
+const NOW_YEAR = new Date().getFullYear();
 
-// 示意變更紀錄（每月重抽 + diff 之呈現格式；真實版由抓取腳本產生）
-const CHANGELOG = {
-  f6f: [{ date: "2026-08-01", field: "note", from: "擊墜比資料待補", to: "太平洋戰場擊墜比約 19:1（美海軍統計）" }],
-  a6m5: [{ date: "2026-08-01", field: "service[end]", from: "1944", to: "1945" }],
-};
+const ERAS = ["WW2", "冷戰", "現代"];
+const BLOC = { west: { z: "西方", cls: "west" }, east: { z: "東方", cls: "east" }, other: { z: "其他", cls: "other" } };
+
+async function getStore() { if (store) return store; try { store = await import("../js/milstore.js"); } catch { store = null; } return store; }
 
 (async function () {
+  root.innerHTML = `<p class="mil-meta">載入中…</p>`;
+  document.body.addEventListener("mil-auth", e => { isAdmin = !!e.detail.isAdmin; const p = document.getElementById("arsImport"); if (p) { p.hidden = !isAdmin; if (isAdmin) wireImport(); } });
   try {
-    [WPN, BW] = await Promise.all([loadJSON("../data/weapons.json"), loadJSON("../data/battle-weapons.json")]);
-    BYW = new Map(WPN.weapons.map(w => [w.id, w]));
-    render();
-  } catch (e) { showErr(root, e.message); }
+    const base = await loadJSON("../data/arsenal.json");
+    FAMILIES = base.families || [];
+    WEAPONS = base.weapons || [];
+  } catch (e) { showErr(root, e.message); return; }
+  const s = await getStore();
+  if (s) { try {
+    const docs = await s.loadWeapons();
+    docs.forEach(d => { const w = d.data || d; const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
+  } catch { /* ignore */ } }
+  BYW = new Map(WEAPONS.map(w => [w.id, w]));
+  const yrs = WEAPONS.flatMap(w => [w.service?.[0], w.service?.[1]]).filter(Boolean);
+  YR0 = Math.min(YR0, ...yrs); YR1 = Math.max(YR1, ...yrs, NOW_YEAR);
+  render();
 })();
 
 function render() {
   root.innerHTML = `
     <div class="mil-banner"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-      <span>服役年份與規格為<b>公開來源概估</b>；變更紀錄區塊為示意格式（真實版由每月重抽 + diff 產生）。</span></div>
-    <div class="ars-legend mil-meta">橫條 = 服役區間（虛線框 = 未量產）；箭頭 = 型號繼承。藍 = 盟軍，紅 = 日本。</div>
-    <div class="ars-families">${WPN.families.map(familyHTML).join("")}</div>
+      <span>服役年份與規格為<b>公開來源概估</b>；譜系繼承為示意（<code>parent</code> 指前一世代）。跨 WW2 / 冷戰 / 現代。</span></div>
+
+    <details class="mil-import" id="arsImport" ${isAdmin ? "" : "hidden"}>
+      <summary>匯入 / 新增武器（ADD JSON）</summary>
+      <p class="hint">貼上 <code>{"weapons":[…]}</code>、陣列或單一武器。每筆需 <code>id / name_zh</code>；建議含 <code>name_en / bloc(west|east|other) / era / family / parent / role / service:[起,迄] / specs / note</code>。以 id 為主鍵寫入 Firestore <code>mil_weapons</code>，重貼同 id 覆蓋。<code>family</code> 未定義時歸入「自訂／未分類」。</p>
+      <textarea id="arsJson" class="mil-textarea" rows="7" spellcheck="false" placeholder='{"weapons":[{"id":"rafale","name_zh":"疾風","name_en":"Dassault Rafale","bloc":"west","era":"現代","family":"eu_jet_fighter","parent":null,"role":"多用途戰機","service":[2001,null],"specs":{"最高速度":"Mach 1.8"},"note":"…"}]}'></textarea>
+      <div class="actions"><button class="mil-btn mil-btn-primary" id="arsPub">發布到 Firebase</button><span class="mil-status" id="arsPubStatus"></span></div>
+    </details>
+
+    <div class="ars-filter">
+      <div class="mil-toggle" id="eraTabs">
+        <button class="mil-btn ${era==='all'?'mil-btn-primary':''}" data-era="all">全部時代</button>
+        ${ERAS.map(x => `<button class="mil-btn ${era===x?'mil-btn-primary':''}" data-era="${x}">${x}</button>`).join("")}
+      </div>
+      <div class="mil-toggle" id="blocTabs">
+        <button class="mil-btn ${bloc==='all'?'mil-btn-primary':''}" data-bloc="all">全陣營</button>
+        <button class="mil-btn ${bloc==='west'?'mil-btn-primary':''}" data-bloc="west">西方</button>
+        <button class="mil-btn ${bloc==='east'?'mil-btn-primary':''}" data-bloc="east">東方</button>
+      </div>
+      <input id="arsSearch" class="mil-input" style="max-width:240px" placeholder="搜尋名稱 / 角色…" value="${esc(q)}">
+      <span class="mil-meta" id="arsCount"></span>
+    </div>
+    <div class="ars-legend mil-meta">橫條 = 服役區間（虛線框 = 未量產）；箭頭 = 繼承。<i class="sw" style="background:var(--allied)"></i>西方 <i class="sw" style="background:var(--japan)"></i>東方</div>
+    <div class="ars-families" id="famGrid"></div>
     <section class="mil-panel" id="detailPanel"><p class="mil-meta">點任一武器節點展開詳情。</p></section>`;
-  root.querySelectorAll("[data-w]").forEach(b => b.onclick = () => showWeapon(b.dataset.w));
+
+  root.querySelectorAll("[data-era]").forEach(b => b.onclick = () => { era = b.dataset.era; render(); });
+  root.querySelectorAll("[data-bloc]").forEach(b => b.onclick = () => { bloc = b.dataset.bloc; render(); });
+  const si = root.querySelector("#arsSearch");
+  si.oninput = () => { q = si.value.trim().toLowerCase(); drawFamilies(); };
+  if (isAdmin) wireImport();
+  drawFamilies();
 }
 
-function familyHTML(fam) {
-  const members = WPN.weapons.filter(w => w.family === fam.id);
-  if (!members.length) return "";
-  // 依繼承鏈排序（root 先）
-  const roots = members.filter(m => !m.parent || !members.find(x => x.id === m.parent));
-  const ordered = [];
-  const walk = w => { ordered.push(w); members.filter(x => x.parent === w.id).forEach(walk); };
-  roots.forEach(walk);
-  return `<div class="ars-family">
-    <div class="ars-fam-head">${esc(fam.name_zh)} <span class="mil-meta">${esc(fam.origin)}</span></div>
-    <div class="ars-chain">${ordered.map(nodeHTML).join("")}</div>
-  </div>`;
+function match(w) {
+  if (era !== "all" && w.era !== era) return false;
+  if (bloc !== "all" && (w.bloc || "other") !== bloc) return false;
+  if (q) { const hay = [w.name_zh, w.name_en, w.role, w.note].join(" ").toLowerCase(); if (!hay.includes(q)) return false; }
+  return true;
+}
+
+function drawFamilies() {
+  const grid = root.querySelector("#famGrid");
+  const shown = WEAPONS.filter(match);
+  root.querySelector("#arsCount").textContent = `${shown.length} / ${WEAPONS.length} 款`;
+  // 未在 families 定義的 family → 自訂群組
+  const famIds = new Set(FAMILIES.map(f => f.id));
+  const groups = [...FAMILIES];
+  const customFams = [...new Set(shown.map(w => w.family).filter(f => f && !famIds.has(f)))];
+  customFams.forEach(f => groups.push({ id: f, name_zh: f, origin: "自訂" }));
+  if (shown.some(w => !w.family)) groups.push({ id: "__none__", name_zh: "未分類", origin: "自訂" });
+
+  const html = groups.map(fam => {
+    const members = shown.filter(w => (w.family || "__none__") === fam.id);
+    if (!members.length) return "";
+    const roots = members.filter(m => !m.parent || !members.find(x => x.id === m.parent));
+    const ordered = []; const walk = w => { ordered.push(w); members.filter(x => x.parent === w.id).forEach(walk); };
+    roots.forEach(walk);
+    // 若因篩選斷鏈，補上其餘
+    members.forEach(m => { if (!ordered.includes(m)) ordered.push(m); });
+    return `<div class="ars-family">
+      <div class="ars-fam-head">${esc(fam.name_zh)} <span class="mil-meta">${esc(fam.origin||"")}</span></div>
+      <div class="ars-chain">${ordered.map(nodeHTML).join("")}</div></div>`;
+  }).join("");
+  grid.innerHTML = html || `<p class="mil-meta">沒有符合篩選的武器。</p>`;
+  grid.querySelectorAll("[data-w]").forEach(b => b.onclick = () => showWeapon(b.dataset.w));
 }
 
 function nodeHTML(w) {
-  const [s, e] = w.service; const end = e || YR1;
+  const [s, e] = w.service || [YR0, null]; const end = e || NOW_YEAR;
   const left = ((s - YR0) / (YR1 - YR0)) * 100, width = ((end - s) / (YR1 - YR0)) * 100;
-  const arrow = w.parent ? `<span class="ars-arrow">▲ 繼承自 ${esc(BYW.get(w.parent)?.name_zh || "")}</span>` : "";
-  return `<button class="ars-node ${w.side} ${w.status === "未量產" ? "unbuilt" : ""}" data-w="${w.id}">
-    <div class="ars-node-name">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en)}</span></div>
-    <div class="ars-node-role mil-meta">${esc(w.role)} · ${w.service[0]}–${w.service[1] || "戰後"}</div>
-    <div class="ars-bar"><span class="ars-bar-fill ${w.side}" style="left:${left}%;width:${Math.max(2,width)}%"></span></div>
-    ${arrow}
+  const cls = BLOC[w.bloc]?.cls || "other";
+  const parent = w.parent ? BYW.get(w.parent) : null;
+  return `<button class="ars-node ${cls} ${w.status === "未量產" ? "unbuilt" : ""}" data-w="${w.id}">
+    <div class="ars-node-name">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en||"")}</span></div>
+    <div class="ars-node-role mil-meta">${esc(w.role||"")} · ${esc(w.era||"")} · ${w.service?`${w.service[0]}–${w.service[1]||"服役中"}`:""}</div>
+    <div class="ars-bar"><span class="ars-bar-fill ${cls}" style="left:${Math.max(0,left)}%;width:${Math.max(2,width)}%"></span></div>
+    ${parent ? `<div class="ars-arrow">▲ 繼承自 ${esc(parent.name_zh)}</div>` : ""}
   </button>`;
 }
 
 function showWeapon(wid) {
-  const w = BYW.get(wid);
-  const chain = []; let cur = w;
-  while (cur) { chain.unshift(cur); cur = cur.parent ? BYW.get(cur.parent) : null; }
-  const children = WPN.weapons.filter(x => x.parent === wid);
-  const inBattles = Object.entries(BW.battle_weapons).filter(([, v]) => v.includes(wid)).map(([k]) => k);
-  const log = CHANGELOG[wid] || [];
+  const w = BYW.get(wid); if (!w) return;
+  const chain = []; let cur = w; while (cur) { chain.unshift(cur); cur = cur.parent ? BYW.get(cur.parent) : null; }
+  const children = WEAPONS.filter(x => x.parent === wid);
+  const cls = BLOC[w.bloc]?.cls || "other";
   const p = document.getElementById("detailPanel");
   p.innerHTML = `
-    <div class="mil-panel-head"><h2 class="mil-panel-title">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en)}</span></h2>
-      <span class="mil-pill ${w.side === "allied" ? "allied" : "japan"}">${w.side === "allied" ? "盟軍" : "日本"}</span></div>
-    <div class="war-wd-specs">${Object.entries(w.specs || {}).map(([k, v]) => `<span><i>${esc(k)}</i> ${esc(v)}</span>`).join("")}</div>
-    <p class="war-wd-note">${esc(w.note)}</p>
+    <div class="mil-panel-head"><h2 class="mil-panel-title">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en||"")}</span></h2>
+      <span class="mil-pill ${cls==='west'?'allied':cls==='east'?'japan':'brass'}">${esc(BLOC[w.bloc]?.z||"其他")} · ${esc(w.era||"")}</span></div>
+    <div class="war-wd-specs">${Object.entries(w.specs||{}).map(([k,v])=>`<span><i>${esc(k)}</i> ${esc(v)}</span>`).join("")}</div>
+    <p class="war-wd-note">${esc(w.note||"")}</p>
     <div class="war-lineage"><span class="mil-meta">家族位置：</span>
       ${chain.map(c => c.id === wid ? `<b class="cur">${esc(c.name_zh)}</b>` : `<button class="link" data-w="${c.id}">${esc(c.name_zh)}</button>`).join(" <span class='arr'>→</span> ")}
       ${children.length ? " <span class='arr'>→</span> " + children.map(c => `<button class="link" data-w="${c.id}">${esc(c.name_zh)}</button>`).join(" / ") : ""}</div>
-    <div class="war-appears"><span class="mil-meta">參戰戰役：</span>${inBattles.length ? inBattles.map(b => `<a class="link" href="../war/index.html">${esc(b)}</a>`).join(" · ") : "—"} <span class="mil-meta">（於「戰役消耗帳」可下鑽）</span></div>
-    <div class="mil-panel-head" style="margin-top:1rem"><h3 class="mil-panel-title">變更紀錄 Changelog</h3><span class="mil-panel-note">示意格式</span></div>
-    ${log.length ? `<div class="ars-log">${log.map(l => `<div class="ars-log-row"><span class="ars-log-date">${esc(l.date)}</span><span class="ars-log-field">${esc(l.field)}</span><span class="ars-log-diff"><del>${esc(l.from)}</del> → <ins>${esc(l.to)}</ins></span></div>`).join("")}</div>` : `<p class="mil-meta">尚無紀錄。真實版將於每月重抽時自動產生欄位級 diff。</p>`}`;
+    <div class="mil-meta" style="margin-top:0.6rem">服役 ${w.service?`${w.service[0]}–${w.service[1]||"服役中"}`:"—"} · 家族 ${esc(w.family||"—")}</div>`;
   p.querySelectorAll("[data-w]").forEach(b => b.onclick = () => showWeapon(b.dataset.w));
   p.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// ── ADD JSON（Firestore mil_weapons）──
+function parseWeapons(input) {
+  const d = JSON.parse(input);
+  if (Array.isArray(d)) return d;
+  if (d && Array.isArray(d.weapons)) return d.weapons;
+  if (d && d.id) return [d];
+  throw new Error('格式需為 {"weapons":[…]}、陣列或單一武器');
+}
+function wireImport() {
+  const btn = root.querySelector("#arsPub"), status = root.querySelector("#arsPubStatus"), ta = root.querySelector("#arsJson");
+  if (!btn) return;
+  btn.onclick = async () => {
+    status.className = "mil-status"; status.textContent = "解析中…";
+    try {
+      const s = await getStore(); if (!s) throw new Error("Firebase SDK 無法載入");
+      const list = parseWeapons(ta.value);
+      list.forEach(w => { if (!w.id || !w.name_zh) throw new Error("每筆需含 id/name_zh"); });
+      const n = await s.saveWeapons(list);
+      // merge locally
+      list.forEach(w => { const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
+      BYW = new Map(WEAPONS.map(w => [w.id, w]));
+      status.className = "mil-status ok"; status.textContent = `✓ 已發布 ${n} 筆`; ta.value = "";
+      render();
+    } catch (e) {
+      status.className = "mil-status err";
+      status.innerHTML = /insufficient permissions|permission-denied/i.test(e.message||"") ? "✗ 權限不足：需白名單帳號且已部署 mil_weapons 規則（<code>firebase deploy --only firestore:rules</code>）" : "✗ " + esc(e.message);
+    }
+  };
 }

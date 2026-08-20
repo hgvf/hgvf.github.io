@@ -109,7 +109,12 @@ function wireImporter() {
       status.className = "mil-status ok"; status.textContent = `✓ 已發布 ${n} 筆`;
       ta.value = ""; await refresh();
     } catch (e) {
-      status.className = "mil-status err"; status.textContent = "✗ " + e.message;
+      status.className = "mil-status err";
+      if (/insufficient permissions|Missing or insufficient|permission-denied/i.test(e.message || "")) {
+        status.innerHTML = "✗ 權限不足：請確認①此帳號 email 已在白名單（config/auth），且②已部署更新後的 Firestore 規則（新增 mil_defense_daily）。<br>部署：<code>firebase deploy --only firestore:rules</code>";
+      } else {
+        status.textContent = "✗ " + e.message;
+      }
     }
   };
 }

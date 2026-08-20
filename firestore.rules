@@ -59,11 +59,15 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
-    // Daily LLM digest. Written ONLY by the Cloudflare Worker via a Google
-    // service account (which bypasses these rules); clients are read-only.
-    match /mil_feeds/{docId} {
+    // Wars/battles (② 戰役消耗帳) and weapons lineage (③ 系統譜系),
+    // inserted by whitelisted users via the "ADD JSON" importers.
+    match /mil_conflicts/{id} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isWhitelisted();
+    }
+    match /mil_weapons/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
     }
 
     match /config/auth {

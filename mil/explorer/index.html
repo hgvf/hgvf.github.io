@@ -20,7 +20,6 @@
   </script>
 </head>
 <body class="mil">
-  <div id="siteSidebar"></div>
 
   <main class="main-content">
     <header class="mil-hero">
@@ -32,9 +31,9 @@
   </main>
 
   <script type="module">
-    import { mountMilSidebar, renderMilnav } from "../js/milcore.js";
-    mountMilSidebar("../../");
+    import { renderMilnav, mountMilAuth } from "../js/milcore.js";
     renderMilnav("#milnav", "explorer", "../");
+    mountMilAuth("../../");
   </script>
   <script type="module" src="../js/explorer.js"></script>
 </body>

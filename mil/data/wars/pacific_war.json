@@ -1,0 +1,756 @@
+{
+ "id": "pacific_war",
+ "name_zh": "太平洋戰爭",
+ "name_en": "Pacific War",
+ "start": "1941-12-07",
+ "end": "1945-09-02",
+ "region_zh": "太平洋 / 東亞",
+ "wikidata": "Q170314",
+ "side_labels": {
+  "allied": "盟軍",
+  "enemy": "日本"
+ },
+ "_note": "Pacific War (1941–1945) battle-attrition dataset (PoC). Casualty figures are approximate open-source estimates rounded for visualization; treat as illustrative, not authoritative. Coordinates are battle-area centroids. civilian_deaths are shown separately and NOT counted in casualty-bar heights.",
+ "phases": [
+  {
+   "id": "opening",
+   "name_zh": "開戰與擴張",
+   "start": "1941-12-07",
+   "end": "1942-05-01"
+  },
+  {
+   "id": "turning",
+   "name_zh": "轉捩",
+   "start": "1942-05-01",
+   "end": "1943-02-10"
+  },
+  {
+   "id": "offensive",
+   "name_zh": "盟軍反攻",
+   "start": "1943-02-10",
+   "end": "1944-10-01"
+  },
+  {
+   "id": "closing",
+   "name_zh": "逼近本土",
+   "start": "1944-10-01",
+   "end": "1945-09-02"
+  }
+ ],
+ "weapons": [
+  {
+   "id": "a6m2",
+   "name_zh": "零式二一型",
+   "name_en": "Mitsubishi A6M2 Zero",
+   "side": "japan",
+   "family": "jp_carrier_fighter",
+   "parent": null,
+   "role": "艦載戰鬥機",
+   "service": [
+    1940,
+    1943
+   ],
+   "specs": {
+    "最高速度": "533 km/h",
+    "航程": "3100 km",
+    "武裝": "2×20mm + 2×7.7mm"
+   },
+   "note": "開戰初期以極長航程與靈活性取得空優，但防護薄弱、無自封油箱。"
+  },
+  {
+   "id": "a6m5",
+   "name_zh": "零式五二型",
+   "name_en": "Mitsubishi A6M5 Zero",
+   "side": "japan",
+   "family": "jp_carrier_fighter",
+   "parent": "a6m2",
+   "role": "艦載戰鬥機",
+   "service": [
+    1943,
+    1945
+   ],
+   "specs": {
+    "最高速度": "565 km/h",
+    "航程": "1920 km",
+    "武裝": "2×20mm + 2×7.7mm"
+   },
+   "note": "強化速度與俯衝限制，但面對 F6F 已居劣勢；為對抗新銳美機的權宜改良。"
+  },
+  {
+   "id": "f4f",
+   "name_zh": "F4F 野貓",
+   "name_en": "Grumman F4F Wildcat",
+   "side": "allied",
+   "family": "us_carrier_fighter",
+   "parent": null,
+   "role": "艦載戰鬥機",
+   "service": [
+    1940,
+    1945
+   ],
+   "specs": {
+    "最高速度": "515 km/h",
+    "航程": "1360 km",
+    "武裝": "4–6×12.7mm"
+   },
+   "note": "性能不及零戰，但憑裝甲、自封油箱與『薩奇剪』戰術撐過開戰初期。"
+  },
+  {
+   "id": "f6f",
+   "name_zh": "F6F 地獄貓",
+   "name_en": "Grumman F6F Hellcat",
+   "side": "allied",
+   "family": "us_carrier_fighter",
+   "parent": "f4f",
+   "role": "艦載戰鬥機",
+   "service": [
+    1943,
+    null
+   ],
+   "specs": {
+    "最高速度": "629 km/h",
+    "航程": "1520 km",
+    "武裝": "6×12.7mm"
+   },
+   "note": "針對零戰弱點設計，馬力/防護/火力全面壓制，太平洋擊墜比極高。"
+  },
+  {
+   "id": "sbd",
+   "name_zh": "SBD 無畏",
+   "name_en": "Douglas SBD Dauntless",
+   "side": "allied",
+   "family": "us_dive_bomber",
+   "parent": null,
+   "role": "俯衝轟炸機",
+   "service": [
+    1940,
+    1944
+   ],
+   "specs": {
+    "最高速度": "410 km/h",
+    "航程": "1240 km",
+    "載彈": "1×1000 lb"
+   },
+   "note": "中途島擊沉四艘日本航艦的主角；精準俯衝轟炸。"
+  },
+  {
+   "id": "sb2c",
+   "name_zh": "SB2C 地獄俯衝者",
+   "name_en": "Curtiss SB2C Helldiver",
+   "side": "allied",
+   "family": "us_dive_bomber",
+   "parent": "sbd",
+   "role": "俯衝轟炸機",
+   "service": [
+    1943,
+    null
+   ],
+   "specs": {
+    "最高速度": "475 km/h",
+    "航程": "1875 km",
+    "載彈": "1×2000 lb"
+   },
+   "note": "載彈與速度提升，接替 SBD，但早期操控評價不佳。"
+  },
+  {
+   "id": "tbf",
+   "name_zh": "TBF 復仇者",
+   "name_en": "Grumman TBF Avenger",
+   "side": "allied",
+   "family": "us_torpedo_bomber",
+   "parent": null,
+   "role": "魚雷轟炸機",
+   "service": [
+    1942,
+    null
+   ],
+   "specs": {
+    "最高速度": "442 km/h",
+    "航程": "1610 km",
+    "載彈": "1×魚雷 或 2000 lb"
+   },
+   "note": "堅固耐打的艦載魚雷/水平轟炸機，服役極廣。"
+  },
+  {
+   "id": "d3a",
+   "name_zh": "九九式艦爆",
+   "name_en": "Aichi D3A Val",
+   "side": "japan",
+   "family": "jp_carrier_strike",
+   "parent": null,
+   "role": "俯衝轟炸機",
+   "service": [
+    1940,
+    1944
+   ],
+   "specs": {
+    "最高速度": "430 km/h",
+    "航程": "1350 km",
+    "載彈": "1×250 kg"
+   },
+   "note": "開戰初期擊沉盟軍多艘艦艇；固定式起落架。"
+  },
+  {
+   "id": "b5n",
+   "name_zh": "九七式艦攻",
+   "name_en": "Nakajima B5N Kate",
+   "side": "japan",
+   "family": "jp_carrier_strike",
+   "parent": "d3a",
+   "role": "魚雷/水平轟炸機",
+   "service": [
+    1938,
+    1944
+   ],
+   "specs": {
+    "最高速度": "378 km/h",
+    "航程": "2000 km",
+    "載彈": "1×魚雷 或 800 kg"
+   },
+   "note": "珍珠港與多場海戰主力艦攻，後期損耗殆盡。"
+  },
+  {
+   "id": "yamato",
+   "name_zh": "大和號戰艦",
+   "name_en": "Yamato-class Battleship",
+   "side": "japan",
+   "family": "jp_capital_ship",
+   "parent": null,
+   "role": "戰艦",
+   "service": [
+    1941,
+    1945
+   ],
+   "specs": {
+    "排水量": "72000 噸",
+    "主砲": "9×460mm",
+    "航速": "27 節"
+   },
+   "note": "史上最大戰艦，但航艦時代使其難有決定性戰果，沖繩海上特攻中沉沒。"
+  },
+  {
+   "id": "essex",
+   "name_zh": "艾塞克斯級航艦",
+   "name_en": "Essex-class Carrier",
+   "side": "allied",
+   "family": "us_carrier",
+   "parent": null,
+   "role": "艦隊航空母艦",
+   "service": [
+    1942,
+    null
+   ],
+   "specs": {
+    "排水量": "27000 噸",
+    "艦載機": "90–100 架",
+    "航速": "33 節"
+   },
+   "note": "大量量產的艦隊航艦，構成美軍反攻的核心打擊力量。"
+  },
+  {
+   "id": "type93",
+   "name_zh": "九三式魚雷（長矛）",
+   "name_en": "Type 93 'Long Lance' Torpedo",
+   "side": "japan",
+   "family": "jp_ordnance",
+   "parent": null,
+   "role": "艦載魚雷",
+   "service": [
+    1935,
+    1945
+   ],
+   "specs": {
+    "射程": "40 km (36 節)",
+    "彈頭": "490 kg",
+    "推進": "純氧"
+   },
+   "note": "純氧推進，射程與威力遠勝同期盟軍魚雷，夜戰利器。"
+  },
+  {
+   "id": "b29",
+   "name_zh": "B-29 超級堡壘",
+   "name_en": "Boeing B-29 Superfortress",
+   "side": "allied",
+   "family": "us_heavy_bomber",
+   "parent": null,
+   "role": "戰略轟炸機",
+   "service": [
+    1944,
+    null
+   ],
+   "specs": {
+    "最高速度": "574 km/h",
+    "航程": "5230 km",
+    "載彈": "9000 kg"
+   },
+   "note": "自馬里亞納與硫磺島起飛轟炸日本本土，加壓艙與遙控槍塔。"
+  },
+  {
+   "id": "shinano",
+   "name_zh": "信濃號航艦",
+   "name_en": "Shinano (converted carrier)",
+   "side": "japan",
+   "family": "jp_capital_ship",
+   "parent": "yamato",
+   "role": "航空母艦",
+   "service": [
+    1944,
+    1944
+   ],
+   "status": "未量產",
+   "specs": {
+    "排水量": "72000 噸",
+    "定位": "補給/支援航艦"
+   },
+   "note": "由大和級三號艦改裝，服役十天即被潛艦擊沉，代表日本後期資源與戰略錯置。"
+  }
+ ],
+ "battles": [
+  {
+   "id": "pearl_harbor",
+   "wikidata": "Q47912",
+   "name_zh": "珍珠港事件",
+   "name_en": "Attack on Pearl Harbor",
+   "phase": "opening",
+   "start": "1941-12-07",
+   "end": "1941-12-07",
+   "location_zh": "夏威夷 珍珠港",
+   "coord": [
+    21.36,
+    -157.95
+   ],
+   "type": "空襲",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 50000,
+     "deaths": 2403,
+     "wounded": 1178,
+     "materiel": "4 艘戰艦沉沒、188 架機被毀"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 3000,
+     "deaths": 64,
+     "wounded": 0,
+     "materiel": "29 架艦載機、5 艘微型潛艇"
+    }
+   ],
+   "outcome": "日軍戰術勝利",
+   "significance": "美國正式參戰；但美軍航艦不在港，成為日後反攻主力。",
+   "weapons": [
+    "a6m2",
+    "d3a",
+    "b5n",
+    "type93",
+    "f4f"
+   ],
+   "featured": true
+  },
+  {
+   "id": "coral_sea",
+   "wikidata": "Q212920",
+   "name_zh": "珊瑚海海戰",
+   "name_en": "Battle of the Coral Sea",
+   "phase": "turning",
+   "start": "1942-05-04",
+   "end": "1942-05-08",
+   "location_zh": "珊瑚海",
+   "coord": [
+    -13.0,
+    154.0
+   ],
+   "type": "航艦海戰",
+   "turning_point": false,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "盟軍（美/澳）",
+     "committed": 12000,
+     "deaths": 656,
+     "wounded": 400,
+     "materiel": "航艦列星頓號沉沒"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 12000,
+     "deaths": 966,
+     "wounded": 500,
+     "materiel": "輕航艦祥鳳號沉沒、翔鶴號重創"
+    }
+   ],
+   "outcome": "戰略盟軍勝利",
+   "significance": "史上首次航艦互不相見的海戰；阻止日軍攻取莫爾茲比港。",
+   "weapons": [
+    "a6m2",
+    "d3a",
+    "b5n",
+    "f4f",
+    "sbd",
+    "tbf"
+   ],
+   "featured": false
+  },
+  {
+   "id": "midway",
+   "wikidata": "Q127897",
+   "name_zh": "中途島海戰",
+   "name_en": "Battle of Midway",
+   "phase": "turning",
+   "start": "1942-06-04",
+   "end": "1942-06-07",
+   "location_zh": "中途島",
+   "coord": [
+    28.2,
+    -177.35
+   ],
+   "type": "航艦海戰",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 20000,
+     "deaths": 362,
+     "wounded": 200,
+     "materiel": "航艦約克鎮號沉沒"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 20000,
+     "deaths": 3057,
+     "wounded": 0,
+     "materiel": "4 艘主力航艦全數沉沒"
+    }
+   ],
+   "outcome": "決定性盟軍勝利",
+   "significance": "日本喪失四艘艦隊航艦與大批熟練機組，太平洋戰略主動權易手。",
+   "weapons": [
+    "a6m2",
+    "d3a",
+    "b5n",
+    "f4f",
+    "sbd",
+    "tbf"
+   ],
+   "featured": true
+  },
+  {
+   "id": "guadalcanal",
+   "wikidata": "Q193875",
+   "name_zh": "瓜達康納爾島戰役",
+   "name_en": "Guadalcanal Campaign",
+   "phase": "offensive",
+   "start": "1942-08-07",
+   "end": "1943-02-09",
+   "location_zh": "所羅門群島",
+   "coord": [
+    -9.5,
+    160.0
+   ],
+   "type": "陸海空聯合",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "盟軍",
+     "committed": 60000,
+     "deaths": 7100,
+     "wounded": 8000,
+     "materiel": "29 艘艦艇損失"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 36000,
+     "deaths": 31000,
+     "wounded": 4300,
+     "materiel": "38 艘艦艇、大量飛機損失"
+    }
+   ],
+   "outcome": "盟軍勝利",
+   "significance": "日軍首度戰略撤退；消耗戰拖垮日本海空戰力。",
+   "weapons": [
+    "a6m2",
+    "f4f",
+    "sbd",
+    "tbf",
+    "d3a",
+    "b5n",
+    "type93"
+   ],
+   "featured": true
+  },
+  {
+   "id": "tarawa",
+   "wikidata": "Q504792",
+   "name_zh": "塔拉瓦戰役",
+   "name_en": "Battle of Tarawa",
+   "phase": "offensive",
+   "start": "1943-11-20",
+   "end": "1943-11-23",
+   "location_zh": "吉爾伯特群島",
+   "coord": [
+    1.35,
+    172.98
+   ],
+   "type": "兩棲登陸",
+   "turning_point": false,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 35000,
+     "deaths": 1009,
+     "wounded": 2296,
+     "materiel": "登陸艇高損失"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 4800,
+     "deaths": 4690,
+     "wounded": 0,
+     "materiel": "守軍幾近全滅"
+    }
+   ],
+   "outcome": "盟軍勝利",
+   "significance": "高昂傷亡促使美軍改良兩棲登陸戰術與裝備。",
+   "weapons": [
+    "f6f",
+    "sbd",
+    "tbf"
+   ],
+   "featured": false
+  },
+  {
+   "id": "philippine_sea",
+   "wikidata": "Q206229",
+   "name_zh": "菲律賓海海戰",
+   "name_en": "Battle of the Philippine Sea",
+   "phase": "offensive",
+   "start": "1944-06-19",
+   "end": "1944-06-20",
+   "location_zh": "馬里亞納外海",
+   "coord": [
+    15.0,
+    137.0
+   ],
+   "type": "航艦海戰",
+   "turning_point": false,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 90000,
+     "deaths": 109,
+     "wounded": 200,
+     "materiel": "約 123 架機損失（多為夜間迫降）"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 30000,
+     "deaths": 2987,
+     "wounded": 0,
+     "materiel": "3 艘航艦沉沒、約 600 架機被毀"
+    }
+   ],
+   "outcome": "決定性盟軍勝利",
+   "significance": "『馬里亞納射火雞大賽』；日本艦載航空兵徹底瓦解。",
+   "weapons": [
+    "a6m5",
+    "f6f",
+    "sb2c",
+    "tbf",
+    "d3a",
+    "essex"
+   ],
+   "featured": false
+  },
+  {
+   "id": "saipan",
+   "wikidata": "Q621538",
+   "name_zh": "塞班島戰役",
+   "name_en": "Battle of Saipan",
+   "phase": "offensive",
+   "start": "1944-06-15",
+   "end": "1944-07-09",
+   "location_zh": "馬里亞納群島",
+   "coord": [
+    15.18,
+    145.75
+   ],
+   "type": "兩棲登陸",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 71000,
+     "deaths": 3426,
+     "wounded": 13160,
+     "materiel": ""
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 31000,
+     "deaths": 29000,
+     "wounded": 0,
+     "materiel": "守軍幾近全滅"
+    }
+   ],
+   "civilian_deaths": 22000,
+   "outcome": "盟軍勝利",
+   "significance": "取得可起降 B-29 轟炸日本本土的機場；東條內閣因此垮台。",
+   "weapons": [
+    "f6f",
+    "sb2c",
+    "tbf",
+    "b29"
+   ],
+   "featured": true
+  },
+  {
+   "id": "leyte_gulf",
+   "wikidata": "Q182749",
+   "name_zh": "雷伊泰灣海戰",
+   "name_en": "Battle of Leyte Gulf",
+   "phase": "closing",
+   "start": "1944-10-23",
+   "end": "1944-10-26",
+   "location_zh": "菲律賓 雷伊泰灣",
+   "coord": [
+    10.5,
+    125.5
+   ],
+   "type": "航艦/水面海戰",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "盟軍",
+     "committed": 200000,
+     "deaths": 3000,
+     "wounded": 2000,
+     "materiel": "多艘護航航艦/驅逐艦損失"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 70000,
+     "deaths": 12500,
+     "wounded": 0,
+     "materiel": "4 航艦、3 戰艦等 26 艦沉沒"
+    }
+   ],
+   "outcome": "決定性盟軍勝利",
+   "significance": "史上最大規模海戰；日本聯合艦隊實質覆滅，神風特攻首度大規模登場。",
+   "weapons": [
+    "a6m5",
+    "f6f",
+    "sb2c",
+    "tbf",
+    "yamato",
+    "type93",
+    "essex"
+   ],
+   "featured": true
+  },
+  {
+   "id": "iwo_jima",
+   "wikidata": "Q131013",
+   "name_zh": "硫磺島戰役",
+   "name_en": "Battle of Iwo Jima",
+   "phase": "closing",
+   "start": "1945-02-19",
+   "end": "1945-03-26",
+   "location_zh": "硫磺島",
+   "coord": [
+    24.78,
+    141.32
+   ],
+   "type": "兩棲登陸",
+   "turning_point": false,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "美國",
+     "committed": 110000,
+     "deaths": 6821,
+     "wounded": 19217,
+     "materiel": ""
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 21000,
+     "deaths": 18844,
+     "wounded": 0,
+     "materiel": "守軍幾近全滅"
+    }
+   ],
+   "outcome": "盟軍勝利",
+   "significance": "美軍唯一總傷亡超過日軍的太平洋島嶼戰；取得 B-29 緊急降落場。",
+   "weapons": [
+    "f6f",
+    "sb2c",
+    "b29"
+   ],
+   "featured": false
+  },
+  {
+   "id": "okinawa",
+   "wikidata": "Q184352",
+   "name_zh": "沖繩島戰役",
+   "name_en": "Battle of Okinawa",
+   "phase": "closing",
+   "start": "1945-04-01",
+   "end": "1945-06-22",
+   "location_zh": "琉球 沖繩",
+   "coord": [
+    26.5,
+    128.0
+   ],
+   "type": "陸海空聯合",
+   "turning_point": true,
+   "sides": [
+    {
+     "key": "allied",
+     "name_zh": "盟軍",
+     "committed": 250000,
+     "deaths": 12520,
+     "wounded": 50000,
+     "materiel": "36 艦沉沒、368 艦受損（神風）"
+    },
+    {
+     "key": "japan",
+     "name_zh": "日本",
+     "committed": 100000,
+     "deaths": 84000,
+     "wounded": 0,
+     "materiel": "戰艦大和號沉沒、大量神風機"
+    }
+   ],
+   "civilian_deaths": 100000,
+   "outcome": "盟軍勝利",
+   "significance": "太平洋戰爭最血腥的島嶼戰；慘重傷亡影響是否登陸日本本土的決策。",
+   "weapons": [
+    "a6m5",
+    "f6f",
+    "sb2c",
+    "tbf",
+    "yamato",
+    "b29",
+    "essex"
+   ],
+   "featured": true
+  }
+ ]
+}

@@ -74,15 +74,32 @@ export async function loadDefenseEvents(max = 300) {
 }
 export const deleteDefenseEvent = id => deleteDoc(doc(db(), "mil_defense_daily", id));
 
-// ── 每日彙整 mil_feeds（唯讀）──
-export async function loadFeeds(days = 7) {
-  try {
-    const snap = await getDocs(query(collection(db(), "mil_feeds"), orderBy("date", "desc"), limit(days)));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch {
-    const snap = await getDocs(collection(db(), "mil_feeds"));
-    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
-    return rows.slice(0, days);
-  }
+// ── 戰爭 mil_conflicts（白名單前端寫；每份文件是一場自足的戰爭）──
+export async function saveConflict(conflict) {
+  if (!conflict || !conflict.id) throw new Error("戰爭需含 id");
+  const id = slug(conflict.id);
+  await setDoc(doc(db(), "mil_conflicts", id), { id: conflict.id, updated_at: new Date().toISOString(), data: conflict }, { merge: false });
+  return id;
 }
+export async function loadConflicts() {
+  const snap = await getDocs(collection(db(), "mil_conflicts"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+export const deleteConflict = id => deleteDoc(doc(db(), "mil_conflicts", id));
+
+// ── 武器 mil_weapons（系統譜系；白名單前端寫）──
+export async function saveWeapons(weapons) {
+  const now = new Date().toISOString();
+  let n = 0;
+  for (const w of weapons) {
+    if (!w.id || !w.name_zh) throw new Error(`每筆需含 id/name_zh：${JSON.stringify(w).slice(0, 80)}`);
+    await setDoc(doc(db(), "mil_weapons", slug(w.id)), { updated_at: now, data: w }, { merge: false });
+    n++;
+  }
+  return n;
+}
+export async function loadWeapons() {
+  const snap = await getDocs(collection(db(), "mil_weapons"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+export const deleteWeapon = id => deleteDoc(doc(db(), "mil_weapons", id));
