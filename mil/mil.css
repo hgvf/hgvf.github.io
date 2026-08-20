@@ -100,16 +100,17 @@ body.mil .sidebar-toggle {
   background: var(--panel); color: var(--paper); border: 1px solid var(--rule);
 }
 
-/* ── 主內容區 ── */
+/* ── 主內容區（無側邊欄，置中）── */
+body.mil { display: block; }
 body.mil .main-content {
-  flex: 1;
-  margin-left: var(--mil-sidebar-w);
-  padding: 2rem clamp(1rem, 3.5vw, 3rem) 5rem;
-  max-width: 1600px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.6rem clamp(1rem, 3.5vw, 3rem) 5rem;
   min-width: 0;
 }
 @media (max-width: 880px) {
-  body.mil .main-content { margin-left: 0; padding: 4rem 1rem 4rem; }
+  body.mil .main-content { padding: 1.2rem 1rem 4rem; }
 }
 
 /* ── 專區頁首 ── */
@@ -130,12 +131,34 @@ body.mil .main-content {
 .mil-title .zh { display: block; font-size: 0.5em; color: var(--muted); letter-spacing: 0.2em; font-weight: 400; margin-top: 0.3rem; }
 .mil-sub { color: var(--muted); font-size: 0.95rem; margin-top: 0.6rem; max-width: 70ch; }
 
+/* ── 頂部工具列（回主站 + 分頁 + 登入）── */
+.milnav-bar {
+  display: flex; align-items: center; gap: 1rem;
+  border-bottom: 1px solid var(--rule);
+  margin: 1.2rem 0 1.6rem;
+}
+.milnav-home {
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted);
+  white-space: nowrap; padding: 0.4rem 0; transition: var(--transition);
+}
+.milnav-home:hover { color: var(--brass); }
+.milnav-auth { margin-left: auto; display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
+.mil-user { font-size: 0.8rem; color: var(--dim); max-width: 12rem; overflow: hidden; text-overflow: ellipsis; }
+.mil-auth-btn {
+  font: inherit; font-size: 0.78rem; cursor: pointer;
+  background: var(--panel-2); color: var(--dim); border: 1px solid var(--rule);
+  border-radius: var(--radius-sm); padding: 0.35rem 0.8rem; transition: var(--transition);
+}
+.mil-auth-btn:hover { background: var(--panel-3); color: var(--paper); border-color: var(--brass); }
+
 /* ── 頂部分頁 nav .milnav ── */
 .milnav {
   display: flex; gap: 0.15rem; flex-wrap: wrap;
-  border-bottom: 1px solid var(--rule);
-  margin: 1.2rem 0 1.6rem;
   overflow-x: auto;
+}
+@media (max-width: 720px) {
+  .milnav-bar { flex-wrap: wrap; gap: 0.5rem; }
+  .milnav-auth { margin-left: 0; }
 }
 .milnav a {
   font-family: var(--font-head); font-size: 1.02rem; letter-spacing: 0.03em;
@@ -342,6 +365,18 @@ body.mil .main-content {
 .war-legend { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: var(--muted); }
 .war-legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 0.3rem; vertical-align: -1px; }
 .war-legend .sw.allied { background: var(--allied); } .war-legend .sw.japan { background: var(--japan); } .war-legend .sw.brass { background: var(--brass); }
+.war-switch { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--dim); }
+.war-switch .mil-select { min-width: 200px; }
+.war-conf-meta { margin-bottom: 0.8rem; }
+.war-filter { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.7rem 1rem; margin-bottom: 1rem; }
+.war-filter-label { font-size: 0.82rem; color: var(--muted); }
+.war-filter .mil-btn { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
+.war-filter-custom { position: relative; }
+.war-filter-custom summary { cursor: pointer; font-size: 0.8rem; color: var(--allied); list-style: none; padding: 0.35rem 0.6rem; border: 1px solid var(--rule); border-radius: var(--radius-sm); }
+.war-filter-custom summary::-webkit-details-marker { display: none; }
+.war-filter-list { position: absolute; z-index: 20; top: 110%; left: 0; background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; max-height: 300px; overflow-y: auto; min-width: 240px; box-shadow: 0 12px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 0.35rem; }
+.war-fchk { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--dim); white-space: nowrap; cursor: pointer; }
+.war-fchk input { accent-color: var(--brass); }
 .war-phase { font-family: var(--font-head); font-size: 0.9rem; fill: var(--muted); letter-spacing: 0.1em; }
 .war-axis-lbl { font-family: var(--font-head); font-size: 0.8rem; }
 .war-blabel { font-family: var(--font-body); font-size: 0.72rem; fill: var(--dim); }
@@ -430,7 +465,13 @@ body.mil .main-content {
 .def-modal-box .mil-btn-primary { margin-top: 1rem; }
 
 /* ── ③ 系統譜系 ── */
+.ars-filter { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.7rem 1rem; margin-bottom: 0.8rem; }
+.ars-filter .mil-btn { font-size: 0.78rem; padding: 0.35rem 0.7rem; }
 .ars-legend { margin-bottom: 1rem; }
+.ars-legend .sw { display: inline-block; width: 12px; height: 8px; border-radius: 2px; margin: 0 0.2rem 0 0.5rem; vertical-align: 1px; }
+.ars-node.west { border-left: 3px solid var(--allied); } .ars-node.east { border-left: 3px solid var(--japan); } .ars-node.other { border-left: 3px solid var(--brass); }
+.ars-node.allied { border-left: 3px solid var(--allied); } .ars-node.japan { border-left: 3px solid var(--japan); }
+.ars-bar-fill.west { background: var(--allied); } .ars-bar-fill.east { background: var(--japan); } .ars-bar-fill.other { background: var(--brass); }
 .ars-families { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.2rem; }
 .ars-family { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.1rem; }
 .ars-fam-head { font-family: var(--font-head); font-size: 1.15rem; color: var(--brass); margin-bottom: 0.7rem; }

@@ -4,74 +4,50 @@
 export const esc = s => String(s ?? "").replace(/[&<>"]/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-// ── 專區七 / 九頁分頁定義（相對於 mil/ 根）──
+// ── 專區分頁定義（相對於 mil/ 根）──
 export const MIL_PAGES = [
-  { key: "hub",       href: "index.html",           label: "總覽",     num: "" },
-  { key: "explorer",  href: "explorer/index.html",  label: "武器探索", num: "①" },
-  { key: "war",       href: "war/index.html",       label: "戰役消耗", num: "②" },
-  { key: "arsenal",   href: "arsenal/index.html",   label: "系統譜系", num: "③" },
-  { key: "strait",    href: "strait/index.html",    label: "台海基線", num: "④" },
-  { key: "doctrine",  href: "doctrine/index.html",  label: "文件漂移", num: "⑤" },
-  { key: "exercises", href: "exercises/index.html", label: "演習行事曆", num: "⑥" },
-  { key: "defense",   href: "defense/index.html",   label: "每日軍武", num: "⑦" },
-  { key: "digest",    href: "digest/index.html",    label: "每日彙整", num: "⑧" },
+  { key: "explorer",  href: "explorer/index.html",  label: "武器探索",   num: "①" },
+  { key: "war",       href: "war/index.html",       label: "戰役消耗",   num: "②" },
+  { key: "arsenal",   href: "arsenal/index.html",   label: "系統譜系",   num: "③" },
+  { key: "defense",   href: "defense/index.html",   label: "每日軍武合約", num: "④" },
 ];
 
-// milToRoot: 從當前 mil 子頁回到 mil/ 根的前綴。
-//   mil/index.html            -> ""       (root-of-mil)
-//   mil/war/index.html        -> "../"
+// 頂部工具列：回主站連結 + 專區分頁 + 迷你登入。取代側邊欄。
+// milToRoot：從當前 mil 子頁回到 mil/ 根的前綴（mil/war/index.html => "../"）。
 export function renderMilnav(hostSel, activeKey, milToRoot = "") {
   const host = typeof hostSel === "string" ? document.querySelector(hostSel) : hostSel;
   if (!host) return;
-  host.className = "milnav";
-  host.innerHTML = MIL_PAGES.map(p => {
+  host.className = "milnav-bar";
+  const tabs = MIL_PAGES.map(p => {
     const cur = p.key === activeKey ? ' aria-current="page"' : "";
     const num = p.num ? `<span class="num">${p.num}</span>` : "";
     return `<a href="${milToRoot}${p.href}"${cur}>${num}${p.label}</a>`;
   }).join("");
+  host.innerHTML = `
+    <a class="milnav-home" href="${milToRoot}../index.html" title="回主站">← 主站</a>
+    <nav class="milnav">${tabs}</nav>
+    <div class="milnav-auth" id="milAuth"></div>`;
 }
 
-// ── 共用側邊欄（重用 partials/sidebar.html）──
-// base = 從當前頁回到站台根的前綴（mil/index.html => "../"，mil/war/index.html => "../../"）。
-export async function mountMilSidebar(base) {
-  const host = document.getElementById("siteSidebar");
+// ── 迷你登入控制（military 頁面無側邊欄，登入改在頂部）──
+// base = 從當前頁回到站台根的前綴（mil/war/index.html => "../../"）。
+export async function mountMilAuth(base) {
+  const host = document.getElementById("milAuth");
   if (!host) return;
-  try {
-    let html = await (await fetch(`${base}partials/sidebar.html`)).text();
-    // partial 內的相對連結一律以 "../" 指向站台根；改寫成正確 base。
-    html = html.replace(/(?:href|src)="\.\.\//g, m => m.replace("../", base));
-    host.innerHTML = html;
-  } catch (e) { console.error("sidebar load failed", e); return; }
-
-  // 標記 Military active
-  host.querySelector('.nav-folder[data-folder="military"]')?.classList.add("open");
-
-  host.querySelectorAll(".nav-folder-header").forEach(btn =>
-    btn.addEventListener("click", () => btn.closest(".nav-folder")?.classList.toggle("open")));
-  document.getElementById("menuToggle")?.addEventListener("click", () =>
-    document.getElementById("sidebar")?.classList.toggle("open"));
-
-  // 認證（重用 reports.js）
-  try {
-    const { onAuth, signInGoogle, signOutUser } = await import(`${base}js/reports.js`);
-    const loginBtn = host.querySelector("#btnLogin");
-    const logoutBtn = host.querySelector("#btnLogout");
-    const userInfo = host.querySelector("#userInfo");
-    loginBtn?.addEventListener("click", () => signInGoogle().catch(console.error));
-    logoutBtn?.addEventListener("click", () => signOutUser().catch(console.error));
-    onAuth(({ user, isAdmin }) => {
-      if (user) {
-        if (loginBtn) loginBtn.style.display = "none";
-        if (logoutBtn) logoutBtn.style.display = "";
-        if (userInfo) userInfo.textContent = user.displayName || user.email;
-      } else {
-        if (loginBtn) loginBtn.style.display = "";
-        if (logoutBtn) logoutBtn.style.display = "none";
-        if (userInfo) userInfo.textContent = "";
-      }
-      document.body.dispatchEvent(new CustomEvent("mil-auth", { detail: { user, isAdmin } }));
-    });
-  } catch (e) { console.warn("auth wiring skipped", e); }
+  let store;
+  try { store = await import(`${base}js/milstore.js`); }
+  catch { host.innerHTML = ""; return; }
+  const draw = (user) => {
+    host.innerHTML = user
+      ? `<span class="mil-user" title="${esc(user.email || "")}">${esc(user.displayName || user.email)}</span><button class="mil-auth-btn" id="milSignOut">登出</button>`
+      : `<button class="mil-auth-btn" id="milSignIn">登入</button>`;
+    host.querySelector("#milSignIn")?.addEventListener("click", () => store.signIn().catch(console.error));
+    host.querySelector("#milSignOut")?.addEventListener("click", () => store.signOutUser().catch(console.error));
+  };
+  store.onAuth(({ user, isAdmin }) => {
+    draw(user);
+    document.body.dispatchEvent(new CustomEvent("mil-auth", { detail: { user, isAdmin } }));
+  });
 }
 
 // ── fetch JSON，失敗時在 host 顯示友善提示 ──

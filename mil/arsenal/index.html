@@ -11,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body class="mil">
-  <div id="siteSidebar"></div>
   <main class="main-content">
     <header class="mil-hero">
       <div class="mil-eyebrow">MODULE ③ · ARSENAL LINEAGE</div>
@@ -21,9 +20,9 @@
     <div id="app"><p class="mil-meta">載入中…</p></div>
   </main>
   <script type="module">
-    import { mountMilSidebar, renderMilnav } from "../js/milcore.js";
-    mountMilSidebar("../../");
+    import { renderMilnav, mountMilAuth } from "../js/milcore.js";
     renderMilnav("#milnav", "arsenal", "../");
+    mountMilAuth("../../");
   </script>
   <script type="module" src="../js/arsenal.js"></script>
 </body>

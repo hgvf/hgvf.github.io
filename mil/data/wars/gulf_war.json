@@ -1,0 +1,40 @@
+{
+  "id": "gulf_war",
+  "name_zh": "波斯灣戰爭", "name_en": "Gulf War",
+  "start": "1990-08-02", "end": "1991-02-28",
+  "region_zh": "波斯灣 / 伊拉克 / 科威特", "wikidata": "Q37643",
+  "side_labels": { "allied": "聯軍", "enemy": "伊拉克" },
+  "_note": "ILLUSTRATIVE open-source estimates, rounded for visualization. Casualty figures for the Gulf War vary widely by source; treat as indicative only.",
+  "phases": [
+    { "id": "shield", "name_zh": "沙漠之盾（部署）", "start": "1990-08-02", "end": "1991-01-16" },
+    { "id": "air", "name_zh": "沙漠風暴（空襲）", "start": "1991-01-17", "end": "1991-02-23" },
+    { "id": "ground", "name_zh": "地面攻勢", "start": "1991-02-24", "end": "1991-02-28" }
+  ],
+  "weapons": [
+    { "id": "m1a1", "name_zh": "M1A1 艾布蘭主戰車", "name_en": "M1A1 Abrams", "side": "allied", "family": "us_mbt", "parent": null, "role": "主戰車", "service": [1985, null], "specs": { "主砲": "120mm 滑膛砲", "裝甲": "貧鈾複合", "航速": "67 km/h" }, "note": "熱影像與貧鈾彈使其在 73 Easting 等戰鬥中以極小損失壓制 T-72。" },
+    { "id": "f117", "name_zh": "F-117 夜鷹", "name_en": "F-117 Nighthawk", "side": "allied", "family": "us_stealth", "parent": null, "role": "匿蹤攻擊機", "service": [1983, 2008], "specs": { "匿蹤": "多面體低 RCS", "武裝": "雷射導引炸彈" }, "note": "首度大規模投入的匿蹤機，專打巴格達高價值目標。" },
+    { "id": "tomahawk_glw", "name_zh": "戰斧巡弋飛彈（BGM-109）", "name_en": "Tomahawk (Gulf War)", "side": "allied", "family": "us_cruise", "parent": null, "role": "巡弋飛彈", "service": [1983, null], "specs": { "射程": "~1600 km", "導引": "TERCOM/GPS" }, "note": "由艦艇發射打擊縱深固定目標，首度大規模實戰。" },
+    { "id": "a10", "name_zh": "A-10 疣豬", "name_en": "A-10 Thunderbolt II", "side": "allied", "family": "us_cas", "parent": null, "role": "近接支援攻擊機", "service": [1977, null], "specs": { "主武器": "30mm GAU-8", "武裝": "Maverick 飛彈" }, "note": "反裝甲近接支援，戰車殺手。" },
+    { "id": "patriot_gw", "name_zh": "愛國者 PAC-2", "name_en": "MIM-104 Patriot (PAC-2)", "side": "allied", "family": "us_sam", "parent": null, "role": "防空/反飛彈", "service": [1990, null], "specs": { "目標": "飛機 / 戰術彈道飛彈" }, "note": "攔截伊拉克飛毛腿（Scud），實戰效果引發評估爭議。" },
+    { "id": "t72_iq", "name_zh": "T-72 主戰車", "name_en": "T-72 (Iraqi)", "side": "enemy", "family": "sov_mbt", "parent": null, "role": "主戰車", "service": [1973, null], "specs": { "主砲": "125mm 滑膛砲" }, "note": "伊拉克出口型缺乏熱影像與新式彈藥，面對 M1A1 劣勢明顯。" },
+    { "id": "scud_iq", "name_zh": "飛毛腿飛彈", "name_en": "Scud (Al Hussein)", "side": "enemy", "family": "sov_brm", "parent": null, "role": "戰術彈道飛彈", "service": [1988, 1991], "specs": { "射程": "~600 km" }, "note": "伊拉克射向以色列與沙烏地，政治效果大於軍事效果。" }
+  ],
+  "battles": [
+    { "id": "invasion_kuwait", "name_zh": "入侵科威特", "name_en": "Invasion of Kuwait", "phase": "shield", "start": "1990-08-02", "end": "1990-08-04", "location_zh": "科威特", "coord": [29.37, 47.98], "type": "地面入侵", "turning_point": true, "featured": true,
+      "sides": [ { "key": "allied", "name_zh": "科威特", "committed": 16000, "deaths": 420, "wounded": 1000, "materiel": "科軍潰散" }, { "key": "enemy", "name_zh": "伊拉克", "committed": 88000, "deaths": 300, "wounded": 0, "materiel": "" } ],
+      "outcome": "伊拉克勝利", "significance": "引發聯合國制裁與聯軍集結，戰爭導火線。", "weapons": ["t72_iq"] },
+    { "id": "khafji", "name_zh": "哈夫吉之戰", "name_en": "Battle of Khafji", "phase": "air", "start": "1991-01-29", "end": "1991-02-01", "location_zh": "沙烏地 哈夫吉", "coord": [28.42, 48.5], "type": "地面/空中", "turning_point": false, "featured": false,
+      "sides": [ { "key": "allied", "name_zh": "聯軍", "committed": 20000, "deaths": 43, "wounded": 52, "materiel": "" }, { "key": "enemy", "name_zh": "伊拉克", "committed": 15000, "deaths": 300, "wounded": 0, "materiel": "90+ 車輛損失" } ],
+      "outcome": "聯軍勝利", "significance": "伊拉克唯一大規模主動出擊，被空權迅速擊退。", "weapons": ["a10", "m1a1"] },
+    { "id": "air_campaign", "name_zh": "沙漠風暴空襲", "name_en": "Air Campaign", "phase": "air", "start": "1991-01-17", "end": "1991-02-23", "location_zh": "伊拉克全境", "coord": [33.32, 44.42], "type": "戰略空襲", "turning_point": true, "featured": true,
+      "sides": [ { "key": "allied", "name_zh": "聯軍", "committed": 100000, "deaths": 75, "wounded": 100, "materiel": "約 40 架機損失" }, { "key": "enemy", "name_zh": "伊拉克", "committed": 200000, "deaths": 7000, "wounded": 0, "materiel": "指管與防空體系癱瘓" } ],
+      "outcome": "決定性聯軍勝利", "significance": "以匿蹤與精準武器癱瘓伊拉克指管，奠定地面速勝基礎。", "weapons": ["f117", "tomahawk_glw", "a10", "patriot_gw", "scud_iq"] },
+    { "id": "73_easting", "name_zh": "73 Easting 戰車戰", "name_en": "Battle of 73 Easting", "phase": "ground", "start": "1991-02-26", "end": "1991-02-26", "location_zh": "伊拉克南部沙漠", "coord": [30.0, 46.5], "type": "裝甲會戰", "turning_point": true, "featured": true,
+      "sides": [ { "key": "allied", "name_zh": "美軍第 2 裝甲騎兵團", "committed": 5000, "deaths": 6, "wounded": 19, "materiel": "1 車輛損失" }, { "key": "enemy", "name_zh": "伊拉克共和衛隊", "committed": 8000, "deaths": 600, "wounded": 0, "materiel": "160+ 戰甲車被毀" } ],
+      "outcome": "決定性聯軍勝利", "significance": "熱影像＋訓練＋數位化的壓倒性裝甲勝利範例。", "weapons": ["m1a1", "a10", "t72_iq"] },
+    { "id": "highway_death", "name_zh": "死亡公路", "name_en": "Highway of Death", "phase": "ground", "start": "1991-02-26", "end": "1991-02-27", "location_zh": "科威特—巴斯拉 80 號公路", "coord": [29.7, 47.7], "type": "空中打擊撤退縱隊", "turning_point": false, "featured": false,
+      "sides": [ { "key": "allied", "name_zh": "聯軍", "committed": 0, "deaths": 0, "wounded": 0, "materiel": "" }, { "key": "enemy", "name_zh": "伊拉克撤退部隊", "committed": 10000, "deaths": 1000, "wounded": 0, "materiel": "數千車輛被毀" } ],
+      "civilian_deaths": 200,
+      "outcome": "聯軍勝利", "significance": "撤退縱隊遭空中打擊，促成停火的人道與輿論壓力。", "weapons": ["a10"] }
+  ]
+}
