@@ -6,7 +6,8 @@ description: 給一個武器型號或家族名稱（例 F-16、T-72、勃克級�
 # arsenal-lineage-research
 
 輸入一個**型號/家族**（例：`F-16`、`T-72`、`Nimitz 級`），輸出 `{"weapons":[ … ]}`，
-可貼進 Arsenal 頁「ADD JSON」或 `python scripts/publish.py --type arsenal --file x.json` 寫入 `mil_weapons`。
+**貼進 Arsenal 頁的「ADD JSON」面板**即寫入 `mil_weapons`。本專案一律用頁面 ADD JSON 新增
+（登入白名單帳號後才會出現該面板），不使用 publish.py。
 
 ## 0. 最終輸出契約（嚴格）
 

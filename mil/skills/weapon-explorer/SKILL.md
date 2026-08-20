@@ -6,8 +6,8 @@ description: 給一個武器/載台名稱（飛彈、軍艦、飛機、火砲…
 # weapon-explorer-research
 
 輸入一個**武器/載台名稱**（例：`勃克級驅逐艦`、`Tomahawk`、`F-16`、`雄風三型`），
-輸出一個 `{"weapons":[ <weapon> ]}`，可貼進 Explorer 頁的「ADD JSON」或
-`python scripts/publish.py --type explorer --file x.json` 寫入 `mil_weapons_modern`。
+輸出一個 `{"weapons":[ <weapon> ]}`，**貼進 Explorer 頁上方的「ADD JSON」面板**即寫入
+`mil_weapons_modern`。本專案一律用頁面 ADD JSON 新增（登入白名單帳號後才會出現該面板），不使用 publish.py。
 
 ## 0. 最終輸出契約（嚴格）
 

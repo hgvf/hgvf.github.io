@@ -27,6 +27,8 @@ async function getStore() { if (store) return store; try { store = await import(
     const docs = await s.loadWeapons();
     docs.forEach(d => { const w = d.data || d; const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
   } catch { /* ignore */ } }
+  // 認證：直接註冊 onAuth（可靠），登入白名單後顯示並接上 ADD JSON。
+  if (s) s.onAuth(({ isAdmin: a }) => { isAdmin = a; const p = document.getElementById("arsImport"); if (p) { p.hidden = !a; if (a) wireImport(); } });
   BYW = new Map(WEAPONS.map(w => [w.id, w]));
   const yrs = WEAPONS.flatMap(w => [w.service?.[0], w.service?.[1]]).filter(Boolean);
   YR0 = Math.min(YR0, ...yrs); YR1 = Math.max(YR1, ...yrs, NOW_YEAR);
