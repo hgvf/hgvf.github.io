@@ -1,0 +1,29 @@
+# wrangler.toml — Cloudflare Worker: mil_feeds 寫入端點
+# 部署：
+#   cd mil/worker
+#   npx wrangler secret put INGEST_TOKEN
+#   npx wrangler secret put GCP_PROJECT_ID
+#   npx wrangler secret put GCP_CLIENT_EMAIL
+#   npx wrangler secret put GCP_PRIVATE_KEY      # 服務帳號 PEM 私鑰（含 -----BEGIN...）
+#   npx wrangler deploy
+#
+# 本機測試（僅驗 token / schema，不需 GCP）：
+#   建立 .dev.vars 內含 INGEST_TOKEN=... （.dev.vars 已在 .gitignore）
+#   npx wrangler dev
+#   curl -XPOST localhost:8787/ingest            # → 401
+#   curl -XPOST localhost:8787/ingest -H "Authorization: Bearer wrong"   # → 401
+#   curl -XPOST localhost:8787/ingest -H "Authorization: Bearer <token>" \
+#        -H "Content-Type: application/json" \
+#        -d '{"feed":"defense-digest","date":"2026-08-19","items":[{"headline":"x","summary":"y","source_name":"z"}]}'
+#        # → 400 + details（缺 source_url）
+
+name = "mil-ingest"
+main = "ingest.js"
+compatibility_date = "2026-01-01"
+
+# Secrets（不要寫在此檔；用 `wrangler secret put` 設定為 Encrypted）：
+#   INGEST_TOKEN, GCP_PROJECT_ID, GCP_CLIENT_EMAIL, GCP_PRIVATE_KEY
+
+# 可選：每日 Cron（若改用 Worker 排程觸發抓取而非 GitHub Actions）
+# [triggers]
+# crons = ["30 0 * * *"]

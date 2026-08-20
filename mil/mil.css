@@ -1,0 +1,504 @@
+/* ===================================================================
+   mil.css — 軍事專區共用樣式
+   視覺方向：作戰標圖 / 海圖風格，但以「黑灰嚴肅」為基調
+   （有別於主站的褐色底）。深底、黃銅刻度、藍紅分屬。
+   所有顏色走 CSS 變數，不寫死 hex。
+   =================================================================== */
+:root {
+  /* 基底：黑灰嚴肅 */
+  --ink:      #0B0E12;   /* 最深底 */
+  --ink-2:    #0F141A;   /* 次深底 */
+  --panel:    #161C24;   /* 面板 */
+  --panel-2:  #1C242E;   /* 面板浮起 */
+  --panel-3:  #232D39;   /* hover / 更浮 */
+  --rule:     #2C3743;   /* 分隔線 */
+  --rule-2:   #3A4653;
+
+  /* 文字 */
+  --paper:    #E6E0D2;   /* 主要文字（暖白，像海圖紙） */
+  --dim:      #C3BCAB;   /* 次要文字 */
+  --muted:    #8093A0;   /* 淡文字 / 標註 */
+  --faint:    #5C6B78;
+
+  /* 分屬 / 語意色 */
+  --allied:   #6FA8C7;   /* 藍＝盟軍 / 我方 */
+  --allied-d: #3E6E8A;
+  --japan:    #C1553F;   /* 紅＝對方 */
+  --japan-d:  #8A3A2B;
+  --brass:    #C9A227;   /* 黃銅刻度 / 轉捩點 */
+  --brass-d:  #97781A;
+  --civil:    #8E7CA8;   /* 平民 */
+  --ok:       #6FAE8A;   /* 正面 */
+  --warn:     #D9903A;   /* 警示 banner */
+  --warn-bg:  rgba(217, 144, 58, 0.12);
+
+  --radius:   10px;
+  --radius-sm: 7px;
+  --radius-lg: 16px;
+
+  --font-head: 'Barlow Condensed', 'Noto Sans TC', system-ui, sans-serif;
+  --font-body: 'Noto Sans TC', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --mil-sidebar-w: 240px;
+  --transition: 0.18s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body.mil {
+  font-family: var(--font-body);
+  color: var(--paper);
+  background:
+    radial-gradient(ellipse 90% 60% at 12% -5%, rgba(111,168,199,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 95% 105%, rgba(193,85,63,0.05) 0%, transparent 55%),
+    linear-gradient(170deg, #0C1015 0%, #0B0E12 50%, #090C10 100%);
+  min-height: 100vh;
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+body.mil a { color: inherit; text-decoration: none; }
+body.mil ul { list-style: none; }
+body.mil img { display: block; max-width: 100%; }
+
+/* ── 重新著色共用側邊欄（partials/sidebar.html 用 style.css 的 class）── */
+body.mil .sidebar {
+  background: rgba(13, 17, 22, 0.92);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-right: 1px solid var(--rule);
+  box-shadow: 2px 0 24px rgba(0,0,0,0.4);
+}
+body.mil .profile-name,
+body.mil .folder-name,
+body.mil .nav-item { color: var(--dim); }
+body.mil .profile-title,
+body.mil .profile-org,
+body.mil .nav-section-label { color: var(--muted); }
+body.mil .avatar-fallback { background: var(--panel-2); color: var(--paper); }
+body.mil .avatar-ring { border-color: var(--rule); }
+body.mil .nav-item:hover { background: var(--panel-2); color: var(--paper); }
+body.mil .nav-item.active {
+  background: linear-gradient(90deg, rgba(201,162,39,0.16), rgba(201,162,39,0.02));
+  color: var(--brass);
+  box-shadow: inset 2px 0 0 var(--brass);
+}
+body.mil .nav-folder-header { color: var(--dim); }
+body.mil .nav-folder-header:hover { background: var(--panel-2); }
+body.mil .sidebar-footer { border-top-color: var(--rule); }
+body.mil .social-link { color: var(--muted); }
+body.mil .social-link:hover { color: var(--paper); }
+body.mil .btn-auth {
+  background: var(--panel-2); color: var(--dim); border: 1px solid var(--rule);
+}
+body.mil .btn-auth:hover { background: var(--panel-3); color: var(--paper); }
+body.mil .user-info { color: var(--muted); }
+body.mil .sidebar-toggle {
+  background: var(--panel); color: var(--paper); border: 1px solid var(--rule);
+}
+
+/* ── 主內容區 ── */
+body.mil .main-content {
+  flex: 1;
+  margin-left: var(--mil-sidebar-w);
+  padding: 2rem clamp(1rem, 3.5vw, 3rem) 5rem;
+  max-width: 1600px;
+  min-width: 0;
+}
+@media (max-width: 880px) {
+  body.mil .main-content { margin-left: 0; padding: 4rem 1rem 4rem; }
+}
+
+/* ── 專區頁首 ── */
+.mil-hero { margin-bottom: 1.5rem; }
+.mil-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--brass); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.6rem;
+}
+.mil-eyebrow::before {
+  content: ""; width: 26px; height: 1px; background: var(--brass); display: inline-block;
+}
+.mil-title {
+  font-family: var(--font-head);
+  font-weight: 600; font-size: clamp(1.9rem, 4vw, 3rem);
+  letter-spacing: 0.01em; line-height: 1.05; color: var(--paper);
+}
+.mil-title .zh { display: block; font-size: 0.5em; color: var(--muted); letter-spacing: 0.2em; font-weight: 400; margin-top: 0.3rem; }
+.mil-sub { color: var(--muted); font-size: 0.95rem; margin-top: 0.6rem; max-width: 70ch; }
+
+/* ── 頂部分頁 nav .milnav ── */
+.milnav {
+  display: flex; gap: 0.15rem; flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+  margin: 1.2rem 0 1.6rem;
+  overflow-x: auto;
+}
+.milnav a {
+  font-family: var(--font-head); font-size: 1.02rem; letter-spacing: 0.03em;
+  padding: 0.55rem 0.9rem; color: var(--muted); white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: var(--transition);
+}
+.milnav a:hover { color: var(--paper); }
+.milnav a[aria-current="page"] {
+  color: var(--brass); border-bottom-color: var(--brass);
+}
+.milnav a .num {
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--faint); margin-right: 0.35rem;
+}
+
+/* ── 面板 ── */
+.mil-panel {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.1rem;
+}
+.mil-panel-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+}
+.mil-panel-title {
+  font-family: var(--font-head); font-size: 1.3rem; letter-spacing: 0.02em; color: var(--paper);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.mil-panel-title::before {
+  content: ""; width: 3px; height: 1.1em; background: var(--brass); display: inline-block; border-radius: 2px;
+}
+.mil-panel-note { color: var(--muted); font-size: 0.82rem; }
+
+/* ── banner（合成資料警示 / LLM 提示）── */
+.mil-banner {
+  display: flex; gap: 0.7rem; align-items: flex-start;
+  background: var(--warn-bg);
+  border: 1px solid rgba(217,144,58,0.4);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1rem; margin-bottom: 1.2rem;
+  color: var(--dim); font-size: 0.85rem;
+}
+.mil-banner svg { flex: none; margin-top: 0.15rem; color: var(--warn); }
+.mil-banner b { color: var(--warn); }
+
+/* ── 載入失敗 ── */
+.mil-err {
+  background: rgba(193,85,63,0.1); border: 1px solid var(--japan-d);
+  border-radius: var(--radius); padding: 1.4rem 1.5rem; color: var(--dim);
+  font-size: 0.9rem; line-height: 1.7;
+}
+.mil-err b { color: var(--japan); }
+.mil-err code {
+  font-family: var(--font-mono); font-size: 0.85em; background: var(--ink);
+  padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--brass);
+}
+
+/* ── 分屬色塊 / chips ── */
+.mil-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.78rem; font-family: var(--font-body);
+  padding: 0.22rem 0.6rem; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--panel-2); color: var(--dim);
+  cursor: pointer; transition: var(--transition); white-space: nowrap;
+}
+.mil-chip:hover { border-color: var(--brass); color: var(--paper); }
+.mil-chip.active { background: var(--brass); color: var(--ink); border-color: var(--brass); font-weight: 600; }
+.mil-chip .zh { color: inherit; }
+.mil-chip .en { color: var(--faint); font-family: var(--font-mono); font-size: 0.9em; }
+.mil-chip.active .en { color: rgba(11,14,18,0.6); }
+
+/* tag type colour keys */
+.mil-chip[data-type="role"]       { border-left: 3px solid var(--japan); }
+.mil-chip[data-type="propulsion"] { border-left: 3px solid var(--brass); }
+.mil-chip[data-type="guidance"]   { border-left: 3px solid var(--allied); }
+.mil-chip[data-type="flight"]     { border-left: 3px solid var(--civil); }
+.mil-chip[data-type="speed"]      { border-left: 3px solid var(--ok); }
+.mil-chip[data-type="launch"]     { border-left: 3px solid var(--dim); }
+.mil-chip[data-type="target"]     { border-left: 3px solid var(--faint); }
+
+/* ── 按鈕 ── */
+.mil-btn {
+  font-family: var(--font-body); font-size: 0.85rem;
+  padding: 0.5rem 0.95rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--rule); background: var(--panel-2); color: var(--dim);
+  cursor: pointer; transition: var(--transition);
+}
+.mil-btn:hover { background: var(--panel-3); color: var(--paper); border-color: var(--faint); }
+.mil-btn-primary { background: var(--brass); color: var(--ink); border-color: var(--brass); font-weight: 600; }
+.mil-btn-primary:hover { background: var(--brass-d); border-color: var(--brass-d); color: var(--ink); }
+.mil-btn-ghost { background: transparent; }
+
+/* ── 統計卡 ── */
+.mil-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 0.7rem; margin-bottom: 1.2rem; }
+.mil-stat { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.9rem 1.1rem; }
+.mil-stat .label { color: var(--muted); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.mil-stat .value { font-family: var(--font-mono); font-size: 1.7rem; color: var(--paper); letter-spacing: -0.02em; margin-top: 0.2rem; }
+.mil-stat .value.allied { color: var(--allied); }
+.mil-stat .value.japan  { color: var(--japan); }
+.mil-stat .value.brass  { color: var(--brass); }
+.mil-stat .sub { color: var(--faint); font-size: 0.72rem; margin-top: 0.15rem; }
+
+/* ── 表單 / 輸入 ── */
+.mil-input, .mil-select, .mil-textarea {
+  width: 100%; font: inherit; font-size: 0.88rem;
+  background: var(--ink-2); border: 1px solid var(--rule); border-radius: var(--radius-sm);
+  color: var(--paper); padding: 0.55rem 0.7rem; outline: none; transition: var(--transition);
+}
+.mil-input:focus, .mil-select:focus, .mil-textarea:focus {
+  border-color: var(--brass); box-shadow: 0 0 0 3px rgba(201,162,39,0.12);
+}
+.mil-textarea { font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; resize: vertical; }
+.mil-select { appearance: none; cursor: pointer; }
+
+/* ── 匯入面板（ADD JSON）── */
+.mil-import { margin-bottom: 1.2rem; }
+.mil-import summary {
+  cursor: pointer; font-family: var(--font-head); font-size: 1.05rem; color: var(--brass);
+  padding: 0.6rem 0; list-style: none;
+}
+.mil-import summary::-webkit-details-marker { display: none; }
+.mil-import summary::before { content: "＋ "; }
+.mil-import[open] summary::before { content: "－ "; }
+.mil-import .hint { color: var(--muted); font-size: 0.82rem; margin: 0.3rem 0 0.6rem; }
+.mil-import .actions { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.6rem; }
+.mil-status { font-size: 0.82rem; color: var(--muted); }
+.mil-status.ok { color: var(--ok); }
+.mil-status.err { color: var(--japan); }
+
+/* ── modal ── */
+.mil-modal {
+  position: fixed; inset: 0; background: rgba(6,8,11,0.72);
+  display: none; align-items: center; justify-content: center; z-index: 2000; padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+.mil-modal.open { display: flex; }
+.mil-modal-box {
+  background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius-lg);
+  max-width: 780px; width: 100%; max-height: 88vh; overflow-y: auto;
+  padding: 1.6rem 1.8rem; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+}
+.mil-modal-close {
+  position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+  color: var(--muted); font-size: 1.6rem; cursor: pointer; line-height: 1;
+}
+.mil-modal-close:hover { color: var(--paper); }
+
+/* ── SVG 圖表通用 ── */
+.mil-svg { display: block; width: 100%; height: auto; }
+.mil-svg text { font-family: var(--font-mono); fill: var(--muted); }
+.mil-axis { stroke: var(--rule); }
+.mil-grid { stroke: var(--rule); stroke-opacity: 0.4; }
+.mil-tip {
+  position: absolute; pointer-events: none; display: none; z-index: 50;
+  background: var(--ink); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--paper);
+  font-family: var(--font-mono); box-shadow: 0 6px 20px rgba(0,0,0,0.5); max-width: 260px;
+}
+.mil-tip .d { color: var(--brass); display: block; }
+
+/* ── 卡片格（hub / operator）── */
+.mil-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1rem; }
+.mil-card {
+  display: block; background: var(--panel); border: 1px solid var(--rule);
+  border-radius: var(--radius-lg); padding: 1.3rem 1.4rem; transition: var(--transition);
+  position: relative; overflow: hidden;
+}
+.mil-card:hover { border-color: var(--brass); transform: translateY(-2px); background: var(--panel-2); }
+.mil-card .card-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--brass); letter-spacing: 0.15em; }
+.mil-card .card-title { font-family: var(--font-head); font-size: 1.35rem; color: var(--paper); margin: 0.35rem 0 0.15rem; }
+.mil-card .card-en { font-family: var(--font-mono); font-size: 0.72rem; color: var(--faint); letter-spacing: 0.08em; text-transform: uppercase; }
+.mil-card .card-desc { color: var(--muted); font-size: 0.85rem; margin-top: 0.7rem; line-height: 1.6; }
+.mil-card .card-arrow { position: absolute; top: 1.3rem; right: 1.3rem; color: var(--faint); transition: var(--transition); }
+.mil-card:hover .card-arrow { color: var(--brass); transform: translateX(3px); }
+
+/* ── 通用 pill / meta ── */
+.mil-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--panel-2); color: var(--muted);
+  border: 1px solid var(--rule); text-transform: uppercase;
+}
+.mil-pill.allied { color: var(--allied); border-color: var(--allied-d); }
+.mil-pill.japan  { color: var(--japan);  border-color: var(--japan-d); }
+.mil-pill.brass  { color: var(--brass);  border-color: var(--brass-d); }
+.mil-pill.ok     { color: var(--ok); }
+
+.mil-meta { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); letter-spacing: 0.03em; }
+
+/* fidelity badges */
+.mil-fidelity { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.68rem; font-family:var(--font-mono); padding:0.15rem 0.45rem; border-radius:4px; }
+.mil-fidelity.a { background: rgba(111,174,138,0.15); color: var(--ok); }
+.mil-fidelity.b { background: rgba(201,162,39,0.15); color: var(--brass); }
+.mil-fidelity.c { background: rgba(128,147,160,0.15); color: var(--muted); }
+
+/* ── 圖表軸文字 / toggle ── */
+.mil-axis-txt { font-family: var(--font-mono); font-size: 0.62rem; fill: var(--faint); }
+.mil-toggle { display: inline-flex; gap: 0.3rem; }
+
+/* ── ② 戰役消耗帳 ── */
+.war-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.war-legend { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.78rem; color: var(--muted); }
+.war-legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 0.3rem; vertical-align: -1px; }
+.war-legend .sw.allied { background: var(--allied); } .war-legend .sw.japan { background: var(--japan); } .war-legend .sw.brass { background: var(--brass); }
+.war-phase { font-family: var(--font-head); font-size: 0.9rem; fill: var(--muted); letter-spacing: 0.1em; }
+.war-axis-lbl { font-family: var(--font-head); font-size: 0.8rem; }
+.war-blabel { font-family: var(--font-body); font-size: 0.72rem; fill: var(--dim); }
+.war-mlabel { font-family: var(--font-body); font-size: 0.74rem; fill: var(--paper); paint-order: stroke; stroke: #0a1119; stroke-width: 3px; }
+.war-battle { cursor: pointer; }
+.war-battle:hover rect, .war-battle:hover circle { opacity: 1; filter: brightness(1.15); }
+.war-battle:focus { outline: none; }
+.war-battle:focus rect, .war-battle:focus circle { stroke: var(--brass); stroke-width: 2; }
+
+.war-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.9rem 0; }
+@media (max-width: 640px) { .war-sides { grid-template-columns: 1fr; } }
+.war-side { background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; }
+.war-side.allied { border-top: 3px solid var(--allied); } .war-side.japan { border-top: 3px solid var(--japan); }
+.war-side-name { font-family: var(--font-head); font-size: 1.2rem; color: var(--paper); margin-bottom: 0.5rem; }
+.war-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 0.2rem 0; border-bottom: 1px dashed var(--rule); }
+.war-stat span { color: var(--muted); font-size: 0.8rem; }
+.war-stat b { font-family: var(--font-mono); color: var(--paper); }
+.war-stat b.allied { color: var(--allied); } .war-stat b.japan { color: var(--japan); }
+.war-mat { color: var(--dim); font-size: 0.78rem; margin-top: 0.5rem; }
+.war-civ { color: var(--civil); font-size: 0.85rem; margin: 0.5rem 0; }
+.war-sig { color: var(--dim); font-size: 0.92rem; line-height: 1.8; margin-top: 0.6rem; }
+.war-weapons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.war-wchip { font: inherit; font-size: 0.82rem; cursor: pointer; background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.35rem 0.7rem; color: var(--dim); }
+.war-wchip.allied { border-left: 3px solid var(--allied); } .war-wchip.japan { border-left: 3px solid var(--japan); }
+.war-wchip:hover { background: var(--panel-3); color: var(--paper); }
+.war-wdetail { margin-top: 1rem; background: var(--ink-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 1rem 1.2rem; }
+.war-wdetail.allied { border-left: 3px solid var(--allied); } .war-wdetail.japan { border-left: 3px solid var(--japan); }
+.war-wd-head b { font-family: var(--font-head); font-size: 1.25rem; color: var(--paper); }
+.war-wd-specs { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin: 0.6rem 0; }
+.war-wd-specs span { font-size: 0.82rem; color: var(--dim); font-family: var(--font-mono); }
+.war-wd-specs i { color: var(--muted); font-style: normal; margin-right: 0.3rem; }
+.war-wd-note { color: var(--dim); font-size: 0.88rem; line-height: 1.7; }
+.war-lineage, .war-appears { margin-top: 0.7rem; font-size: 0.85rem; color: var(--dim); display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; }
+.war-lineage .cur { color: var(--brass); } .war-lineage .arr { color: var(--faint); }
+.link { font: inherit; background: none; border: none; color: var(--allied); cursor: pointer; padding: 0; text-decoration: underline dotted; }
+.link:hover { color: var(--paper); }
+
+/* ── ⑦ 每日軍武動態 ── */
+.def-toolbar { display: grid; grid-template-columns: minmax(200px, 2fr) repeat(4, minmax(110px, 1fr)); gap: 0.5rem; margin-bottom: 0.8rem; }
+@media (max-width: 760px) { .def-toolbar { grid-template-columns: 1fr 1fr; } }
+.def-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.def-chips .chip-count { color: var(--brass); font-family: var(--font-mono); font-size: 0.7rem; }
+.def-list { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.6rem; }
+.def-card { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 1.4rem; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1.1rem 1.3rem; cursor: pointer; transition: var(--transition); }
+@media (max-width: 680px) { .def-card { grid-template-columns: 1fr; } }
+.def-card:hover, .def-card:focus { border-color: var(--brass); outline: none; }
+.def-meta { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.04em; }
+.def-title { font-family: var(--font-head); font-size: 1.3rem; color: var(--paper); line-height: 1.3; margin: 0.4rem 0; }
+.def-summary { color: var(--dim); font-size: 0.88rem; line-height: 1.7; }
+.def-action { margin-top: 0.6rem; border-left: 3px solid var(--rule-2); background: var(--ink-2); padding: 0.5rem 0.7rem; font-size: 0.8rem; color: var(--muted); border-radius: 0 4px 4px 0; }
+.def-progs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
+.def-prog { background: var(--panel-3); color: var(--paper); border-radius: 5px; padding: 0.25rem 0.55rem; font-size: 0.74rem; font-weight: 500; }
+.def-prog small { opacity: 0.65; margin-left: 0.4rem; font-weight: 400; }
+.def-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.6rem; }
+.def-tag { font-size: 0.68rem; color: var(--muted); background: var(--ink-2); border-radius: 4px; padding: 0.12rem 0.4rem; }
+.def-review { margin-top: 0.6rem; font-size: 0.72rem; color: var(--warn); background: var(--warn-bg); padding: 0.35rem 0.5rem; border-radius: 4px; }
+.def-side { border-left: 1px solid var(--rule); padding-left: 1.3rem; display: flex; flex-direction: column; align-items: flex-start; }
+@media (max-width: 680px) { .def-side { border-left: none; border-top: 1px solid var(--rule); padding-left: 0; padding-top: 0.8rem; } }
+.def-amount { font-family: var(--font-mono); font-size: 1.5rem; color: var(--paper); letter-spacing: -0.02em; }
+.def-cno { font-size: 0.68rem; color: var(--faint); font-family: var(--font-mono); margin-top: 0.15rem; }
+.def-company { margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px solid var(--rule); width: 100%; }
+.def-cname { font-size: 0.8rem; color: var(--dim); font-weight: 500; }
+.def-ticker { margin-top: 0.3rem; }
+.def-ticker .tk { display: inline-block; background: var(--allied-d); color: #fff; border-radius: 4px; padding: 0.15rem 0.45rem; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; }
+.def-ticker .tk.private { background: var(--panel-3); color: var(--muted); }
+.def-ticker .ex { color: var(--muted); font-size: 0.7rem; }
+.def-parent { font-size: 0.66rem; color: var(--faint); margin-top: 0.25rem; }
+.def-comp { font-size: 0.7rem; color: var(--muted); margin-top: 0.6rem; }
+.def-score { font-size: 0.7rem; color: var(--brass); background: rgba(201,162,39,0.12); border-radius: 4px; padding: 0.2rem 0.45rem; margin-top: 0.5rem; font-family: var(--font-mono); }
+.def-del { font-size: 0.7rem; margin-top: 0.6rem; }
+
+/* defense modal */
+.def-modal-title { font-family: var(--font-head); font-size: 1.6rem; color: var(--paper); margin: 0.3rem 0; line-height: 1.2; }
+.def-orig { font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); margin-bottom: 0.6rem; }
+.def-modal-sum { color: var(--dim); font-size: 0.95rem; line-height: 1.9; }
+.def-en { margin-top: 0.5rem; }
+.def-en summary { cursor: pointer; color: var(--allied); font-size: 0.8rem; }
+.def-en p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; margin-top: 0.4rem; padding-left: 0.8rem; border-left: 2px solid var(--rule); }
+.def-block { margin-top: 1.1rem; }
+.def-block h4 { font-family: var(--font-head); font-size: 1.05rem; color: var(--brass); margin-bottom: 0.4rem; }
+.def-block p { color: var(--dim); font-size: 0.9rem; line-height: 1.7; }
+.def-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1.2rem; margin: 1rem 0; }
+@media (max-width: 560px) { .def-grid2 { grid-template-columns: 1fr; } }
+.def-grid2 > div { font-size: 0.88rem; color: var(--paper); border-bottom: 1px dashed var(--rule); padding-bottom: 0.4rem; }
+.def-grid2 span { display: block; color: var(--muted); font-size: 0.72rem; margin-bottom: 0.15rem; }
+.def-modal-box .mil-btn-primary { margin-top: 1rem; }
+
+/* ── ③ 系統譜系 ── */
+.ars-legend { margin-bottom: 1rem; }
+.ars-families { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.2rem; }
+.ars-family { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.1rem; }
+.ars-fam-head { font-family: var(--font-head); font-size: 1.15rem; color: var(--brass); margin-bottom: 0.7rem; }
+.ars-chain { display: flex; flex-direction: column; gap: 0.5rem; }
+.ars-node { text-align: left; font: inherit; cursor: pointer; background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; transition: var(--transition); }
+.ars-node:hover { border-color: var(--brass); background: var(--panel-3); }
+.ars-node.unbuilt { border-style: dashed; opacity: 0.85; }
+.ars-node.allied { border-left: 3px solid var(--allied); } .ars-node.japan { border-left: 3px solid var(--japan); }
+.ars-node-name { font-family: var(--font-head); font-size: 1.05rem; color: var(--paper); }
+.ars-node-role { font-size: 0.72rem; }
+.ars-bar { position: relative; height: 6px; background: var(--ink); border-radius: 3px; margin: 0.4rem 0 0.2rem; }
+.ars-bar-fill { position: absolute; top: 0; height: 100%; border-radius: 3px; }
+.ars-bar-fill.allied { background: var(--allied); } .ars-bar-fill.japan { background: var(--japan); }
+.ars-arrow { font-size: 0.68rem; color: var(--faint); }
+.ars-log { display: flex; flex-direction: column; gap: 0.4rem; }
+.ars-log-row { display: grid; grid-template-columns: 6rem 8rem 1fr; gap: 0.6rem; font-size: 0.82rem; align-items: baseline; padding: 0.35rem 0; border-bottom: 1px dashed var(--rule); }
+.ars-log-date { font-family: var(--font-mono); color: var(--brass); font-size: 0.75rem; }
+.ars-log-field { font-family: var(--font-mono); color: var(--muted); font-size: 0.75rem; }
+.ars-log-diff del { color: var(--japan); text-decoration: line-through; } .ars-log-diff ins { color: var(--ok); text-decoration: none; }
+
+/* ── ④ 台海基線 ── */
+.str-controls { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.9rem 1.2rem; margin-bottom: 1rem; }
+.str-controls label { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--dim); }
+.str-controls b { color: var(--brass); font-family: var(--font-mono); }
+.str-controls input[type=range] { accent-color: var(--brass); width: 160px; }
+.str-event { font-size: 0.62rem; fill: var(--civil); font-family: var(--font-body); }
+.str-anom { cursor: pointer; } .str-anom:hover { r: 5; }
+.str-comp-legend { display: flex; gap: 1.2rem; font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+.str-comp-legend .sw { display: inline-block; width: 12px; height: 3px; margin-right: 0.3rem; vertical-align: 3px; }
+
+/* ── ⑤ 文件漂移 ── */
+.doc-ed { font-family: var(--font-head); font-size: 1rem; fill: var(--paper); }
+.doc-topic { font-size: 0.78rem; font-family: var(--font-body); }
+.doc-shifts { display: flex; flex-direction: column; gap: 0.8rem; }
+.doc-shift { display: flex; gap: 0.8rem; }
+.doc-sev { flex: none; width: 4px; border-radius: 2px; }
+.doc-shift-head { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+.doc-shift-head b { font-family: var(--font-head); font-size: 1.1rem; color: var(--paper); }
+.doc-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin: 0.6rem 0; }
+@media (max-width: 620px) { .doc-quotes { grid-template-columns: 1fr; } }
+.doc-q { font-size: 0.85rem; line-height: 1.7; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); background: var(--ink-2); color: var(--dim); }
+.doc-q span { display: block; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 0.3rem; }
+.doc-q.from { border-left: 3px solid var(--faint); } .doc-q.to { border-left: 3px solid var(--brass); }
+.doc-delta { font-size: 0.8rem; color: var(--brass); }
+.doc-secs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; }
+.doc-sec-ed { background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.7rem 0.9rem; }
+.doc-sec-year { font-family: var(--font-head); color: var(--brass); margin-bottom: 0.4rem; }
+.doc-sec-row { font-size: 0.82rem; padding: 0.2rem 0; }
+.doc-sec-row.added { color: var(--ok); } .doc-sec-row.removed { color: var(--japan); }
+
+/* ── ⑥ 演習行事曆 ── */
+.ex-legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.ex-legend .sw { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin-right: 0.3rem; vertical-align: 0; }
+.ex-name { font-size: 0.78rem; fill: var(--dim); font-family: var(--font-body); }
+
+/* ── ⑧ 每日彙整 ── */
+.dig-items { display: flex; flex-direction: column; gap: 0.7rem; }
+.dig-item { display: flex; gap: 0.8rem; }
+.dig-sent { flex: none; width: 4px; border-radius: 2px; }
+.dig-head { font-family: var(--font-head); font-size: 1.15rem; color: var(--paper); line-height: 1.3; }
+.dig-sum { color: var(--dim); font-size: 0.88rem; line-height: 1.7; margin: 0.3rem 0; }
+.dig-foot { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-top: 0.4rem; }
+.dig-src { color: var(--allied); font-size: 0.8rem; } .dig-src:hover { color: var(--paper); }
+.dig-tag { font-size: 0.68rem; color: var(--muted); background: var(--ink-2); border-radius: 4px; padding: 0.1rem 0.4rem; }
+.dig-ent { font-size: 0.68rem; color: var(--brass); border: 1px solid var(--brass-d); border-radius: 4px; padding: 0.1rem 0.4rem; }
+
+/* scrollbar */
+body.mil ::-webkit-scrollbar { width: 10px; height: 10px; }
+body.mil ::-webkit-scrollbar-track { background: var(--ink); }
+body.mil ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 5px; }
+body.mil ::-webkit-scrollbar-thumb:hover { background: var(--faint); }

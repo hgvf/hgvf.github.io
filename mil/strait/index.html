@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台海活動基線 · TAIWAN STRAIT BASELINE</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260819a" />
+  <link rel="stylesheet" href="../mil.css?v=20260819a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="mil">
+  <div id="siteSidebar"></div>
+  <main class="main-content">
+    <header class="mil-hero">
+      <div class="mil-eyebrow">MODULE ④ · TAIWAN STRAIT BASELINE</div>
+      <h1 class="mil-title">台海活動基線<span class="zh">共機架次穩健基線 · 中位數 ± k·MAD</span></h1>
+    </header>
+    <nav id="milnav"></nav>
+    <div id="app"><p class="mil-meta">載入中…</p></div>
+  </main>
+  <script type="module">
+    import { mountMilSidebar, renderMilnav } from "../js/milcore.js";
+    mountMilSidebar("../../");
+    renderMilnav("#milnav", "strait", "../");
+  </script>
+  <script type="module" src="../js/strait.js"></script>
+</body>
+</html>
