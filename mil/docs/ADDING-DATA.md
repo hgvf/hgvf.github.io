@@ -10,6 +10,8 @@
 
 載入時：**靜態基底 ∪ Firestore（Firestore 同 id 覆蓋基底）**。
 
+> ③ 系統譜系另有 `mil_families`（家族顯示覆寫）：在家族標題點鉛筆（✎，需白名單登入）即可**改名／改國家**，覆寫疊在 `arsenal.json` 的 `families[]` 之上，doc id = 家族 slug。
+
 > **這三頁一律用「方式 A：頁面 ADD JSON」新增**（登入白名單帳號後，頁面上方會出現「匯入 / 新增…（ADD JSON）」面板）。方式 B（`publish.py`）為選用的排程/CLI 自動化路徑，本專案不用於這三頁。
 
 ---
@@ -52,7 +54,7 @@ python scripts/publish.py --type explorer --file /tmp/modern.json
 firebase deploy --only firestore:rules
 ```
 
-規則已在 `firestore.rules`（`mil_weapons_modern / mil_conflicts / mil_weapons / mil_defense_daily`：public read、白名單 write），部署設定在 `firebase.json`。方式 B（服務帳號）不受此限。
+規則已在 `firestore.rules`（`mil_weapons_modern / mil_conflicts / mil_weapons / mil_families / mil_defense_daily`：public read、白名單 write），部署設定在 `firebase.json`。方式 B（服務帳號）不受此限。
 
 ---
 

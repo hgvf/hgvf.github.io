@@ -104,6 +104,20 @@ export async function loadWeapons() {
 }
 export const deleteWeapon = id => deleteDoc(doc(db(), "mil_weapons", id));
 
+// ── 家族覆寫 mil_families（系統譜系改名／改國家；白名單前端寫）──
+// 每份文件 = 一個 family 的顯示覆寫 {id, name_zh?, origin?, bloc?}；載入時疊到 arsenal.json 之上。
+export async function saveFamily(fam) {
+  if (!fam || !fam.id) throw new Error("family 需含 id");
+  const id = slug(fam.id);
+  await setDoc(doc(db(), "mil_families", id), { updated_at: new Date().toISOString(), data: { ...fam, id: fam.id } }, { merge: false });
+  return id;
+}
+export async function loadFamilies() {
+  const snap = await getDocs(collection(db(), "mil_families"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+export const deleteFamily = id => deleteDoc(doc(db(), "mil_families", id));
+
 // ── 現代武器實體 mil_weapons_modern（武器探索 Explorer；白名單前端寫）──
 export async function saveModernWeapons(weapons) {
   const now = new Date().toISOString();

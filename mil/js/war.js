@@ -185,6 +185,21 @@ function drawTimeline(maxD) {
 
 // ── 地圖視圖（等距圓柱投影，實際海岸線 Natural Earth 110m）─────────
 const LON = l => (l < 0 ? l + 360 : l);
+// 把一個陸塊環「連續化」再整體平移到取景中心附近：
+// 逐點消除 ±360 跳變（跨換日線也連續），再依環質心把整環移到最接近 center 的 360 倍數。
+// 這樣跨越 0°（本初子午線）的國家（西班牙、法國、西非…）不會被硬拆成橫跨全圖的假色帶。
+function fitRing(ring, center) {
+  const out = []; let prev = null;
+  for (const p of ring) {
+    let lo = p[0];
+    if (prev !== null) { while (lo - prev > 180) lo -= 360; while (lo - prev < -180) lo += 360; }
+    out.push([lo, p[1]]); prev = lo;
+  }
+  let mean = 0; for (const p of out) mean += p[0]; mean /= out.length;
+  const k = Math.round((center - mean) / 360);
+  if (k) for (const p of out) p[0] += k * 360;
+  return out;
+}
 function drawMap() {
   const host = document.getElementById("chart");
   const bs = visibleBattles();
@@ -202,14 +217,25 @@ function drawMap() {
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "mil-svg", width: W, height: H });
   svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, fill: "#0a1119" }));   // 海面
 
-  // 真實陸塊：只畫落在取景框內的環（效能 + 避免換日線接縫）
+  // 真實陸塊：整環畫出，交給 SVG clipPath 於「算圖階段」裁切到取景框。
+  // 用向量裁切（Sutherland–Hodgman）會替凹形/跨越換日線的大國補上沿邊界的假邊，
+  // 形成橫跨畫面的條紋；clipPath 是對「填色結果」做幾何裁切，不會產生假邊。
   if (WORLD && WORLD.rings) {
-    const inView = (lon, lat) => lon >= lonMin - 5 && lon <= lonMax + 5 && lat >= latMin - 5 && lat <= latMax + 5;
+    const defs = svgEl("defs", {});
+    const cp = svgEl("clipPath", { id: "mapclip" });
+    cp.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H }));
+    defs.appendChild(cp); svg.appendChild(defs);
+    const land = svgEl("g", { "clip-path": "url(#mapclip)" });
+    const center = (lonMin + lonMax) / 2;
     for (const ring of WORLD.rings) {
-      let any = false;
-      const pts = ring.map(p => { const lon = LON(p[0]); if (inView(lon, p[1])) any = true; return `${PX(lon).toFixed(1)},${PY(p[1]).toFixed(1)}`; });
-      if (any) svg.appendChild(svgEl("polygon", { points: pts.join(" "), fill: "#16242f", stroke: "#28414f", "stroke-width": 0.8 }));
+      const r = fitRing(ring, center);
+      // 環自身 bbox 與取景框無交集 → 略過（效能）
+      let rl = 1e9, rr = -1e9, rb = 1e9, rt = -1e9;
+      for (const pt of r) { if (pt[0] < rl) rl = pt[0]; if (pt[0] > rr) rr = pt[0]; if (pt[1] < rb) rb = pt[1]; if (pt[1] > rt) rt = pt[1]; }
+      if (rr < lonMin || rl > lonMax || rt < latMin || rb > latMax) continue;
+      land.appendChild(svgEl("polygon", { points: r.map(p => `${PX(p[0]).toFixed(1)},${PY(p[1]).toFixed(1)}`).join(" "), fill: "#16242f", stroke: "#28414f", "stroke-width": 0.8 }));
     }
+    svg.appendChild(land);
   }
   // 經緯格線
   for (let lo = Math.ceil(lonMin / 10) * 10; lo < lonMax; lo += 10) { svg.appendChild(svgEl("line", { x1: PX(lo), y1: 0, x2: PX(lo), y2: H, class: "mil-grid" })); const t = svgEl("text", { x: PX(lo), y: H - 6, class: "mil-axis-txt", "text-anchor": "middle" }); t.textContent = (lo > 180 ? lo - 360 : lo) + "°"; svg.appendChild(t); }

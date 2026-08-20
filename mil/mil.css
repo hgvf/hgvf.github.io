@@ -483,7 +483,18 @@ body.mil .main-content {
 .ars-bar-fill.west { background: var(--allied); } .ars-bar-fill.east { background: var(--japan); } .ars-bar-fill.other { background: var(--brass); }
 .ars-families { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 1.2rem; }
 .ars-family { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.1rem; }
-.ars-fam-head { font-family: var(--font-head); font-size: 1.15rem; color: var(--brass); margin-bottom: 0.7rem; }
+.ars-fam-head { font-family: var(--font-head); font-size: 1.15rem; color: var(--brass); margin-bottom: 0.7rem; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+.ars-fam-head .ars-fam-name { flex: 0 1 auto; }
+.ars-fam-edit-btn { margin-left: auto; align-self: center; font-size: 0.8rem; line-height: 1; cursor: pointer; background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); color: var(--muted); padding: 0.2rem 0.4rem; transition: var(--transition); }
+.ars-fam-edit-btn:hover { color: var(--brass); border-color: var(--brass); }
+.ars-fam-edit { margin-bottom: 0.7rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.ars-fam-edit .mil-input { width: 100%; }
+.ars-fam-edit .actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.ars-fam-edit .mil-btn { font-size: 0.78rem; padding: 0.3rem 0.7rem; }
+.ars-spec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin: 0.7rem 0; }
+.ars-spec { background: var(--ink-2); border: 1px solid var(--rule); border-left: 3px solid var(--rule-2); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; }
+.ars-spec dt { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.03em; margin-bottom: 0.15rem; }
+.ars-spec dd { color: var(--paper); font-size: 0.9rem; font-family: var(--font-mono); margin: 0; word-break: break-word; }
 .ars-chain { display: flex; flex-direction: column; gap: 0.5rem; }
 .ars-node { text-align: left; font: inherit; cursor: pointer; background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; transition: var(--transition); }
 .ars-node:hover { border-color: var(--brass); background: var(--panel-3); }
@@ -491,7 +502,7 @@ body.mil .main-content {
 .ars-node.allied { border-left: 3px solid var(--allied); } .ars-node.japan { border-left: 3px solid var(--japan); }
 .ars-node-name { font-family: var(--font-head); font-size: 1.05rem; color: var(--paper); }
 .ars-node-role { font-size: 0.72rem; }
-.ars-bar { position: relative; height: 6px; background: var(--ink); border-radius: 3px; margin: 0.4rem 0 0.2rem; }
+.ars-bar { position: relative; height: 6px; background: var(--ink); border-radius: 3px; margin: 0.4rem 0 0.2rem; overflow: hidden; }
 .ars-bar-fill { position: absolute; top: 0; height: 100%; border-radius: 3px; }
 .ars-bar-fill.allied { background: var(--allied); } .ars-bar-fill.japan { background: var(--japan); }
 .ars-arrow { font-size: 0.68rem; color: var(--faint); }

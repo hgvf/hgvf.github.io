@@ -3,6 +3,8 @@
 import { loadJSON, showErr, esc } from "../js/milcore.js";
 
 let FAMILIES = [], WEAPONS = [], BYW = new Map();
+let FAM_OVERRIDES = new Map();   // family id → {name_zh?, origin?}（mil_families 覆寫）
+let editingFam = null;           // 目前正在編輯（改名／改國家）的 family id
 let era = "all", bloc = "all", q = "";
 let YR0 = 1935, YR1 = 2030;
 let isAdmin = false, store = null;
@@ -16,7 +18,7 @@ async function getStore() { if (store) return store; try { store = await import(
 
 (async function () {
   root.innerHTML = `<p class="mil-meta">載入中…</p>`;
-  document.body.addEventListener("mil-auth", e => { isAdmin = !!e.detail.isAdmin; const p = document.getElementById("arsImport"); if (p) { p.hidden = !isAdmin; if (isAdmin) wireImport(); } });
+  document.body.addEventListener("mil-auth", e => { isAdmin = !!e.detail.isAdmin; const p = document.getElementById("arsImport"); if (p) { p.hidden = !isAdmin; if (isAdmin) wireImport(); drawFamilies(); } });
   try {
     const base = await loadJSON("../data/arsenal.json");
     FAMILIES = base.families || [];
@@ -27,8 +29,12 @@ async function getStore() { if (store) return store; try { store = await import(
     const docs = await s.loadWeapons();
     docs.forEach(d => { const w = d.data || d; const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
   } catch { /* ignore */ } }
+  if (s) { try {
+    const fdocs = await s.loadFamilies();
+    fdocs.forEach(d => { const f = d.data || d; if (f && f.id) FAM_OVERRIDES.set(f.id, f); });
+  } catch { /* ignore */ } }
   // 認證：直接註冊 onAuth（可靠），登入白名單後顯示並接上 ADD JSON。
-  if (s) s.onAuth(({ isAdmin: a }) => { isAdmin = a; const p = document.getElementById("arsImport"); if (p) { p.hidden = !a; if (a) wireImport(); } });
+  if (s) s.onAuth(({ isAdmin: a }) => { isAdmin = a; const p = document.getElementById("arsImport"); if (p) { p.hidden = !a; if (a) wireImport(); drawFamilies(); } });
   BYW = new Map(WEAPONS.map(w => [w.id, w]));
   const yrs = WEAPONS.flatMap(w => [w.service?.[0], w.service?.[1]]).filter(Boolean);
   YR0 = Math.min(YR0, ...yrs); YR1 = Math.max(YR1, ...yrs, NOW_YEAR);
@@ -81,6 +87,7 @@ function match(w) {
 
 function drawFamilies() {
   const grid = root.querySelector("#famGrid");
+  if (!grid) return;   // 首次 auth 回呼可能早於 render()
   const shown = WEAPONS.filter(match);
   root.querySelector("#arsCount").textContent = `${shown.length} / ${WEAPONS.length} 款`;
   // 未在 families 定義的 family → 自訂群組
@@ -90,7 +97,8 @@ function drawFamilies() {
   customFams.forEach(f => groups.push({ id: f, name_zh: f, origin: "自訂" }));
   if (shown.some(w => !w.family)) groups.push({ id: "__none__", name_zh: "未分類", origin: "自訂" });
 
-  const html = groups.map(fam => {
+  const html = groups.map(fam0 => {
+    const fam = famView(fam0);
     const members = shown.filter(w => (w.family || "__none__") === fam.id);
     if (!members.length) return "";
     const roots = members.filter(m => !m.parent || !members.find(x => x.id === m.parent));
@@ -98,25 +106,96 @@ function drawFamilies() {
     roots.forEach(walk);
     // 若因篩選斷鏈，補上其餘
     members.forEach(m => { if (!ordered.includes(m)) ordered.push(m); });
-    return `<div class="ars-family">
-      <div class="ars-fam-head">${esc(fam.name_zh)} <span class="mil-meta">${esc(fam.origin||"")}</span></div>
+    return `<div class="ars-family" data-famid="${esc(fam.id)}">
+      ${famHeadHTML(fam)}
       <div class="ars-chain">${ordered.map(nodeHTML).join("")}</div></div>`;
   }).join("");
   grid.innerHTML = html || `<p class="mil-meta">沒有符合篩選的武器。</p>`;
   grid.querySelectorAll("[data-w]").forEach(b => b.onclick = () => showWeapon(b.dataset.w));
+  // 家族改名／改國家（僅白名單）
+  grid.querySelectorAll("[data-fam-edit]").forEach(b => b.onclick = e => { e.stopPropagation(); editingFam = b.dataset.famEdit; drawFamilies(); });
+  grid.querySelectorAll("[data-fam-cancel]").forEach(b => b.onclick = e => { e.stopPropagation(); editingFam = null; drawFamilies(); });
+  grid.querySelectorAll("[data-fam-save]").forEach(b => b.onclick = e => { e.stopPropagation(); saveFamilyEdit(b.dataset.famSave); });
+}
+
+// family 顯示值 = arsenal.json 基底 疊上 mil_families 覆寫（改名／改國家）。
+function famView(fam) {
+  const ov = FAM_OVERRIDES.get(fam.id);
+  return ov ? { ...fam, name_zh: ov.name_zh || fam.name_zh, origin: ov.origin != null ? ov.origin : fam.origin } : fam;
+}
+function famHeadHTML(fam) {
+  const editable = isAdmin && fam.id !== "__none__";
+  if (editable && editingFam === fam.id) {
+    return `<div class="ars-fam-edit">
+      <input class="mil-input" data-ef="name" value="${esc(fam.name_zh || "")}" placeholder="家族名稱" spellcheck="false">
+      <input class="mil-input" data-ef="origin" value="${esc(fam.origin || "")}" placeholder="國家 / 來源（如 美國）" spellcheck="false">
+      <div class="actions">
+        <button class="mil-btn mil-btn-primary" data-fam-save="${esc(fam.id)}">儲存</button>
+        <button class="mil-btn" data-fam-cancel="${esc(fam.id)}">取消</button>
+        <span class="mil-status" data-fam-status></span>
+      </div></div>`;
+  }
+  return `<div class="ars-fam-head">
+    <span class="ars-fam-name">${esc(fam.name_zh)}</span>
+    <span class="mil-meta">${esc(fam.origin || "")}</span>
+    ${editable ? `<button class="ars-fam-edit-btn" data-fam-edit="${esc(fam.id)}" title="改名／改國家" aria-label="改名／改國家">✎</button>` : ""}
+  </div>`;
+}
+async function saveFamilyEdit(famId) {
+  const card = root.querySelector(`.ars-family[data-famid="${CSS.escape(famId)}"]`);
+  if (!card) return;
+  const name = card.querySelector('[data-ef="name"]').value.trim();
+  const origin = card.querySelector('[data-ef="origin"]').value.trim();
+  const status = card.querySelector('[data-fam-status]');
+  if (!name) { status.className = "mil-status err"; status.textContent = "名稱不可空白"; return; }
+  status.className = "mil-status"; status.textContent = "儲存中…";
+  try {
+    const s = await getStore(); if (!s) throw new Error("Firebase SDK 無法載入");
+    await s.saveFamily({ id: famId, name_zh: name, origin });
+    FAM_OVERRIDES.set(famId, { id: famId, name_zh: name, origin });
+    editingFam = null; drawFamilies();
+  } catch (e) {
+    status.className = "mil-status err";
+    status.innerHTML = /insufficient permissions|permission-denied/i.test(e.message || "") ? "✗ 權限不足：需白名單帳號且已部署 mil_families 規則" : "✗ " + esc(e.message);
+  }
 }
 
 function nodeHTML(w) {
-  const [s, e] = w.service || [YR0, null]; const end = e || NOW_YEAR;
-  const left = ((s - YR0) / (YR1 - YR0)) * 100, width = ((end - s) / (YR1 - YR0)) * 100;
+  const sv = Array.isArray(w.service) ? w.service : null;
+  const s = sv && sv[0] != null ? Number(sv[0]) : null;   // 服役起（可能為 null）
+  const e = sv && sv[1] != null ? Number(sv[1]) : null;    // 服役迄（null=服役中）
+  const span = YR1 - YR0 || 1;
+  let left = 0, width = 0;
+  if (s != null && !Number.isNaN(s)) {
+    const end = e != null && !Number.isNaN(e) ? e : NOW_YEAR;
+    left = ((s - YR0) / span) * 100;
+    width = ((Math.max(end, s) - s) / span) * 100;
+  }
+  // 卡控：left/width 皆夾在 [0,100]，且 left+width ≤ 100（不超出卡片右緣）。
+  left = Math.min(100, Math.max(0, left));
+  width = Math.max(s != null ? 2 : 0, Math.min(width, 100 - left));
+  const yrs = s != null ? `${s}–${e != null ? e : "服役中"}` : "服役年份未知";
   const cls = BLOC[w.bloc]?.cls || "other";
   const parent = w.parent ? BYW.get(w.parent) : null;
   return `<button class="ars-node ${cls} ${w.status === "未量產" ? "unbuilt" : ""}" data-w="${w.id}">
     <div class="ars-node-name">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en||"")}</span></div>
-    <div class="ars-node-role mil-meta">${esc(w.role||"")} · ${esc(w.era||"")} · ${w.service?`${w.service[0]}–${w.service[1]||"服役中"}`:""}</div>
-    <div class="ars-bar"><span class="ars-bar-fill ${cls}" style="left:${Math.max(0,left)}%;width:${Math.max(2,width)}%"></span></div>
+    <div class="ars-node-role mil-meta">${esc(w.role||"")} · ${esc(w.era||"")} · ${esc(yrs)}</div>
+    <div class="ars-bar"><span class="ars-bar-fill ${cls}" style="left:${left}%;width:${width}%"></span></div>
     ${parent ? `<div class="ars-arrow">▲ 繼承自 ${esc(parent.name_zh)}</div>` : ""}
   </button>`;
+}
+
+// 規格以 key/value 網格呈現（取代單行純文字，較易閱讀）。
+function specsGrid(specs) {
+  const ent = Object.entries(specs || {}).filter(([, v]) => v != null && v !== "");
+  if (!ent.length) return "";
+  return `<dl class="ars-spec-grid">${ent.map(([k, v]) => `<div class="ars-spec"><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>`;
+}
+// family 顯示標籤：套用改名覆寫，找不到定義時回傳原 slug。
+function famLabel(fid) {
+  if (!fid) return "—";
+  const base = FAMILIES.find(f => f.id === fid) || { id: fid, name_zh: fid };
+  return famView(base).name_zh || fid;
 }
 
 function showWeapon(wid) {
@@ -128,12 +207,12 @@ function showWeapon(wid) {
   p.innerHTML = `
     <div class="mil-panel-head"><h2 class="mil-panel-title">${esc(w.name_zh)} <span class="mil-meta">${esc(w.name_en||"")}</span></h2>
       <span class="mil-pill ${cls==='west'?'allied':cls==='east'?'japan':'brass'}">${esc(BLOC[w.bloc]?.z||"其他")} · ${esc(w.era||"")}</span></div>
-    <div class="war-wd-specs">${Object.entries(w.specs||{}).map(([k,v])=>`<span><i>${esc(k)}</i> ${esc(v)}</span>`).join("")}</div>
+    ${specsGrid(w.specs)}
     <p class="war-wd-note">${esc(w.note||"")}</p>
     <div class="war-lineage"><span class="mil-meta">家族位置：</span>
       ${chain.map(c => c.id === wid ? `<b class="cur">${esc(c.name_zh)}</b>` : `<button class="link" data-w="${c.id}">${esc(c.name_zh)}</button>`).join(" <span class='arr'>→</span> ")}
       ${children.length ? " <span class='arr'>→</span> " + children.map(c => `<button class="link" data-w="${c.id}">${esc(c.name_zh)}</button>`).join(" / ") : ""}</div>
-    <div class="mil-meta" style="margin-top:0.6rem">服役 ${w.service?`${w.service[0]}–${w.service[1]||"服役中"}`:"—"} · 家族 ${esc(w.family||"—")}</div>`;
+    <div class="mil-meta" style="margin-top:0.6rem">服役 ${(Array.isArray(w.service)&&w.service[0]!=null)?`${w.service[0]}–${w.service[1]!=null?w.service[1]:"服役中"}`:"—"} · 家族 ${esc(famLabel(w.family))}</div>`;
   p.querySelectorAll("[data-w]").forEach(b => b.onclick = () => showWeapon(b.dataset.w));
   p.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
