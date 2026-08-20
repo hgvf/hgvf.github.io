@@ -69,6 +69,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    match /mil_weapons_modern/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
 
     match /config/auth {
       allow read: if isSignedIn();

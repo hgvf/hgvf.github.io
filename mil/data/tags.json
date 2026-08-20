@@ -8,7 +8,14 @@
     "flight":     { "label_zh": "飛行模式", "label_en": "Flight Profile" },
     "speed":      { "label_zh": "速度級距", "label_en": "Speed Class" },
     "launch":     { "label_zh": "發射平台", "label_en": "Launch Platform" },
-    "target":     { "label_zh": "目標類型", "label_en": "Target Type" }
+    "target":     { "label_zh": "目標類型", "label_en": "Target Type" },
+    "ship_type":      { "label_zh": "艦種", "label_en": "Ship Type" },
+    "combat_system":  { "label_zh": "作戰系統", "label_en": "Combat System" },
+    "radar":          { "label_zh": "雷達", "label_en": "Radar" },
+    "launcher":       { "label_zh": "發射器", "label_en": "Launcher" },
+    "capability":     { "label_zh": "能力", "label_en": "Capability" },
+    "aircraft_type":  { "label_zh": "機種", "label_en": "Aircraft Type" },
+    "generation":     { "label_zh": "世代", "label_en": "Generation" }
   },
   "tags": {
     "anti_ship":        { "type": "role", "label_en": "Anti-ship", "label_zh": "反艦", "desc_zh": "以水面艦艇為主要打擊對象。" },
@@ -64,6 +71,48 @@
     "missile":          { "type": "target", "label_en": "Missile", "label_zh": "飛彈", "desc_zh": "" },
     "fixed_ground_target": { "type": "target", "label_en": "Fixed Ground", "label_zh": "固定地面目標", "desc_zh": "" },
     "moving_ground_target":{ "type": "target", "label_en": "Moving Ground", "label_zh": "機動地面目標", "desc_zh": "" },
-    "radar":            { "type": "target", "label_en": "Radar", "label_zh": "雷達", "desc_zh": "" }
+    "radar":            { "type": "target", "label_en": "Radar", "label_zh": "雷達", "desc_zh": "" },
+
+    "destroyer":        { "type": "ship_type", "label_en": "Destroyer", "label_zh": "驅逐艦", "desc_zh": "多用途主力水面作戰艦。" },
+    "frigate":          { "type": "ship_type", "label_en": "Frigate", "label_zh": "巡防艦", "desc_zh": "" },
+    "cruiser":          { "type": "ship_type", "label_en": "Cruiser", "label_zh": "巡洋艦", "desc_zh": "" },
+    "aircraft_carrier": { "type": "ship_type", "label_en": "Aircraft Carrier", "label_zh": "航空母艦", "desc_zh": "" },
+    "corvette":         { "type": "ship_type", "label_en": "Corvette", "label_zh": "巡邏艦/輕型艦", "desc_zh": "" },
+    "attack_submarine": { "type": "ship_type", "label_en": "Attack Submarine", "label_zh": "攻擊潛艦", "desc_zh": "" },
+    "amphibious_ship":  { "type": "ship_type", "label_en": "Amphibious", "label_zh": "兩棲艦", "desc_zh": "" },
+
+    "aegis":            { "type": "combat_system", "label_en": "Aegis", "label_zh": "神盾系統", "desc_zh": "整合式防空作戰系統。" },
+
+    "aesa":             { "type": "radar", "label_en": "AESA", "label_zh": "主動相位陣列", "desc_zh": "主動電子掃描陣列雷達。" },
+    "pesa":             { "type": "radar", "label_en": "PESA", "label_zh": "被動相位陣列", "desc_zh": "被動電子掃描陣列雷達。" },
+    "s_band":           { "type": "radar", "label_en": "S-band", "label_zh": "S 波段", "desc_zh": "" },
+    "x_band":           { "type": "radar", "label_en": "X-band", "label_zh": "X 波段", "desc_zh": "" },
+
+    "mk41_vls":         { "type": "launcher", "label_en": "Mk 41 VLS", "label_zh": "Mk 41 垂直發射", "desc_zh": "" },
+    "mk57_vls":         { "type": "launcher", "label_en": "Mk 57 VLS", "label_zh": "Mk 57 垂直發射", "desc_zh": "" },
+    "deck_gun":         { "type": "launcher", "label_en": "Deck Gun", "label_zh": "艦砲", "desc_zh": "" },
+    "ciws":             { "type": "launcher", "label_en": "CIWS", "label_zh": "近迫武器系統", "desc_zh": "" },
+
+    "area_air_defense": { "type": "capability", "label_en": "Area Air Defense", "label_zh": "區域防空", "desc_zh": "" },
+    "point_defense":    { "type": "capability", "label_en": "Point Defense", "label_zh": "點防禦", "desc_zh": "" },
+    "bmd_capable":      { "type": "capability", "label_en": "BMD-capable", "label_zh": "彈道飛彈防禦能力", "desc_zh": "" },
+    "asw":              { "type": "capability", "label_en": "ASW", "label_zh": "反潛", "desc_zh": "" },
+    "asuw":             { "type": "capability", "label_en": "ASuW", "label_zh": "反水面", "desc_zh": "" },
+    "naval_strike":     { "type": "capability", "label_en": "Naval Strike", "label_zh": "對陸/對艦打擊", "desc_zh": "" },
+
+    "gas_turbine":      { "type": "propulsion", "label_en": "Gas Turbine", "label_zh": "燃氣渦輪", "desc_zh": "" },
+    "cogag":            { "type": "propulsion", "label_en": "COGAG", "label_zh": "複合燃氣渦輪", "desc_zh": "四具燃氣渦輪雙軸推進。" },
+    "nuclear_propulsion": { "type": "propulsion", "label_en": "Nuclear", "label_zh": "核子動力", "desc_zh": "" },
+    "diesel_electric":  { "type": "propulsion", "label_en": "Diesel-electric", "label_zh": "柴電", "desc_zh": "" },
+    "steam_turbine":    { "type": "propulsion", "label_en": "Steam Turbine", "label_zh": "蒸汽渦輪", "desc_zh": "" },
+
+    "fighter":          { "type": "aircraft_type", "label_en": "Fighter", "label_zh": "戰鬥機", "desc_zh": "" },
+    "multirole":        { "type": "aircraft_type", "label_en": "Multirole", "label_zh": "多用途戰機", "desc_zh": "" },
+    "bomber":           { "type": "aircraft_type", "label_en": "Bomber", "label_zh": "轟炸機", "desc_zh": "" },
+    "attack_aircraft":  { "type": "aircraft_type", "label_en": "Attack", "label_zh": "攻擊機", "desc_zh": "" },
+    "uav":              { "type": "aircraft_type", "label_en": "UAV", "label_zh": "無人機", "desc_zh": "" },
+    "gen4":             { "type": "generation", "label_en": "4th Gen", "label_zh": "第四代", "desc_zh": "" },
+    "gen4_5":           { "type": "generation", "label_en": "4.5 Gen", "label_zh": "四代半", "desc_zh": "" },
+    "gen5":             { "type": "generation", "label_en": "5th Gen", "label_zh": "第五代", "desc_zh": "" }
   }
 }

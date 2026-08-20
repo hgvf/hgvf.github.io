@@ -4,6 +4,7 @@ import { loadJSON, showErr, esc, fmtDate, svgEl } from "../js/milcore.js";
 
 let REGISTRY = [];        // [{id,name_zh,...,file?,data?}]
 let CONF = null;          // 目前選中的戰爭（完整資料）
+let WORLD = null;         // 真實世界陸塊（Natural Earth 110m）
 let BYW = new Map(), BYB = new Map();
 let view = "timeline";
 let selected = new Set(); // 顯示在 timeline/map 上的戰役 id
@@ -13,6 +14,7 @@ let store = null;
 const root = document.getElementById("app");
 const DAY = 86400000;
 const ms = d => new Date(d + "T00:00:00").getTime();
+const yrRange = r => { const sy = String(r.start).slice(0, 4), ey = String(r.end || "").slice(0, 4); return ey && ey !== sy ? `${sy}–${ey}` : sy; };
 
 async function getStore() { if (store) return store; try { store = await import("../js/milstore.js"); } catch { store = null; } return store; }
 
@@ -23,6 +25,7 @@ async function getStore() { if (store) return store; try { store = await import(
     const idx = await loadJSON("../data/wars/index.json");
     REGISTRY = (idx.conflicts || []).map(c => ({ ...c }));
   } catch (e) { showErr(root, e.message); return; }
+  try { WORLD = await loadJSON("../data/world-110m.json"); } catch { WORLD = null; }
   // 併入 Firestore mil_conflicts（若可用）
   const s = await getStore();
   if (s) { try {
@@ -71,11 +74,11 @@ function render() {
   root.innerHTML = `
     <div class="war-toolbar">
       <label class="war-switch">戰爭
-        <span class="rv-sel-wrap"><select class="mil-select" id="warSel">${REGISTRY.map(r => `<option value="${r.id}" ${r.id === CONF.id ? "selected" : ""}>${esc(r.name_zh)}（${String(r.start).slice(0,4)}）</option>`).join("")}</select></span>
+        <span class="rv-sel-wrap"><select class="mil-select" id="warSel">${REGISTRY.map(r => `<option value="${r.id}" ${r.id === CONF.id ? "selected" : ""}>${esc(r.name_zh)}（${yrRange(r)}）</option>`).join("")}</select></span>
       </label>
       <div class="mil-toggle">
         <button class="mil-btn ${view==='timeline'?'mil-btn-primary':''}" data-v="timeline">時序視圖</button>
-        <button class="mil-btn ${view==='map'?'mil-btn-primary':''}" data-v="map">海圖視圖</button>
+        <button class="mil-btn ${view==='map'?'mil-btn-primary':''}" data-v="map">地圖視圖</button>
       </div>
       <div class="war-legend">
         <span><i class="sw allied"></i>${esc(CONF.side_labels?.allied||"我方")}陣亡</span>
@@ -178,35 +181,37 @@ function drawTimeline(maxD) {
   if (!bs.length) host.innerHTML = `<p class="mil-meta" style="padding:2rem;text-align:center">篩選後沒有可顯示的戰役。</p>`;
 }
 
-// ── 海圖視圖 ─────────────────────────────────────────────
+// ── 地圖視圖（等距圓柱投影，實際海岸線 Natural Earth 110m）─────────
 const LON = l => (l < 0 ? l + 360 : l);
-const COAST = [
-  { pts: [[45,142],[41,140],[35,140],[34,136],[33,131],[31,131],[34,133],[36,138],[38,140],[41,141],[45,142]] },
-  { pts: [[41,126],[39,122],[35,120],[31,122],[24,118],[22,114],[21,110],[24,110],[30,112],[35,119],[41,123],[41,126]] },
-  { pts: [[18,120],[16,122],[12,124],[9,126],[6,125],[8,123],[11,122],[14,120],[18,120]] },
-  { pts: [[-1,131],[-3,138],[-6,144],[-9,148],[-10,150],[-8,146],[-5,140],[-2,133],[-1,131]] },
-  { pts: [[-11,142],[-13,142],[-17,146],[-20,149],[-20,140],[-16,137],[-12,136],[-11,142]] }
-];
 function drawMap() {
   const host = document.getElementById("chart");
   const bs = visibleBattles();
-  const W = Math.max(host.clientWidth || 900, 900), H = 560, pad = 34;
+  const W = Math.max(host.clientWidth || 900, 900), H = 560, pad = 40;
   if (!bs.length) { host.innerHTML = `<p class="mil-meta" style="padding:2rem;text-align:center">篩選後沒有可顯示的戰役。</p>`; return; }
+  // 依戰役範圍自動取景（等比例投影，x/y 每度像素相等）
   const lons = bs.map(b => LON(b.coord[1])), lats = bs.map(b => b.coord[0]);
-  const usePacific = CONF.id === "pacific_war";
-  const extraLon = usePacific ? COAST.flatMap(c => c.pts.map(p => p[1])) : [];
-  const extraLat = usePacific ? COAST.flatMap(c => c.pts.map(p => p[0])) : [];
-  let lonMin = Math.min(...lons, ...extraLon) - 4, lonMax = Math.max(...lons, ...extraLon) + 4;
-  let latMin = Math.min(...lats, ...extraLat) - 4, latMax = Math.max(...lats, ...extraLat) + 4;
+  const spanPad = Math.max(6, (Math.max(...lons) - Math.min(...lons)) * 0.25, (Math.max(...lats) - Math.min(...lats)) * 0.25);
+  let lonMin = Math.min(...lons) - spanPad, lonMax = Math.max(...lons) + spanPad;
+  let latMin = Math.min(...lats) - spanPad, latMax = Math.max(...lats) + spanPad;
   const scale = Math.min((W - 2 * pad) / (lonMax - lonMin), (H - 2 * pad) / (latMax - latMin));
   const offX = (W - scale * (lonMax - lonMin)) / 2, offY = (H - scale * (latMax - latMin)) / 2;
   const PX = lon => offX + (lon - lonMin) * scale, PY = lat => offY + (latMax - lat) * scale;
 
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "mil-svg", width: W, height: H });
-  svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, fill: "#0a1119" }));
+  svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, fill: "#0a1119" }));   // 海面
+
+  // 真實陸塊：只畫落在取景框內的環（效能 + 避免換日線接縫）
+  if (WORLD && WORLD.rings) {
+    const inView = (lon, lat) => lon >= lonMin - 5 && lon <= lonMax + 5 && lat >= latMin - 5 && lat <= latMax + 5;
+    for (const ring of WORLD.rings) {
+      let any = false;
+      const pts = ring.map(p => { const lon = LON(p[0]); if (inView(lon, p[1])) any = true; return `${PX(lon).toFixed(1)},${PY(p[1]).toFixed(1)}`; });
+      if (any) svg.appendChild(svgEl("polygon", { points: pts.join(" "), fill: "#16242f", stroke: "#28414f", "stroke-width": 0.8 }));
+    }
+  }
+  // 經緯格線
   for (let lo = Math.ceil(lonMin / 10) * 10; lo < lonMax; lo += 10) { svg.appendChild(svgEl("line", { x1: PX(lo), y1: 0, x2: PX(lo), y2: H, class: "mil-grid" })); const t = svgEl("text", { x: PX(lo), y: H - 6, class: "mil-axis-txt", "text-anchor": "middle" }); t.textContent = (lo > 180 ? lo - 360 : lo) + "°"; svg.appendChild(t); }
   for (let la = Math.ceil(latMin / 10) * 10; la < latMax; la += 10) { svg.appendChild(svgEl("line", { x1: 0, y1: PY(la), x2: W, y2: PY(la), class: "mil-grid" })); const t = svgEl("text", { x: 6, y: PY(la) - 3, class: "mil-axis-txt" }); t.textContent = la + "°"; svg.appendChild(t); }
-  if (usePacific) COAST.forEach(c => svg.appendChild(svgEl("polygon", { points: c.pts.map(p => `${PX(p[1])},${PY(p[0])}`).join(" "), fill: "#16232e", stroke: "#243642", "stroke-width": 1 })));
 
   const seq = [...bs].sort((a, b) => ms(a.start) - ms(b.start));
   svg.appendChild(svgEl("polyline", { points: seq.map(b => `${PX(LON(b.coord[1]))},${PY(b.coord[0])}`).join(" "), fill: "none", stroke: "var(--brass)", "stroke-width": 1.2, "stroke-dasharray": "5 5", opacity: 0.7 }));
@@ -216,7 +221,7 @@ function drawMap() {
     const r = 5 + Math.sqrt(total / maxTot) * 26, x = PX(LON(b.coord[1])), y = PY(b.coord[0]);
     const side = outcomeSide(b.outcome), col = side === "allied" ? "var(--allied)" : side === "enemy" ? "var(--japan)" : "var(--brass)";
     const g = svgEl("g", { class: "war-battle", tabindex: "0", role: "button" });
-    g.appendChild(svgEl("circle", { cx: x, cy: y, r, fill: col, "fill-opacity": 0.35, stroke: col, "stroke-width": 1.4 }));
+    g.appendChild(svgEl("circle", { cx: x, cy: y, r, fill: col, "fill-opacity": 0.4, stroke: col, "stroke-width": 1.6 }));
     if (b.turning_point) g.appendChild(svgEl("circle", { cx: x, cy: y, r: r + 3, fill: "none", stroke: "var(--brass)", "stroke-width": 1, "stroke-dasharray": "2 3" }));
     const flip = x > W - 130;
     const tx = svgEl("text", { x: flip ? x - r - 6 : x + r + 6, y: y + 4, class: "war-mlabel", "text-anchor": flip ? "end" : "start" }); tx.textContent = b.name_zh; g.appendChild(tx);
@@ -224,7 +229,7 @@ function drawMap() {
     g.addEventListener("keydown", e => { if (e.key === "Enter") showBattle(b.id); });
     svg.appendChild(g);
   });
-  const note = svgEl("text", { x: W - 8, y: 16, class: "mil-axis-txt", "text-anchor": "end" }); note.textContent = usePacific ? "示意陸塊，不具製圖精度" : "僅示意標記位置，未繪製陸塊"; svg.appendChild(note);
+  const note = svgEl("text", { x: W - 8, y: 16, class: "mil-axis-txt", "text-anchor": "end" }); note.textContent = WORLD ? "海岸線 Natural Earth 110m · 圓面積 ∝ 雙方陣亡總數" : "圓面積 ∝ 雙方陣亡總數"; svg.appendChild(note);
   host.innerHTML = ""; host.appendChild(svg);
 }
 

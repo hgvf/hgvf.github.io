@@ -103,3 +103,20 @@ export async function loadWeapons() {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 export const deleteWeapon = id => deleteDoc(doc(db(), "mil_weapons", id));
+
+// ── 現代武器實體 mil_weapons_modern（武器探索 Explorer；白名單前端寫）──
+export async function saveModernWeapons(weapons) {
+  const now = new Date().toISOString();
+  let n = 0;
+  for (const w of weapons) {
+    if (!w.id || !w.name_zh) throw new Error(`每筆需含 id/name_zh：${JSON.stringify(w).slice(0, 80)}`);
+    await setDoc(doc(db(), "mil_weapons_modern", slug(w.id)), { updated_at: now, data: w }, { merge: false });
+    n++;
+  }
+  return n;
+}
+export async function loadModernWeapons() {
+  const snap = await getDocs(collection(db(), "mil_weapons_modern"));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+export const deleteModernWeapon = id => deleteDoc(doc(db(), "mil_weapons_modern", id));

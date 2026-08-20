@@ -14,6 +14,9 @@ Usage:
     python scripts/publish.py --type news     --file news.json
     python scripts/publish.py --type earnings --file earnings.json
     python scripts/publish.py --type defense  --file defense.json   # -> mil_defense_daily
+    python scripts/publish.py --type conflict --file war.json        # -> mil_conflicts   (② 戰役消耗)
+    python scripts/publish.py --type arsenal  --file weapons.json    # -> mil_weapons     (③ 系統譜系)
+    python scripts/publish.py --type explorer --file modern.json     # -> mil_weapons_modern (① 武器探索)
 
 A scheduler can call this after producing the JSON, e.g.:
     claude ... > /tmp/defense.json && \
@@ -250,9 +253,54 @@ def defense_docs(events, now_iso):
         }
 
 
+# ─── Military war conflicts (mil_conflicts) + weapon pools ─────────────
+# Doc shapes mirror the front-end writers (mil/js/milstore.js) so scheduler
+# and hand-pasted data upsert identically:
+#   mil_conflicts/{id}        -> { id, updated_at, data:<conflict> }
+#   mil_weapons/{id}          -> { updated_at, data:<weapon> }   (arsenal ③)
+#   mil_weapons_modern/{id}   -> { updated_at, data:<weapon> }   (explorer ①)
+def conflicts_from(data):
+    if isinstance(data, dict) and isinstance(data.get("conflicts"), list):
+        return data["conflicts"]
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and data.get("id"):
+        return [data]
+    print('ERROR: expected a conflict object, a list, or {"conflicts":[...]}')
+    sys.exit(1)
+
+
+def conflict_docs(items, now_iso):
+    for c in items:
+        if not c.get("id"):
+            print(f"  skip (missing id): {json.dumps(c, ensure_ascii=False)[:80]}")
+            continue
+        yield slug(c["id"], 90), {"id": c["id"], "updated_at": now_iso, "data": c}
+
+
+def weapons_from(data):
+    if isinstance(data, dict) and isinstance(data.get("weapons"), list):
+        return data["weapons"]
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and data.get("id"):
+        return [data]
+    print('ERROR: expected a weapon object, a list, or {"weapons":[...]}')
+    sys.exit(1)
+
+
+def weapon_docs(items, now_iso):
+    for w in items:
+        if not w.get("id") or not w.get("name_zh"):
+            print(f"  skip (missing id/name_zh): {json.dumps(w, ensure_ascii=False)[:80]}")
+            continue
+        yield slug(w["id"], 90), {"updated_at": now_iso, "data": w}
+
+
 def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
-    ap.add_argument("--type", required=True, choices=["news", "earnings", "defense"])
+    ap.add_argument("--type", required=True,
+                    choices=["news", "earnings", "defense", "conflict", "arsenal", "explorer"])
     ap.add_argument("--file", required=True, help="Path to input JSON")
     ap.add_argument("--credentials", help="Path to Firebase service account JSON")
     args = ap.parse_args()
@@ -280,13 +328,20 @@ def main():
         "news": "supply_chain_news",
         "earnings": "earnings_calls",
         "defense": "mil_defense_daily",
+        "conflict": "mil_conflicts",
+        "arsenal": "mil_weapons",
+        "explorer": "mil_weapons_modern",
     }[args.type]
     if args.type == "news":
         docs = news_docs(as_list(data, "items"), now_iso)
     elif args.type == "earnings":
         docs = earnings_docs(as_list(data, "calls"), now_iso)
-    else:
+    elif args.type == "defense":
         docs = defense_docs(defense_events_from(data), now_iso)
+    elif args.type == "conflict":
+        docs = conflict_docs(conflicts_from(data), now_iso)
+    else:  # arsenal | explorer
+        docs = weapon_docs(weapons_from(data), now_iso)
 
     session = requests.Session()
     ok = 0
