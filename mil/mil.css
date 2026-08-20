@@ -114,7 +114,16 @@ body.mil .main-content {
 }
 
 /* ── 專區頁首 ── */
-.mil-hero { margin-bottom: 1.5rem; }
+.mil-hero { margin-bottom: 1.5rem; position: relative; }
+.mil-skill-link {
+  position: absolute; top: 0; right: 0;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--font-mono); font-size: 0.78rem;
+  padding: 0.35rem 0.75rem; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--panel-2); color: var(--dim);
+  transition: var(--transition);
+}
+.mil-skill-link:hover { border-color: var(--brass); color: var(--paper); background: var(--panel-3); }
 .mil-eyebrow {
   font-family: var(--font-mono);
   font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
@@ -537,6 +546,22 @@ body.mil .main-content {
 .dig-src { color: var(--allied); font-size: 0.8rem; } .dig-src:hover { color: var(--paper); }
 .dig-tag { font-size: 0.68rem; color: var(--muted); background: var(--ink-2); border-radius: 4px; padding: 0.1rem 0.4rem; }
 .dig-ent { font-size: 0.68rem; color: var(--brass); border: 1px solid var(--brass-d); border-radius: 4px; padding: 0.1rem 0.4rem; }
+
+/* ── ④ 合約分析 / ETL ── */
+.def-ana { margin-top: 1.2rem; }
+.def-ana .ana-ccy { min-width: 120px; }
+.ana-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 0.6rem; }
+.ana-card { background: var(--panel-2); border: 1px solid var(--rule); border-radius: var(--radius); padding: 0.9rem 1.1rem; }
+.ana-card.ana-wide { grid-column: 1 / -1; }
+.ana-card h3 { font-family: var(--font-head); font-size: 1.05rem; color: var(--paper); margin-bottom: 0.7rem; }
+.ana-card h3 span { font-size: 0.7rem; color: var(--muted); font-family: var(--font-mono); }
+.ana-bars { display: flex; flex-direction: column; gap: 0.4rem; }
+.ana-bar-row { display: grid; grid-template-columns: minmax(6rem, 40%) 1fr auto; align-items: center; gap: 0.6rem; }
+.ana-bar-label { font-size: 0.8rem; color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ana-bar-label i { color: var(--faint); font-style: normal; font-family: var(--font-mono); font-size: 0.9em; }
+.ana-bar-track { height: 12px; background: var(--ink); border-radius: 3px; overflow: hidden; }
+.ana-bar-fill { display: block; height: 100%; border-radius: 3px; min-width: 2px; }
+.ana-bar-val { font-family: var(--font-mono); font-size: 0.78rem; color: var(--paper); white-space: nowrap; }
 
 /* scrollbar */
 body.mil ::-webkit-scrollbar { width: 10px; height: 10px; }

@@ -13,6 +13,11 @@ Setup:
 Usage:
     python scripts/publish.py --type news     --file news.json
     python scripts/publish.py --type earnings --file earnings.json
+    python scripts/publish.py --type defense  --file defense.json   # -> mil_defense_daily
+
+A scheduler can call this after producing the JSON, e.g.:
+    claude ... > /tmp/defense.json && \
+    python scripts/publish.py --type defense --file /tmp/defense.json
 
 Credentials are resolved in this order:
     1. --credentials <path>
@@ -46,6 +51,15 @@ earnings: a list of calls, or {"calls": [...]}. Each call:
       ],
       "watch": ["future watch point", ...]  # optional; [] or missing = none
     }
+
+defense:  {"run": {...}, "events": [...]}, a bare list, or a single event.
+          The `run` block is ignored (audit only). Each event follows the
+          defense-acquisition schema; only `title` or `title_zh` is required,
+          and at least one official source is expected. Written to
+          mil_defense_daily as { _date, _country, _type, _score, updated_at,
+          data:<event> } — identical to the site's ADD JSON writer, so the doc
+          id (event_id, else country_date_contract/title) upserts cleanly no
+          matter which path published it.
 
 Docs use deterministic IDs so re-running is idempotent (upsert, not duplicate).
 """
@@ -123,8 +137,8 @@ def upsert(session, base, token, collection, doc_id, data):
 
 
 # ─── Payload builders ──────────────────────────────────────────────────
-def slug(text):
-    return re.sub(r"[^a-z0-9]+", "-", str(text).lower()).strip("-")[:60]
+def slug(text, n=60):
+    return re.sub(r"[^a-z0-9]+", "-", str(text).lower()).strip("-")[:n]
 
 
 def norm_sentiment(v):
@@ -194,9 +208,51 @@ def earnings_docs(calls, now_iso):
         }
 
 
+# ─── Military defense contracts (mil_defense_daily) ────────────────────
+# Doc shape MUST match the front-end writer (mil/js/milstore.js saveDefenseEvents)
+# so the page renders scheduler-written and hand-pasted events identically:
+#   { _date, _country, _type, _score, updated_at, data: <event> }
+# Accepts {"run":{...},"events":[...]}, a bare list, or a single event object.
+def defense_events_from(data):
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        if isinstance(data.get("events"), list):
+            return data["events"]
+        if data.get("event_id") or data.get("title") or data.get("title_zh"):
+            return [data]
+    print('ERROR: expected {"events":[...]}, a list, or a single event object')
+    sys.exit(1)
+
+
+def defense_docs(events, now_iso):
+    for e in events:
+        if not e.get("title") and not e.get("title_zh"):
+            print(f"  skip (missing title/title_zh): {json.dumps(e, ensure_ascii=False)[:80]}")
+            continue
+        contract_no = (e.get("contract") or {}).get("contract_number")
+        id_base = e.get("event_id") or "{}_{}_{}".format(
+            e.get("country", "xx"),
+            e.get("publication_date") or e.get("event_date") or "nodate",
+            contract_no or (e.get("title") or e.get("title_zh") or "")[:24],
+        )
+        try:
+            score = int(float(e.get("importance_score") or 0))
+        except (TypeError, ValueError):
+            score = 0
+        yield slug(id_base, 90), {
+            "_date": e.get("publication_date") or e.get("event_date") or "",
+            "_country": e.get("country", ""),
+            "_type": e.get("event_type", ""),
+            "_score": score,
+            "updated_at": now_iso,
+            "data": e,
+        }
+
+
 def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
-    ap.add_argument("--type", required=True, choices=["news", "earnings"])
+    ap.add_argument("--type", required=True, choices=["news", "earnings", "defense"])
     ap.add_argument("--file", required=True, help="Path to input JSON")
     ap.add_argument("--credentials", help="Path to Firebase service account JSON")
     args = ap.parse_args()
@@ -220,11 +276,17 @@ def main():
     base = f"https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents"
     now_iso = datetime.now(timezone.utc).isoformat()
 
-    collection = "supply_chain_news" if args.type == "news" else "earnings_calls"
+    collection = {
+        "news": "supply_chain_news",
+        "earnings": "earnings_calls",
+        "defense": "mil_defense_daily",
+    }[args.type]
     if args.type == "news":
         docs = news_docs(as_list(data, "items"), now_iso)
-    else:
+    elif args.type == "earnings":
         docs = earnings_docs(as_list(data, "calls"), now_iso)
+    else:
+        docs = defense_docs(defense_events_from(data), now_iso)
 
     session = requests.Session()
     ok = 0
