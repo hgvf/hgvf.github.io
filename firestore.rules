@@ -73,6 +73,11 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // Family display overrides (③ 系統譜系 改名／改國家), whitelist writes.
+    match /mil_families/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
 
     match /config/auth {
       allow read: if isSignedIn();

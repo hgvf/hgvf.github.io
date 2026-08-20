@@ -7,6 +7,7 @@ let CONF = null;          // 目前選中的戰爭（完整資料）
 let WORLD = null;         // 真實世界陸塊（Natural Earth 110m）
 let BYW = new Map(), BYB = new Map();
 let view = "timeline";
+let mapZoom = null;       // 地圖縮放視窗 {lonMin,lonMax,latMin,latMax}；null = 自動取景
 let selected = new Set(); // 顯示在 timeline/map 上的戰役 id
 let isAdmin = false;
 let store = null;
@@ -114,7 +115,7 @@ function render() {
     <section class="mil-panel" id="detailPanel"><p class="mil-meta">點選任一戰役 → 展開雙方消耗、戰略意義與參戰武器。點武器可看型號譜系與其他參戰戰役。</p></section>`;
 
   root.querySelector("#warSel").onchange = e => { const h = `#/?war=${e.target.value}`; history.replaceState(null, "", h); selectConflict(e.target.value); };
-  root.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { view = b.dataset.v; drawChart(maxD); root.querySelectorAll("[data-v]").forEach(x => x.classList.toggle("mil-btn-primary", x.dataset.v === view)); });
+  root.querySelectorAll("[data-v]").forEach(b => b.onclick = () => { view = b.dataset.v; mapZoom = null; drawChart(maxD); root.querySelectorAll("[data-v]").forEach(x => x.classList.toggle("mil-btn-primary", x.dataset.v === view)); });
   root.querySelectorAll("[data-f]").forEach(b => b.onclick = () => applyFilter(b.dataset.f));
   root.querySelectorAll("[data-bid]").forEach(c => c.onchange = () => { c.checked ? selected.add(c.dataset.bid) : selected.delete(c.dataset.bid); refreshChart(maxD); });
   if (isAdmin) wireImport();
@@ -133,6 +134,7 @@ function applyFilter(kind) {
 }
 function refreshChart(maxD) {
   root.querySelector("#warSelCount").textContent = `顯示 ${selected.size} / ${CONF.battles.length} 場`;
+  mapZoom = null;   // 篩選 / 換戰爭 → 回到自動取景
   drawChart(maxD);
 }
 function visibleBattles() { return CONF.battles.filter(b => selected.has(b.id)); }
@@ -185,31 +187,59 @@ function drawTimeline(maxD) {
 
 // ── 地圖視圖（等距圓柱投影，實際海岸線 Natural Earth 110m）─────────
 const LON = l => (l < 0 ? l + 360 : l);
+// 把一個陸塊環「連續化」再整體平移到取景中心附近：
+// 逐點消除 ±360 跳變（跨換日線也連續），再依環質心把整環移到最接近 center 的 360 倍數。
+// 這樣跨越 0°（本初子午線）的國家（西班牙、法國、西非…）不會被硬拆成橫跨全圖的假色帶。
+function fitRing(ring, center) {
+  const out = []; let prev = null;
+  for (const p of ring) {
+    let lo = p[0];
+    if (prev !== null) { while (lo - prev > 180) lo -= 360; while (lo - prev < -180) lo += 360; }
+    out.push([lo, p[1]]); prev = lo;
+  }
+  let mean = 0; for (const p of out) mean += p[0]; mean /= out.length;
+  const k = Math.round((center - mean) / 360);
+  if (k) for (const p of out) p[0] += k * 360;
+  return out;
+}
 function drawMap() {
   const host = document.getElementById("chart");
   const bs = visibleBattles();
   const W = Math.max(host.clientWidth || 900, 900), H = 560, pad = 40;
   if (!bs.length) { host.innerHTML = `<p class="mil-meta" style="padding:2rem;text-align:center">篩選後沒有可顯示的戰役。</p>`; return; }
-  // 依戰役範圍自動取景（等比例投影，x/y 每度像素相等）
+  // 依戰役範圍自動取景（等比例投影，x/y 每度像素相等）；mapZoom 存在時用縮放後視窗。
   const lons = bs.map(b => LON(b.coord[1])), lats = bs.map(b => b.coord[0]);
   const spanPad = Math.max(6, (Math.max(...lons) - Math.min(...lons)) * 0.25, (Math.max(...lats) - Math.min(...lats)) * 0.25);
-  let lonMin = Math.min(...lons) - spanPad, lonMax = Math.max(...lons) + spanPad;
-  let latMin = Math.min(...lats) - spanPad, latMax = Math.max(...lats) + spanPad;
+  const base = { lonMin: Math.min(...lons) - spanPad, lonMax: Math.max(...lons) + spanPad, latMin: Math.min(...lats) - spanPad, latMax: Math.max(...lats) + spanPad };
+  const win = mapZoom || base;
+  let { lonMin, lonMax, latMin, latMax } = win;
   const scale = Math.min((W - 2 * pad) / (lonMax - lonMin), (H - 2 * pad) / (latMax - latMin));
   const offX = (W - scale * (lonMax - lonMin)) / 2, offY = (H - scale * (latMax - latMin)) / 2;
   const PX = lon => offX + (lon - lonMin) * scale, PY = lat => offY + (latMax - lat) * scale;
+  const ILON = px => lonMin + (px - offX) / scale, ILAT = py => latMax - (py - offY) / scale;   // 反投影（螢幕→地理）
 
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "mil-svg", width: W, height: H });
   svg.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H, fill: "#0a1119" }));   // 海面
 
-  // 真實陸塊：只畫落在取景框內的環（效能 + 避免換日線接縫）
+  // 真實陸塊：整環畫出，交給 SVG clipPath 於「算圖階段」裁切到取景框。
+  // 用向量裁切（Sutherland–Hodgman）會替凹形/跨越換日線的大國補上沿邊界的假邊，
+  // 形成橫跨畫面的條紋；clipPath 是對「填色結果」做幾何裁切，不會產生假邊。
   if (WORLD && WORLD.rings) {
-    const inView = (lon, lat) => lon >= lonMin - 5 && lon <= lonMax + 5 && lat >= latMin - 5 && lat <= latMax + 5;
+    const defs = svgEl("defs", {});
+    const cp = svgEl("clipPath", { id: "mapclip" });
+    cp.appendChild(svgEl("rect", { x: 0, y: 0, width: W, height: H }));
+    defs.appendChild(cp); svg.appendChild(defs);
+    const land = svgEl("g", { "clip-path": "url(#mapclip)" });
+    const center = (lonMin + lonMax) / 2;
     for (const ring of WORLD.rings) {
-      let any = false;
-      const pts = ring.map(p => { const lon = LON(p[0]); if (inView(lon, p[1])) any = true; return `${PX(lon).toFixed(1)},${PY(p[1]).toFixed(1)}`; });
-      if (any) svg.appendChild(svgEl("polygon", { points: pts.join(" "), fill: "#16242f", stroke: "#28414f", "stroke-width": 0.8 }));
+      const r = fitRing(ring, center);
+      // 環自身 bbox 與取景框無交集 → 略過（效能）
+      let rl = 1e9, rr = -1e9, rb = 1e9, rt = -1e9;
+      for (const pt of r) { if (pt[0] < rl) rl = pt[0]; if (pt[0] > rr) rr = pt[0]; if (pt[1] < rb) rb = pt[1]; if (pt[1] > rt) rt = pt[1]; }
+      if (rr < lonMin || rl > lonMax || rt < latMin || rb > latMax) continue;
+      land.appendChild(svgEl("polygon", { points: r.map(p => `${PX(p[0]).toFixed(1)},${PY(p[1]).toFixed(1)}`).join(" "), fill: "#16242f", stroke: "#28414f", "stroke-width": 0.8 }));
     }
+    svg.appendChild(land);
   }
   // 經緯格線
   for (let lo = Math.ceil(lonMin / 10) * 10; lo < lonMax; lo += 10) { svg.appendChild(svgEl("line", { x1: PX(lo), y1: 0, x2: PX(lo), y2: H, class: "mil-grid" })); const t = svgEl("text", { x: PX(lo), y: H - 6, class: "mil-axis-txt", "text-anchor": "middle" }); t.textContent = (lo > 180 ? lo - 360 : lo) + "°"; svg.appendChild(t); }
@@ -232,7 +262,61 @@ function drawMap() {
     svg.appendChild(g);
   });
   const note = svgEl("text", { x: W - 8, y: 16, class: "mil-axis-txt", "text-anchor": "end" }); note.textContent = WORLD ? "海岸線 Natural Earth 110m · 圓面積 ∝ 雙方陣亡總數" : "圓面積 ∝ 雙方陣亡總數"; svg.appendChild(note);
+
+  // ── 縮放 / 平移 ───────────────────────────────────────────
+  // 縮放（滾輪／按鈕）：重算地理視窗後重繪 → 標記與文字維持固定像素大小，戰役會拉開。
+  // 平移（拖曳）：即時位移 viewBox（不重繪、保留指標捕捉），放開時把位移併入地理視窗再重繪。
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const spanLon = lonMax - lonMin, spanLat = latMax - latMin;
+  const MIN_LON = 2, MAX_LON = 350;          // 縮放上下限（經度跨度）
+  const zoomTo = (glon, glat, fx, fy, f) => {
+    const nLon = clamp(spanLon * f, MIN_LON, MAX_LON), nLat = nLon * (spanLat / spanLon);
+    let la0 = clamp(glat - fy * nLat, -89, 89 - nLat);
+    mapZoom = { lonMin: glon - fx * nLon, lonMax: glon - fx * nLon + nLon, latMin: la0, latMax: la0 + nLat };
+    drawMap();
+  };
+  const geoAt = (cx, cy) => { const r = svg.getBoundingClientRect(); return [ILON((cx - r.left) / r.width * W), ILAT((cy - r.top) / r.height * H)]; };
+  svg.addEventListener("wheel", e => {
+    e.preventDefault();
+    const [glon, glat] = geoAt(e.clientX, e.clientY);
+    zoomTo(glon, glat, (glon - lonMin) / spanLon, (glat - latMin) / spanLat, e.deltaY < 0 ? 0.82 : 1 / 0.82);
+  }, { passive: false });
+
+  let drag = null;
+  svg.addEventListener("pointerdown", e => {
+    if (e.target.closest(".war-battle")) return;   // 讓標記點擊維持可用
+    drag = { x: e.clientX, y: e.clientY, dx: 0, dy: 0 }; svg.setPointerCapture(e.pointerId); svg.style.cursor = "grabbing";
+  });
+  svg.addEventListener("pointermove", e => {
+    if (!drag) return;
+    const r = svg.getBoundingClientRect();
+    drag.dx = -(e.clientX - drag.x) / r.width * W; drag.dy = -(e.clientY - drag.y) / r.height * H;
+    svg.setAttribute("viewBox", `${drag.dx.toFixed(2)} ${drag.dy.toFixed(2)} ${W} ${H}`);
+  });
+  const endDrag = e => {
+    if (!drag) return; const d = drag; drag = null; svg.style.cursor = "grab";
+    try { svg.releasePointerCapture(e.pointerId); } catch { }
+    if (d.dx || d.dy) {
+      const dLon = d.dx / scale, dLat = -d.dy / scale;
+      mapZoom = { lonMin: lonMin + dLon, lonMax: lonMax + dLon, latMin: latMin + dLat, latMax: latMax + dLat };
+      drawMap();
+    }
+  };
+  svg.addEventListener("pointerup", endDrag); svg.addEventListener("pointercancel", endDrag);
+  svg.style.cursor = "grab"; svg.style.touchAction = "none";
+
+  host.style.position = "relative";
   host.innerHTML = ""; host.appendChild(svg);
+  // 縮放按鈕 + 提示
+  const cx = (lonMin + lonMax) / 2, cy = (latMin + latMax) / 2;
+  const ctrl = document.createElement("div"); ctrl.className = "war-map-ctrl";
+  ctrl.innerHTML = `<button data-z="in" title="放大" aria-label="放大">＋</button><button data-z="out" title="縮小" aria-label="縮小">－</button><button data-z="reset" title="重設視野" aria-label="重設視野">⤢</button>`;
+  ctrl.querySelector('[data-z="in"]').onclick = () => zoomTo(cx, cy, 0.5, 0.5, 0.6);
+  ctrl.querySelector('[data-z="out"]').onclick = () => zoomTo(cx, cy, 0.5, 0.5, 1 / 0.6);
+  ctrl.querySelector('[data-z="reset"]').onclick = () => { mapZoom = null; drawMap(); };
+  host.appendChild(ctrl);
+  const tip = document.createElement("div"); tip.className = "war-map-tip mil-meta"; tip.textContent = "滾輪縮放 · 拖曳平移" + (mapZoom ? " · 已縮放" : "");
+  host.appendChild(tip);
 }
 
 // ── 戰役詳情 ─────────────────────────────────────────────
