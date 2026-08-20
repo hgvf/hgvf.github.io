@@ -392,6 +392,11 @@ body.mil .main-content {
 .war-mlabel { font-family: var(--font-body); font-size: 0.74rem; fill: var(--paper); paint-order: stroke; stroke: #0a1119; stroke-width: 3px; }
 .war-battle { cursor: pointer; }
 .war-battle:hover rect, .war-battle:hover circle { opacity: 1; filter: brightness(1.15); }
+/* 地圖縮放控制 */
+.war-map-ctrl { position: absolute; top: 30px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 2; }
+.war-map-ctrl button { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; cursor: pointer; color: var(--dim); background: rgba(12,20,28,0.82); border: 1px solid var(--rule-2); border-radius: var(--radius-sm); backdrop-filter: blur(2px); transition: var(--transition); }
+.war-map-ctrl button:hover { color: var(--brass); border-color: var(--brass); background: rgba(20,32,44,0.92); }
+.war-map-tip { position: absolute; left: 10px; bottom: 10px; z-index: 2; background: rgba(12,20,28,0.7); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0.2rem 0.5rem; font-size: 0.68rem; pointer-events: none; }
 .war-battle:focus { outline: none; }
 .war-battle:focus rect, .war-battle:focus circle { stroke: var(--brass); stroke-width: 2; }
 
