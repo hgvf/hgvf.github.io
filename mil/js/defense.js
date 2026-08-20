@@ -1,7 +1,7 @@
 // defense.js — ⑦ 每日軍武動態。讀 mil_defense_daily（Firestore），
 // 白名單使用者可用「ADD JSON」貼上 skill 產出的 run JSON 發布。
 // 呈現：中文為主、英文原文為輔；篩選 / chips / 詳情 modal / 統計。
-import { esc, money, fmtDate, loadJSON } from "../js/milcore.js";
+import { esc, money, fmtDate, loadJSON, svgEl } from "../js/milcore.js";
 // milstore（Firebase）動態載入：若 SDK 無法載入，仍以示意資料唯讀呈現。
 let store = null;
 async function getStore() {
@@ -42,13 +42,13 @@ async function loadSample() {
 
 async function refresh() {
   const s = await getStore();
-  if (!s) { await loadSample(); renderShell(); applyFilters(); return; }
+  if (!s) { await loadSample(); renderShell(); applyFilters(); renderAnalytics(); return; }
   try {
     META = await s.loadDefenseEvents();
     if (META.length) { EVENTS = META.map(m => ({ __id: m.id, ...m.data })); usingSample = false; }
     else { await loadSample(); }
   } catch { await loadSample(); }
-  renderShell(); applyFilters();
+  renderShell(); applyFilters(); renderAnalytics();
 }
 
 function renderShell() {
@@ -81,7 +81,9 @@ function renderShell() {
     </div>
     <div class="def-chips" id="chips"></div>
     <div class="mil-panel-head" style="margin-top:0.8rem"><h2 class="mil-panel-title">事件</h2><span class="mil-panel-note" id="count"></span></div>
-    <div class="def-list" id="list"></div>`;
+    <div class="def-list" id="list"></div>
+
+    <section class="mil-panel def-ana" id="analytics"></section>`;
 
   // filters options
   const fc = root.querySelector("#fCountry"); fc.innerHTML = `<option value="">全部國家</option>` + [...new Set(EVENTS.map(e => e.country))].filter(Boolean).sort().map(c => `<option value="${c}">${cZ(c)}</option>`).join("");
@@ -206,4 +208,124 @@ function openDetail(e) {
   modal.querySelector(".mil-modal-close").onclick = close;
   modal.onclick = ev => { if (ev.target === modal) close(); };
   document.addEventListener("keydown", function esc2(ev) { if (ev.key === "Escape") { close(); document.removeEventListener("keydown", esc2); } });
+}
+
+// ── ETL / 分析（就地彙整 Firestore 內部資料）──────────────────────────
+// 全部從已載入的 EVENTS 就地計算（in-memory），不額外讀 Firestore。
+const CCY_SYM = { USD: "$", TWD: "NT$", JPY: "¥", KRW: "₩", EUR: "€", GBP: "£", AUD: "A$" };
+let anaCcy = null;
+function fmtAmt(v, ccy) {
+  if (v == null) return "—";
+  const s = CCY_SYM[ccy] || (ccy ? ccy + " " : ""), a = Math.abs(v);
+  if (a >= 1e9) return s + (v / 1e9).toFixed(2) + "B";
+  if (a >= 1e6) return s + (v / 1e6).toFixed(1) + "M";
+  if (a >= 1e3) return s + (v / 1e3).toFixed(1) + "K";
+  return s + Number(v).toLocaleString();
+}
+function contractorKey(e) {
+  const c = e.contractor || {};
+  const t = listedTicker(c);
+  return { name: c.name || c.name_raw || "未列承包商", ticker: t ? t.t : null };
+}
+function hbars(rows, fmt, color = "var(--brass)") {
+  if (!rows.length) return `<p class="mil-meta">無資料</p>`;
+  const max = Math.max(...rows.map(r => r.value), 1);
+  return `<div class="ana-bars">${rows.map(r => `
+    <div class="ana-bar-row">
+      <span class="ana-bar-label" title="${esc(r.label)}">${esc(r.label)}${r.sub ? ` <i>${esc(r.sub)}</i>` : ""}</span>
+      <span class="ana-bar-track"><span class="ana-bar-fill" style="width:${(r.value / max * 100).toFixed(1)}%;background:${r.color || color}"></span></span>
+      <span class="ana-bar-val">${fmt(r.value)}</span>
+    </div>`).join("")}</div>`;
+}
+
+function renderAnalytics() {
+  const host = document.getElementById("analytics");
+  if (!host) return;
+  const E = EVENTS;
+  if (!E.length) { host.innerHTML = `<div class="mil-panel-head"><h2 class="mil-panel-title">合約分析</h2></div><p class="mil-meta">尚無資料。</p>`; return; }
+
+  // 幣別（金額類彙整依幣別，不做 FX 換算）
+  const ccyCount = {};
+  E.forEach(e => { const c = e.contract?.currency; if (c) ccyCount[c] = (ccyCount[c] || 0) + 1; });
+  const currencies = Object.keys(ccyCount).sort((a, b) => ccyCount[b] - ccyCount[a]);
+  if (!anaCcy || !currencies.includes(anaCcy)) anaCcy = currencies[0] || "USD";
+  const inCcy = E.filter(e => (e.contract?.currency || "USD") === anaCcy && e.contract?.amount != null);
+
+  // 彙整
+  const sum = arr => arr.reduce((s, x) => s + x, 0);
+  const totalByCcy = currencies.map(c => ({ c, v: sum(E.filter(e => e.contract?.currency === c).map(e => e.contract?.amount || 0)) }));
+  const contractors = new Map();
+  inCcy.forEach(e => { const k = contractorKey(e); const cur = contractors.get(k.name) || { value: 0, n: 0, ticker: k.ticker }; cur.value += e.contract.amount; cur.n++; cur.ticker = cur.ticker || k.ticker; contractors.set(k.name, cur); });
+  const topContractors = [...contractors.entries()].map(([name, o]) => ({ label: name, value: o.value, sub: o.ticker ? o.ticker : (o.n + " 筆"), color: o.ticker ? "var(--allied)" : "var(--brass)" })).sort((a, b) => b.value - a.value).slice(0, 10);
+
+  const byCountry = {};
+  inCcy.forEach(e => { const c = e.country || "?"; (byCountry[c] ||= { v: 0, n: 0 }); byCountry[c].v += e.contract.amount; byCountry[c].n++; });
+  const countryRows = Object.entries(byCountry).map(([c, o]) => ({ label: cZ(c), value: o.v, sub: o.n + " 筆" })).sort((a, b) => b.value - a.value);
+
+  const byType = {};
+  E.forEach(e => { const t = e.event_type || "other"; byType[t] = (byType[t] || 0) + 1; });
+  const typeRows = Object.entries(byType).map(([t, n]) => ({ label: tZ(t), value: n })).sort((a, b) => b.value - a.value);
+
+  const byCat = {};
+  E.forEach(e => (e.programs || []).forEach(p => { const c = p.category || "unknown"; byCat[c] = (byCat[c] || 0) + 1; }));
+  const catRows = Object.entries(byCat).map(([c, n]) => ({ label: c, value: n })).sort((a, b) => b.value - a.value).slice(0, 10);
+
+  // 上市 vs 非上市（金額）
+  const listedVal = sum(inCcy.filter(isListed).map(e => e.contract.amount));
+  const privVal = sum(inCcy.filter(e => !isListed(e)).map(e => e.contract.amount));
+
+  // 月度趨勢
+  const byMonth = {};
+  inCcy.forEach(e => { const m = (e.publication_date || e.event_date || "").slice(0, 7); if (m) byMonth[m] = (byMonth[m] || 0) + e.contract.amount; });
+  const months = Object.keys(byMonth).sort();
+
+  const distinctContractors = contractors.size;
+  const distinctPrograms = new Set(E.flatMap(e => (e.programs || []).map(p => p.program_id || p.canonical_name || p.name_zh).filter(Boolean))).size;
+
+  host.innerHTML = `
+    <div class="mil-panel-head">
+      <h2 class="mil-panel-title">合約分析 · ETL</h2>
+      <label class="mil-meta">金額幣別
+        <span class="rv-sel-wrap"><select class="mil-select ana-ccy" id="anaCcy">${currencies.map(c => `<option value="${c}" ${c === anaCcy ? "selected" : ""}>${c}（${ccyCount[c]}）</option>`).join("")}</select></span>
+      </label>
+    </div>
+    <p class="mil-meta" style="margin:-0.4rem 0 0.8rem">就地彙整目前載入的 ${E.length} 筆事件；金額類統計依幣別分開，不做匯率換算（<b>ceiling ≠ 實支</b>）。</p>
+
+    <div class="mil-stats">
+      <div class="mil-stat"><div class="label">事件數</div><div class="value">${E.length}</div></div>
+      ${totalByCcy.slice(0, 2).map(t => `<div class="mil-stat"><div class="label">合約總額 ${t.c}</div><div class="value brass">${fmtAmt(t.v, t.c)}</div></div>`).join("")}
+      <div class="mil-stat"><div class="label">承包商數</div><div class="value allied">${distinctContractors}</div></div>
+      <div class="mil-stat"><div class="label">計畫數</div><div class="value">${distinctPrograms}</div></div>
+    </div>
+
+    <div class="ana-grid">
+      <div class="ana-card"><h3>承包商合約總值 Top 10 <span>（${anaCcy}）</span></h3>${hbars(topContractors, v => fmtAmt(v, anaCcy))}</div>
+      <div class="ana-card"><h3>國別合約總額 <span>（${anaCcy}）</span></h3>${hbars(countryRows, v => fmtAmt(v, anaCcy), "var(--allied)")}</div>
+      <div class="ana-card"><h3>事件類型分布 <span>（筆數）</span></h3>${hbars(typeRows, v => v + " 筆", "var(--civil)")}</div>
+      <div class="ana-card"><h3>計畫類別分布 <span>（筆數）</span></h3>${hbars(catRows, v => v + " 筆", "var(--ok)")}</div>
+      <div class="ana-card ana-wide"><h3>月度合約金額趨勢 <span>（${anaCcy}）</span></h3><div id="anaTrend"></div></div>
+      <div class="ana-card"><h3>上市 vs 非上市 合約值 <span>（${anaCcy}）</span></h3>
+        ${hbars([{ label: "上市承包商", value: listedVal, color: "var(--allied)" }, { label: "非上市 / 政府", value: privVal, color: "var(--muted)" }], v => fmtAmt(v, anaCcy))}
+      </div>
+    </div>`;
+
+  host.querySelector("#anaCcy").onchange = e => { anaCcy = e.target.value; renderAnalytics(); };
+  drawTrend(document.getElementById("anaTrend"), months.map(m => ({ m, v: byMonth[m] })), anaCcy);
+}
+
+function drawTrend(host, series, ccy) {
+  if (!host) return;
+  if (series.length < 2) { host.innerHTML = `<p class="mil-meta">資料月份不足以繪製趨勢（需 ≥ 2 個月）。</p>`; return; }
+  const W = Math.max(host.clientWidth || 600, 480), H = 180, padL = 52, padR = 14, padT = 14, padB = 30;
+  const max = Math.max(...series.map(s => s.v), 1);
+  const X = i => padL + (i / (series.length - 1)) * (W - padL - padR);
+  const Y = v => H - padB - (v / max) * (H - padT - padB);
+  const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "mil-svg", width: W, height: H });
+  [0, 0.5, 1].forEach(g => { svg.appendChild(svgEl("line", { x1: padL, y1: Y(max * g), x2: W - padR, y2: Y(max * g), class: "mil-grid" })); const t = svgEl("text", { x: padL - 6, y: Y(max * g) + 3, class: "mil-axis-txt", "text-anchor": "end" }); t.textContent = fmtAmt(max * g, ccy); svg.appendChild(t); });
+  svg.appendChild(svgEl("polyline", { points: series.map((s, i) => `${X(i)},${Y(s.v)}`).join(" "), fill: "none", stroke: "var(--brass)", "stroke-width": 1.8 }));
+  series.forEach((s, i) => {
+    svg.appendChild(svgEl("circle", { cx: X(i), cy: Y(s.v), r: 3, fill: "var(--brass)" }));
+    if (i % Math.ceil(series.length / 8) === 0 || i === series.length - 1) { const t = svgEl("text", { x: X(i), y: H - padB + 16, class: "mil-axis-txt", "text-anchor": "middle" }); t.textContent = s.m.slice(2); svg.appendChild(t); }
+  });
+  host.innerHTML = ""; host.appendChild(svg);
 }
