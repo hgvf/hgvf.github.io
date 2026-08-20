@@ -116,7 +116,7 @@ export function mountHighlight(opts) {
       <label class="hl-ctl">區間
         <span class="rv-sel-wrap"><select class="rv-select" data-role="hl-range"></select></span>
       </label>
-      <button class="hl-btn" data-role="hl-update">↻ 更新股價</button>
+      <button class="hl-btn" data-role="hl-update" title="更新所有收藏新聞的相關個股股價">↻ 更新全部股價</button>
       <button class="hl-btn hl-btn-ghost" data-role="hl-remove" title="從重點移除">移除此則</button>
       <span class="hl-status" data-role="hl-status"></span>
     </div>
@@ -187,26 +187,39 @@ export function mountHighlight(opts) {
     }
   }
 
+  // Every unique ticker across ALL collected news items.
+  function allSymbols() {
+    const set = new Set();
+    collected().forEach(it => tickersOf(it).forEach(s => { if (s) set.add(s); }));
+    return [...set];
+  }
+
+  // One press refreshes the price series for every collected news item's stocks
+  // (not just the currently-selected one). Symbols are fetched in chunks of 25
+  // (the worker's per-request cap) and merged into the cache.
   async function updatePrices() {
-    const it = currentItem();
-    if (!it) return;
-    const syms = tickersOf(it);
-    if (!syms.length) { setStatus("此新聞沒有相關股票代號", "warn"); return; }
+    const syms = allSymbols();
+    if (!syms.length) { setStatus("收藏的新聞都沒有相關股票代號", "warn"); return; }
     updateBtn.disabled = true;
-    setStatus("更新中…");
+    setStatus(`更新中… (${syms.length} 檔)`);
     try {
-      const data = await fetchSeries(syms, range);
       const cache = readPriceCache();
       const now = Date.now();
       let n = 0;
-      for (const sym of syms) {
-        const d = data[sym];
-        if (d && Array.isArray(d.series) && d.series.length) {
-          cache[sym] = { ...d, range, fetched_at: now };
-          n++;
+      const CHUNK = 25;
+      for (let i = 0; i < syms.length; i += CHUNK) {
+        const batch = syms.slice(i, i + CHUNK);
+        const data = await fetchSeries(batch, range);
+        for (const sym of batch) {
+          const d = data[sym];
+          if (d && Array.isArray(d.series) && d.series.length) {
+            cache[sym] = { ...d, range, fetched_at: now };
+            n++;
+          }
         }
+        writePriceCache(cache);              // persist progress after each chunk
+        setStatus(`更新中… ${Math.min(i + CHUNK, syms.length)}/${syms.length}`);
       }
-      writePriceCache(cache);
       renderBody();
       setStatus(n ? `已更新 ${n}/${syms.length} 檔 · ${new Date(now).toLocaleTimeString("en-GB")}`
                   : "查無股價資料（來源可能暫時無回應）", n ? "ok" : "warn");
