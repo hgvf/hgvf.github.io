@@ -10,9 +10,11 @@
 
 載入時：**靜態基底 ∪ Firestore（Firestore 同 id 覆蓋基底）**。
 
+> **這三頁一律用「方式 A：頁面 ADD JSON」新增**（登入白名單帳號後，頁面上方會出現「匯入 / 新增…（ADD JSON）」面板）。方式 B（`publish.py`）為選用的排程/CLI 自動化路徑，本專案不用於這三頁。
+
 ---
 
-## 方式 A — 頁面「ADD JSON」按鈕（手動、即時）
+## 方式 A — 頁面「ADD JSON」面板（手動、即時、預設）
 
 1. 用**白名單帳號**在頁面右上角「登入」（email 需在 Firestore `config/auth.allowed_emails`）。
 2. 出現「匯入 / 新增…（ADD JSON）」面板 → 貼 JSON → 發布。前端用你的登入身分直接寫 Firestore。
@@ -20,7 +22,7 @@
 
 > 三頁的 ADD JSON 接受 `{"weapons":[…]}` / `{"conflicts":[…]}`（或戰爭單一物件）/ 陣列 / 單一物件。
 
-## 方式 B — `scripts/publish.py`（排程 / CLI、自動、免登入）
+## 方式 B（選用）— `scripts/publish.py`（排程 / CLI、自動、免登入）
 
 用**服務帳號** server-side 寫入（繞過規則，不需白名單），適合排程：
 

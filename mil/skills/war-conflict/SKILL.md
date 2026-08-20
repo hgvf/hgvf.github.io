@@ -6,7 +6,8 @@ description: 給一個戰役或戰爭名稱，從公開來源整理成「戰役�
 # war-conflict-research
 
 輸入一個**戰役**（例：`淞滬會戰`）或**戰爭**（例：`太平洋戰爭`），輸出一個**自足的戰爭物件**，
-可貼進 War 頁「ADD JSON」或 `python scripts/publish.py --type conflict --file x.json` 寫入 `mil_conflicts`。
+**貼進 War 頁的「ADD JSON」面板**即寫入 `mil_conflicts`。本專案一律用頁面 ADD JSON 新增
+（登入白名單帳號後才會出現該面板），不使用 publish.py。
 
 ## 0. 最終輸出契約（嚴格）
 

@@ -37,6 +37,8 @@ async function getStore() { if (store) return store; try { store = await import(
       if (i >= 0) REGISTRY[i] = entry; else REGISTRY.push(entry);
     });
   } catch { /* ignore */ } }
+  // 認證：直接註冊 onAuth（可靠），登入白名單後顯示並接上 ADD JSON。
+  if (s) s.onAuth(({ isAdmin: a }) => { isAdmin = a; const p = document.getElementById("warImport"); if (p) { p.hidden = !a; if (a) wireImport(); } });
   REGISTRY.sort((a, b) => String(a.start).localeCompare(String(b.start)));
   const wanted = new URLSearchParams(location.hash.split("?")[1] || "").get("war");
   await selectConflict(wanted && REGISTRY.find(r => r.id === wanted) ? wanted : REGISTRY[0]?.id);
