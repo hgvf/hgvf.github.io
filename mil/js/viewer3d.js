@@ -7,6 +7,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const COL = {
   allied: 0x6fa8c7, brass: 0xc9a227, panel: 0x161c24, rule: 0x2c3743, paper: 0xe6e0d2,
 };
+const clamp01 = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
 export class WeaponViewer {
   constructor(container) {
@@ -105,17 +106,18 @@ export class WeaponViewer {
     const axAt = f => f * L;   // 0..1 (nose→tail measured from nose) → x 位置（x 由尾0到鼻L）
     const xFromAxial = f => L - f * L;
 
-    // 彈翼
+    // 彈翼（中段）
     if (s.wings) {
-      this._ring(s.wings.count || 4, s.wings, xFromAxial(s.wings.axial ?? 0.5), R, finMat, s.wings.sweep || 0.2, "wing");
+      this._ring(s.wings.count || 4, s.wings, xFromAxial(clamp01(s.wings.axial ?? 0.5, 0.2, 0.7)), R, finMat, s.wings.sweep || 0.25, "wing");
     }
-    // 尾翼
+    // 尾翼（貼近尾端但仍坐落於彈體上）
     if (s.tailFins) {
-      this._ring(s.tailFins.count || 4, s.tailFins, R * 0.9 + (s.tailFins.chord || 0.4) / 2, R, finMat, 0.15, "tail");
-      if (s.tailFins.strakes) this._ring(s.tailFins.count || 4, { span: (s.tailFins.span||0.5)*0.5, chord: (s.tailFins.chord||0.4)*1.6 }, xFromAxial(0.6), R, finMat, 0.05, "strake");
+      const tailChord = s.tailFins.chord || R * 2;
+      this._ring(s.tailFins.count || 4, s.tailFins, Math.max(tailChord * 0.6, R * 1.2), R, finMat, 0.15, "tail");
+      if (s.tailFins.strakes) this._ring(s.tailFins.count || 4, { span: (s.tailFins.span || R * 2) * 0.6, chord: (s.tailFins.chord || R * 2) * 1.6 }, xFromAxial(0.62), R, finMat, 0.05, "strake");
     }
     // 前翼 / 控制面
-    if (s.canards) this._ring(4, s.canards, xFromAxial(s.canards.axial ?? 0.2), R, finMat, 0.1, "canard");
+    if (s.canards) this._ring(4, s.canards, xFromAxial(clamp01(s.canards.axial ?? 0.2, 0.08, 0.35)), R, finMat, 0.1, "canard");
 
     // 衝壓/渦扇進氣道
     if (s.intake) this._intakes(s.intake, xFromAxial(0.55), R, L, darkMat);
@@ -128,8 +130,8 @@ export class WeaponViewer {
       boost.position.x = -bL / 2 - 0.02;
       this.model.add(boost);
       this._targets.set(boost, { base: boost.position.clone(), explode: boost.position.clone().add(new THREE.Vector3(-bL * 1.1, 0, 0)) });
-      // 助推尾翼
-      this._ring(4, { span: bR * 1.6, chord: bL * 0.35 }, -bL * 0.85, bR, finMat, 0.1, "bfin", boost);
+      // 助推尾翼（在助推段本體上）
+      this._ring(4, { span: bR * 2.2, chord: bL * 0.3 }, -bL * 0.35, bR, finMat, 0.1, "bfin", boost);
     }
 
     // 標註熱點
@@ -147,44 +149,45 @@ export class WeaponViewer {
     this.setExploded(false);
   }
 
+  // 全部尺寸以「本體半徑 R」為基準並夾限，任何輸入都能得到可辨識、不跑版的翼面。
+  // fin.span 視為全展長（tip-to-tip 概念）→ 單片徑向長 reach = clamp(span/2, 0.5R, maxReach)。
   _ring(count, fin, x, R, mat, sweep, kind, parent) {
-    const span = fin.span || 0.5, chord = fin.chord || 0.4;
-    const geo = new THREE.BoxGeometry(chord, span, 0.02);
-    // 後掠：以簡單平行四邊形近似（沿 x 位移頂點）
-    const pos = geo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const y = pos.getY(i);
-      pos.setX(i, pos.getX(i) - (y > 0 ? 0 : 0) - Math.abs(y) * sweep);
-    }
+    const cl = (v, a, b) => Math.max(a, Math.min(b, v));
+    const maxReach = kind === "wing" ? R * 3.4 : kind === "canard" ? R * 1.6 : R * 2.6;
+    // fin.span = 全展長(tip-to-tip)；單片刀面長 = span/2 - R（從本體表面到翼尖），夾限。
+    const reach = cl((fin.span || R * 2) * 0.5 - R, R * 0.4, maxReach);
+    const chord = cl(fin.chord || R * 2, R * 0.5, R * 6);             // 弦長（沿彈體）
+    const thick = Math.max(0.012, R * 0.06);
+    const geo = new THREE.BoxGeometry(chord, reach, thick);
+    // 後掠：徑向越外，後緣越往 -X（真正的平行四邊形剪切，非 no-op）
+    const pos = geo.attributes.position, yMin = -reach / 2;
+    for (let i = 0; i < pos.count; i++) pos.setX(i, pos.getX(i) - (pos.getY(i) - yMin) * sweep);
     geo.computeVertexNormals();
     const host = parent || this.model;
     for (let i = 0; i < count; i++) {
       const ang = (i / count) * Math.PI * 2 + (count === 4 ? Math.PI / 4 : 0);
       const fmesh = new THREE.Mesh(geo, mat);
-      fmesh.position.set(x, 0, 0);
+      fmesh.position.set(x, R + reach / 2, 0);   // 內緣貼合本體表面
       const pivot = new THREE.Group();
       pivot.add(fmesh);
-      fmesh.position.y = span / 2 + R * 0.85;
-      pivot.rotation.x = ang;
+      pivot.rotation.x = ang;                          // 繞彈體軸(X)環狀分佈
       host.add(pivot);
-      if (kind === "wing" || kind === "tail" || kind === "canard") {
-        this._targets.set(pivot, { base: pivot.scale.clone(), explode: pivot.scale.clone() });
-      }
     }
   }
 
   _intakes(kind, x, R, L, mat) {
+    const len = Math.min(L * 0.2, R * 5);              // 進氣道長度夾限，避免變成大平板
     const mk = (y, z) => {
-      const g = new THREE.BoxGeometry(L * 0.28, R * 0.8, R * 0.9);
+      const g = new THREE.BoxGeometry(len, R * 0.7, R * 0.8);
       const m = new THREE.Mesh(g, mat);
       m.position.set(x, y, z);
       this.model.add(m);
     };
-    if (kind === "belly") mk(-R * 1.1, 0);
-    else if (kind === "dorsal") mk(R * 1.1, 0);
-    else if (kind === "side2") { mk(0, R * 1.1); mk(0, -R * 1.1); }
-    else if (kind === "side") mk(0, R * 1.1);
-    else if (kind === "nose") { /* 頭錐進氣：加一個環 */
+    if (kind === "belly") mk(-R * 1.05, 0);
+    else if (kind === "dorsal") mk(R * 1.05, 0);
+    else if (kind === "side2") { mk(0, R * 1.05); mk(0, -R * 1.05); }
+    else if (kind === "side") mk(0, R * 1.05);
+    else if (kind === "nose") {
       const g = new THREE.TorusGeometry(R * 0.55, R * 0.18, 12, 24);
       const m = new THREE.Mesh(g, mat); m.position.x = L - R * 0.3; m.rotation.y = Math.PI / 2; this.model.add(m);
     }
