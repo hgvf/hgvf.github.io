@@ -80,62 +80,16 @@ export class WeaponViewer {
     const darkMat = new THREE.MeshStandardMaterial({ color: bodyColor.clone().multiplyScalar(0.7), metalness: 0.6, roughness: 0.5 });
     const finMat = new THREE.MeshStandardMaterial({ color: bodyColor.clone().multiplyScalar(0.85), metalness: 0.4, roughness: 0.55, side: THREE.DoubleSide });
 
-    // 座標：沿 X 軸擺放，機鼻在 +X。0 = 機鼻尖，L = 尾端。
-    const noseLen = R * (s.nose === "cone" ? 3.2 : s.nose === "chisel" ? 2.2 : s.nose === "blunt" ? 0.9 : 2.6);
-    const bodyLen = Math.max(0.1, L - noseLen);
-
-    // 本體
-    const bodyGeo = new THREE.CylinderGeometry(R, R, bodyLen, s.faceted ? 8 : 28);
-    bodyGeo.rotateZ(Math.PI / 2);
-    const body = new THREE.Mesh(bodyGeo, mat);
-    body.position.x = L - noseLen - bodyLen / 2;   // 尾端在 x=0 側
-    this.model.add(body);
-
-    // 機鼻
-    let noseGeo;
-    if (s.nose === "blunt") { noseGeo = new THREE.SphereGeometry(R, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2); noseGeo.rotateZ(-Math.PI / 2); }
-    else { noseGeo = new THREE.ConeGeometry(R, noseLen, s.faceted ? 8 : 26); noseGeo.rotateZ(-Math.PI / 2); }
-    const nose = new THREE.Mesh(noseGeo, mat);
-    nose.position.x = L - noseLen / 2;
-    this.model.add(nose);
-
-    // 尾焰噴嘴
-    const nozGeo = new THREE.CylinderGeometry(R * 0.75, R * 0.55, R * 0.6, 20); nozGeo.rotateZ(Math.PI / 2);
-    const noz = new THREE.Mesh(nozGeo, darkMat); noz.position.x = -R * 0.3; this.model.add(noz);
-
-    const axAt = f => f * L;   // 0..1 (nose→tail measured from nose) → x 位置（x 由尾0到鼻L）
-    const xFromAxial = f => L - f * L;
-
-    // 彈翼（中段）
-    if (s.wings) {
-      this._ring(s.wings.count || 4, s.wings, xFromAxial(clamp01(s.wings.axial ?? 0.5, 0.2, 0.7)), R, finMat, s.wings.sweep || 0.25, "wing");
-    }
-    // 尾翼（貼近尾端但仍坐落於彈體上）
-    if (s.tailFins) {
-      const tailChord = s.tailFins.chord || R * 2;
-      this._ring(s.tailFins.count || 4, s.tailFins, Math.max(tailChord * 0.6, R * 1.2), R, finMat, 0.15, "tail");
-      if (s.tailFins.strakes) this._ring(s.tailFins.count || 4, { span: (s.tailFins.span || R * 2) * 0.6, chord: (s.tailFins.chord || R * 2) * 1.6 }, xFromAxial(0.62), R, finMat, 0.05, "strake");
-    }
-    // 前翼 / 控制面
-    if (s.canards) this._ring(4, s.canards, xFromAxial(clamp01(s.canards.axial ?? 0.2, 0.08, 0.35)), R, finMat, 0.1, "canard");
-
-    // 衝壓/渦扇進氣道
-    if (s.intake) this._intakes(s.intake, xFromAxial(0.55), R, L, darkMat);
-
-    // 串列助推器（爆炸視圖分離）
-    if (s.booster) {
-      const bR = (s.booster.dia || s.bodyDia) / 2, bL = s.booster.len || 1;
-      const bGeo = new THREE.CylinderGeometry(bR, bR * 0.9, bL, 22); bGeo.rotateZ(Math.PI / 2);
-      const boost = new THREE.Mesh(bGeo, darkMat);
-      boost.position.x = -bL / 2 - 0.02;
-      this.model.add(boost);
-      this._targets.set(boost, { base: boost.position.clone(), explode: boost.position.clone().add(new THREE.Vector3(-bL * 1.1, 0, 0)) });
-      // 助推尾翼（在助推段本體上）
-      this._ring(4, { span: bR * 2.2, chord: bL * 0.3 }, -bL * 0.35, bR, finMat, 0.1, "bfin", boost);
-    }
+    // 依 shape.type 分派建模，回傳代表性 {R,L} 供標註定位。
+    const mats = { mat, darkMat, finMat };
+    let dims;
+    if (s.type === "ship") dims = this._buildShip(s, mats);
+    else if (s.type === "aircraft") dims = this._buildAircraft(s, mats);
+    else dims = this._buildMissile(s, mats, R, L);
+    const aR = dims.R, aL = dims.L;
 
     // 標註熱點
-    (model3d?.annotations || []).forEach(a => this._addMarker(a, R, L));
+    (model3d?.annotations || []).forEach(a => this._addMarker(a, aR, aL));
 
     // 縮放置中：讓最長邊 ~ 8 單位
     const box = new THREE.Box3().setFromObject(this.model);
@@ -147,6 +101,114 @@ export class WeaponViewer {
     this._modelScale = scale;
 
     this.setExploded(false);
+  }
+
+  // ── 飛彈 / 導引炸彈（沿 X 軸，機鼻在 +X=L）─────────────────
+  _buildMissile(s, mats, R, L) {
+    const { mat, darkMat, finMat } = mats;
+    const noseLen = R * (s.nose === "cone" ? 3.2 : s.nose === "chisel" ? 2.2 : s.nose === "blunt" ? 0.9 : 2.6);
+    const bodyLen = Math.max(0.1, L - noseLen);
+    const bodyGeo = new THREE.CylinderGeometry(R, R, bodyLen, s.faceted ? 8 : 28); bodyGeo.rotateZ(Math.PI / 2);
+    const body = new THREE.Mesh(bodyGeo, mat); body.position.x = L - noseLen - bodyLen / 2; this.model.add(body);
+    let noseGeo;
+    if (s.nose === "blunt") { noseGeo = new THREE.SphereGeometry(R, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2); noseGeo.rotateZ(-Math.PI / 2); }
+    else { noseGeo = new THREE.ConeGeometry(R, noseLen, s.faceted ? 8 : 26); noseGeo.rotateZ(-Math.PI / 2); }
+    const nose = new THREE.Mesh(noseGeo, mat); nose.position.x = L - noseLen / 2; this.model.add(nose);
+    const nozGeo = new THREE.CylinderGeometry(R * 0.75, R * 0.55, R * 0.6, 20); nozGeo.rotateZ(Math.PI / 2);
+    const noz = new THREE.Mesh(nozGeo, darkMat); noz.position.x = -R * 0.3; this.model.add(noz);
+    const xFromAxial = f => L - f * L;
+    if (s.wings) this._ring(s.wings.count || 4, s.wings, xFromAxial(clamp01(s.wings.axial ?? 0.5, 0.2, 0.7)), R, finMat, s.wings.sweep || 0.25, "wing");
+    if (s.tailFins) {
+      const tailChord = s.tailFins.chord || R * 2;
+      this._ring(s.tailFins.count || 4, s.tailFins, Math.max(tailChord * 0.6, R * 1.2), R, finMat, 0.15, "tail");
+      if (s.tailFins.strakes) this._ring(s.tailFins.count || 4, { span: (s.tailFins.span || R * 2) * 0.6, chord: (s.tailFins.chord || R * 2) * 1.6 }, xFromAxial(0.62), R, finMat, 0.05, "strake");
+    }
+    if (s.canards) this._ring(4, s.canards, xFromAxial(clamp01(s.canards.axial ?? 0.2, 0.08, 0.35)), R, finMat, 0.1, "canard");
+    if (s.intake) this._intakes(s.intake, xFromAxial(0.55), R, L, darkMat);
+    if (s.booster) {
+      const bR = (s.booster.dia || s.bodyDia) / 2, bL = s.booster.len || 1;
+      const bGeo = new THREE.CylinderGeometry(bR, bR * 0.9, bL, 22); bGeo.rotateZ(Math.PI / 2);
+      const boost = new THREE.Mesh(bGeo, darkMat); boost.position.x = -bL / 2 - 0.02; this.model.add(boost);
+      this._targets.set(boost, { base: boost.position.clone(), explode: boost.position.clone().add(new THREE.Vector3(-bL * 1.1, 0, 0)) });
+      this._ring(4, { span: bR * 2.2, chord: bL * 0.3 }, -bL * 0.35, bR, finMat, 0.1, "bfin", boost);
+    }
+    return { R, L };
+  }
+
+  // ── 軍艦（沿 X 軸，艦艏在 +X=L，甲板在 +Y）──────────────────
+  _buildShip(s, mats) {
+    const { mat, darkMat } = mats;
+    const L = s.length || 150, beam = s.beam || Math.max(8, L * 0.12), depth = beam * 0.55;
+    const X = a => L - clamp01(a) * L;
+    const deckMat = new THREE.MeshStandardMaterial({ color: 0x0c1218, metalness: 0.3, roughness: 0.85 });
+    // 船體（收窄艦艏）
+    const hull = new THREE.BoxGeometry(L, depth, beam, 16, 1, 2);
+    const pos = hull.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const fx = pos.getX(i) / (L / 2);
+      if (fx > 0.55) { const k = 1 - (fx - 0.55) / 0.45 * 0.92; pos.setZ(i, pos.getZ(i) * k); if (pos.getY(i) < 0) pos.setY(i, pos.getY(i) * (0.55 + 0.45 * k)); }
+      else if (fx < -0.9) pos.setZ(i, pos.getZ(i) * 0.72);
+    }
+    hull.computeVertexNormals();
+    const hullMesh = new THREE.Mesh(hull, mat); hullMesh.position.x = L / 2; this.model.add(hullMesh);
+    // 上層結構
+    (s.superstructure || [{ a0: 0.3, a1: 0.62, w: 0.55, h: 1.1 }]).forEach(b => {
+      const len = Math.max(0.02, (b.a1 - b.a0)) * L, w = (b.w ?? 0.55) * beam, h = (b.h ?? 1) * beam * 0.5;
+      const m = new THREE.Mesh(new THREE.BoxGeometry(len, h, w), darkMat);
+      m.position.set(L - (b.a0 + b.a1) / 2 * L, depth / 2 + h / 2, 0); this.model.add(m);
+    });
+    (s.funnels || []).forEach(a => { const m = new THREE.Mesh(new THREE.CylinderGeometry(beam * 0.11, beam * 0.13, beam * 0.55, 12), darkMat); m.position.set(X(a), depth / 2 + beam * 0.42, 0); this.model.add(m); });
+    (s.masts || []).forEach(a => { const m = new THREE.Mesh(new THREE.CylinderGeometry(beam * 0.012, beam * 0.03, beam * 1.25, 6), darkMat); m.position.set(X(a), depth / 2 + beam * 0.78, 0); this.model.add(m); });
+    (s.turrets || []).forEach(a => {
+      const t = new THREE.Mesh(new THREE.CylinderGeometry(beam * 0.16, beam * 0.2, beam * 0.22, 14), darkMat); t.position.set(X(a), depth / 2 + beam * 0.11, 0); this.model.add(t);
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(beam * 0.02, beam * 0.02, beam * 0.6, 8), darkMat); bar.rotation.z = Math.PI / 2; bar.position.set(X(a) + (a < 0.5 ? beam * 0.3 : -beam * 0.3), depth / 2 + beam * 0.13, 0); this.model.add(bar);
+    });
+    (s.vls || []).forEach(v => { const m = new THREE.Mesh(new THREE.BoxGeometry(beam * 0.5, beam * 0.05, beam * 0.5), deckMat); m.position.set(X(v.a ?? 0.25), depth / 2 + beam * 0.03, 0); this.model.add(m); });
+    return { R: beam / 2, L };
+  }
+
+  // ── 固定翼飛機（沿 X 軸，機鼻在 +X=L）──────────────────────
+  _buildAircraft(s, mats) {
+    const { mat, darkMat, finMat } = mats;
+    const L = s.length || 15, R = (s.bodyDia || L * 0.09) / 2, span = s.span || L * 0.7;
+    const X = a => L - clamp01(a) * L;
+    const fusLen = L * 0.86;
+    const fus = new THREE.CylinderGeometry(R, R * 0.55, fusLen, 16); fus.rotateZ(Math.PI / 2);
+    const fm = new THREE.Mesh(fus, mat); fm.position.x = L - fusLen / 2 - R * 3; this.model.add(fm);
+    const noseG = new THREE.ConeGeometry(R, R * 3.2, 16); noseG.rotateZ(-Math.PI / 2);
+    const nose = new THREE.Mesh(noseG, mat); nose.position.x = L - R * 1.6; this.model.add(nose);
+    // 座艙
+    const can = new THREE.Mesh(new THREE.SphereGeometry(R * 0.85, 12, 8), new THREE.MeshStandardMaterial({ color: 0x16242f, metalness: 0.5, roughness: 0.2 }));
+    can.scale.set(2.2, 0.7, 0.85); can.position.set(L - R * 5, R * 0.7, 0); this.model.add(can);
+    // 主翼、尾翼、垂尾、前翼
+    const w = s.wing || { axial: 0.5, chord: L * 0.24, sweep: 0.5 };
+    this._hwing(X(w.axial ?? 0.5), (w.span || span) / 2, w.chord || L * 0.24, w.sweep ?? 0.5, 0, finMat);
+    const t = s.tail || {};
+    this._hwing(X(0.93), (t.span || span * 0.42) / 2, t.chord || L * 0.12, 0.5, 0, finMat);
+    this._vtail(X(0.94), t.vspan || span * 0.32, t.chord || L * 0.15, 0.55, finMat, s.twin_tail);
+    if (s.canard) this._hwing(X(s.canard.axial ?? 0.24), (s.canard.span || span * 0.35) / 2, s.canard.chord || L * 0.1, 0.4, R * 0.3, finMat);
+    // 引擎噴嘴
+    const noz = new THREE.Mesh(new THREE.CylinderGeometry(R * 0.6, R * 0.5, R, 14), darkMat); noz.rotateZ(Math.PI / 2); noz.position.x = R * 0.4; this.model.add(noz);
+    return { R, L };
+  }
+  _hwing(x, halfspan, chord, sweep, y, mat) {
+    const thick = Math.max(0.02, chord * 0.05);
+    [1, -1].forEach(dir => {
+      const g = new THREE.BoxGeometry(chord, thick, halfspan);
+      const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setX(i, p.getX(i) - Math.abs(p.getZ(i)) * sweep);
+      g.computeVertexNormals();
+      const m = new THREE.Mesh(g, mat); m.position.set(x, y, dir * halfspan / 2); this.model.add(m);
+    });
+  }
+  _vtail(x, height, chord, sweep, mat, twin) {
+    const thick = Math.max(0.02, chord * 0.05);
+    const mk = (z, cant) => {
+      const g = new THREE.BoxGeometry(chord, height, thick);
+      const p = g.attributes.position; for (let i = 0; i < p.count; i++) p.setX(i, p.getX(i) - Math.max(0, p.getY(i)) * sweep);
+      g.computeVertexNormals();
+      const m = new THREE.Mesh(g, mat); m.position.set(x, height / 2, z); m.rotation.x = cant; this.model.add(m);
+    };
+    if (twin) { mk(height * 0.35, -0.18); mk(-height * 0.35, 0.18); } else mk(0, 0);
   }
 
   // 全部尺寸以「本體半徑 R」為基準並夾限，任何輸入都能得到可辨識、不跑版的翼面。

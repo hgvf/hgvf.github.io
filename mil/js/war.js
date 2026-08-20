@@ -14,6 +14,7 @@ let store = null;
 const root = document.getElementById("app");
 const DAY = 86400000;
 const ms = d => new Date(d + "T00:00:00").getTime();
+const yrRange = r => { const sy = String(r.start).slice(0, 4), ey = String(r.end || "").slice(0, 4); return ey && ey !== sy ? `${sy}–${ey}` : sy; };
 
 async function getStore() { if (store) return store; try { store = await import("../js/milstore.js"); } catch { store = null; } return store; }
 
@@ -73,7 +74,7 @@ function render() {
   root.innerHTML = `
     <div class="war-toolbar">
       <label class="war-switch">戰爭
-        <span class="rv-sel-wrap"><select class="mil-select" id="warSel">${REGISTRY.map(r => `<option value="${r.id}" ${r.id === CONF.id ? "selected" : ""}>${esc(r.name_zh)}（${String(r.start).slice(0,4)}）</option>`).join("")}</select></span>
+        <span class="rv-sel-wrap"><select class="mil-select" id="warSel">${REGISTRY.map(r => `<option value="${r.id}" ${r.id === CONF.id ? "selected" : ""}>${esc(r.name_zh)}（${yrRange(r)}）</option>`).join("")}</select></span>
       </label>
       <div class="mil-toggle">
         <button class="mil-btn ${view==='timeline'?'mil-btn-primary':''}" data-v="timeline">時序視圖</button>

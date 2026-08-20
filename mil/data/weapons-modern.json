@@ -695,6 +695,65 @@
           { "id": "intake", "name": "Throttleable ramjet intakes", "name_zh": "可調流衝壓進氣口", "axial": 0.5, "radial": "side", "tag": "propulsion:ramjet", "source_id": "meteor_mbda" },
           { "id": "seeker", "name": "Active radar seeker", "name_zh": "主動雷達尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:active_radar", "source_id": "meteor_mbda" }
         ] }
+    },
+    {
+      "id": "arleigh_burke", "name": "Arleigh Burke-class Destroyer", "name_zh": "勃克級驅逐艦", "designation": "DDG-51",
+      "entity_type": "ship", "country": "USA", "manufacturer": ["General Dynamics BIW", "Huntington Ingalls"],
+      "status": "operational",
+      "summary_zh": "美國海軍神盾飛彈驅逐艦，以 Aegis 作戰系統整合相位陣列雷達與 Mk 41 垂直發射系統，具區域防空、反艦、對陸打擊與（Flight III）彈道飛彈防禦能力；COGAG 燃氣渦輪推進。是美軍數量最多的主力水面作戰艦，並持續建造。",
+      "summary": "US Navy Aegis guided-missile destroyer integrating a phased-array radar and Mk 41 VLS; area air defense, anti-ship, land attack and (Flight III) ballistic-missile defense. COGAG propulsion. The most numerous US surface combatant, still in production.",
+      "specifications": {
+        "length_m":  { "value": 155.3, "source_id": "ab_navy", "confidence": "high" },
+        "range_km":  { "value": "~8100 (4400 nm @20kn)", "source_id": "ab_navy", "confidence": "medium" },
+        "speed":     { "value": "30+ 節", "source_id": "ab_navy", "confidence": "high" },
+        "weight_kg": { "value": "~9700 噸（滿載排水量）", "source_id": "ab_navy", "confidence": "medium" },
+        "propulsion":{ "value": "COGAG 4×LM2500 燃氣渦輪、雙軸", "source_id": "ab_navy", "confidence": "high" },
+        "guidance":  { "value": "Aegis 作戰系統 + 相位陣列雷達", "source_id": "ab_navy", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "ship_type", "value": "destroyer", "source_id": "ab_navy" },
+        { "type": "combat_system", "value": "aegis", "source_id": "ab_navy" },
+        { "type": "radar", "value": "pesa", "source_id": "ab_navy" },
+        { "type": "launcher", "value": "mk41_vls", "source_id": "ab_navy" },
+        { "type": "role", "value": "air_defense", "source_id": "ab_navy" },
+        { "type": "role", "value": "anti_ship", "source_id": "ab_navy" },
+        { "type": "role", "value": "land_attack", "source_id": "ab_navy" },
+        { "type": "role", "value": "ballistic_missile_defense", "source_id": "ab_csis" },
+        { "type": "capability", "value": "area_air_defense", "source_id": "ab_navy" },
+        { "type": "capability", "value": "bmd_capable", "source_id": "ab_csis" },
+        { "type": "capability", "value": "asw", "source_id": "ab_navy" },
+        { "type": "capability", "value": "asuw", "source_id": "ab_navy" },
+        { "type": "propulsion", "value": "cogag", "source_id": "ab_navy" },
+        { "type": "launch", "value": "ship", "source_id": "ab_navy" },
+        { "type": "launch", "value": "vls", "source_id": "ab_navy" }
+      ],
+      "variants": [
+        { "id": "flight1", "name": "Flight I/II", "name_zh": "Flight I/II", "changes": { "note": "初始批次，SPY-1D 雷達、90 管 VLS。" } },
+        { "id": "flight2a", "name": "Flight IIA", "name_zh": "Flight IIA", "changes": { "note": "加裝雙機庫可搭載兩架直升機，96 管 VLS。" } },
+        { "id": "flight3", "name": "Flight III", "name_zh": "Flight III", "changes": { "radar": "+ AN/SPY-6 AESA", "role": "+ 強化彈道飛彈防禦", "note": "換裝 SPY-6 主動相位陣列與更大電力/冷卻。" } }
+      ],
+      "platforms": [],
+      "operators": [
+        { "country": "US", "name_zh": "美國海軍", "status": "operational", "note": "數十艘服役、持續建造。" },
+        { "country": "JP", "name_zh": "日本（衍生：金剛/愛宕/摩耶級）", "status": "operational", "note": "以此為基礎發展。" }
+      ],
+      "events": [
+        { "date": "1991-01-01", "type": "deployment", "title_zh": "首艦勃克號服役", "title": "USS Arleigh Burke commissioned", "source_ids": ["ab_navy"] },
+        { "date": "2023-01-01", "type": "upgrade", "title_zh": "Flight III（SPY-6）交付", "title": "Flight III (SPY-6) delivered", "source_ids": ["ab_navy"] }
+      ],
+      "sources": [
+        { "id": "ab_navy", "title": "Arleigh Burke-class (DDG 51) — U.S. Navy Fact File", "publisher": "U.S. Navy", "source_type": "official", "url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2169871/destroyers-ddg/", "reliability": "tier_1" },
+        { "id": "ab_csis", "title": "Aegis BMD — CSIS Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/defsys/aegis/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "ship", "length": 155, "beam": 20, "color": "#8b929c",
+          "superstructure": [{ "a0": 0.24, "a1": 0.5, "w": 0.62, "h": 1.5 }, { "a0": 0.5, "a1": 0.66, "w": 0.5, "h": 1.0 }],
+          "funnels": [0.48], "masts": [0.34, 0.6], "turrets": [0.13], "vls": [{ "a": 0.2 }, { "a": 0.82 }] },
+        "annotations": [
+          { "id": "spy", "name": "Phased-array radar (SPY)", "name_zh": "相位陣列雷達（SPY）", "axial": 0.3, "radial": "dorsal", "tag": "radar:pesa", "source_id": "ab_navy" },
+          { "id": "vls_fwd", "name": "Mk 41 VLS (fwd)", "name_zh": "Mk 41 垂直發射（前）", "axial": 0.2, "radial": "dorsal", "tag": "launcher:mk41_vls", "source_id": "ab_navy" },
+          { "id": "gun", "name": "5-inch gun", "name_zh": "127mm 艦砲", "axial": 0.13, "radial": "dorsal", "tag": "ship_type:destroyer", "source_id": "ab_navy" }
+        ] }
     }
   ]
 }
