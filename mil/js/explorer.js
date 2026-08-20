@@ -7,7 +7,9 @@ import { loadJSON, showErr, esc, fmtDate } from "../js/milcore.js";
 let WEAPONS = [], BYID = new Map(), TAGS = null, WEIGHTS = {};
 let tray = [];             // in-memory 比較盤（不使用 localStorage）
 let viewer = null;
+let isAdmin = false, store = null;
 const app = document.getElementById("app");
+async function getStore() { if (store) return store; try { store = await import("../js/milstore.js"); } catch { store = null; } return store; }
 
 // ── Tag helpers ──────────────────────────────────────────────
 const tagInfo = v => (TAGS.tags[v]) || { type: "role", label_en: v, label_zh: v, desc_zh: "" };
@@ -78,6 +80,12 @@ function renderHome() {
   const popular = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 12);
 
   app.innerHTML = `
+    <details class="mil-import" id="expImport" ${isAdmin ? "" : "hidden"}>
+      <summary>匯入 / 新增武器實體（ADD JSON）</summary>
+      <p class="hint">貼上 <code>{"weapons":[…]}</code>、陣列或單一武器。每筆需 <code>id / name_zh</code>；建議含 <code>name / designation / country / entity_type / status / summary_zh / specifications / tags:[{type,value,source_id}] / variants / platforms / operators / events / sources / model_3d</code>（結構見 <code>mil/data/weapons-modern.json</code>）。tags 的 <code>value</code> 需存在於 <code>tags.json</code> 分類法。以 id 為主鍵寫入 Firestore <code>mil_weapons_modern</code>。</p>
+      <textarea id="expJson" class="mil-textarea" rows="7" spellcheck="false" placeholder='{"weapons":[{"id":"jassm_er","name_zh":"增程聯合空對地飛彈","name":"AGM-158B JASSM-ER","designation":"JASSM-ER","entity_type":"missile","country":"USA","status":"operational","summary_zh":"…","specifications":{"range_km":{"value":"~1000","confidence":"medium"}},"tags":[{"type":"role","value":"land_attack"},{"type":"propulsion","value":"turbofan"}],"model_3d":{"fidelity":"c","shape":{"bodyLen":4.3,"bodyDia":0.55,"nose":"chisel","faceted":true,"wings":{"span":2.4,"chord":0.6,"axial":0.5},"tailFins":{"span":0.5,"chord":0.35,"count":3},"intake":"belly"},"annotations":[]}}]}'></textarea>
+      <div class="actions"><button class="mil-btn mil-btn-primary" id="expPub">發布到 Firebase</button><span class="mil-status" id="expPubStatus"></span></div>
+    </details>
     <div class="exp-search-wrap">
       <input id="expSearch" class="mil-input exp-search" placeholder="搜尋武器名稱、代號、國家、承包商…（例如 雄風、Tomahawk、ramjet）" autocomplete="off" />
     </div>
@@ -106,6 +114,38 @@ function renderHome() {
         w.summary_zh, tagsOf(w).map(tagLabelEn).join(" "), tagsOf(w).map(tagLabelZh).join(" ")].join(" ").toLowerCase();
       return hay.includes(q);
     }));
+  };
+  if (isAdmin) wireExpImport();
+}
+
+function parseWeapons(input) {
+  const d = JSON.parse(input);
+  if (Array.isArray(d)) return d;
+  if (d && Array.isArray(d.weapons)) return d.weapons;
+  if (d && d.id) return [d];
+  throw new Error('格式需為 {"weapons":[…]}、陣列或單一武器');
+}
+function wireExpImport() {
+  const btn = app.querySelector("#expPub"), status = app.querySelector("#expPubStatus"), ta = app.querySelector("#expJson");
+  if (!btn) return;
+  btn.onclick = async () => {
+    status.className = "mil-status"; status.textContent = "解析中…";
+    try {
+      const s = await getStore(); if (!s) throw new Error("Firebase SDK 無法載入");
+      const list = parseWeapons(ta.value);
+      list.forEach(w => { if (!w.id || !w.name_zh) throw new Error("每筆需含 id/name_zh"); });
+      // 提醒未知 tag（不阻擋）
+      const unknown = [...new Set(list.flatMap(w => (w.tags || []).map(t => t.value)).filter(v => !TAGS.tags[v]))];
+      const n = await s.saveModernWeapons(list);
+      list.forEach(w => { const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
+      reindex();
+      status.className = "mil-status ok";
+      status.textContent = `✓ 已發布 ${n} 筆${unknown.length ? `（未知 tag：${unknown.join(", ")}）` : ""}`;
+      ta.value = ""; renderHome();
+    } catch (e) {
+      status.className = "mil-status err";
+      status.innerHTML = /insufficient permissions|permission-denied/i.test(e.message || "") ? "✗ 權限不足：需白名單帳號且已部署 mil_weapons_modern 規則（<code>firebase deploy --only firestore:rules</code>）" : "✗ " + esc(e.message);
+    }
   };
 }
 
@@ -369,11 +409,23 @@ function route() {
 }
 
 // ── init ─────────────────────────────────────────────────────
+function reindex() { BYID = new Map(WEAPONS.map(w => [w.id, w])); }
+
 (async function init() {
   try {
     const [wd, td] = await Promise.all([loadJSON("../data/weapons-modern.json"), loadJSON("../data/tags.json")]);
     WEAPONS = wd.weapons; TAGS = td; WEIGHTS = td.weights || {};
-    BYID = new Map(WEAPONS.map(w => [w.id, w]));
+    reindex();
+    // 併入 Firestore mil_weapons_modern（若可用）
+    const s = await getStore();
+    if (s) {
+      try {
+        const docs = await s.loadModernWeapons();
+        docs.forEach(d => { const w = d.data || d; const i = WEAPONS.findIndex(x => x.id === w.id); if (i >= 0) WEAPONS[i] = w; else WEAPONS.push(w); });
+        reindex();
+      } catch { /* ignore */ }
+      s.onAuth(({ isAdmin: a }) => { isAdmin = a; const p = document.getElementById("expImport"); if (p) p.hidden = !a; if (a && document.getElementById("expImport")) wireExpImport(); });
+    }
     window.addEventListener("hashchange", route);
     route();
     renderTray();
