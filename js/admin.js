@@ -179,6 +179,61 @@ export async function submitHome(onDone) {
   onDone?.(data);
 }
 
+/* ── Publications (home page) ─────────────────────────────────── */
+function _attr(s) {
+  return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function _addPubRow(p = {}) {
+  const wrap = document.getElementById('pubEditor');
+  if (!wrap) return;
+  const linksStr = (p.links || []).map(l => `${l.label || ''}=${l.url || ''}`).join(', ');
+  const row = document.createElement('div');
+  row.className = 'pub-edit-row';
+  row.innerHTML = `
+    <div class="pub-edit-grid">
+      <label class="pub-edit-field pub-edit-full">Authors<input class="modal-input" data-f="authors" value="${_attr(p.authors)}" /></label>
+      <label class="pub-edit-field pub-edit-full">Title<input class="modal-input" data-f="title" value="${_attr(p.title)}" /></label>
+      <label class="pub-edit-field pub-edit-full">Title URL<input class="modal-input" data-f="title_url" value="${_attr(p.title_url)}" placeholder="https://…" /></label>
+      <label class="pub-edit-field">Venue<input class="modal-input" data-f="venue" value="${_attr(p.venue)}" /></label>
+      <label class="pub-edit-field">Year<input class="modal-input" data-f="year" value="${_attr(p.year)}" /></label>
+      <label class="pub-edit-field pub-edit-full">Links（格式：Label=URL，多個以逗號分隔）<input class="modal-input" data-f="links" value="${_attr(linksStr)}" placeholder="Dataset=https://…, Code=https://…" /></label>
+    </div>
+    <button type="button" class="pub-edit-remove" title="移除這篇">× 移除</button>`;
+  row.querySelector('.pub-edit-remove').addEventListener('click', () => row.remove());
+  wrap.appendChild(row);
+}
+
+export function addBlankPubRow() { _addPubRow({}); }
+
+export function openEditPubs(pubs) {
+  const wrap = document.getElementById('pubEditor');
+  if (wrap) wrap.innerHTML = '';
+  const list = (Array.isArray(pubs) && pubs.length) ? pubs : [{}];
+  list.forEach(p => _addPubRow(p));
+  openModal('modalPublications');
+}
+
+export async function submitPubs(onDone) {
+  const rows = [...document.querySelectorAll('#pubEditor .pub-edit-row')];
+  const pubs = rows.map(r => {
+    const g = f => r.querySelector(`[data-f="${f}"]`)?.value.trim() || '';
+    const links = g('links').split(',').map(s => s.trim()).filter(Boolean).map(pair => {
+      const i = pair.indexOf('=');
+      return i >= 0
+        ? { label: pair.slice(0, i).trim(), url: pair.slice(i + 1).trim() }
+        : { label: pair, url: '' };
+    });
+    return {
+      authors: g('authors'), title: g('title'), title_url: g('title_url'),
+      venue: g('venue'), year: g('year'), links,
+    };
+  }).filter(p => p.title || p.authors);
+  await saveHomeProfile({ publications: pubs });
+  closeModal('modalPublications');
+  onDone?.(pubs);
+}
+
 export function openAddSector(nextOrder) {
   const form = document.getElementById('formSector');
   form.reset(); form.dataset.mode = 'add'; delete form.dataset.id;

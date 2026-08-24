@@ -198,6 +198,20 @@ img { display: block; max-width: 100%; }
 /* Interests — inline tags folded into the About Me card */
 .about-interests { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.1rem; }
 .about-tags { display: contents; }
+
+/* Publications editor (modal) */
+.pub-editor { display: flex; flex-direction: column; gap: 0.9rem; max-height: 52vh; overflow-y: auto; padding-right: 0.25rem; }
+.pub-edit-row { position: relative; padding: 0.9rem; border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: var(--glass-bg); }
+.pub-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.75rem; }
+.pub-edit-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+.pub-edit-field .modal-input { font-weight: 400; }
+.pub-edit-full { grid-column: 1 / -1; }
+.pub-edit-remove { margin-top: 0.6rem; font-size: 0.72rem; font-weight: 600; padding: 0.25rem 0.6rem; cursor: pointer;
+  color: var(--negative); background: var(--negative-bg); border: 1px solid rgba(220,38,38,0.3); border-radius: var(--radius-sm); }
+.pub-edit-remove:hover { background: rgba(220,38,38,0.16); }
+.btn-add-pub { margin-top: 0.75rem; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.9rem; cursor: pointer;
+  color: var(--accent); background: var(--accent-light); border: 1px dashed rgba(139,94,60,0.4); border-radius: var(--radius-sm); }
+.btn-add-pub:hover { background: rgba(139,94,60,0.16); }
 .about-interests-label {
   font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-muted); margin-right: 0.15rem;

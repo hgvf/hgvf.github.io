@@ -14,6 +14,7 @@ import {
   openAddResearchNote, openEditResearchNote, submitResearchNote, handleDeleteResearchNote,
   openWhitelist, submitWhitelistEmail,
   openEditHome, submitHome,
+  openEditPubs, submitPubs, addBlankPubRow,
 } from './admin.js';
 
 /* ── App state ─────────────────────────────────────────────── */
@@ -88,52 +89,115 @@ onAuthChange(({ user, isAdmin }) => {
 document.getElementById('btnLogin')?.addEventListener('click',  () => signIn().catch(console.error));
 document.getElementById('btnLogout')?.addEventListener('click', () => signOutUser().catch(console.error));
 
-/* ── Home profile (editable About Me / Interests) ───────────────────── */
+/* ── Home profile (editable About Me / Interests / Publications) ─────── */
 function _escHtml(s) {
   return String(s ?? '').replace(/[&<>"]/g, c => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 
-// Apply a stored profile onto the home card. Any missing field leaves the
-// static HTML default in place, so the page still reads fine before/without
-// a Firestore doc.
+// Baseline content — mirrors the static HTML so the edit form always opens
+// pre-filled with the currently-shown values, even before any Firestore doc
+// exists. A stored profile overrides these field-by-field.
+const HOME_DEFAULTS = {
+  name: 'Kuan-Wei Tang (湯冠維)',
+  about: 'I am deeply interested in the field of deep learning and am currently engaged in related work.',
+  interests: ['Deep Learning', 'Seismology', 'Seismic Phase Picking'],
+  publications: [
+    {
+      authors: 'Tang, K. W., Chen, K. Y., Chen, D. Y., Chin, T. L., & Hsu, T. Y.',
+      title: 'The CWA benchmark: A seismic dataset from Taiwan for seismic research.',
+      title_url: 'https://pubs.geoscienceworld.org/ssa/srl/article/96/3/2079/650394/The-CWA-Benchmark-A-Seismic-Dataset-from-Taiwan?guestAccessKey=',
+      venue: 'Seismological Research Letters, 96(3), 2079-2091.',
+      year: '2025',
+      links: [{ label: 'Dataset', url: 'https://huggingface.co/datasets/NLPLabNTUST/Merged-CWA' }],
+    },
+    {
+      authors: 'Tang, K. W., & Chen, K. Y.',
+      title: 'SeismoDual: A dual-domain deep learning framework for robust seismic phase picking.',
+      title_url: 'https://www.sciencedirect.com/science/article/pii/S0098300425002304',
+      venue: 'Computers & Geosciences, 106080.',
+      year: '2025',
+      links: [{ label: 'Code', url: 'https://github.com/hgvf/SeismoDual.git' }],
+    },
+  ],
+};
+
+// Merge the stored profile over the defaults, field by field.
+function resolvedProfile() {
+  const p = _homeProfile || {};
+  return {
+    name:         (p.name && p.name.trim()) ? p.name : HOME_DEFAULTS.name,
+    about:        (typeof p.about === 'string' && p.about.trim()) ? p.about : HOME_DEFAULTS.about,
+    interests:    Array.isArray(p.interests) ? p.interests : HOME_DEFAULTS.interests,
+    publications: Array.isArray(p.publications) ? p.publications : HOME_DEFAULTS.publications,
+  };
+}
+
 function renderHomeProfile(profile) {
-  if (!profile) return;
-  if (profile.name) {
-    const nameEl = document.getElementById('homeName');
-    if (nameEl) nameEl.textContent = profile.name;
+  const nameEl = document.getElementById('homeName');
+  if (nameEl) nameEl.textContent = profile.name;
+
+  const aboutEl = document.getElementById('homeAbout');
+  if (aboutEl) {
+    aboutEl.innerHTML = profile.about.split(/\n+/).filter(Boolean)
+      .map(line => `<p>${_escHtml(line)}</p>`).join('');
   }
-  if (typeof profile.about === 'string' && profile.about.trim()) {
-    const aboutEl = document.getElementById('homeAbout');
-    if (aboutEl) {
-      aboutEl.innerHTML = profile.about.split(/\n+/).filter(Boolean)
-        .map(line => `<p>${_escHtml(line)}</p>`).join('');
-    }
-  }
-  if (Array.isArray(profile.interests)) {
-    const wrap = document.getElementById('homeInterestsWrap');
-    const tags = document.getElementById('homeInterests');
-    if (tags) tags.innerHTML = profile.interests
-      .map(t => `<span class="about-tag">${_escHtml(t)}</span>`).join('');
-    if (wrap) wrap.style.display = profile.interests.length ? '' : 'none';
-  }
+
+  const wrap = document.getElementById('homeInterestsWrap');
+  const tags = document.getElementById('homeInterests');
+  if (tags) tags.innerHTML = (profile.interests || [])
+    .map(t => `<span class="about-tag">${_escHtml(t)}</span>`).join('');
+  if (wrap) wrap.style.display = (profile.interests || []).length ? '' : 'none';
+}
+
+function pubItemHTML(p) {
+  const links = (p.links || []).filter(l => l && l.label).map(l =>
+    l.url ? `[<a href="${_escHtml(l.url)}" target="_blank" rel="noopener">${_escHtml(l.label)}</a>]`
+          : `[${_escHtml(l.label)}]`).join(' ');
+  const title = p.title_url
+    ? `<a class="pub-title" href="${_escHtml(p.title_url)}" target="_blank" rel="noopener">${_escHtml(p.title)}</a>`
+    : `<span class="pub-title">${_escHtml(p.title)}</span>`;
+  return `<li class="publication-item">
+    <span class="pub-authors">${_escHtml(p.authors)}</span>.
+    ${title}.
+    <span class="pub-venue">${_escHtml(p.venue)}</span>${p.year ? ',' : ''}
+    ${p.year ? `<span class="pub-year">${_escHtml(p.year)}</span>.` : ''}
+    ${links ? `<span class="pub-links">${links}</span>` : ''}
+  </li>`;
+}
+
+function renderPublications(pubs) {
+  const ol = document.getElementById('publicationList');
+  if (ol) ol.innerHTML = (pubs || []).map(pubItemHTML).join('');
+}
+
+function renderAllHome() {
+  const r = resolvedProfile();
+  renderHomeProfile(r);
+  renderPublications(r.publications);
 }
 
 async function loadHomeProfile() {
   try {
     _homeProfile = await getHomeProfile();
-    renderHomeProfile(_homeProfile);
   } catch (err) {
-    // Non-fatal — the static defaults remain visible.
-    console.warn('home profile load failed:', err);
+    console.warn('home profile load failed:', err);  // non-fatal — defaults stay
   }
+  renderAllHome();
 }
 loadHomeProfile();
 
-document.getElementById('btnEditHome')?.addEventListener('click', () => openEditHome(_homeProfile));
+document.getElementById('btnEditHome')?.addEventListener('click', () => openEditHome(resolvedProfile()));
 document.getElementById('formHome')?.addEventListener('submit', async e => {
   e.preventDefault();
-  await submitHome(saved => { _homeProfile = { ..._homeProfile, ...saved }; renderHomeProfile(_homeProfile); });
+  await submitHome(saved => { _homeProfile = { ..._homeProfile, ...saved }; renderAllHome(); });
+});
+
+document.getElementById('btnEditPubs')?.addEventListener('click', () => openEditPubs(resolvedProfile().publications));
+document.getElementById('btnAddPub')?.addEventListener('click', () => addBlankPubRow());
+document.getElementById('formPublications')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  await submitPubs(pubs => { _homeProfile = { ..._homeProfile, publications: pubs }; renderAllHome(); });
 });
 
 /* ── Watchlist loader ─────────────────────────────────────────────── */
