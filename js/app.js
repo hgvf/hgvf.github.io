@@ -1,7 +1,7 @@
 /* ── Main application ───────────────────────────────────────────── */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { firebaseConfig, WORKER_URL } from './config.js';
-import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices } from './db.js';
+import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices, getHomeProfile } from './db.js';
 import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
@@ -13,10 +13,12 @@ import {
   openAddAnalysis, openEditAnalysis, submitAnalysis, handleDeleteAnalysis,
   openAddResearchNote, openEditResearchNote, submitResearchNote, handleDeleteResearchNote,
   openWhitelist, submitWhitelistEmail,
+  openEditHome, submitHome,
 } from './admin.js';
 
 /* ── App state ─────────────────────────────────────────────── */
 let _isAdmin          = false;
+let _homeProfile      = null;   // editable About Me / Interests (site_content/home)
 let _sectors          = [];
 let _currentSector    = null;
 let _unsubPrices      = null;
@@ -85,6 +87,54 @@ onAuthChange(({ user, isAdmin }) => {
 
 document.getElementById('btnLogin')?.addEventListener('click',  () => signIn().catch(console.error));
 document.getElementById('btnLogout')?.addEventListener('click', () => signOutUser().catch(console.error));
+
+/* ── Home profile (editable About Me / Interests) ───────────────────── */
+function _escHtml(s) {
+  return String(s ?? '').replace(/[&<>"]/g, c => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+// Apply a stored profile onto the home card. Any missing field leaves the
+// static HTML default in place, so the page still reads fine before/without
+// a Firestore doc.
+function renderHomeProfile(profile) {
+  if (!profile) return;
+  if (profile.name) {
+    const nameEl = document.getElementById('homeName');
+    if (nameEl) nameEl.textContent = profile.name;
+  }
+  if (typeof profile.about === 'string' && profile.about.trim()) {
+    const aboutEl = document.getElementById('homeAbout');
+    if (aboutEl) {
+      aboutEl.innerHTML = profile.about.split(/\n+/).filter(Boolean)
+        .map(line => `<p>${_escHtml(line)}</p>`).join('');
+    }
+  }
+  if (Array.isArray(profile.interests)) {
+    const wrap = document.getElementById('homeInterestsWrap');
+    const tags = document.getElementById('homeInterests');
+    if (tags) tags.innerHTML = profile.interests
+      .map(t => `<span class="about-tag">${_escHtml(t)}</span>`).join('');
+    if (wrap) wrap.style.display = profile.interests.length ? '' : 'none';
+  }
+}
+
+async function loadHomeProfile() {
+  try {
+    _homeProfile = await getHomeProfile();
+    renderHomeProfile(_homeProfile);
+  } catch (err) {
+    // Non-fatal — the static defaults remain visible.
+    console.warn('home profile load failed:', err);
+  }
+}
+loadHomeProfile();
+
+document.getElementById('btnEditHome')?.addEventListener('click', () => openEditHome(_homeProfile));
+document.getElementById('formHome')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  await submitHome(saved => { _homeProfile = { ..._homeProfile, ...saved }; renderHomeProfile(_homeProfile); });
+});
 
 /* ── Watchlist loader ─────────────────────────────────────────────── */
 async function loadWatchlist() {

@@ -7,6 +7,7 @@ import {
   addAnalysis, updateAnalysis, deleteAnalysis,
   addResearchNote, updateResearchNote, deleteResearchNote,
   addAllowedEmail, removeAllowedEmail, getAllowedEmails,
+  saveHomeProfile,
 } from './db.js';
 
 function openModal(id) { document.getElementById(id)?.classList.add('open'); }
@@ -113,6 +114,69 @@ function _initImageUpload() {
 
   // Click-to-browse
   fileInput.addEventListener('change', () => handleImageFile(fileInput.files[0]));
+}
+
+/* ── Home profile (About Me / Interests) ─────────────────────── */
+// Interests tag input. Unlike the ticker-overview input, interests keep their
+// original case and may contain spaces (e.g. "Seismic Phase Picking").
+const _interestTags = [];
+function _renderInterestTags() {
+  const list = document.getElementById('homeInterestTags');
+  if (!list) return;
+  list.innerHTML = '';
+  _interestTags.forEach((val, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.textContent = val;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'tag-chip-remove'; btn.textContent = '×';
+    btn.addEventListener('click', () => { _interestTags.splice(i, 1); _renderInterestTags(); });
+    chip.appendChild(btn);
+    list.appendChild(chip);
+  });
+}
+function _initInterestInput() {
+  const input = document.getElementById('inputHomeInterest');
+  const wrap  = document.getElementById('homeInterestWrap');
+  if (!input || wrap._tagInited) return;
+  wrap._tagInited = true;
+  wrap.addEventListener('click', () => input.focus());
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (val && !_interestTags.includes(val)) { _interestTags.push(val); _renderInterestTags(); }
+      input.value = '';
+    } else if (e.key === 'Backspace' && input.value === '' && _interestTags.length) {
+      _interestTags.pop(); _renderInterestTags();
+    }
+  });
+}
+
+export function openEditHome(profile) {
+  const p = profile || {};
+  document.getElementById('inputHomeName').value  = p.name  || '';
+  document.getElementById('inputHomeAbout').value = p.about || '';
+  _interestTags.length = 0;
+  _interestTags.push(...(Array.isArray(p.interests) ? p.interests : []));
+  _renderInterestTags();
+  _initInterestInput();
+  document.getElementById('inputHomeInterest').value = '';
+  openModal('modalHome');
+}
+
+export async function submitHome(onDone) {
+  // flush any pending text still in the input field
+  const pending = document.getElementById('inputHomeInterest')?.value.trim();
+  if (pending && !_interestTags.includes(pending)) _interestTags.push(pending);
+  const data = {
+    name:      document.getElementById('inputHomeName').value.trim(),
+    about:     document.getElementById('inputHomeAbout').value.replace(/\r\n/g, '\n').trim(),
+    interests: [..._interestTags],
+  };
+  await saveHomeProfile(data);
+  closeModal('modalHome');
+  onDone?.(data);
 }
 
 export function openAddSector(nextOrder) {

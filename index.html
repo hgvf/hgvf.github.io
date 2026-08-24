@@ -158,14 +158,21 @@
       </div>
       <div class="home-grid">
         <div class="glass-card home-about">
-          <h3 class="card-title">About Me</h3>
-          <p>Hi, I'm <strong>Kuan-Wei Tang (湯冠維)</strong>.</p>
-          <p>I am deeply interested in the field of deep learning and am currently engaged in related work.</p>
-          <div class="about-interests">
+          <div class="card-title-row">
+            <h3 class="card-title">About Me</h3>
+            <button id="btnEditHome" class="btn-edit-inline admin-only" style="display:none" title="編輯 About Me / Interests">✎ Edit</button>
+          </div>
+          <p>Hi, I'm <strong id="homeName">Kuan-Wei Tang (湯冠維)</strong>.</p>
+          <div id="homeAbout" class="home-about-body">
+            <p>I am deeply interested in the field of deep learning and am currently engaged in related work.</p>
+          </div>
+          <div class="about-interests" id="homeInterestsWrap">
             <span class="about-interests-label">Interests</span>
-            <span class="about-tag">Deep Learning</span>
-            <span class="about-tag">Seismology</span>
-            <span class="about-tag">Seismic Phase Picking</span>
+            <span class="about-tags" id="homeInterests">
+              <span class="about-tag">Deep Learning</span>
+              <span class="about-tag">Seismology</span>
+              <span class="about-tag">Seismic Phase Picking</span>
+            </span>
           </div>
         </div>
 
@@ -396,6 +403,29 @@
         <label class="modal-label">Order<input class="modal-input" id="inputResearchOrder" type="number" value="0" /></label>
         <div class="modal-actions">
           <button type="button" class="btn-modal" data-modal="modalResearch">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalHome">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title">Edit About Me</h3>
+      <button class="modal-close" data-modal="modalHome">×</button>
+      <form id="formHome">
+        <label class="modal-label">Name<input class="modal-input" id="inputHomeName" placeholder="Kuan-Wei Tang (湯冠維)" /></label>
+        <label class="modal-label">About（一行一段，可留白行分段）
+          <textarea class="modal-textarea" id="inputHomeAbout" rows="5"></textarea>
+        </label>
+        <div class="modal-label">Interests
+          <div class="tag-input-wrap" id="homeInterestWrap">
+            <div class="tag-list" id="homeInterestTags"></div>
+            <input class="tag-input-field" id="inputHomeInterest" placeholder="輸入興趣後按 Enter" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel" data-modal="modalHome">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>

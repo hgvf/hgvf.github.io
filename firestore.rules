@@ -91,6 +91,12 @@ service cloud.firestore {
       allow write: if isWhitelisted();
     }
 
+    // Editable site content (home 頁 About Me / Interests 等)。公開讀，白名單寫。
+    match /site_content/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+
     match /config/auth {
       allow read: if isSignedIn();
       allow write: if isWhitelisted();

@@ -175,3 +175,15 @@ export async function getWorkerSecret() {
   if (!snap.exists()) return null;
   return snap.data().trigger_secret || null;
 }
+
+// ─── Editable site content (home page About Me / Interests) ─────────────
+// Stored at site_content/home: { name, about, interests[] }. Public read,
+// whitelist write (enforced by firestore.rules).
+export async function getHomeProfile() {
+  const snap = await getDoc(doc(db(), "site_content", "home"));
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function saveHomeProfile(data) {
+  return setDoc(doc(db(), "site_content", "home"), data, { merge: true });
+}
