@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>重點新聞 · Highlight Watchlist</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260824b" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260824b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head hl-head">
+      <h2 class="page-title">重點新聞 · Highlight Watchlist</h2>
+      <p class="hl-sub">把「供應鏈瓶頸新聞」與「產業消息」中收藏、關注的消息統一在這裡控管；每則卡片會標註來源，並可挑選查看相關個股走勢與更新股價。</p>
+    </div>
+
+    <div class="hl-legend">
+      <span class="hl-legend-item"><span class="hl-dot hl-src-supply-chain"></span>供應鏈瓶頸</span>
+      <span class="hl-legend-item"><span class="hl-dot hl-src-industry-news"></span>產業消息</span>
+      <span class="hl-legend-note">在
+        <a href="../supply-chain/index.html">供應鏈瓶頸新聞</a> 或
+        <a href="../industry-news/index.html">產業消息</a>
+        頁面點新聞列上的 🔖 即可加入這裡。</span>
+    </div>
+
+    <div id="highlightRoot" class="hl-root hl-root-page"></div>
+  </main>
+
+  <script type="module">
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountHighlight } from "../js/highlight.js";
+    import { detail as scDetail } from "../js/scdetail.js";
+    import { detail as industryDetail } from "../js/industrydetail.js";
+
+    mountSidebar("highlights");
+
+    // Dispatch to the right card renderer based on where the item was collected.
+    function renderDetail(item) {
+      return (item && item._source === "industry-news") ? industryDetail(item) : scDetail(item);
+    }
+
+    mountHighlight({
+      root: document.getElementById("highlightRoot"),
+      renderDetail,
+    });
+  </script>
+</body>
+</html>

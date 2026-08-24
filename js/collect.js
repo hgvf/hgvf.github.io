@@ -25,10 +25,13 @@ export function getCollected() { return read(); }
 export function isCollected(id) { return read().some(x => x.id === id); }
 
 // Add (or refresh) an item's snapshot. Returns the current collection.
-export function addCollected(item) {
+// `source` tags where the item came from ("supply-chain" | "industry-news")
+// so the consolidated 重點新聞 page can label + filter by origin and pick the
+// right detail renderer. Any `_source` already on the item is preserved.
+export function addCollected(item, source) {
   if (!item || !item.id) return read();
   const arr = read().filter(x => x.id !== item.id);
-  arr.unshift({ ...item, _collected_at: Date.now() });
+  arr.unshift({ ...item, _source: source || item._source || "supply-chain", _collected_at: Date.now() });
   write(arr);
   return arr;
 }
@@ -39,10 +42,10 @@ export function removeCollected(id) {
 }
 
 // Toggle collection membership. Returns true if now collected, false if removed.
-export function toggleCollected(item) {
+export function toggleCollected(item, source) {
   if (!item || !item.id) return false;
   if (isCollected(item.id)) { removeCollected(item.id); return false; }
-  addCollected(item);
+  addCollected(item, source);
   return true;
 }
 

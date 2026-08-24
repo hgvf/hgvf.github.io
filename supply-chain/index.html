@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>供應鏈瓶頸新聞 · Supply Chain Digest</title>
-  <link rel="stylesheet" href="../css/style.css?v=20260824a" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260824a" />
+  <link rel="stylesheet" href="../css/style.css?v=20260824b" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260824b" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -21,87 +21,20 @@
         <span>Skill</span>
       </a>
     </div>
+    <p class="hl-sub sc-hl-hint">收藏的重點新聞已整合到
+      <a href="../highlights/index.html">重點新聞 Highlight Watchlist</a>
+      頁面（與「產業消息」共用）；點下方新聞列上的 🔖 即可加入。</p>
     <div id="reportRoot" class="rv-root"></div>
-
-    <section id="highlightSection" class="hl-section">
-      <div class="rp-head hl-head">
-        <h2 class="page-title">重點新聞 · Highlight News</h2>
-        <p class="hl-sub">收藏的重點新聞會列在這裡，可挑選查看新聞卡片與相關個股走勢。</p>
-      </div>
-      <div id="highlightRoot" class="hl-root"></div>
-    </section>
   </main>
 
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { mountHighlight } from "../js/highlight.js";
+    import { detail } from "../js/scdetail.js";
     import { toggleCollected, isCollected, onCollectChange } from "../js/collect.js";
-    import { sent, esc, fmtDate, chartUrl, onAuth } from "../js/reports.js";
+    import { onAuth } from "../js/reports.js";
 
     mountSidebar("supply-chain");
-
-    // ── Detail rendering helpers (all new fields are optional & backward-safe) ──
-    const CRED = { "高": "pos", "中": "neu", "低": "neg" };
-    function credBadge(v) {
-      return v ? `<span class="rp-cred ${CRED[v] || "neu"}">可信度：${esc(v)}</span>` : "";
-    }
-    function textCard(cls, icon, label, val) {
-      return val ? `<div class="rp-subcard ${cls}"><div class="rp-subcard-head">${icon} ${label}</div><div class="rp-subcard-body">${esc(val)}</div></div>` : "";
-    }
-    function tagsCard(tags) {
-      if (!tags || !tags.length) return "";
-      return `<div class="rp-subcard rp-tags"><div class="rp-subcard-head">🏷️ 瓶頸關鍵字 / 題材</div>
-        <div class="rp-chiprow">${tags.map(t => `<span class="rp-chipk">${esc(t)}</span>`).join("")}</div></div>`;
-    }
-    function chainCard(ch) {
-      if (!ch) return "";
-      const seg = (label, arr) => (arr && arr.length)
-        ? `<div class="rp-chain-seg"><span class="rp-chain-label">${label}</span><div class="rp-chain-items">${
-            arr.map(o => `<div class="rp-chain-item"><b>${esc(o.name)}</b>${o.note ? `<span>${esc(o.note)}</span>` : ""}</div>`).join("")}</div></div>`
-        : "";
-      const body = seg("上游", ch.upstream) + seg("中游", ch.midstream) + seg("下游", ch.downstream);
-      return body ? `<div class="rp-subcard rp-chain"><div class="rp-subcard-head">🔗 供應鏈上中下游影響</div>${body}</div>` : "";
-    }
-    function altCard(alts) {
-      if (!alts || !alts.length) return "";
-      const rows = alts.map(a => `<div class="rp-alt-row ${a.incumbent ? "inc" : ""}">
-        <span class="rp-alt-name">${esc(a.name)}${a.incumbent ? ' <span class="rp-alt-tag">現任</span>' : ""}</span>
-        <span class="rp-alt-share">${esc(a.share || "—")}</span>
-        ${a.note ? `<span class="rp-alt-note">${esc(a.note)}</span>` : ""}</div>`).join("");
-      return `<div class="rp-subcard rp-alt"><div class="rp-subcard-head">🔄 替代品 / 公司 · 市占</div><div class="rp-alt-list">${rows}</div></div>`;
-    }
-
-    function detail(it) {
-      const s = sent(it.sentiment);
-      const tickers = (it.tickers || []).map(t => `<a class="rp-ticker" href="${esc(chartUrl(t))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(t)} 線圖">${esc(t)}</a>`).join("");
-      const sources = (it.sources || []).length
-        ? `<div class="news-src">來源：${it.sources.map(o => `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`
-        : "";
-      return `<article class="rv-detail ${s.cls}">
-        <div class="rv-detail-meta">
-          <span class="rp-date">${esc(fmtDate(it.date))}</span>
-          ${tickers}
-          <span class="sent-tag ${s.cls}">${s.label}</span>
-          ${credBadge(it.credibility)}
-        </div>
-        <h2 class="rv-detail-title">${esc(it.headline)}</h2>
-        <p class="rv-detail-body">${esc(it.content)}</p>
-        ${tagsCard(it.tags)}
-        ${chainCard(it.chain)}
-        ${altCard(it.alternatives)}
-        ${textCard("rp-effect", "⛓️", "下游影響", it.effect)}
-        ${textCard("rp-signals", "🔍", "財報 / 逐字稿線索", it.signals)}
-        ${textCard("rp-advise", "💡", "投資建議", it.advise)}
-        ${sources}
-      </article>`;
-    }
-
-    // Lower "Highlight News" section — collected items + per-ticker price trends.
-    const highlight = mountHighlight({
-      root: document.getElementById("highlightRoot"),
-      renderDetail: detail,
-    });
 
     let view = null, lastAdmin = false;
     onAuth(({ isAdmin }) => { lastAdmin = isAdmin; if (view) view.setAdmin(isAdmin); });
@@ -115,11 +48,7 @@
       renderDetail: detail,
       emptyHint: "點選左側新聞節點，內容會顯示在這裡",
       isCollected,
-      onCollect: (it) => {                 // toggle; return true when now collected
-        const now = toggleCollected(it);
-        if (now) highlight.focusItem(it.id);
-        return now;
-      },
+      onCollect: (it) => toggleCollected(it, "supply-chain"),  // → 重點新聞 page
     }).then(v => { view = v; view.setAdmin(lastAdmin); }).catch(e => { console.error(e); document.getElementById("reportRoot").innerHTML = '<div class="rv-empty">載入失敗，請稍後再試。</div>'; });
 
     // Keep the sidebar bookmark icons in sync when items are removed elsewhere.

@@ -16,6 +16,17 @@ const RANGES = [
   { v: "1y",  label: "1 年" },
 ];
 
+// Where a collected item came from (see collect.js `_source`). Used for the
+// source filter + the badge shown on each highlight card.
+const SOURCE_LABEL = {
+  "supply-chain":  "供應鏈瓶頸",
+  "industry-news": "產業消息",
+};
+function sourceOf(it) { return (it && it._source) || "supply-chain"; }
+// Normalize the two schemas so the picker/card read one shape.
+function dateOf(it) { return (it && (it.date || it.event_date)) || ""; }
+function headlineOf(it) { return (it && (it.headline || it.title_zh || it.title_original || it.id)) || ""; }
+
 function readPriceCache() {
   try { return JSON.parse(localStorage.getItem(PRICE_KEY) || "{}") || {}; }
   catch { return {}; }
@@ -132,12 +143,18 @@ function trendCard(orig, eff, entry) {
 }
 
 export function mountHighlight(opts) {
+  // `renderDetail(item)` may dispatch on item._source (the consolidated
+  // 重點新聞 page passes a renderer that picks the supply-chain vs 產業消息 card).
   const { root, renderDetail } = opts;
   let range = "6mo";
   let selectedId = null;
+  let sourceFilter = "__all__";
 
   root.innerHTML = `
     <div class="hl-bar">
+      <label class="hl-ctl">來源
+        <span class="rv-sel-wrap"><select class="rv-select" data-role="hl-source"></select></span>
+      </label>
       <label class="hl-ctl">選新聞
         <span class="rv-sel-wrap"><select class="rv-select" data-role="hl-news"></select></span>
       </label>
@@ -150,6 +167,7 @@ export function mountHighlight(opts) {
     </div>
     <div class="hl-body" data-role="hl-body"></div>`;
 
+  const sourceSel= root.querySelector('[data-role="hl-source"]');
   const newsSel  = root.querySelector('[data-role="hl-news"]');
   const rangeSel = root.querySelector('[data-role="hl-range"]');
   const updateBtn= root.querySelector('[data-role="hl-update"]');
@@ -162,7 +180,25 @@ export function mountHighlight(opts) {
 
   function setStatus(msg, kind = "") { statusEl.textContent = msg || ""; statusEl.className = `hl-status ${kind}`; }
 
-  function collected() { return getCollected(); }
+  function allCollected() { return getCollected(); }
+  function collected() {
+    const items = getCollected();
+    return sourceFilter === "__all__" ? items : items.filter(it => sourceOf(it) === sourceFilter);
+  }
+
+  // Rebuild the source filter, keeping "全部" plus whichever sources are present.
+  function rebuildSourceSelect() {
+    const present = [...new Set(getCollected().map(sourceOf))];
+    const counts = {};
+    getCollected().forEach(it => { const s = sourceOf(it); counts[s] = (counts[s] || 0) + 1; });
+    const order = ["supply-chain", "industry-news", ...present.filter(s => !SOURCE_LABEL[s])];
+    const opts = [`<option value="__all__">全部來源（${getCollected().length}）</option>`,
+      ...order.filter(s => present.includes(s)).map(s =>
+        `<option value="${esc(s)}">${esc(SOURCE_LABEL[s] || s)}（${counts[s] || 0}）</option>`)];
+    sourceSel.innerHTML = opts.join("");
+    if (![...sourceSel.options].some(o => o.value === sourceFilter)) sourceFilter = "__all__";
+    sourceSel.value = sourceFilter;
+  }
 
   // Original tickers as stored on the item, and the effective (corrected) ones.
   function tickersOf(it) { return (it && it.tickers) ? it.tickers : []; }
@@ -177,9 +213,10 @@ export function mountHighlight(opts) {
       return;
     }
     newsSel.disabled = false;
-    newsSel.innerHTML = items.map(it =>
-      `<option value="${esc(it.id)}">${esc((fmtDate(it.date) || "").slice(0))} · ${esc(it.headline || it.id)}</option>`
-    ).join("");
+    newsSel.innerHTML = items.map(it => {
+      const tag = sourceFilter === "__all__" ? `[${SOURCE_LABEL[sourceOf(it)] || sourceOf(it)}] ` : "";
+      return `<option value="${esc(it.id)}">${esc(tag)}${esc((fmtDate(dateOf(it)) || "").slice(0))} · ${esc(headlineOf(it))}</option>`;
+    }).join("");
     if (!selectedId || !items.some(it => it.id === selectedId)) selectedId = items[0].id;
     newsSel.value = selectedId;
   }
@@ -203,8 +240,10 @@ export function mountHighlight(opts) {
 
     // Show corrected tickers in the news card's chips too.
     const cardItem = { ...it, tickers: effTickersOf(it) };
+    const src = sourceOf(it);
+    const srcBadge = `<div class="hl-source-badge hl-src-${esc(src)}">來源：${esc(SOURCE_LABEL[src] || src)}</div>`;
     bodyEl.innerHTML = `
-      <div class="hl-card">${renderDetail(cardItem)}</div>
+      <div class="hl-card">${srcBadge}${renderDetail(cardItem)}</div>
       <div class="hl-trends-wrap">${trendsWrap}</div>`;
 
     const host = bodyEl.querySelector('[data-role="hl-trends"]');
@@ -220,10 +259,11 @@ export function mountHighlight(opts) {
     }
   }
 
-  // Every unique effective (corrected) ticker across ALL collected news items.
+  // Every unique effective (corrected) ticker across ALL collected news items
+  // (every source, regardless of the current source filter).
   function allSymbols() {
     const set = new Set();
-    collected().forEach(it => effTickersOf(it).forEach(s => { if (s) set.add(s); }));
+    allCollected().forEach(it => effTickersOf(it).forEach(s => { if (s) set.add(s); }));
     return [...set];
   }
 
@@ -317,6 +357,7 @@ export function mountHighlight(opts) {
     if (edit) { e.preventDefault(); startEditTicker(edit.closest(".hl-trend-card")); }
   });
 
+  sourceSel.addEventListener("change", () => { sourceFilter = sourceSel.value; selectedId = null; rebuildSelect(); renderBody(); });
   newsSel.addEventListener("change", () => { selectedId = newsSel.value; renderBody(); });
   rangeSel.addEventListener("change", () => { range = rangeSel.value; renderBody(); });
   updateBtn.addEventListener("click", updatePrices);
@@ -326,12 +367,17 @@ export function mountHighlight(opts) {
     removeCollected(it.id);
   });
 
-  function refresh() { rebuildSelect(); renderBody(); }
+  function refresh() { rebuildSourceSelect(); rebuildSelect(); renderBody(); }
 
   onCollectChange(() => { refresh(); });
   refresh();
 
-  // Programmatically focus a freshly-collected item.
-  function focusItem(id) { if (getCollected().some(x => x.id === id)) { selectedId = id; rebuildSelect(); newsSel.value = id; renderBody(); } }
+  // Programmatically focus a freshly-collected item (reset the source filter
+  // so it is visible regardless of which source it came from).
+  function focusItem(id) {
+    if (!getCollected().some(x => x.id === id)) return;
+    sourceFilter = "__all__"; selectedId = id;
+    rebuildSourceSelect(); rebuildSelect(); newsSel.value = id; renderBody();
+  }
   return { refresh, focusItem };
 }
