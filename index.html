@@ -178,8 +178,11 @@
 
         <!-- Publications — same width as About Me, directly below it -->
         <div class="glass-card home-publications">
-          <h3 class="card-title">Publications</h3>
-          <ol class="publication-list">
+          <div class="card-title-row">
+            <h3 class="card-title">Publications</h3>
+            <button id="btnEditPubs" class="btn-edit-inline admin-only" style="display:none" title="編輯 Publications">✎ Edit</button>
+          </div>
+          <ol class="publication-list" id="publicationList">
             <li class="publication-item">
               <span class="pub-authors">Tang, K. W., Chen, K. Y., Chen, D. Y., Chin, T. L., & Hsu, T. Y.</span>.
               <a class="pub-title" href="https://pubs.geoscienceworld.org/ssa/srl/article/96/3/2079/650394/The-CWA-Benchmark-A-Seismic-Dataset-from-Taiwan?guestAccessKey=" target="_blank" rel="noopener">The CWA benchmark: A seismic dataset from Taiwan for seismic research.</a>.
@@ -426,6 +429,21 @@
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-modal modal-cancel" data-modal="modalHome">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalPublications">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title">Edit Publications</h3>
+      <button class="modal-close" data-modal="modalPublications">×</button>
+      <form id="formPublications">
+        <div id="pubEditor" class="pub-editor"></div>
+        <button type="button" id="btnAddPub" class="btn-add-pub">＋ Add publication</button>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel" data-modal="modalPublications">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
