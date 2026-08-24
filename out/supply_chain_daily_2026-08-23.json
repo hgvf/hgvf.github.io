@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-24T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-08-20",
+    "end": "2026-08-23"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 1,
+      "advanced packaging": 1,
+      "HBM": 1,
+      "memory": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "relevant": 1
+    },
+    "top_tickers": ["005930.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260820-001",
+      "slug": "samsung-hbm-onyang-p5-capacity-expansion",
+      "event_date": "2026-08-20",
+      "published_at": "2026-08-20",
+      "ingested_at": "2026-08-24T09:00:00+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": ["permit_regulatory"],
+      "themes": ["semiconductor", "advanced packaging", "HBM", "memory", "AI infrastructure"],
+      "regions": ["KR"],
+      "importance_score": 79,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+
+      "title_zh": "三星6兆韓元溫陽HBM新廠動土在即，平澤P5獲准三廠體改建大增產能",
+      "title_original": "Samsung to Break Ground on KRW 6T Onyang HBM Fab in Sept.; P5 Eyes Triple-Fab Shift as Expansion Accelerates",
+      "summary_zh": "三星電子將於9月在忠清南道牙山溫陽園區動土興建投資額6兆韓元（約43.1億美元）的HBM生產暨先進封裝新廠，基地面積約38.98萬平方公尺；同時平澤P5基地已通過都市計畫審查，建蔽容積上限由350%提高至490%，由雙廠體改為三廠體，潔淨室數量增加50%、產能可望提升逾1.5倍，用於HBM、高階DRAM、次世代V-NAND及先進代工晶片生產。",
+      "why_it_matters": "在NVIDIA、AMD與雲端業者持續搶購HBM產能、CoWoS/HBM供給仍是AI晶片最大瓶頸的情況下，三星此舉大幅擴增全球HBM暨先進封裝供給，可望緩解記憶體缺貨與價格飆升壓力，並強化三星在HBM市佔上對SK海力士的追趕力道；平澤P5潔淨室增加50%、產能躍升逾1.5倍，意味三星在DRAM／NAND議價籌碼上升，下游AI伺服器與GPU廠商的記憶體採購成本與交期風險可望隨新產能於2029年後陸續開出而逐步緩解。",
+
+      "tickers": ["005930.KS"],
+      "companies": [
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["silicon wafer", "TSV substrate", "advanced packaging materials"],
+        "component": "HBM / DRAM / V-NAND / advanced-node logic",
+        "supplier": ["Samsung Electronics Co., Ltd."],
+        "customer": ["NVIDIA", "AMD", "hyperscaler AI accelerator buyers"],
+        "end_market": ["AI infrastructure", "data center", "AI accelerators"]
+      },
+
+      "products": ["HBM", "DRAM", "V-NAND", "advanced foundry logic"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "平澤P5基地為雙廠體設計（4座潔淨室），溫陽園區尚無HBM專用生產與先進封裝產能",
+        "after": "P5改為三廠體設計（最多6座潔淨室），潔淨室數增加50%、產能提升逾1.5倍；溫陽新廠投資6兆韓元，9月動土，聚焦HBM生產與先進封裝"
+      },
+
+      "financial_data": {
+        "amount": 6000000000000,
+        "currency": "KRW",
+        "capacity_change_pct": 50,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-01"
+      },
+
+      "search_keywords": [
+        "samsung", "samsung electronics", "三星", "三星電子",
+        "hbm", "high bandwidth memory", "高頻寬記憶體",
+        "dram", "v-nand", "nand", "記憶體",
+        "onyang", "溫陽", "pyeongtaek", "平澤", "p5",
+        "capacity expansion", "擴產", "產能",
+        "advanced packaging", "先進封裝",
+        "semiconductor", "半導體",
+        "ai infrastructure", "memory",
+        "cleanroom", "潔淨室",
+        "005930", "005930.ks",
+        "nvidia", "amd", "cowos", "hbm4"
+      ],
+
+      "sources": [
+        {
+          "publisher": "TrendForce",
+          "source_type": "trade",
+          "url": "https://www.trendforce.com/news/2026/08/20/news-samsung-to-break-ground-on-krw-6t-onyang-hbm-fab-in-sept-p5-eyes-triple-fab-shift-as-expansion-accelerates/",
+          "is_primary": true,
+          "accessed_at": "2026-08-24T08:40:00+08:00"
+        },
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260820VL203/samsung-hbm-packaging-plant-production.html",
+          "is_primary": false,
+          "accessed_at": "2026-08-24T08:35:00+08:00"
+        }
+      ]
+    }
+  ]
+}
