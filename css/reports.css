@@ -576,3 +576,129 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 .hl-trend-save:hover { background: var(--positive-bg); }
 .hl-trend-cancel { color: var(--text-muted); }
 .hl-trend-cancel:hover { color: var(--negative); background: var(--negative-bg); border-color: rgba(220,38,38,0.4); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   產業消息 (supply_chain_events) — industry-news page
+   ══════════════════════════════════════════════════════════════════════ */
+
+.in-lede { margin: 0.2rem 0 1rem; font-size: 0.9rem; line-height: 1.7; color: var(--text-secondary); max-width: 60rem; }
+
+/* ETL pipeline strip */
+.in-etl { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.1rem;
+  padding: 0.55rem 0.9rem; border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
+  background: var(--glass-bg); font-size: 0.78rem; }
+.in-etl-stage { display: inline-flex; flex-direction: column; line-height: 1.25; }
+.in-etl-stage b { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); }
+.in-etl-stage span { font-size: 0.72rem; color: var(--text-muted); }
+.in-etl-arrow { color: var(--text-muted); font-weight: 700; }
+.in-etl-tail { margin-left: auto; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); }
+
+/* Filter bar */
+.in-filters { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.6rem; }
+.in-search { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;
+  border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: var(--glass-bg-solid);
+  padding: 0.1rem 0.7rem; max-width: 34rem; transition: border-color var(--transition); }
+.in-search:focus-within { border-color: var(--accent); }
+.in-search-input { flex: 1; border: none; background: transparent; outline: none; color: var(--text-primary);
+  font-family: var(--font-sans); font-size: 0.9rem; padding: 0.45rem 0; }
+.in-selects { display: flex; align-items: center; gap: 0.7rem 1rem; flex-wrap: wrap; }
+.in-clear { font-size: 0.76rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-secondary); cursor: pointer;
+  transition: all var(--transition); }
+.in-clear:hover { color: var(--negative); border-color: var(--negative); background: var(--negative-bg); }
+
+/* Live digest strip */
+.in-digest:not(:empty) { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin: 0.5rem 0 0.2rem;
+  padding: 0.4rem 0.7rem; border-radius: var(--radius-md); background: var(--glass-bg); border: 1px solid var(--glass-border); }
+.in-dg-lbl { font-size: 0.72rem; color: var(--text-muted); }
+.in-dg-count { font-family: var(--font-mono); font-weight: 700; color: var(--text-primary); }
+.in-dg-sep { color: var(--text-muted); }
+.in-dg-pill { font-size: 0.7rem; font-weight: 600; padding: 0.08rem 0.45rem; border-radius: 999px; border: 1px solid; }
+.in-dg-tk { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.45rem; cursor: pointer;
+  border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass-bg-solid); color: var(--text-secondary);
+  display: inline-flex; align-items: baseline; gap: 0.3rem; transition: all var(--transition); }
+.in-dg-tk span { font-size: 0.62rem; color: var(--text-muted); }
+.in-dg-tk:hover { border-color: var(--accent); color: var(--accent); }
+.in-viewctl { justify-content: flex-start; gap: 1rem; }
+.in-count { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted); }
+
+/* Importance-tier colours (dot / calendar chip / pill / detail rail) */
+.rv-dot.tier-critical { background: var(--negative); box-shadow: 0 0 0 3px var(--negative-bg); }
+.rv-dot.tier-high { background: #D9963C; }
+.rv-dot.tier-relevant { background: var(--neutral); }
+.rv-cal-chip.tier-critical { color: var(--negative); background: var(--negative-bg); border-color: rgba(220,38,38,0.4); }
+.rv-cal-chip.tier-high { color: #B5731F; background: rgba(217,150,60,0.14); border-color: rgba(217,150,60,0.4); }
+.rv-cal-chip.tier-relevant { color: var(--neutral); background: var(--neutral-bg); border-color: rgba(120,113,108,0.3); }
+.rv-detail.tier-critical { border-left-color: var(--negative); }
+.rv-detail.tier-high { border-left-color: #D9963C; }
+.rv-detail.tier-relevant { border-left-color: var(--neutral); }
+.in-tier { font-size: 0.72rem; font-weight: 700; padding: 0.12rem 0.5rem; border-radius: var(--radius-sm); white-space: nowrap; }
+.in-tier.tier-critical, .in-dg-pill.tier-critical { color: var(--negative); background: var(--negative-bg); border-color: rgba(220,38,38,0.4); }
+.in-tier.tier-high, .in-dg-pill.tier-high { color: #B5731F; background: rgba(217,150,60,0.15); border-color: rgba(217,150,60,0.4); }
+.in-tier.tier-relevant, .in-dg-pill.tier-relevant { color: var(--neutral); background: var(--neutral-bg); border-color: rgba(120,113,108,0.3); }
+
+/* Detail meta chips */
+.in-etype { font-size: 0.72rem; font-weight: 600; padding: 0.12rem 0.5rem; border-radius: var(--radius-sm);
+  color: var(--accent); background: var(--accent-light); border: 1px solid var(--glass-border); }
+.in-etype-sec { color: var(--text-secondary); background: var(--glass-bg); }
+.in-region { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; padding: 0.08rem 0.4rem;
+  border-radius: 4px; color: var(--text-secondary); background: var(--glass-bg-solid); border: 1px solid var(--glass-border); }
+.in-evi { font-size: 0.68rem; font-weight: 600; padding: 0.1rem 0.45rem; border-radius: var(--radius-sm); }
+.in-evi-confirmed { color: var(--positive); background: var(--positive-bg); }
+.in-evi-reported { color: #3E6AB0; background: rgba(79,114,182,0.12); }
+.in-evi-inferred { color: #B5731F; background: rgba(217,150,60,0.14); }
+.in-evi-rumor { color: var(--negative); background: var(--negative-bg); }
+.in-title-en { margin: -0.2rem 0 0.5rem; font-size: 0.88rem; color: var(--text-muted); font-style: italic; }
+
+/* Change delta */
+.in-change { background: rgba(46,139,133,0.09); border-color: rgba(46,139,133,0.38); }
+.in-change .rp-subcard-head { color: #2E8B85; }
+.in-change-type { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; color: var(--text-muted);
+  padding: 0.02rem 0.4rem; border-radius: 4px; background: var(--glass-bg-solid); }
+.in-change-flow { display: flex; align-items: stretch; gap: 0.6rem; margin-top: 0.3rem; flex-wrap: wrap; }
+.in-change-side { flex: 1; min-width: 12rem; display: flex; flex-direction: column; gap: 0.2rem;
+  font-size: 0.88rem; line-height: 1.55; color: var(--text-secondary); }
+.in-change-lbl { font-size: 0.66rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.in-change-side.after { color: var(--text-primary); }
+.in-change-arrow { align-self: center; color: #2E8B85; font-weight: 700; }
+
+/* Supply-chain rows */
+.in-chain-row { display: flex; gap: 0.6rem; margin-top: 0.4rem; align-items: baseline; }
+.in-chain-lbl { flex-shrink: 0; width: 4rem; font-size: 0.74rem; font-weight: 700; color: #2E8B85; }
+.in-chain-vals { display: flex; flex-wrap: wrap; gap: 0.3rem; flex: 1; }
+
+/* Companies */
+.in-co-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.2rem; }
+.in-co-row { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; font-size: 0.88rem; }
+.in-co-name { font-weight: 600; color: var(--text-primary); }
+.in-role { font-size: 0.66rem; font-weight: 600; color: #7C5CBF; background: rgba(124,92,191,0.14); padding: 0.03rem 0.4rem; border-radius: 4px; }
+.in-co-geo { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); }
+
+/* Financials */
+.in-fin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.5rem; margin-top: 0.3rem; }
+.in-fin-item { display: flex; flex-direction: column; gap: 0.1rem; }
+.in-fin-k { font-size: 0.68rem; color: var(--text-muted); }
+.in-fin-v { font-family: var(--font-mono); font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
+
+/* Keyword chips + sources */
+.rp-chipk.in-kw { font-family: var(--font-mono); font-size: 0.68rem; opacity: 0.9; }
+.in-src { align-items: center; }
+.in-src-link { display: inline-flex; align-items: center; gap: 0.3rem; }
+.in-src-type { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; }
+.in-src-primary { font-size: 0.6rem; font-weight: 700; color: var(--positive); background: var(--positive-bg); padding: 0 0.3rem; border-radius: 3px; }
+
+/* ── Consolidated 重點新聞 (highlights) page ─────────────────────────── */
+.sc-hl-hint { margin: 0.2rem 0 0.9rem; }
+.sc-hl-hint a, .hl-legend-note a { color: var(--accent); }
+.hl-root-page { margin-top: 1.25rem; }
+.hl-legend { display: flex; align-items: center; gap: 1rem 1.4rem; flex-wrap: wrap; margin: 0.4rem 0 1rem;
+  padding: 0.5rem 0.8rem; border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: var(--glass-bg); font-size: 0.8rem; }
+.hl-legend-item { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); }
+.hl-legend-note { color: var(--text-muted); font-size: 0.78rem; }
+.hl-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.hl-src-supply-chain { background: #2E8B85; }
+.hl-src-industry-news { background: #7C5CBF; }
+.hl-source-badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.55rem;
+  border-radius: 999px; margin-bottom: 0.6rem; color: var(--text-on-accent); }
+.hl-source-badge.hl-src-supply-chain { background: #2E8B85; }
+.hl-source-badge.hl-src-industry-news { background: #7C5CBF; }

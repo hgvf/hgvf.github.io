@@ -44,6 +44,18 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // 產業消息 (supply-chain-intelligence-daily skill) — structural
+    // supply-chain events + a per-day digest. Written server-side by
+    // scripts/publish.py --type events (Admin/REST, bypasses rules);
+    // public read so the page renders without login, whitelisted client writes.
+    match /supply_chain_events/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+    match /supply_chain_daily_digest/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
     match /earnings_calls/{id} {
       allow read: if true;
       allow write: if isWhitelisted();

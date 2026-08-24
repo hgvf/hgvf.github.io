@@ -17,6 +17,7 @@ Usage:
     python scripts/publish.py --type conflict --file war.json        # -> mil_conflicts   (② 戰役消耗)
     python scripts/publish.py --type arsenal  --file weapons.json    # -> mil_weapons     (③ 系統譜系)
     python scripts/publish.py --type explorer --file modern.json     # -> mil_weapons_modern (① 武器探索)
+    python scripts/publish.py --type events   --file sc_events.json   # -> supply_chain_events + supply_chain_daily_digest (產業消息)
 
 A scheduler can call this after producing the JSON, e.g.:
     claude ... > /tmp/defense.json && \
@@ -297,12 +298,107 @@ def weapon_docs(items, now_iso):
         yield slug(w["id"], 90), {"updated_at": now_iso, "data": w}
 
 
+# ─── 產業消息 / supply-chain intelligence events (supply_chain_events) ──
+# Consumes the JSON emitted by the supply-chain-intelligence-daily skill:
+#   { "schema_version": "1.x", "events": [ ... ], "digest": {...},
+#     "event_window": {"start": "YYYY-MM-DD"}, ... }
+# or a bare list of events, or a single event object.
+#
+# Each event upserts to supply_chain_events/<event_id> (idempotent — the whole
+# event object is stored flat so the front-end can filter on event_type /
+# themes[] / regions[] / tickers[] / importance_tier / search_keywords[]).
+# The per-day digest upserts to supply_chain_daily_digest/<event_date>.
+SCHEMA_VERSION_SUPPORTED = "1."  # accept 1.x
+
+
+def events_payload(data):
+    """Return (events_list, full_payload_or_None). full_payload carries the
+    top-level digest/event_window when the input is the skill's envelope."""
+    if isinstance(data, dict) and isinstance(data.get("events"), list):
+        version = str(data.get("schema_version", "1.0"))
+        if not version.startswith(SCHEMA_VERSION_SUPPORTED):
+            print(f"ERROR: unsupported schema_version {version!r}; publisher supports "
+                  f"{SCHEMA_VERSION_SUPPORTED}x")
+            sys.exit(1)
+        return data["events"], data
+    if isinstance(data, list):
+        return data, None
+    if isinstance(data, dict) and (data.get("event_id") or data.get("title_zh")):
+        return [data], None
+    print('ERROR: expected {"events":[...]}, a list, or a single event object')
+    sys.exit(1)
+
+
+def event_docs(events, now_iso):
+    """Yield (doc_id, event) with event_id as the deterministic doc id and a
+    server-side ingested_at stamped so the "new since last visit" badge works."""
+    for e in events:
+        eid = e.get("event_id")
+        date = e.get("event_date") or (e.get("event_window") or {}).get("start")
+        if not eid or not date:
+            print(f"  skip (missing event_id/event_date): "
+                  f"{json.dumps(e, ensure_ascii=False)[:80]}")
+            continue
+        doc = dict(e)
+        doc["ingested_at"] = now_iso  # overwrite with the actual publish time
+        # event_id is the canonical doc id; only sanitize chars Firestore
+        # forbids in a document id ("/"), keep case so it matches the schema.
+        yield str(eid).replace("/", "-")[:1500], doc
+
+
+def digest_doc(payload, events, now_iso):
+    """Build the supply_chain_daily_digest/<date> doc. Uses the skill's
+    precomputed digest when present, else derives one from the events."""
+    window = (payload or {}).get("event_window") or {}
+    date_key = window.get("start")
+    if not date_key and events:
+        date_key = events[0].get("event_date")
+    if not date_key:
+        return None, None
+
+    digest = (payload or {}).get("digest") or {}
+    if not digest:
+        themes, tiers, tickers = {}, {}, {}
+        for e in events:
+            for t in e.get("themes", []) or []:
+                themes[t] = themes.get(t, 0) + 1
+            tier = e.get("importance_tier")
+            if tier:
+                tiers[tier] = tiers.get(tier, 0) + 1
+            for tk in e.get("tickers", []) or []:
+                tickers[tk] = tickers.get(tk, 0) + 1
+        top = [k for k, _ in sorted(tickers.items(), key=lambda kv: -kv[1])[:8]]
+        digest = {
+            "themes_distribution": themes,
+            "importance_distribution": tiers,
+            "top_tickers": top,
+        }
+
+    return date_key, {
+        "date": date_key,
+        "event_count": (payload or {}).get("event_count", len(events)),
+        "event_window": window,
+        "digest": digest,
+        "schema_version": (payload or {}).get("schema_version", "1.0"),
+        "generator": (payload or {}).get("generator", {}),
+        "generated_at": (payload or {}).get("generated_at", now_iso),
+        "updated_at": now_iso,
+    }
+
+
 def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
     ap.add_argument("--type", required=True,
-                    choices=["news", "earnings", "defense", "conflict", "arsenal", "explorer"])
+                    choices=["news", "earnings", "defense", "conflict",
+                             "arsenal", "explorer", "events"])
     ap.add_argument("--file", required=True, help="Path to input JSON")
     ap.add_argument("--credentials", help="Path to Firebase service account JSON")
+    ap.add_argument("--collection",
+                    help="Override target collection (events only; "
+                         "default supply_chain_events)")
+    ap.add_argument("--digest-collection",
+                    help="Digest collection for --type events "
+                         "(default supply_chain_daily_digest)")
     args = ap.parse_args()
 
     try:
@@ -331,7 +427,28 @@ def main():
         "conflict": "mil_conflicts",
         "arsenal": "mil_weapons",
         "explorer": "mil_weapons_modern",
+        "events": args.collection or "supply_chain_events",
     }[args.type]
+
+    session = requests.Session()
+
+    # 產業消息: events + a per-day digest (two collections).
+    if args.type == "events":
+        events, envelope = events_payload(data)
+        docs = list(event_docs(events, now_iso))
+        ok = 0
+        for doc_id, payload in docs:
+            if upsert(session, base, token, collection, doc_id, payload):
+                ok += 1
+        print(f"Published {ok} event document(s) to {collection}.")
+
+        date_key, digest = digest_doc(envelope, events, now_iso)
+        if date_key and digest:
+            dcol = args.digest_collection or "supply_chain_daily_digest"
+            if upsert(session, base, token, dcol, date_key, digest):
+                print(f"Wrote digest for {date_key} to {dcol}.")
+        return
+
     if args.type == "news":
         docs = news_docs(as_list(data, "items"), now_iso)
     elif args.type == "earnings":
@@ -343,7 +460,6 @@ def main():
     else:  # arsenal | explorer
         docs = weapon_docs(weapons_from(data), now_iso)
 
-    session = requests.Session()
     ok = 0
     for doc_id, payload in docs:
         if upsert(session, base, token, collection, doc_id, payload):

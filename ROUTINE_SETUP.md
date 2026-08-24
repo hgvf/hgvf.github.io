@@ -6,7 +6,13 @@
 | 區塊 | 頁面 | Firestore collection | 更新方式 |
 |------|------|----------------------|----------|
 | 供應鏈瓶頸新聞 | `supply-chain/index.html` | `supply_chain_news` | **每日自動**（Routine） |
+| 產業消息 | `industry-news/index.html` | `supply_chain_events`＋`supply_chain_daily_digest` | **每日自動**（Routine，supply-chain-intelligence-daily skill） |
+| 重點新聞（收藏彙整） | `highlights/index.html` | —（瀏覽器 localStorage，跨頁共用收藏） | 由上述頁面點 🔖 收藏 |
 | 財報電話會議分析 | `earnings/index.html` | `earnings_calls` | **手動**（Claude Code web session） |
+
+`產業消息` 用 `scripts/publish.py --type events --file <skill_output.json>` 發布：每個 event upsert 到
+`supply_chain_events/<event_id>`（冪等），並把當日 digest 寫入 `supply_chain_daily_digest/<event_date>`。
+可用 `--collection` / `--digest-collection` 覆寫目標 collection。
 
 每個頁面都有：時間軸圖（節點依日期排列、點節點跳到對應卡片、日後可疊股價線）＋ 可讀卡片＋ ticker 標註＋ 偏多/偏空標色。首頁 **Quick Links** 有兩個入口。
 
@@ -16,7 +22,7 @@
 
 ## 0. 一次性前置
 
-1. **部署 Firestore 規則**（新增了 `supply_chain_news`、`earnings_calls` 兩個 collection，公開讀、白名單寫）：
+1. **部署 Firestore 規則**（含 `supply_chain_news`、`earnings_calls`、以及新增的 `supply_chain_events`、`supply_chain_daily_digest`，皆公開讀、白名單寫）：
    ```
    firebase deploy --only firestore:rules
    ```
