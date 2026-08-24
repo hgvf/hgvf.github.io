@@ -554,3 +554,22 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
 .hl-spark-area { stroke: none; opacity: 0.7; }
 .hl-trend-period { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-muted); margin-top: 0.3rem; }
 .hl-trend-empty { font-size: 0.76rem; color: var(--text-muted); padding: 0.9rem 0.2rem; text-align: center; }
+
+/* Highlight News — editable ticker on trend cards */
+.hl-trend-head { position: relative; }
+.hl-trend-edit { display: inline-flex; align-items: center; justify-content: center; padding: 1px;
+  border: none; background: transparent; color: var(--text-muted); cursor: pointer; opacity: 0.5;
+  border-radius: 4px; transition: all var(--transition); }
+.hl-trend-card:hover .hl-trend-edit { opacity: 1; }
+.hl-trend-edit:hover { color: var(--accent); background: var(--accent-light); }
+.hl-trend-edit-form { display: inline-flex; align-items: center; gap: 0.25rem; }
+.hl-trend-input { width: 6rem; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700;
+  text-transform: uppercase; padding: 0.15rem 0.35rem; border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); background: var(--glass-bg-solid); color: var(--text-primary); }
+.hl-trend-input:focus { outline: none; }
+.hl-trend-save, .hl-trend-cancel { width: 1.4rem; height: 1.4rem; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--glass-border); background: var(--glass-bg); font-size: 0.8rem; line-height: 1; }
+.hl-trend-save { color: var(--positive); border-color: rgba(22,163,74,0.4); }
+.hl-trend-save:hover { background: var(--positive-bg); }
+.hl-trend-cancel { color: var(--text-muted); }
+.hl-trend-cancel:hover { color: var(--negative); background: var(--negative-bg); border-color: rgba(220,38,38,0.4); }

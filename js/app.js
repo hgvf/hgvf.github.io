@@ -376,4 +376,10 @@ document.querySelectorAll('.nav-trigger').forEach(item => {
   });
 });
 
-showPage('home');
+// Default to home only when no deep-link hash (e.g. index.html#watchlist) has
+// already selected another page — otherwise this would override the hash and
+// snap the Reports-sidebar "Stock Watchlist" link back to the home page.
+{
+  const hashId = location.hash.replace('#', '');
+  if (!(hashId && document.getElementById(`page-${hashId}`))) showPage('home');
+}
