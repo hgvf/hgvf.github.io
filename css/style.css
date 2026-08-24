@@ -177,29 +177,24 @@ img { display: block; max-width: 100%; }
 
 .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .home-about { grid-column: 1 / -1; padding: 1.5rem 1.75rem; }
-.home-interests { padding: 1.5rem 1.75rem; }
-.home-links { padding: 1.5rem 1.75rem; }
 .card-title {
   font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em;
   color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.9rem;
 }
 .home-about p { font-size: 0.88rem; line-height: 1.7; color: var(--text-secondary); }
 .home-about p strong { color: var(--text-primary); }
-.interest-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.interest-list li {
-  font-size: 0.85rem; color: var(--text-secondary);
-  padding: 0.4rem 0.75rem; background: var(--accent-light);
-  border-radius: var(--radius-sm); border-left: 3px solid var(--accent);
+
+/* Interests — inline tags folded into the About Me card */
+.about-interests { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.1rem; }
+.about-interests-label {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); margin-right: 0.15rem;
 }
-.quick-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
-.quick-link-btn {
-  flex: 1 1 auto; display: inline-block; padding: 0.4rem 0.55rem; border-radius: var(--radius-sm);
-  font-size: 0.72rem; font-weight: 500; white-space: nowrap; background: rgba(139,94,60,0.1);
-  color: var(--accent); border: 1px solid rgba(139,94,60,0.2);
-  transition: background var(--transition), transform var(--transition);
-  cursor: pointer; text-align: center;
+.about-tag {
+  font-size: 0.78rem; font-weight: 500; color: var(--accent);
+  padding: 0.25rem 0.7rem; background: var(--accent-light);
+  border: 1px solid rgba(139,94,60,0.2); border-radius: 999px;
 }
-.quick-link-btn:hover { background: rgba(139,94,60,0.18); transform: translateY(-1px); }
 
 /* ── Publications (home) ─────────────────────────────────── */
 .home-publications { grid-column: 1 / -1; padding: 1.5rem 1.75rem; }
