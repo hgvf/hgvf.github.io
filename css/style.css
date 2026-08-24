@@ -166,6 +166,15 @@ img { display: block; max-width: 100%; }
 .page-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
 .page-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
 
+/* Link from the Watchlist header to the standalone 題材強弱 page */
+.wl-strength-link {
+  display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; font-weight: 500;
+  color: var(--accent); text-decoration: none; padding: 0.28rem 0.7rem;
+  border: 1px solid var(--glass-border); border-radius: 999px; white-space: nowrap;
+  background: var(--glass-bg); transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.wl-strength-link:hover { color: var(--accent-hover); border-color: var(--accent); background: var(--accent-light); }
+
 .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .home-about { grid-column: 1 / -1; padding: 1.5rem 1.75rem; }
 .home-interests { padding: 1.5rem 1.75rem; }
@@ -182,10 +191,10 @@ img { display: block; max-width: 100%; }
   padding: 0.4rem 0.75rem; background: var(--accent-light);
   border-radius: var(--radius-sm); border-left: 3px solid var(--accent);
 }
-.quick-links { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem; }
+.quick-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
 .quick-link-btn {
-  display: inline-block; padding: 0.55rem 1rem; border-radius: var(--radius-sm);
-  font-size: 0.83rem; font-weight: 500; background: rgba(139,94,60,0.1);
+  flex: 1 1 auto; display: inline-block; padding: 0.4rem 0.55rem; border-radius: var(--radius-sm);
+  font-size: 0.72rem; font-weight: 500; white-space: nowrap; background: rgba(139,94,60,0.1);
   color: var(--accent); border: 1px solid rgba(139,94,60,0.2);
   transition: background var(--transition), transform var(--transition);
   cursor: pointer; text-align: center;

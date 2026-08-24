@@ -318,6 +318,14 @@ document.getElementById('btnRefreshPrices')?.addEventListener('click', async () 
         const failed = Array.isArray(data.failed) ? data.failed : [];
         let msg = `Updated ${data.updated ?? '?'} symbols`;
         if (failed.length) msg += ` · ${failed.length} not updated: ${failed.slice(0, 8).join(', ')}${failed.length > 8 ? '…' : ''}`;
+        // When nothing came back, name the likely cause from the worker's diag
+        // (Yahoo crumb/cookie failed vs. a rate-limited batch) instead of just
+        // "0 updated".
+        if (data.updated === 0 && data.diag) {
+          msg += data.diag.sessionOk === false
+            ? ' · Yahoo session failed (crumb/cookie) — 稍後再試'
+            : ' · Yahoo returned no quotes (rate-limited?) — 稍後再試';
+        }
         statusEl.textContent = msg;
         statusEl.className   = `price-status ${failed.length ? 'warn' : 'ok'}`;
         if (failed.length) statusEl.title = failed.join(', ');

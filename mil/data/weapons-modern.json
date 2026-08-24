@@ -1,0 +1,759 @@
+{
+  "_note": "Weapon Research Explorer dataset (PoC). Values are from public / open sources and rounded; each critical spec carries a source_id + confidence. model_3d.fidelity = 'c' (visual approximation from public external characteristics) — recognition use only, not engineering-grade. Tags reference mil/data/tags.json by {type,value}.",
+  "weapons": [
+    {
+      "id": "hf3", "name": "Hsiung Feng III", "name_zh": "雄風三型", "designation": "HF-3",
+      "entity_type": "missile", "country": "Taiwan", "manufacturer": ["NCSIST 國家中山科學研究院"],
+      "status": "operational",
+      "summary_zh": "台灣自製超音速反艦飛彈，採整合式火箭衝壓引擎（ramjet）維持超音速巡航，具海面掠射與末端機動能力，部署於成功級/沱江級艦艇與岸置機動發射系統。",
+      "summary": "Taiwan's indigenous supersonic anti-ship missile using an integral rocket-ramjet for sustained supersonic cruise; sea-skimming with terminal maneuver, fielded on surface combatants and coastal mobile launchers.",
+      "specifications": {
+        "length_m":  { "value": 6.1, "source_id": "hf3_ncsist", "confidence": "medium" },
+        "diameter_m":{ "value": 0.46, "source_id": "hf3_ncsist", "confidence": "low" },
+        "weight_kg": { "value": 1500, "source_id": "hf3_ncsist", "confidence": "low" },
+        "range_km":  { "value": "150+", "source_id": "hf3_csis", "confidence": "medium" },
+        "speed":     { "value": "Mach 2.5", "source_id": "hf3_csis", "confidence": "medium" },
+        "warhead":   { "value": "~120–225 kg 半穿甲高爆", "source_id": "hf3_csis", "confidence": "low" },
+        "propulsion":{ "value": "整合火箭衝壓 (rocket-ramjet)", "source_id": "hf3_ncsist", "confidence": "high" },
+        "guidance":  { "value": "慣性中途 + 主動雷達末端", "source_id": "hf3_csis", "confidence": "medium" }
+      },
+      "tags": [
+        { "type": "role", "value": "anti_ship", "source_id": "hf3_csis" },
+        { "type": "propulsion", "value": "ramjet", "source_id": "hf3_ncsist" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "hf3_ncsist" },
+        { "type": "guidance", "value": "inertial", "source_id": "hf3_csis" },
+        { "type": "guidance", "value": "active_radar", "source_id": "hf3_csis" },
+        { "type": "flight", "value": "sea_skimming", "source_id": "hf3_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "hf3_csis" },
+        { "type": "launch", "value": "ship", "source_id": "hf3_csis" },
+        { "type": "launch", "value": "ground", "source_id": "hf3_csis" },
+        { "type": "target", "value": "surface_ship", "source_id": "hf3_csis" }
+      ],
+      "variants": [
+        { "id": "hf3", "name": "HF-3", "name_zh": "雄三 基本型", "changes": {} },
+        { "id": "hf3-er", "name": "HF-3 ER", "name_zh": "雄三增程型", "changes": { "range_km": "400+", "note": "延長彈體/燃料，射程大幅提升。" } }
+      ],
+      "platforms": [
+        { "name": "Cheng Kung-class frigate", "name_zh": "成功級巡防艦", "type": "ship" },
+        { "name": "Tuo Chiang-class corvette", "name_zh": "沱江級巡邏艦", "type": "ship" },
+        { "name": "Coastal mobile launcher", "name_zh": "岸置機動發射系統", "type": "ground" }
+      ],
+      "operators": [ { "country": "TW", "name_zh": "中華民國海軍", "status": "operational", "note": "艦載與岸置。" } ],
+      "events": [
+        { "date": "2007-01-01", "type": "development", "title_zh": "首度公開展示", "title": "First public display", "source_ids": ["hf3_csis"] },
+        { "date": "2011-01-01", "type": "deployment", "title_zh": "成功級艦艇整合部署", "title": "Fielded on Cheng Kung-class", "source_ids": ["hf3_csis"] },
+        { "date": "2022-01-01", "type": "upgrade", "title_zh": "增程型 (ER) 量產部署", "title": "Extended-range variant fielded", "source_ids": ["hf3_ncsist"] }
+      ],
+      "sources": [
+        { "id": "hf3_ncsist", "title": "NCSIST 雄風三型飛彈", "publisher": "NCSIST", "source_type": "official", "url": "https://www.ncsist.org.tw/", "reliability": "tier_1" },
+        { "id": "hf3_csis", "title": "Hsiung Feng III — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/hsiung-feng-iii/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 6.1, "bodyDia": 0.46, "color": "#c8ccd2", "nose": "ogive",
+          "wings": { "span": 0.55, "chord": 0.6, "axial": 0.5, "sweep": 0.45 },
+          "tailFins": { "span": 0.6, "chord": 0.55, "count": 4 },
+          "intake": "side2", "booster": { "len": 1.4, "dia": 0.5 } },
+        "annotations": [
+          { "id": "intake", "name": "Ramjet intake", "name_zh": "衝壓引擎進氣道", "axial": 0.55, "radial": "side", "tag": "propulsion:ramjet", "source_id": "hf3_ncsist" },
+          { "id": "seeker", "name": "Active radar seeker", "name_zh": "主動雷達尋標器", "axial": 0.04, "radial": "nose", "tag": "guidance:active_radar", "source_id": "hf3_csis" },
+          { "id": "booster", "name": "Tandem rocket booster", "name_zh": "串列火箭助推器", "axial": 0.95, "radial": "tail", "tag": "propulsion:rocket_booster", "source_id": "hf3_ncsist" }
+        ] }
+    },
+    {
+      "id": "tomahawk", "name": "Tomahawk (BGM-109 / RGM/UGM-109)", "name_zh": "戰斧巡弋飛彈", "designation": "TLAM",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["RTX (Raytheon)"],
+      "status": "operational",
+      "summary_zh": "美國長程次音速對地巡弋飛彈，渦輪風扇動力、地形匹配與 GPS/INS 導引，可由艦艇（Mk 41 VLS）與潛艦發射；Block V 加入反艦與網路化打擊能力。",
+      "summary": "US long-range subsonic land-attack cruise missile; turbofan powered with TERCOM/DSMAC + GPS/INS, launched from ships (Mk 41 VLS) and submarines. Block V adds maritime-strike and networked targeting.",
+      "specifications": {
+        "length_m":  { "value": 5.56, "source_id": "tlam_navy", "confidence": "high" },
+        "diameter_m":{ "value": 0.52, "source_id": "tlam_navy", "confidence": "high" },
+        "weight_kg": { "value": 1600, "source_id": "tlam_navy", "confidence": "medium" },
+        "range_km":  { "value": "~1600", "source_id": "tlam_csis", "confidence": "medium" },
+        "speed":     { "value": "~Mach 0.7 (880 km/h)", "source_id": "tlam_navy", "confidence": "high" },
+        "warhead":   { "value": "450 kg 單一/子母彈頭", "source_id": "tlam_navy", "confidence": "medium" },
+        "propulsion":{ "value": "渦輪風扇 + 固態助推", "source_id": "tlam_navy", "confidence": "high" },
+        "guidance":  { "value": "GPS/INS + TERCOM/DSMAC", "source_id": "tlam_navy", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "land_attack", "source_id": "tlam_navy" },
+        { "type": "role", "value": "anti_ship", "source_id": "tlam_csis" },
+        { "type": "propulsion", "value": "turbofan", "source_id": "tlam_navy" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "tlam_navy" },
+        { "type": "guidance", "value": "gps_ins", "source_id": "tlam_navy" },
+        { "type": "guidance", "value": "terrain_matching", "source_id": "tlam_navy" },
+        { "type": "guidance", "value": "datalink", "source_id": "tlam_csis" },
+        { "type": "flight", "value": "low_altitude", "source_id": "tlam_navy" },
+        { "type": "speed", "value": "subsonic", "source_id": "tlam_navy" },
+        { "type": "launch", "value": "ship", "source_id": "tlam_navy" },
+        { "type": "launch", "value": "vls", "source_id": "tlam_navy" },
+        { "type": "launch", "value": "submarine", "source_id": "tlam_navy" },
+        { "type": "target", "value": "fixed_ground_target", "source_id": "tlam_navy" },
+        { "type": "target", "value": "surface_ship", "source_id": "tlam_csis" }
+      ],
+      "variants": [
+        { "id": "blk4", "name": "Block IV", "name_zh": "Block IV", "changes": { "note": "彈上重新瞄準、資料鏈與戰場評估相機。" } },
+        { "id": "blk5", "name": "Block V", "name_zh": "Block V", "changes": { "guidance": "+ 網路化目標更新", "note": "Va 反艦（MST）、Vb 強化對陸彈頭 (JMEWS)。" } }
+      ],
+      "platforms": [
+        { "name": "Arleigh Burke-class", "name_zh": "勃克級驅逐艦", "type": "ship" },
+        { "name": "Virginia-class SSN", "name_zh": "維吉尼亞級潛艦", "type": "submarine" },
+        { "name": "Typhon ground launcher", "name_zh": "Typhon 陸基發射系統", "type": "ground" }
+      ],
+      "operators": [
+        { "country": "US", "name_zh": "美國海軍/陸軍", "status": "operational", "note": "" },
+        { "country": "GB", "name_zh": "英國皇家海軍", "status": "operational", "note": "潛射。" },
+        { "country": "JP", "name_zh": "日本", "status": "acquisition", "note": "採購與整合中。" },
+        { "country": "AU", "name_zh": "澳洲", "status": "procurement", "note": "已核准 FMS。" }
+      ],
+      "events": [
+        { "date": "1983-01-01", "type": "deployment", "title_zh": "服役", "title": "Entered service", "source_ids": ["tlam_navy"] },
+        { "date": "2004-01-01", "type": "upgrade", "title_zh": "Block IV 服役", "title": "Block IV fielded", "source_ids": ["tlam_navy"] },
+        { "date": "2023-01-01", "type": "procurement", "title_zh": "日本核准採購", "title": "Japan approved for procurement", "source_ids": ["tlam_csis"] }
+      ],
+      "sources": [
+        { "id": "tlam_navy", "title": "Tomahawk Cruise Missile — U.S. Navy Fact File", "publisher": "U.S. Navy", "source_type": "official", "url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2169229/tomahawk-cruise-missile/", "reliability": "tier_1" },
+        { "id": "tlam_csis", "title": "Tomahawk — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/tomahawk/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 5.56, "bodyDia": 0.52, "color": "#5c6b52", "nose": "ogive",
+          "wings": { "span": 1.35, "chord": 0.5, "axial": 0.55, "sweep": 0.25, "popout": true },
+          "tailFins": { "span": 0.55, "chord": 0.4, "count": 4 },
+          "intake": "belly", "booster": { "len": 0.8, "dia": 0.52 } },
+        "annotations": [
+          { "id": "wing", "name": "Pop-out wings", "name_zh": "彈出式彈翼", "axial": 0.55, "radial": "side", "tag": "flight:low_altitude", "source_id": "tlam_navy" },
+          { "id": "intake", "name": "Turbofan air intake", "name_zh": "渦扇進氣口", "axial": 0.8, "radial": "belly", "tag": "propulsion:turbofan", "source_id": "tlam_navy" },
+          { "id": "guidance", "name": "GPS/TERCOM guidance", "name_zh": "GPS/地形匹配導引", "axial": 0.15, "radial": "dorsal", "tag": "guidance:terrain_matching", "source_id": "tlam_navy" }
+        ] }
+    },
+    {
+      "id": "harpoon", "name": "Harpoon (AGM/RGM/UGM-84)", "name_zh": "魚叉反艦飛彈", "designation": "Harpoon",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["Boeing"],
+      "status": "operational", "family": "harpoon",
+      "summary_zh": "美國廣泛外銷的次音速反艦飛彈，渦輪噴射動力、主動雷達尋標與海面掠射；Block II 加入 GPS/INS 具備對岸與濱海打擊能力。",
+      "summary": "Widely exported US subsonic anti-ship missile; turbojet, active-radar seeker, sea-skimming. Block II adds GPS/INS for littoral / coastal-target strike.",
+      "specifications": {
+        "length_m":  { "value": 4.6, "source_id": "harp_boeing", "confidence": "high" },
+        "diameter_m":{ "value": 0.34, "source_id": "harp_boeing", "confidence": "high" },
+        "weight_kg": { "value": 690, "source_id": "harp_boeing", "confidence": "medium" },
+        "range_km":  { "value": "~124 (Block II)", "source_id": "harp_csis", "confidence": "medium" },
+        "speed":     { "value": "~Mach 0.85", "source_id": "harp_csis", "confidence": "medium" },
+        "warhead":   { "value": "221 kg 穿甲爆破", "source_id": "harp_boeing", "confidence": "medium" },
+        "propulsion":{ "value": "渦輪噴射 + 固態助推", "source_id": "harp_boeing", "confidence": "high" },
+        "guidance":  { "value": "主動雷達 (+ GPS/INS Block II)", "source_id": "harp_csis", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "anti_ship", "source_id": "harp_boeing" },
+        { "type": "role", "value": "land_attack", "source_id": "harp_csis" },
+        { "type": "propulsion", "value": "turbojet", "source_id": "harp_boeing" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "harp_boeing" },
+        { "type": "guidance", "value": "active_radar", "source_id": "harp_boeing" },
+        { "type": "guidance", "value": "gps_ins", "source_id": "harp_csis" },
+        { "type": "flight", "value": "sea_skimming", "source_id": "harp_boeing" },
+        { "type": "speed", "value": "subsonic", "source_id": "harp_boeing" },
+        { "type": "launch", "value": "ship", "source_id": "harp_boeing" },
+        { "type": "launch", "value": "air", "source_id": "harp_boeing" },
+        { "type": "launch", "value": "submarine", "source_id": "harp_boeing" },
+        { "type": "launch", "value": "ground", "source_id": "harp_csis" },
+        { "type": "target", "value": "surface_ship", "source_id": "harp_boeing" }
+      ],
+      "variants": [
+        { "id": "block1", "name": "Block I", "name_zh": "Block I", "changes": { "guidance": "主動雷達 (INS)", "role": "反艦", "launch": "艦/空", "note": "原型反艦構型，海面掠射攻擊。" } },
+        { "id": "block1c", "name": "Block IC", "name_zh": "Block IC", "changes": { "note": "多重掠海高度與再攻擊航路選項。" } },
+        { "id": "block2", "name": "Block II", "name_zh": "Block II", "changes": { "guidance": "+ GPS/INS", "role": "+ 濱海/對岸攻擊", "launch": "+ 陸射整合", "note": "沿用 JDAM/SLAM-ER 的 GPS 導引套件。" } },
+        { "id": "block2plus", "name": "Block II+", "name_zh": "Block II+", "changes": { "guidance": "+ 網路化資料鏈", "note": "彈道中途更新，抗干擾強化。" } }
+      ],
+      "platforms": [
+        { "name": "Surface combatants", "name_zh": "各型水面艦", "type": "ship" },
+        { "name": "P-3 / P-8 / F/A-18", "name_zh": "反潛巡邏機 / 戰機", "type": "air" },
+        { "name": "Coastal defense (HCDS)", "name_zh": "岸置防禦系統", "type": "ground" }
+      ],
+      "operators": [
+        { "country": "US", "name_zh": "美國", "status": "operational", "note": "" },
+        { "country": "TW", "name_zh": "台灣", "status": "operational", "note": "艦載、空射與岸置 HCDS。" },
+        { "country": "JP", "name_zh": "日本", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "1977-01-01", "type": "deployment", "title_zh": "服役", "title": "Entered service", "source_ids": ["harp_boeing"] },
+        { "date": "2009-01-01", "type": "upgrade", "title_zh": "Block II 生產", "title": "Block II in production", "source_ids": ["harp_csis"] },
+        { "date": "2020-01-01", "type": "procurement", "title_zh": "台灣岸置 HCDS 採購", "title": "Taiwan coastal HCDS buy", "source_ids": ["harp_csis"] }
+      ],
+      "sources": [
+        { "id": "harp_boeing", "title": "Harpoon — Boeing", "publisher": "Boeing", "source_type": "official", "url": "https://www.boeing.com/defense/harpoon", "reliability": "tier_1" },
+        { "id": "harp_csis", "title": "Harpoon — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/harpoon/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 4.6, "bodyDia": 0.34, "color": "#d6d9de", "nose": "ogive",
+          "wings": { "span": 0.91, "chord": 0.45, "axial": 0.5, "sweep": 0.1 },
+          "tailFins": { "span": 0.6, "chord": 0.4, "count": 4 },
+          "intake": null, "booster": { "len": 0.6, "dia": 0.34 } },
+        "annotations": [
+          { "id": "seeker", "name": "Active radar seeker", "name_zh": "主動雷達尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:active_radar", "source_id": "harp_boeing" },
+          { "id": "wing", "name": "Cruciform mid-body wings", "name_zh": "十字中段彈翼", "axial": 0.5, "radial": "side", "tag": "flight:sea_skimming", "source_id": "harp_boeing" },
+          { "id": "booster", "name": "Solid rocket booster", "name_zh": "固態火箭助推段", "axial": 0.95, "radial": "tail", "tag": "propulsion:rocket_booster", "source_id": "harp_boeing" }
+        ] }
+    },
+    {
+      "id": "sm2", "name": "Standard Missile 2 (RIM-66/67)", "name_zh": "標準二型防空飛彈", "designation": "SM-2",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["RTX (Raytheon)"],
+      "status": "operational", "family": "standard",
+      "summary_zh": "神盾艦區域防空主力，半主動雷達導引（末端），固態火箭與可拋式助推，經 Mk 41 VLS 發射。",
+      "summary": "Primary Aegis area-air-defense missile; semi-active radar homing (terminal), solid-rocket with jettisonable booster, launched from Mk 41 VLS.",
+      "specifications": {
+        "length_m":  { "value": 4.72, "source_id": "sm2_navy", "confidence": "high" },
+        "diameter_m":{ "value": 0.34, "source_id": "sm2_navy", "confidence": "high" },
+        "weight_kg": { "value": 708, "source_id": "sm2_navy", "confidence": "medium" },
+        "range_km":  { "value": "~90–170 (依型)", "source_id": "sm2_csis", "confidence": "medium" },
+        "speed":     { "value": "~Mach 3.5", "source_id": "sm2_csis", "confidence": "medium" },
+        "warhead":   { "value": "115 kg 破片", "source_id": "sm2_navy", "confidence": "medium" },
+        "propulsion":{ "value": "雙推力固態火箭 + Mk 72 助推", "source_id": "sm2_navy", "confidence": "high" },
+        "guidance":  { "value": "慣性 + 指令中途 + 半主動雷達末端", "source_id": "sm2_csis", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "air_defense", "source_id": "sm2_navy" },
+        { "type": "propulsion", "value": "solid_rocket", "source_id": "sm2_navy" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "sm2_navy" },
+        { "type": "guidance", "value": "semi_active_radar", "source_id": "sm2_csis" },
+        { "type": "guidance", "value": "inertial", "source_id": "sm2_csis" },
+        { "type": "guidance", "value": "datalink", "source_id": "sm2_csis" },
+        { "type": "flight", "value": "high_altitude", "source_id": "sm2_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "sm2_csis" },
+        { "type": "launch", "value": "ship", "source_id": "sm2_navy" },
+        { "type": "launch", "value": "vls", "source_id": "sm2_navy" },
+        { "type": "target", "value": "aircraft", "source_id": "sm2_navy" },
+        { "type": "target", "value": "missile", "source_id": "sm2_csis" }
+      ],
+      "variants": [
+        { "id": "blk3b", "name": "SM-2 Block IIIB", "name_zh": "Block IIIB", "changes": { "guidance": "+ 紅外線輔助 (MHIP)" } }
+      ],
+      "platforms": [ { "name": "Aegis cruisers/destroyers", "name_zh": "神盾巡洋艦/驅逐艦", "type": "ship" } ],
+      "operators": [
+        { "country": "US", "name_zh": "美國海軍", "status": "operational", "note": "" },
+        { "country": "TW", "name_zh": "台灣（基隆級）", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "1981-01-01", "type": "deployment", "title_zh": "服役", "title": "Entered service", "source_ids": ["sm2_navy"] }
+      ],
+      "sources": [
+        { "id": "sm2_navy", "title": "Standard Missile — U.S. Navy Fact File", "publisher": "U.S. Navy", "source_type": "official", "url": "https://www.navy.mil/Resources/Fact-Files/", "reliability": "tier_1" },
+        { "id": "sm2_csis", "title": "SM-2 — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/defsys/sm-2/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "interceptor", "bodyLen": 4.72, "bodyDia": 0.34, "color": "#cdd2d8", "nose": "cone",
+          "wings": { "span": 0.5, "chord": 0.35, "axial": 0.5, "sweep": 0.2 },
+          "tailFins": { "span": 0.62, "chord": 0.45, "count": 4 },
+          "intake": null, "booster": { "len": 1.7, "dia": 0.53 } },
+        "annotations": [
+          { "id": "seeker", "name": "Semi-active radar seeker", "name_zh": "半主動雷達尋標器", "axial": 0.04, "radial": "nose", "tag": "guidance:semi_active_radar", "source_id": "sm2_csis" },
+          { "id": "booster", "name": "Mk 72 booster", "name_zh": "Mk 72 助推段", "axial": 0.92, "radial": "tail", "tag": "propulsion:rocket_booster", "source_id": "sm2_navy" }
+        ] }
+    },
+    {
+      "id": "sm6", "name": "Standard Missile 6 (RIM-174)", "name_zh": "標準六型飛彈", "designation": "SM-6",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["RTX (Raytheon)"],
+      "status": "operational", "family": "standard",
+      "summary_zh": "多用途標準飛彈，結合 AMRAAM 主動雷達尋標器，具超地平線防空、末端彈道防禦與反艦打擊三重能力。",
+      "summary": "Multi-mission Standard Missile using an AMRAAM-derived active seeker; over-the-horizon air defense, terminal BMD, and anti-ship strike.",
+      "specifications": {
+        "length_m":  { "value": 6.6, "source_id": "sm6_navy", "confidence": "high" },
+        "diameter_m":{ "value": 0.53, "source_id": "sm6_navy", "confidence": "high" },
+        "weight_kg": { "value": 1500, "source_id": "sm6_navy", "confidence": "medium" },
+        "range_km":  { "value": "~240–460", "source_id": "sm6_csis", "confidence": "low" },
+        "speed":     { "value": "~Mach 3.5", "source_id": "sm6_csis", "confidence": "medium" },
+        "warhead":   { "value": "64 kg 破片", "source_id": "sm6_csis", "confidence": "low" },
+        "propulsion":{ "value": "雙推力固態火箭 + Mk 72 助推", "source_id": "sm6_navy", "confidence": "high" },
+        "guidance":  { "value": "慣性/指令 + 主動/半主動雷達末端", "source_id": "sm6_navy", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "air_defense", "source_id": "sm6_navy" },
+        { "type": "role", "value": "ballistic_missile_defense", "source_id": "sm6_navy" },
+        { "type": "role", "value": "anti_ship", "source_id": "sm6_csis" },
+        { "type": "propulsion", "value": "solid_rocket", "source_id": "sm6_navy" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "sm6_navy" },
+        { "type": "guidance", "value": "active_radar", "source_id": "sm6_navy" },
+        { "type": "guidance", "value": "semi_active_radar", "source_id": "sm6_navy" },
+        { "type": "guidance", "value": "datalink", "source_id": "sm6_navy" },
+        { "type": "flight", "value": "high_altitude", "source_id": "sm6_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "sm6_csis" },
+        { "type": "launch", "value": "ship", "source_id": "sm6_navy" },
+        { "type": "launch", "value": "vls", "source_id": "sm6_navy" },
+        { "type": "target", "value": "aircraft", "source_id": "sm6_navy" },
+        { "type": "target", "value": "missile", "source_id": "sm6_navy" },
+        { "type": "target", "value": "surface_ship", "source_id": "sm6_csis" }
+      ],
+      "variants": [
+        { "id": "blk1a", "name": "Block IA", "name_zh": "Block IA", "changes": {} },
+        { "id": "blk1b", "name": "Block IB", "name_zh": "Block IB", "changes": { "note": "21 吋大直徑火箭，射程/速度提升。" } }
+      ],
+      "platforms": [ { "name": "Aegis destroyers", "name_zh": "神盾驅逐艦", "type": "ship" } ],
+      "operators": [
+        { "country": "US", "name_zh": "美國海軍", "status": "operational", "note": "" },
+        { "country": "JP", "name_zh": "日本", "status": "acquisition", "note": "" },
+        { "country": "AU", "name_zh": "澳洲", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "2013-01-01", "type": "deployment", "title_zh": "服役", "title": "Entered service", "source_ids": ["sm6_navy"] },
+        { "date": "2021-01-01", "type": "test", "title_zh": "末端彈道防禦測試成功", "title": "Terminal BMD intercept", "source_ids": ["sm6_navy"] }
+      ],
+      "sources": [
+        { "id": "sm6_navy", "title": "SM-6 — RTX / U.S. Navy", "publisher": "RTX", "source_type": "official", "url": "https://www.rtx.com/raytheon/what-we-do/sea/standard-missile-6", "reliability": "tier_1" },
+        { "id": "sm6_csis", "title": "SM-6 — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/defsys/sm-6/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "interceptor", "bodyLen": 6.6, "bodyDia": 0.53, "color": "#cdd2d8", "nose": "cone",
+          "wings": { "span": 0.5, "chord": 0.35, "axial": 0.55, "sweep": 0.2 },
+          "tailFins": { "span": 0.7, "chord": 0.5, "count": 4 },
+          "intake": null, "booster": { "len": 1.7, "dia": 0.53 } },
+        "annotations": [
+          { "id": "seeker", "name": "AMRAAM active seeker", "name_zh": "AMRAAM 主動尋標器", "axial": 0.04, "radial": "nose", "tag": "guidance:active_radar", "source_id": "sm6_navy" },
+          { "id": "booster", "name": "Mk 72 booster", "name_zh": "Mk 72 助推段", "axial": 0.92, "radial": "tail", "tag": "propulsion:rocket_booster", "source_id": "sm6_navy" }
+        ] }
+    },
+    {
+      "id": "pac3mse", "name": "PAC-3 MSE", "name_zh": "愛國者三型 MSE", "designation": "PAC-3 MSE",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["Lockheed Martin"],
+      "status": "operational",
+      "summary_zh": "陸基終端彈道飛彈防禦攔截彈，採直接撞擊（hit-to-kill）與主動雷達尋標，MSE 換裝雙脈衝發動機延長射程。",
+      "summary": "Ground-based terminal ballistic-missile-defense interceptor; hit-to-kill with active radar seeker. MSE adds a dual-pulse motor for extended reach.",
+      "specifications": {
+        "length_m":  { "value": 5.2, "source_id": "pac3_lm", "confidence": "medium" },
+        "diameter_m":{ "value": 0.29, "source_id": "pac3_lm", "confidence": "medium" },
+        "weight_kg": { "value": 315, "source_id": "pac3_lm", "confidence": "low" },
+        "range_km":  { "value": "~60", "source_id": "pac3_csis", "confidence": "low" },
+        "speed":     { "value": "~Mach 4–5", "source_id": "pac3_csis", "confidence": "low" },
+        "warhead":   { "value": "動能撞擊 + 殺傷增強器", "source_id": "pac3_lm", "confidence": "medium" },
+        "propulsion":{ "value": "雙脈衝固態發動機", "source_id": "pac3_lm", "confidence": "high" },
+        "guidance":  { "value": "慣性 + 主動 Ka 波段雷達尋標", "source_id": "pac3_lm", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "ballistic_missile_defense", "source_id": "pac3_lm" },
+        { "type": "role", "value": "air_defense", "source_id": "pac3_lm" },
+        { "type": "propulsion", "value": "dual_pulse_motor", "source_id": "pac3_lm" },
+        { "type": "propulsion", "value": "solid_rocket", "source_id": "pac3_lm" },
+        { "type": "guidance", "value": "active_radar", "source_id": "pac3_lm" },
+        { "type": "guidance", "value": "inertial", "source_id": "pac3_lm" },
+        { "type": "flight", "value": "high_altitude", "source_id": "pac3_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "pac3_csis" },
+        { "type": "launch", "value": "ground", "source_id": "pac3_lm" },
+        { "type": "launch", "value": "vehicle", "source_id": "pac3_lm" },
+        { "type": "target", "value": "missile", "source_id": "pac3_lm" },
+        { "type": "target", "value": "aircraft", "source_id": "pac3_lm" }
+      ],
+      "variants": [],
+      "platforms": [ { "name": "Patriot / LTAMDS battery", "name_zh": "愛國者發射車", "type": "vehicle" } ],
+      "operators": [
+        { "country": "US", "name_zh": "美國陸軍", "status": "operational", "note": "" },
+        { "country": "TW", "name_zh": "台灣", "status": "operational", "note": "" },
+        { "country": "JP", "name_zh": "日本", "status": "operational", "note": "授權生產。" }
+      ],
+      "events": [
+        { "date": "2016-01-01", "type": "deployment", "title_zh": "MSE 服役", "title": "MSE fielded", "source_ids": ["pac3_lm"] }
+      ],
+      "sources": [
+        { "id": "pac3_lm", "title": "PAC-3 MSE — Lockheed Martin", "publisher": "Lockheed Martin", "source_type": "official", "url": "https://www.lockheedmartin.com/en-us/products/pac-3-cost-effective-missile-defense.html", "reliability": "tier_1" },
+        { "id": "pac3_csis", "title": "PAC-3 — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/defsys/pac-3/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "interceptor", "bodyLen": 5.2, "bodyDia": 0.29, "color": "#b7bcc4", "nose": "cone",
+          "wings": null, "tailFins": { "span": 0.4, "chord": 0.3, "count": 4 },
+          "canards": { "span": 0.22, "chord": 0.16, "axial": 0.18 },
+          "intake": null, "booster": null, "attitudeThrusters": true },
+        "annotations": [
+          { "id": "seeker", "name": "Ka-band active seeker", "name_zh": "Ka 波段主動尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:active_radar", "source_id": "pac3_lm" },
+          { "id": "acm", "name": "Attitude control motors", "name_zh": "姿態控制推進器", "axial": 0.3, "radial": "side", "tag": "propulsion:dual_pulse_motor", "source_id": "pac3_lm" }
+        ] }
+    },
+    {
+      "id": "lrasm", "name": "AGM-158C LRASM", "name_zh": "長程反艦飛彈 LRASM", "designation": "LRASM",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["Lockheed Martin"],
+      "status": "operational",
+      "summary_zh": "以 JASSM-ER 為基礎的長程匿蹤反艦飛彈，具被動 RF 感測與自主目標識別，可在 GPS 受擾環境下作戰。",
+      "summary": "JASSM-ER-derived long-range stealthy anti-ship missile with passive RF sensing and autonomous target discrimination; operates in GPS-degraded environments.",
+      "specifications": {
+        "length_m":  { "value": 4.27, "source_id": "lrasm_lm", "confidence": "medium" },
+        "diameter_m":{ "value": 0.55, "source_id": "lrasm_lm", "confidence": "low" },
+        "weight_kg": { "value": 1100, "source_id": "lrasm_lm", "confidence": "low" },
+        "range_km":  { "value": "~560+", "source_id": "lrasm_csis", "confidence": "medium" },
+        "speed":     { "value": "次音速 (~Mach 0.85)", "source_id": "lrasm_csis", "confidence": "medium" },
+        "warhead":   { "value": "~450 kg 穿甲爆破", "source_id": "lrasm_lm", "confidence": "medium" },
+        "propulsion":{ "value": "渦輪風扇", "source_id": "lrasm_lm", "confidence": "high" },
+        "guidance":  { "value": "GPS/INS + 被動 RF + 成像紅外末端", "source_id": "lrasm_lm", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "anti_ship", "source_id": "lrasm_lm" },
+        { "type": "role", "value": "land_attack", "source_id": "lrasm_csis" },
+        { "type": "propulsion", "value": "turbofan", "source_id": "lrasm_lm" },
+        { "type": "guidance", "value": "gps_ins", "source_id": "lrasm_lm" },
+        { "type": "guidance", "value": "imaging_ir", "source_id": "lrasm_lm" },
+        { "type": "guidance", "value": "datalink", "source_id": "lrasm_lm" },
+        { "type": "flight", "value": "sea_skimming", "source_id": "lrasm_csis" },
+        { "type": "speed", "value": "subsonic", "source_id": "lrasm_lm" },
+        { "type": "launch", "value": "air", "source_id": "lrasm_lm" },
+        { "type": "launch", "value": "ship", "source_id": "lrasm_csis" },
+        { "type": "target", "value": "surface_ship", "source_id": "lrasm_lm" }
+      ],
+      "variants": [],
+      "platforms": [
+        { "name": "F/A-18E/F, B-1B", "name_zh": "F/A-18 / B-1B", "type": "air" },
+        { "name": "Mk 41 VLS (surface)", "name_zh": "Mk 41 VLS", "type": "ship" }
+      ],
+      "operators": [
+        { "country": "US", "name_zh": "美國海空軍", "status": "operational", "note": "" },
+        { "country": "AU", "name_zh": "澳洲", "status": "acquisition", "note": "" }
+      ],
+      "events": [
+        { "date": "2018-01-01", "type": "deployment", "title_zh": "早期作戰能力 (B-1B)", "title": "EOC on B-1B", "source_ids": ["lrasm_lm"] }
+      ],
+      "sources": [
+        { "id": "lrasm_lm", "title": "LRASM — Lockheed Martin", "publisher": "Lockheed Martin", "source_type": "official", "url": "https://www.lockheedmartin.com/en-us/products/long-range-anti-ship-missile-lrasm.html", "reliability": "tier_1" },
+        { "id": "lrasm_csis", "title": "LRASM — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/lrasm/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 4.27, "bodyDia": 0.55, "color": "#8b8f97", "nose": "chisel", "faceted": true,
+          "wings": { "span": 2.4, "chord": 0.6, "axial": 0.5, "sweep": 0.35, "popout": true },
+          "tailFins": { "span": 0.5, "chord": 0.35, "count": 3 },
+          "intake": "belly", "booster": null },
+        "annotations": [
+          { "id": "seeker", "name": "Multi-mode seeker", "name_zh": "多模尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:imaging_ir", "source_id": "lrasm_lm" },
+          { "id": "intake", "name": "Turbofan intake", "name_zh": "渦扇進氣口", "axial": 0.75, "radial": "belly", "tag": "propulsion:turbofan", "source_id": "lrasm_lm" }
+        ] }
+    },
+    {
+      "id": "jdam", "name": "Joint Direct Attack Munition (GBU-31/38)", "name_zh": "聯合直接攻擊彈藥 JDAM", "designation": "JDAM",
+      "entity_type": "guided_bomb", "country": "USA", "manufacturer": ["Boeing"],
+      "status": "operational",
+      "summary_zh": "將無導引炸彈加裝 GPS/INS 尾翼套件而成的精準導引炸彈，無動力滑翔投放；JDAM-ER 加裝彈翼延長滑翔距離。",
+      "summary": "A guidance tail kit (GPS/INS) bolted onto unguided bombs to make precision-guided munitions; unpowered glide. JDAM-ER adds wings for extended standoff.",
+      "specifications": {
+        "length_m":  { "value": 3.0, "source_id": "jdam_af", "confidence": "medium" },
+        "diameter_m":{ "value": 0.27, "source_id": "jdam_af", "confidence": "low" },
+        "weight_kg": { "value": 450, "source_id": "jdam_af", "confidence": "medium" },
+        "range_km":  { "value": "~28 (高空投放)", "source_id": "jdam_af", "confidence": "medium" },
+        "speed":     { "value": "次音速滑翔", "source_id": "jdam_af", "confidence": "medium" },
+        "warhead":   { "value": "Mk 82/83/84 通用炸彈", "source_id": "jdam_af", "confidence": "high" },
+        "propulsion":{ "value": "無（滑翔）", "source_id": "jdam_af", "confidence": "high" },
+        "guidance":  { "value": "GPS/INS 尾翼套件", "source_id": "jdam_af", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "land_attack", "source_id": "jdam_af" },
+        { "type": "guidance", "value": "gps_ins", "source_id": "jdam_af" },
+        { "type": "flight", "value": "unpowered", "source_id": "jdam_af" },
+        { "type": "speed", "value": "subsonic", "source_id": "jdam_af" },
+        { "type": "launch", "value": "air", "source_id": "jdam_af" },
+        { "type": "target", "value": "fixed_ground_target", "source_id": "jdam_af" }
+      ],
+      "variants": [
+        { "id": "gbu38", "name": "GBU-38 (Mk 82)", "name_zh": "GBU-38", "changes": { "warhead": "500 lb" } },
+        { "id": "gbu31", "name": "GBU-31 (Mk 84)", "name_zh": "GBU-31", "changes": { "warhead": "2000 lb" } },
+        { "id": "jdam-er", "name": "JDAM-ER", "name_zh": "增程型 JDAM-ER", "changes": { "range_km": "~72", "note": "加裝滑翔彈翼。" } }
+      ],
+      "platforms": [ { "name": "Most US/allied strike aircraft", "name_zh": "多數美/盟軍打擊機", "type": "air" } ],
+      "operators": [
+        { "country": "US", "name_zh": "美國", "status": "operational", "note": "" },
+        { "country": "TW", "name_zh": "台灣", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "1999-01-01", "type": "deployment", "title_zh": "科索沃實戰首用", "title": "First combat use (Kosovo)", "source_ids": ["jdam_af"] }
+      ],
+      "sources": [
+        { "id": "jdam_af", "title": "JDAM — U.S. Air Force Fact Sheet", "publisher": "U.S. Air Force", "source_type": "official", "url": "https://www.af.mil/About-Us/Fact-Sheets/Display/Article/104572/joint-direct-attack-munition-gbu-3132/", "reliability": "tier_1" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "bomb", "bodyLen": 3.0, "bodyDia": 0.35, "color": "#6f7a58", "nose": "blunt",
+          "wings": null, "tailFins": { "span": 0.55, "chord": 0.5, "count": 4, "strakes": true },
+          "intake": null, "booster": null },
+        "annotations": [
+          { "id": "tailkit", "name": "GPS/INS tail kit", "name_zh": "GPS/INS 尾翼套件", "axial": 0.9, "radial": "tail", "tag": "guidance:gps_ins", "source_id": "jdam_af" },
+          { "id": "body", "name": "Mk 8x bomb body", "name_zh": "通用炸彈本體", "axial": 0.45, "radial": "side", "tag": "role:land_attack", "source_id": "jdam_af" }
+        ] }
+    },
+    {
+      "id": "brahmos", "name": "BrahMos", "name_zh": "布拉莫斯", "designation": "PJ-10",
+      "entity_type": "missile", "country": "India / Russia", "manufacturer": ["BrahMos Aerospace"],
+      "status": "operational",
+      "summary_zh": "印俄合作超音速巡弋飛彈，衝壓引擎維持超音速，具反艦與對地能力，可由艦、潛、陸、空多平台發射。",
+      "summary": "Indo-Russian supersonic cruise missile; ramjet-sustained supersonic, anti-ship and land-attack, launchable from ship, submarine, ground and air.",
+      "specifications": {
+        "length_m":  { "value": 8.4, "source_id": "brah_org", "confidence": "medium" },
+        "diameter_m":{ "value": 0.6, "source_id": "brah_org", "confidence": "medium" },
+        "weight_kg": { "value": 3000, "source_id": "brah_org", "confidence": "medium" },
+        "range_km":  { "value": "~290–450", "source_id": "brah_csis", "confidence": "medium" },
+        "speed":     { "value": "~Mach 2.8–3", "source_id": "brah_csis", "confidence": "high" },
+        "warhead":   { "value": "200–300 kg", "source_id": "brah_csis", "confidence": "medium" },
+        "propulsion":{ "value": "固態助推 + 液燃衝壓", "source_id": "brah_org", "confidence": "high" },
+        "guidance":  { "value": "慣性中途 + 主動雷達末端", "source_id": "brah_csis", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "anti_ship", "source_id": "brah_org" },
+        { "type": "role", "value": "land_attack", "source_id": "brah_org" },
+        { "type": "propulsion", "value": "ramjet", "source_id": "brah_org" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "brah_org" },
+        { "type": "guidance", "value": "inertial", "source_id": "brah_csis" },
+        { "type": "guidance", "value": "active_radar", "source_id": "brah_csis" },
+        { "type": "flight", "value": "sea_skimming", "source_id": "brah_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "brah_csis" },
+        { "type": "launch", "value": "ship", "source_id": "brah_org" },
+        { "type": "launch", "value": "ground", "source_id": "brah_org" },
+        { "type": "launch", "value": "air", "source_id": "brah_org" },
+        { "type": "launch", "value": "submarine", "source_id": "brah_org" },
+        { "type": "target", "value": "surface_ship", "source_id": "brah_org" }
+      ],
+      "variants": [
+        { "id": "air", "name": "BrahMos-A", "name_zh": "空射型", "changes": { "note": "Su-30MKI 掛載。" } },
+        { "id": "ng", "name": "BrahMos-NG", "name_zh": "次世代型", "changes": { "note": "縮小尺寸、更廣平台整合。" } }
+      ],
+      "platforms": [
+        { "name": "Destroyers/frigates", "name_zh": "驅逐艦/巡防艦", "type": "ship" },
+        { "name": "Su-30MKI", "name_zh": "Su-30MKI", "type": "air" },
+        { "name": "Mobile launcher", "name_zh": "機動發射車", "type": "ground" }
+      ],
+      "operators": [
+        { "country": "IN", "name_zh": "印度", "status": "operational", "note": "" },
+        { "country": "PH", "name_zh": "菲律賓", "status": "operational", "note": "岸置反艦。" }
+      ],
+      "events": [
+        { "date": "2006-01-01", "type": "deployment", "title_zh": "印度海軍服役", "title": "Fielded (Indian Navy)", "source_ids": ["brah_org"] },
+        { "date": "2022-01-01", "type": "export", "title_zh": "菲律賓外銷合約", "title": "Philippines export contract", "source_ids": ["brah_csis"] }
+      ],
+      "sources": [
+        { "id": "brah_org", "title": "BrahMos Aerospace", "publisher": "BrahMos Aerospace", "source_type": "official", "url": "https://www.brahmos.com/", "reliability": "tier_1" },
+        { "id": "brah_csis", "title": "BrahMos — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/brahmos/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 8.4, "bodyDia": 0.6, "color": "#d8dbe0", "nose": "cone",
+          "wings": { "span": 1.7, "chord": 0.6, "axial": 0.6, "sweep": 0.4 },
+          "tailFins": { "span": 0.9, "chord": 0.6, "count": 4 },
+          "intake": "nose", "booster": { "len": 2.0, "dia": 0.6 } },
+        "annotations": [
+          { "id": "intake", "name": "Nose ramjet intake", "name_zh": "頭錐衝壓進氣口", "axial": 0.08, "radial": "nose", "tag": "propulsion:ramjet", "source_id": "brah_org" },
+          { "id": "booster", "name": "Solid booster", "name_zh": "固態助推段", "axial": 0.93, "radial": "tail", "tag": "propulsion:rocket_booster", "source_id": "brah_org" }
+        ] }
+    },
+    {
+      "id": "nsm", "name": "Naval Strike Missile", "name_zh": "海軍打擊飛彈 NSM", "designation": "NSM",
+      "entity_type": "missile", "country": "Norway", "manufacturer": ["Kongsberg"],
+      "status": "operational",
+      "summary_zh": "挪威匿蹤次音速反艦飛彈，複合材料彈體、成像紅外尋標（無主動雷達放射），末端高機動航路規避防禦。",
+      "summary": "Norwegian stealthy subsonic anti-ship missile; composite airframe, imaging-IR seeker (no active radar emission), highly maneuvering terminal routing.",
+      "specifications": {
+        "length_m":  { "value": 3.96, "source_id": "nsm_kong", "confidence": "high" },
+        "diameter_m":{ "value": 0.34, "source_id": "nsm_kong", "confidence": "medium" },
+        "weight_kg": { "value": 410, "source_id": "nsm_kong", "confidence": "medium" },
+        "range_km":  { "value": "~185+", "source_id": "nsm_csis", "confidence": "medium" },
+        "speed":     { "value": "高次音速", "source_id": "nsm_csis", "confidence": "medium" },
+        "warhead":   { "value": "125 kg 穿甲爆破", "source_id": "nsm_kong", "confidence": "medium" },
+        "propulsion":{ "value": "渦輪噴射 + 固態助推", "source_id": "nsm_kong", "confidence": "high" },
+        "guidance":  { "value": "GPS/INS + 地形參考 + 成像紅外末端", "source_id": "nsm_kong", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "anti_ship", "source_id": "nsm_kong" },
+        { "type": "role", "value": "land_attack", "source_id": "nsm_csis" },
+        { "type": "propulsion", "value": "turbojet", "source_id": "nsm_kong" },
+        { "type": "propulsion", "value": "rocket_booster", "source_id": "nsm_kong" },
+        { "type": "guidance", "value": "gps_ins", "source_id": "nsm_kong" },
+        { "type": "guidance", "value": "imaging_ir", "source_id": "nsm_kong" },
+        { "type": "guidance", "value": "terrain_matching", "source_id": "nsm_kong" },
+        { "type": "flight", "value": "sea_skimming", "source_id": "nsm_kong" },
+        { "type": "speed", "value": "subsonic", "source_id": "nsm_kong" },
+        { "type": "launch", "value": "ship", "source_id": "nsm_kong" },
+        { "type": "launch", "value": "ground", "source_id": "nsm_kong" },
+        { "type": "target", "value": "surface_ship", "source_id": "nsm_kong" }
+      ],
+      "variants": [
+        { "id": "jsm", "name": "JSM (Joint Strike Missile)", "name_zh": "JSM 聯合打擊飛彈", "changes": { "launch": "空射 (F-35 內載)", "note": "可內置於 F-35 彈艙。" } }
+      ],
+      "platforms": [
+        { "name": "LCS / Constellation-class", "name_zh": "濱海戰鬥艦/巡防艦", "type": "ship" },
+        { "name": "NMESIS (USMC)", "name_zh": "陸戰隊 NMESIS 無人發射車", "type": "ground" }
+      ],
+      "operators": [
+        { "country": "NO", "name_zh": "挪威", "status": "operational", "note": "" },
+        { "country": "US", "name_zh": "美國海軍/陸戰隊", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "2012-01-01", "type": "deployment", "title_zh": "挪威海軍服役", "title": "Fielded (Norway)", "source_ids": ["nsm_kong"] },
+        { "date": "2019-01-01", "type": "integration", "title_zh": "美國 LCS 整合", "title": "US LCS integration", "source_ids": ["nsm_csis"] }
+      ],
+      "sources": [
+        { "id": "nsm_kong", "title": "Naval Strike Missile — Kongsberg", "publisher": "Kongsberg", "source_type": "official", "url": "https://www.kongsberg.com/kda/what-we-do/defence-and-security/missile-systems/naval-strike-missile-nsm/", "reliability": "tier_1" },
+        { "id": "nsm_csis", "title": "NSM — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/naval-strike-missile/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 3.96, "bodyDia": 0.34, "color": "#9aa0a8", "nose": "chisel", "faceted": true,
+          "wings": { "span": 1.4, "chord": 0.45, "axial": 0.5, "sweep": 0.3, "popout": true },
+          "tailFins": { "span": 0.5, "chord": 0.35, "count": 4 },
+          "intake": "belly", "booster": { "len": 0.5, "dia": 0.34 } },
+        "annotations": [
+          { "id": "seeker", "name": "Imaging IR seeker", "name_zh": "成像紅外尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:imaging_ir", "source_id": "nsm_kong" },
+          { "id": "intake", "name": "Turbojet intake", "name_zh": "渦噴進氣口", "axial": 0.7, "radial": "belly", "tag": "propulsion:turbojet", "source_id": "nsm_kong" }
+        ] }
+    },
+    {
+      "id": "aim120", "name": "AIM-120 AMRAAM", "name_zh": "先進中程空對空飛彈 AMRAAM", "designation": "AIM-120",
+      "entity_type": "missile", "country": "USA", "manufacturer": ["RTX (Raytheon)"],
+      "status": "operational",
+      "summary_zh": "美製主動雷達導引中程空對空飛彈，慣性/資料鏈中途、主動雷達末端，具射後不理能力；亦衍生為地基防空 (NASAMS)。",
+      "summary": "US active-radar medium-range air-to-air missile; inertial/datalink midcourse, active-radar terminal, fire-and-forget; also basis for ground-based NASAMS.",
+      "specifications": {
+        "length_m":  { "value": 3.7, "source_id": "amraam_rtx", "confidence": "high" },
+        "diameter_m":{ "value": 0.18, "source_id": "amraam_rtx", "confidence": "high" },
+        "weight_kg": { "value": 152, "source_id": "amraam_rtx", "confidence": "high" },
+        "range_km":  { "value": "~160 (D 型)", "source_id": "amraam_csis", "confidence": "low" },
+        "speed":     { "value": "~Mach 4", "source_id": "amraam_csis", "confidence": "medium" },
+        "warhead":   { "value": "~18 kg 破片", "source_id": "amraam_rtx", "confidence": "medium" },
+        "propulsion":{ "value": "高性能固態火箭", "source_id": "amraam_rtx", "confidence": "high" },
+        "guidance":  { "value": "慣性 + 資料鏈 + 主動雷達末端", "source_id": "amraam_rtx", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "air_to_air", "source_id": "amraam_rtx" },
+        { "type": "role", "value": "air_defense", "source_id": "amraam_csis" },
+        { "type": "propulsion", "value": "solid_rocket", "source_id": "amraam_rtx" },
+        { "type": "guidance", "value": "active_radar", "source_id": "amraam_rtx" },
+        { "type": "guidance", "value": "inertial", "source_id": "amraam_rtx" },
+        { "type": "guidance", "value": "datalink", "source_id": "amraam_rtx" },
+        { "type": "flight", "value": "high_altitude", "source_id": "amraam_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "amraam_csis" },
+        { "type": "launch", "value": "air", "source_id": "amraam_rtx" },
+        { "type": "launch", "value": "ground", "source_id": "amraam_csis" },
+        { "type": "target", "value": "aircraft", "source_id": "amraam_rtx" },
+        { "type": "target", "value": "missile", "source_id": "amraam_csis" }
+      ],
+      "variants": [
+        { "id": "c", "name": "AIM-120C", "name_zh": "C 型", "changes": { "note": "縮翼以內載於戰機彈艙。" } },
+        { "id": "d", "name": "AIM-120D", "name_zh": "D 型", "changes": { "range_km": "顯著增程", "guidance": "+ 雙向資料鏈/GPS" } }
+      ],
+      "platforms": [
+        { "name": "F-16 / F-15 / F/A-18 / F-35", "name_zh": "多型戰機", "type": "air" },
+        { "name": "NASAMS launcher", "name_zh": "NASAMS 地基發射器", "type": "ground" }
+      ],
+      "operators": [
+        { "country": "US", "name_zh": "美國", "status": "operational", "note": "" },
+        { "country": "TW", "name_zh": "台灣", "status": "operational", "note": "F-16 掛載。" }
+      ],
+      "events": [
+        { "date": "1991-01-01", "type": "deployment", "title_zh": "服役", "title": "Entered service", "source_ids": ["amraam_rtx"] }
+      ],
+      "sources": [
+        { "id": "amraam_rtx", "title": "AMRAAM — RTX", "publisher": "RTX", "source_type": "official", "url": "https://www.rtx.com/raytheon/what-we-do/air/amraam", "reliability": "tier_1" },
+        { "id": "amraam_csis", "title": "AIM-120 — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/aim-120-amraam/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 3.7, "bodyDia": 0.18, "color": "#dfe2e6", "nose": "ogive",
+          "wings": { "span": 0.53, "chord": 0.3, "axial": 0.55, "sweep": 0.3 },
+          "tailFins": { "span": 0.63, "chord": 0.4, "count": 4 },
+          "intake": null, "booster": null },
+        "annotations": [
+          { "id": "seeker", "name": "Active radar seeker", "name_zh": "主動雷達尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:active_radar", "source_id": "amraam_rtx" },
+          { "id": "motor", "name": "Solid rocket motor", "name_zh": "固態火箭發動機", "axial": 0.75, "radial": "side", "tag": "propulsion:solid_rocket", "source_id": "amraam_rtx" }
+        ] }
+    },
+    {
+      "id": "meteor", "name": "MBDA Meteor", "name_zh": "流星飛彈 Meteor", "designation": "Meteor",
+      "entity_type": "missile", "country": "Europe", "manufacturer": ["MBDA"],
+      "status": "operational",
+      "summary_zh": "歐洲主動雷達導引超視距空對空飛彈，採可調節流量固態衝壓引擎，末端具大「不可逃逸區」，透過雙向資料鏈更新。",
+      "summary": "European active-radar beyond-visual-range air-to-air missile with a throttleable solid-fuel ramjet, giving a large terminal no-escape zone; two-way datalink.",
+      "specifications": {
+        "length_m":  { "value": 3.65, "source_id": "meteor_mbda", "confidence": "high" },
+        "diameter_m":{ "value": 0.18, "source_id": "meteor_mbda", "confidence": "high" },
+        "weight_kg": { "value": 190, "source_id": "meteor_mbda", "confidence": "medium" },
+        "range_km":  { "value": "~150+", "source_id": "meteor_csis", "confidence": "low" },
+        "speed":     { "value": "> Mach 4", "source_id": "meteor_csis", "confidence": "medium" },
+        "warhead":   { "value": "破片 + 撞擊", "source_id": "meteor_mbda", "confidence": "medium" },
+        "propulsion":{ "value": "可調流固態衝壓", "source_id": "meteor_mbda", "confidence": "high" },
+        "guidance":  { "value": "慣性 + 雙向資料鏈 + 主動雷達末端", "source_id": "meteor_mbda", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "role", "value": "air_to_air", "source_id": "meteor_mbda" },
+        { "type": "propulsion", "value": "ramjet", "source_id": "meteor_mbda" },
+        { "type": "guidance", "value": "active_radar", "source_id": "meteor_mbda" },
+        { "type": "guidance", "value": "inertial", "source_id": "meteor_mbda" },
+        { "type": "guidance", "value": "datalink", "source_id": "meteor_mbda" },
+        { "type": "flight", "value": "high_altitude", "source_id": "meteor_csis" },
+        { "type": "speed", "value": "supersonic", "source_id": "meteor_csis" },
+        { "type": "launch", "value": "air", "source_id": "meteor_mbda" },
+        { "type": "target", "value": "aircraft", "source_id": "meteor_mbda" }
+      ],
+      "variants": [],
+      "platforms": [ { "name": "Typhoon / Rafale / Gripen / F-35", "name_zh": "颱風/疾風/獅鷲/F-35", "type": "air" } ],
+      "operators": [
+        { "country": "GB", "name_zh": "英國等歐洲多國", "status": "operational", "note": "" }
+      ],
+      "events": [
+        { "date": "2016-01-01", "type": "deployment", "title_zh": "Gripen 首度服役整合", "title": "First operational (Gripen)", "source_ids": ["meteor_mbda"] }
+      ],
+      "sources": [
+        { "id": "meteor_mbda", "title": "Meteor — MBDA", "publisher": "MBDA", "source_type": "official", "url": "https://www.mbda-systems.com/product/meteor/", "reliability": "tier_1" },
+        { "id": "meteor_csis", "title": "Meteor — Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/missile/meteor/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "missile", "bodyLen": 3.65, "bodyDia": 0.18, "color": "#dfe2e6", "nose": "ogive",
+          "wings": { "span": 0.4, "chord": 0.25, "axial": 0.5, "sweep": 0.35 },
+          "tailFins": { "span": 0.5, "chord": 0.3, "count": 4 },
+          "intake": "side2", "booster": null },
+        "annotations": [
+          { "id": "intake", "name": "Throttleable ramjet intakes", "name_zh": "可調流衝壓進氣口", "axial": 0.5, "radial": "side", "tag": "propulsion:ramjet", "source_id": "meteor_mbda" },
+          { "id": "seeker", "name": "Active radar seeker", "name_zh": "主動雷達尋標器", "axial": 0.05, "radial": "nose", "tag": "guidance:active_radar", "source_id": "meteor_mbda" }
+        ] }
+    },
+    {
+      "id": "arleigh_burke", "name": "Arleigh Burke-class Destroyer", "name_zh": "勃克級驅逐艦", "designation": "DDG-51",
+      "entity_type": "ship", "country": "USA", "manufacturer": ["General Dynamics BIW", "Huntington Ingalls"],
+      "status": "operational",
+      "summary_zh": "美國海軍神盾飛彈驅逐艦，以 Aegis 作戰系統整合相位陣列雷達與 Mk 41 垂直發射系統，具區域防空、反艦、對陸打擊與（Flight III）彈道飛彈防禦能力；COGAG 燃氣渦輪推進。是美軍數量最多的主力水面作戰艦，並持續建造。",
+      "summary": "US Navy Aegis guided-missile destroyer integrating a phased-array radar and Mk 41 VLS; area air defense, anti-ship, land attack and (Flight III) ballistic-missile defense. COGAG propulsion. The most numerous US surface combatant, still in production.",
+      "specifications": {
+        "length_m":  { "value": 155.3, "source_id": "ab_navy", "confidence": "high" },
+        "range_km":  { "value": "~8100 (4400 nm @20kn)", "source_id": "ab_navy", "confidence": "medium" },
+        "speed":     { "value": "30+ 節", "source_id": "ab_navy", "confidence": "high" },
+        "weight_kg": { "value": "~9700 噸（滿載排水量）", "source_id": "ab_navy", "confidence": "medium" },
+        "propulsion":{ "value": "COGAG 4×LM2500 燃氣渦輪、雙軸", "source_id": "ab_navy", "confidence": "high" },
+        "guidance":  { "value": "Aegis 作戰系統 + 相位陣列雷達", "source_id": "ab_navy", "confidence": "high" }
+      },
+      "tags": [
+        { "type": "ship_type", "value": "destroyer", "source_id": "ab_navy" },
+        { "type": "combat_system", "value": "aegis", "source_id": "ab_navy" },
+        { "type": "radar", "value": "pesa", "source_id": "ab_navy" },
+        { "type": "launcher", "value": "mk41_vls", "source_id": "ab_navy" },
+        { "type": "role", "value": "air_defense", "source_id": "ab_navy" },
+        { "type": "role", "value": "anti_ship", "source_id": "ab_navy" },
+        { "type": "role", "value": "land_attack", "source_id": "ab_navy" },
+        { "type": "role", "value": "ballistic_missile_defense", "source_id": "ab_csis" },
+        { "type": "capability", "value": "area_air_defense", "source_id": "ab_navy" },
+        { "type": "capability", "value": "bmd_capable", "source_id": "ab_csis" },
+        { "type": "capability", "value": "asw", "source_id": "ab_navy" },
+        { "type": "capability", "value": "asuw", "source_id": "ab_navy" },
+        { "type": "propulsion", "value": "cogag", "source_id": "ab_navy" },
+        { "type": "launch", "value": "ship", "source_id": "ab_navy" },
+        { "type": "launch", "value": "vls", "source_id": "ab_navy" }
+      ],
+      "variants": [
+        { "id": "flight1", "name": "Flight I/II", "name_zh": "Flight I/II", "changes": { "note": "初始批次，SPY-1D 雷達、90 管 VLS。" } },
+        { "id": "flight2a", "name": "Flight IIA", "name_zh": "Flight IIA", "changes": { "note": "加裝雙機庫可搭載兩架直升機，96 管 VLS。" } },
+        { "id": "flight3", "name": "Flight III", "name_zh": "Flight III", "changes": { "radar": "+ AN/SPY-6 AESA", "role": "+ 強化彈道飛彈防禦", "note": "換裝 SPY-6 主動相位陣列與更大電力/冷卻。" } }
+      ],
+      "platforms": [],
+      "operators": [
+        { "country": "US", "name_zh": "美國海軍", "status": "operational", "note": "數十艘服役、持續建造。" },
+        { "country": "JP", "name_zh": "日本（衍生：金剛/愛宕/摩耶級）", "status": "operational", "note": "以此為基礎發展。" }
+      ],
+      "events": [
+        { "date": "1991-01-01", "type": "deployment", "title_zh": "首艦勃克號服役", "title": "USS Arleigh Burke commissioned", "source_ids": ["ab_navy"] },
+        { "date": "2023-01-01", "type": "upgrade", "title_zh": "Flight III（SPY-6）交付", "title": "Flight III (SPY-6) delivered", "source_ids": ["ab_navy"] }
+      ],
+      "sources": [
+        { "id": "ab_navy", "title": "Arleigh Burke-class (DDG 51) — U.S. Navy Fact File", "publisher": "U.S. Navy", "source_type": "official", "url": "https://www.navy.mil/Resources/Fact-Files/Display-FactFiles/Article/2169871/destroyers-ddg/", "reliability": "tier_1" },
+        { "id": "ab_csis", "title": "Aegis BMD — CSIS Missile Threat", "publisher": "CSIS Missile Threat", "source_type": "research", "url": "https://missilethreat.csis.org/defsys/aegis/", "reliability": "tier_2" }
+      ],
+      "model_3d": { "fidelity": "c",
+        "shape": { "type": "ship", "length": 155, "beam": 20, "color": "#8b929c",
+          "superstructure": [{ "a0": 0.24, "a1": 0.5, "w": 0.62, "h": 1.5 }, { "a0": 0.5, "a1": 0.66, "w": 0.5, "h": 1.0 }],
+          "funnels": [0.48], "masts": [0.34, 0.6], "turrets": [0.13], "vls": [{ "a": 0.2 }, { "a": 0.82 }] },
+        "annotations": [
+          { "id": "spy", "name": "Phased-array radar (SPY)", "name_zh": "相位陣列雷達（SPY）", "axial": 0.3, "radial": "dorsal", "tag": "radar:pesa", "source_id": "ab_navy" },
+          { "id": "vls_fwd", "name": "Mk 41 VLS (fwd)", "name_zh": "Mk 41 垂直發射（前）", "axial": 0.2, "radial": "dorsal", "tag": "launcher:mk41_vls", "source_id": "ab_navy" },
+          { "id": "gun", "name": "5-inch gun", "name_zh": "127mm 艦砲", "axial": 0.13, "radial": "dorsal", "tag": "ship_type:destroyer", "source_id": "ab_navy" }
+        ] }
+    }
+  ]
+}

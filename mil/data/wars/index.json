@@ -1,0 +1,9 @@
+{
+  "_note": "Registry of static conflict files. Each `file` is self-contained (phases + weapons + battles). Firestore `mil_conflicts` documents are merged on top of this list (by id) at load time.",
+  "conflicts": [
+    { "id": "second_sino_japanese_war", "name_zh": "中日戰爭（抗日戰爭）", "name_en": "Second Sino-Japanese War", "start": "1937-07-07", "end": "1945-09-02", "region_zh": "中國", "file": "second_sino_japanese.json" },
+    { "id": "pacific_war", "name_zh": "太平洋戰爭", "name_en": "Pacific War", "start": "1941-12-07", "end": "1945-09-02", "region_zh": "太平洋 / 東亞", "file": "pacific_war.json" },
+    { "id": "gulf_war", "name_zh": "波斯灣戰爭", "name_en": "Gulf War", "start": "1990-08-02", "end": "1991-02-28", "region_zh": "波斯灣", "file": "gulf_war.json" },
+    { "id": "russo_ukrainian", "name_zh": "俄烏戰爭", "name_en": "Russo-Ukrainian War", "start": "2022-02-24", "end": "2024-12-31", "region_zh": "烏克蘭", "file": "russo_ukrainian.json" }
+  ]
+}

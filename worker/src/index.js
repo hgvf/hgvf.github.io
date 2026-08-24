@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8-2026-08-14b';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8+diag+host-fallback-2026-08-19';
 
 export default {
   async fetch(request, env) {
@@ -73,8 +73,8 @@ export default {
     }
 
     try {
-      const { updated, failed } = await fetchAndStorePrices(env);
-      return new Response(JSON.stringify({ ok: true, updated, failed, version: WORKER_VERSION }), { headers: jsonHeaders() });
+      const { updated, failed, diag } = await fetchAndStorePrices(env);
+      return new Response(JSON.stringify({ ok: true, updated, failed, diag, version: WORKER_VERSION }), { headers: jsonHeaders() });
     } catch (err) {
       return new Response(JSON.stringify({ error: err.message, version: WORKER_VERSION }), { status: 500, headers: jsonHeaders() });
     }
@@ -252,6 +252,7 @@ async function fetchAndStorePrices(env) {
   //   — leaves ~18 spare sub-requests, enough to retry the occasional dropped
   //   quote batch below.
   let session = await getYahooSession();
+  console.log(`[trigger] symbols=${symbols.length} session=${session ? 'OK' : 'NULL'}`);
 
   // v7 quote → price, day%, P/E, market cap, volume (batched 50/req).
   //
@@ -283,6 +284,8 @@ async function fetchAndStorePrices(env) {
   // v8 spark → week/month/year % from historical closes (batched 50/req)
   const spark = await fetchSparkData(symbols, session);
 
+  console.log(`[trigger] quotes=${Object.keys(quotes).length}/${symbols.length} spark=${Object.keys(spark).length} failed=${failed.length}`);
+
   const now = new Date().toISOString();
   const allWrites = Object.entries(quotes).map(([sym, p]) => ({
     docPath: `prices/${sym}`,
@@ -290,7 +293,15 @@ async function fetchAndStorePrices(env) {
   }));
 
   await firestoreBatchSet(token, env.FIREBASE_PROJECT_ID, allWrites);
-  return { updated: allWrites.length, failed };
+  // diag travels back in the /trigger JSON so the cause is visible even without
+  // a live `wrangler tail` — e.g. sessionOk:false ⇒ Yahoo crumb/cookie failed.
+  const diag = {
+    symbols: symbols.length,
+    sessionOk: !!session,
+    quotes: Object.keys(quotes).length,
+    spark: Object.keys(spark).length,
+  };
+  return { updated: allWrites.length, failed, diag };
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -302,45 +313,57 @@ const YAHOO_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (
    Avoids per-symbol v8 chart requests which would exhaust the 50-subrequest limit. */
 async function fetchAllQuoteData(symbols, session) {
   const out = {};
-  if (!session) return out;
-  try {
-    const fields = [
-      'symbol','shortName','longName',
-      'regularMarketPrice','regularMarketChangePercent','regularMarketVolume',
-      'regularMarketPreviousClose',
-      'fiftyTwoWeekHigh','fiftyTwoWeekLow',
-      'trailingPE','marketCap','currency',
-    ].join(',');
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote`
-      + `?symbols=${encodeURIComponent(symbols.join(','))}`
-      + `&fields=${encodeURIComponent(fields)}`
-      + `&crumb=${encodeURIComponent(session.crumb)}`;
-    const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA, 'Cookie': session.cookie } });
-    if (!res.ok) return out;
-    const data = await res.json();
-    for (const q of data?.quoteResponse?.result || []) {
-      if (!q.symbol || q.regularMarketPrice == null) continue;
-      const entry = {
-        name:           q.longName || q.shortName || q.symbol,
-        last:           q.regularMarketPrice,
-        day_change_pct: q.regularMarketChangePercent ?? null,
-        day_volume:     q.regularMarketVolume ?? null,
-      };
-      if (q.trailingPE != null) entry.pe_ratio = q.trailingPE;
-      if (q.marketCap  != null) {
-        const mc = q.marketCap;
-        let val, suffix = '';
-        if      (mc >= 1e12) { val = (mc / 1e12).toFixed(2); suffix = 'T'; }
-        else if (mc >= 1e9)  { val = (mc / 1e9).toFixed(2);  suffix = 'B'; }
-        else if (mc >= 1e6)  { val = (mc / 1e6).toFixed(2);  suffix = 'M'; }
-        else                 { val = mc.toFixed(0); }
-        entry.market_cap          = val;
-        entry.market_cap_suffix   = suffix;
-        entry.market_cap_currency = q.currency || 'USD';
+  if (!session) { console.warn(`[quote] no session — skipping ${symbols.length} symbols`); return out; }
+  const fields = [
+    'symbol','shortName','longName',
+    'regularMarketPrice','regularMarketChangePercent','regularMarketVolume',
+    'regularMarketPreviousClose',
+    'fiftyTwoWeekHigh','fiftyTwoWeekLow',
+    'trailingPE','marketCap','currency',
+  ].join(',');
+  // Try query1 then query2: Yahoo intermittently 401/429s one host from a
+  // Cloudflare IP while the other still answers, so a host fallback recovers a
+  // batch that would otherwise be dropped.
+  for (const host of ['query1', 'query2']) {
+    try {
+      const url = `https://${host}.finance.yahoo.com/v7/finance/quote`
+        + `?symbols=${encodeURIComponent(symbols.join(','))}`
+        + `&fields=${encodeURIComponent(fields)}`
+        + `&crumb=${encodeURIComponent(session.crumb)}`;
+      const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA, 'Cookie': session.cookie } });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.warn(`[quote] ${host} HTTP ${res.status} for ${symbols.length} symbols · body=${JSON.stringify(body.slice(0, 160))}`);
+        continue;  // try next host
       }
-      out[q.symbol] = entry;
+      const data = await res.json();
+      for (const q of data?.quoteResponse?.result || []) {
+        if (!q.symbol || q.regularMarketPrice == null) continue;
+        const entry = {
+          name:           q.longName || q.shortName || q.symbol,
+          last:           q.regularMarketPrice,
+          day_change_pct: q.regularMarketChangePercent ?? null,
+          day_volume:     q.regularMarketVolume ?? null,
+        };
+        if (q.trailingPE != null) entry.pe_ratio = q.trailingPE;
+        if (q.marketCap  != null) {
+          const mc = q.marketCap;
+          let val, suffix = '';
+          if      (mc >= 1e12) { val = (mc / 1e12).toFixed(2); suffix = 'T'; }
+          else if (mc >= 1e9)  { val = (mc / 1e9).toFixed(2);  suffix = 'B'; }
+          else if (mc >= 1e6)  { val = (mc / 1e6).toFixed(2);  suffix = 'M'; }
+          else                 { val = mc.toFixed(0); }
+          entry.market_cap          = val;
+          entry.market_cap_suffix   = suffix;
+          entry.market_cap_currency = q.currency || 'USD';
+        }
+        out[q.symbol] = entry;
+      }
+      return out;  // got a good response — no need to try the other host
+    } catch (e) {
+      console.warn(`[quote] ${host} error: ${e.message}`);
     }
-  } catch { /* skip */ }
+  }
   return out;
 }
 
@@ -452,14 +475,21 @@ async function getYahooSession() {
       ? cookieRes.headers.getSetCookie()
       : [cookieRes.headers.get('set-cookie')].filter(Boolean);
     const cookie = setCookies.map(c => c.split(';')[0]).join('; ');
+    console.log(`[yahoo] cookie: HTTP ${cookieRes.status} · ${setCookies.length} cookie(s) · len=${cookie.length}`);
 
-    const crumbRes = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
-      headers: { 'User-Agent': YAHOO_UA, 'Cookie': cookie },
-    });
-    const crumb = (await crumbRes.text()).trim();
-    if (!crumb || crumb.includes('<')) return null;   // got an HTML error page, not a crumb
-    return { cookie, crumb };
-  } catch {
+    // Crumb must match the cookie; try both hosts since one can be rate-limited.
+    for (const host of ['query1', 'query2']) {
+      const crumbRes = await fetch(`https://${host}.finance.yahoo.com/v1/test/getcrumb`, {
+        headers: { 'User-Agent': YAHOO_UA, 'Cookie': cookie },
+      });
+      const crumb = (await crumbRes.text()).trim();
+      console.log(`[yahoo] crumb ${host}: HTTP ${crumbRes.status} · len=${crumb.length} · ${JSON.stringify(crumb.slice(0, 50))}`);
+      if (crumbRes.ok && crumb && !crumb.includes('<')) return { cookie, crumb };
+    }
+    console.warn('[yahoo] no valid crumb from either host — quote calls will return nothing');
+    return null;
+  } catch (e) {
+    console.error(`[yahoo] session error: ${e.message}`);
     return null;
   }
 }
