@@ -96,6 +96,11 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // 重點新聞收藏 — 跨裝置 / 跨帳號共用同一份收藏清單。公開讀，白名單寫。
+    match /highlight_collected/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
 
     match /config/auth {
       allow read: if isSignedIn();
