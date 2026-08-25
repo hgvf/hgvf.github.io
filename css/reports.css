@@ -702,3 +702,21 @@ a.rp-ticker:hover { background: var(--accent); color: var(--text-on-accent); }
   border-radius: 999px; margin-bottom: 0.6rem; color: var(--text-on-accent); }
 .hl-source-badge.hl-src-supply-chain { background: #2E8B85; }
 .hl-source-badge.hl-src-industry-news { background: #7C5CBF; }
+
+/* Highlight trends — per-item add / remove ticker (charts only) */
+.hl-trend-add { display: flex; gap: 0.4rem; margin-bottom: 0.7rem; }
+.hl-trend-add-input { flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase;
+  padding: 0.4rem 0.65rem; border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  background: var(--glass-bg-solid); color: var(--text-primary); }
+.hl-trend-add-input::placeholder { text-transform: none; font-family: var(--font-sans); color: var(--text-muted); }
+.hl-trend-add-input:focus { outline: none; border-color: var(--accent); }
+.hl-trend-add-btn { flex-shrink: 0; font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.85rem; cursor: pointer;
+  border-radius: var(--radius-sm); border: 1px solid var(--accent); background: var(--accent-light); color: var(--accent);
+  transition: all var(--transition); }
+.hl-trend-add-btn:hover { background: var(--accent); color: var(--text-on-accent); }
+.hl-trend-none { grid-column: 1 / -1; }
+.hl-trend-remove { margin-left: auto; flex-shrink: 0; border: none; background: transparent; color: var(--text-muted);
+  cursor: pointer; font-size: 0.82rem; line-height: 1; padding: 1px 4px; border-radius: 4px; opacity: 0.45;
+  transition: all var(--transition); }
+.hl-trend-card:hover .hl-trend-remove { opacity: 1; }
+.hl-trend-remove:hover { color: var(--negative); background: var(--negative-bg); }

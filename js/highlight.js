@@ -5,7 +5,7 @@
 
 import { WORKER_URL } from "./config.js";
 import { esc, fmtDate, chartUrl } from "./reports.js";
-import { getCollected, removeCollected, onCollectChange } from "./collect.js";
+import { getCollected, removeCollected, onCollectChange, getTrendTickers, setTrendTickers } from "./collect.js";
 
 const PRICE_KEY = "sc_price_series_v1";
 const ALIAS_KEY = "sc_ticker_alias_v1";   // { originalSymbol: correctedSymbol }
@@ -54,6 +54,22 @@ function setAlias(orig, corrected) {
   writeAlias(m);
 }
 
+// Per-item override of which tickers get a trend chart on the right. Affects
+// ONLY the trend charts, never the news card's own tickers. Backed by the
+// shared collect store (Firestore), so it is unified across devices too.
+function trendSymbols(it) { return getTrendTickers(it); }
+function addTrendSymbol(it, sym) {
+  const v = String(sym || "").trim().toUpperCase();
+  if (!v) return false;
+  const list = trendSymbols(it);
+  if (list.includes(v)) return false;
+  setTrendTickers(it.id, [...list, v]);
+  return true;
+}
+function removeTrendSymbol(it, sym) {
+  setTrendTickers(it.id, trendSymbols(it).filter(s => s !== sym));
+}
+
 // Fetch daily close series for symbols from the price worker's /chart endpoint.
 // Returns { [symbol]: { name, currency, series:[{date,close}] } }.
 async function fetchSeries(symbols, range) {
@@ -81,6 +97,7 @@ function headHTML(orig, eff, name) {
       <a class="hl-trend-sym" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener">${esc(eff)}</a>
       <button class="hl-trend-edit" data-edit-ticker="${esc(orig)}" data-eff="${esc(eff)}" title="編輯股票代號" aria-label="編輯股票代號">${PENCIL}</button>
       ${name ? `<span class="hl-trend-name">${esc(name)}</span>` : ""}
+      <button class="hl-trend-remove" data-remove-ticker="${esc(orig)}" title="從走勢圖移除此 ticker" aria-label="移除此 ticker">✕</button>
     </div>`;
 }
 
@@ -233,12 +250,18 @@ export function mountHighlight(opts) {
     removeBtn.disabled = false; updateBtn.disabled = false;
 
     const cache = readPriceCache();
-    const syms = tickersOf(it);
-    const trendsWrap = syms.length
-      ? `<div class="hl-trends-head">股價走勢 <span class="hl-muted">(${esc(range)})</span></div><div class="hl-trends" data-role="hl-trends"></div>`
-      : `<div class="hl-trends-head hl-muted">此新聞未標註相關股票</div>`;
+    const syms = trendSymbols(it);   // per-item trend override (add/remove/edit)
+    const trendsWrap = `
+      <div class="hl-trends-head">股價走勢 <span class="hl-muted">(${esc(range)})</span></div>
+      <div class="hl-trend-add">
+        <input class="hl-trend-add-input" data-role="hl-add-input" type="text"
+               placeholder="新增 ticker（如 TSLA、2330.TW）" spellcheck="false" autocapitalize="characters" aria-label="新增 ticker" />
+        <button class="hl-trend-add-btn" data-role="hl-add-btn" title="加入走勢圖">＋ 新增</button>
+      </div>
+      <div class="hl-trends" data-role="hl-trends"></div>`;
 
-    // Show corrected tickers in the news card's chips too.
+    // Show corrected tickers in the news card's chips too. The card's own
+    // tickers are NOT affected by trend add/remove — only the charts are.
     const cardItem = { ...it, tickers: effTickersOf(it) };
     const src = sourceOf(it);
     const srcBadge = `<div class="hl-source-badge hl-src-${esc(src)}">來源：${esc(SOURCE_LABEL[src] || src)}</div>`;
@@ -248,22 +271,44 @@ export function mountHighlight(opts) {
 
     const host = bodyEl.querySelector('[data-role="hl-trends"]');
     if (host) {
-      syms.forEach(orig => {
-        const eff = aliasSym(orig);
-        const c = cache[eff];
-        // Only reuse a cached series if it was fetched for the current range;
-        // otherwise show the empty state prompting an update.
-        const entry = (c && c.range === range) ? c : null;
-        host.appendChild(trendCard(orig, eff, entry));
-      });
+      if (!syms.length) {
+        host.innerHTML = `<div class="hl-trend-empty hl-trend-none">此新聞沒有走勢圖 ticker，於上方輸入框新增。</div>`;
+      } else {
+        syms.forEach(orig => {
+          const eff = aliasSym(orig);
+          const c = cache[eff];
+          // Only reuse a cached series if it was fetched for the current range;
+          // otherwise show the empty state prompting an update.
+          const entry = (c && c.range === range) ? c : null;
+          host.appendChild(trendCard(orig, eff, entry));
+        });
+      }
     }
   }
 
-  // Every unique effective (corrected) ticker across ALL collected news items
-  // (every source, regardless of the current source filter).
+  // Add a ticker to the current item's trend charts, then fetch its series so
+  // the chart appears immediately.
+  async function doAddTicker() {
+    const it = currentItem();
+    if (!it) return;
+    const input = bodyEl.querySelector('[data-role="hl-add-input"]');
+    const val = (input?.value || "").trim().toUpperCase();
+    if (!val) return;
+    if (!addTrendSymbol(it, val)) { setStatus(`${val} 已在走勢圖中`, "warn"); return; }
+    renderBody();
+    const eff = aliasSym(val);
+    if (readPriceCache()[eff]?.range === range) { setStatus(`已新增 ${eff}`, "ok"); return; }
+    setStatus(`載入 ${eff} …`);
+    const ok = await fetchOneIntoCache(eff);
+    renderBody();
+    setStatus(ok ? `已新增 ${eff}` : `已新增 ${eff}（查無股價）`, ok ? "ok" : "warn");
+  }
+
+  // Every unique effective (corrected) ticker actually charted across ALL
+  // collected news items (their per-item trend lists, every source).
   function allSymbols() {
     const set = new Set();
-    allCollected().forEach(it => effTickersOf(it).forEach(s => { if (s) set.add(s); }));
+    allCollected().forEach(it => trendSymbols(it).map(aliasSym).forEach(s => { if (s) set.add(s); }));
     return [...set];
   }
 
@@ -354,7 +399,18 @@ export function mountHighlight(opts) {
 
   bodyEl.addEventListener("click", e => {
     const edit = e.target.closest("[data-edit-ticker]");
-    if (edit) { e.preventDefault(); startEditTicker(edit.closest(".hl-trend-card")); }
+    if (edit) { e.preventDefault(); startEditTicker(edit.closest(".hl-trend-card")); return; }
+    const rm = e.target.closest("[data-remove-ticker]");
+    if (rm) {
+      e.preventDefault();
+      const it = currentItem();
+      if (it) { removeTrendSymbol(it, rm.dataset.removeTicker); renderBody(); setStatus(`已移除 ${rm.dataset.removeTicker}`, "ok"); }
+      return;
+    }
+    if (e.target.closest('[data-role="hl-add-btn"]')) { e.preventDefault(); doAddTicker(); }
+  });
+  bodyEl.addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.target.closest('[data-role="hl-add-input"]')) { e.preventDefault(); doAddTicker(); }
   });
 
   sourceSel.addEventListener("change", () => { sourceFilter = sourceSel.value; selectedId = null; rebuildSelect(); renderBody(); });
