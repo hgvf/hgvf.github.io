@@ -320,7 +320,7 @@ export function mountStrength(opts) {
       <div class="st-quad-head">
         <div class="st-quad-titles">
           <h3 class="st-quad-title">題材四象限圖</h3>
-          <p class="st-quad-desc">每個題材以去除離群個股後的漲跌幅定位；X／Y 可選不同時間尺度，觀察題材由強轉弱或由弱轉強的移動。</p>
+          <p class="st-quad-desc">每個題材以去除離群個股後的漲跌幅定位；X／Y 可選不同時間尺度，觀察題材由強轉弱或由弱轉強的移動。座標軸依當前資料自動縮放，少數極端題材以虛線圈釘在邊緣。</p>
         </div>
         <div class="st-quad-ctrls">
           <label class="st-quad-axis">X 軸
@@ -578,11 +578,28 @@ export function mountStrength(opts) {
     const H = Math.round(Math.min(640, Math.max(430, W * 0.6)));
     const m = { l: 50, r: 18, t: 26, b: 42 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    const domX = Math.max(1, niceMax(Math.max(...pts.map(p => Math.abs(p.x))) * 1.12));
-    const domY = Math.max(1, niceMax(Math.max(...pts.map(p => Math.abs(p.y))) * 1.12));
+    // Dynamic axis scale: size the domain from the ~88th percentile of |value|,
+    // not the max — so a couple of extreme movers pin to the edge instead of
+    // squashing every other theme against the origin. Independent per axis.
+    const domainFor = vals => {
+      const a = vals.map(v => Math.abs(v)).filter(v => isFinite(v)).sort((p, q) => p - q);
+      if (!a.length) return 2;
+      const q = a[Math.min(a.length - 1, Math.floor(a.length * 0.88))];
+      return Math.max(2, niceMax(q * 1.1));
+    };
+    const domX = domainFor(pts.map(p => p.x));
+    const domY = domainFor(pts.map(p => p.y));
     const sx = v => m.l + (v + domX) / (2 * domX) * iw;
     const sy = v => m.t + (domY - v) / (2 * domY) * ih;
     const ox = sx(0), oy = sy(0);
+    // Clamp a theme's coords into the plot; outliers past the domain pin to the
+    // border (marked so they read as "off-scale") rather than overflow.
+    const coord = p => {
+      const rx = sx(p.x), ry = sy(p.y);
+      const cx = Math.max(m.l, Math.min(m.l + iw, rx));
+      const cy = Math.max(m.t, Math.min(m.t + ih, ry));
+      return { cx, cy, edge: cx !== rx || cy !== ry };
+    };
     const xlbl = DIM_LABEL[xk], ylbl = DIM_LABEL[yk];
 
     const svg = [];
@@ -616,10 +633,10 @@ export function mountStrength(opts) {
     // points, largest themes drawn first so small ones sit on top and stay hittable
     const drawn = pts.slice().sort((a, b) => (b.t.pricedCount || 0) - (a.t.pricedCount || 0));
     for (const p of drawn) {
-      const cx = sx(p.x), cy = sy(p.y);
+      const { cx, cy, edge } = coord(p);
       const r = 4 + Math.min(8, Math.sqrt(p.t.pricedCount || 1));
       const cls = p.x > 0 && p.y > 0 ? "pos" : p.x < 0 && p.y < 0 ? "neg" : "mid";
-      svg.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" class="st-q-dot ${cls}" data-id="${esc(p.t.id)}"/>`);
+      svg.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" class="st-q-dot ${cls}${edge ? " edge" : ""}" data-id="${esc(p.t.id)}"/>`);
     }
 
     // labels — greedy, importance-ordered, skip on collision so names never
@@ -632,7 +649,7 @@ export function mountStrength(opts) {
       (b.t.pricedCount || 0) - (a.t.pricedCount || 0) ||
       (Math.abs(b.x) + Math.abs(b.y)) - (Math.abs(a.x) + Math.abs(a.y)));
     for (const p of byImp) {
-      const cx = sx(p.x), cy = sy(p.y);
+      const { cx, cy } = coord(p);
       const r = 4 + Math.min(8, Math.sqrt(p.t.pricedCount || 1));
       let name = p.t.name || "";
       if (name.length > 10) name = name.slice(0, 9) + "…";

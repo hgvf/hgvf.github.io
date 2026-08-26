@@ -205,6 +205,8 @@
 .st-q-dot.neg { fill: rgba(220,38,38,0.55);  stroke: var(--negative); }
 .st-q-dot.mid { fill: rgba(120,113,108,0.5); stroke: var(--neutral); }
 .st-q-dot:hover, .st-q-dot.hot { fill-opacity: 1; stroke-width: 2; }
+/* off-scale themes pinned to the plot edge by the dynamic domain */
+.st-q-dot.edge { stroke-dasharray: 2 1.5; }
 
 /* theme labels — fixed readable size, white halo, collision-avoided in JS */
 .st-q-label {
