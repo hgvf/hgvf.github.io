@@ -37,6 +37,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    // Manual company-name overrides for tickers whose auto-fetched name is
+    // wrong. Kept separate from prices/ (which is locked and overwritten by the
+    // price refresh) so a correction survives. Whitelisted admins may write.
+    match /ticker_overrides/{symbol} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
     // Reports — populated server-side via the Firebase Admin SDK
     // (scripts/publish.py), which bypasses these rules. Public read so the
     // pages render on any device without login; no client writes.

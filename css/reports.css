@@ -105,7 +105,22 @@
 .tt-sym { display: flex; flex-direction: column; gap: 0.05rem; }
 .tt-sym a { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); text-decoration: none; }
 .tt-sym a:hover { color: var(--accent); text-decoration: underline; }
+.tt-namewrap { display: inline-flex; align-items: center; gap: 0.25rem; }
 .tt-name { font-size: 0.68rem; color: var(--text-muted); font-weight: 400; max-width: 14rem; overflow: hidden; text-overflow: ellipsis; }
+.tt-noname { color: var(--text-muted); opacity: 0.7; }
+.tt-editbtn {
+  border: none; background: transparent; cursor: pointer; padding: 0 0.15rem;
+  font-size: 0.72rem; line-height: 1; color: var(--text-muted); border-radius: 4px;
+}
+.tt-edit { opacity: 0; transition: opacity var(--transition); }
+.tt-sym:hover .tt-edit, .tt-editbtn:focus { opacity: 1; }
+.tt-editbtn:hover { color: var(--accent); background: var(--glass-bg); }
+.tt-save { color: var(--positive); } .tt-cancel { color: var(--negative); }
+.tt-name-input {
+  font-size: 0.7rem; font-family: var(--font-sans); padding: 0.1rem 0.3rem;
+  border: 1px solid var(--accent); border-radius: 4px; width: 11rem;
+  background: var(--glass-bg); color: var(--text-primary);
+}
 .tt-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 .tt-num.pos { color: var(--positive); font-weight: 500; }
 .tt-num.neg { color: var(--negative); font-weight: 500; }

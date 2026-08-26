@@ -203,6 +203,99 @@ export async function loadPricesMap() {
 }
 export function getPricesMapSync() { return _pricesMap || {}; }
 
+// Manual company-name overrides (ticker_overrides/{symbol}.name). Loaded once
+// per page; admins can edit inline and it's written straight back to Firestore.
+let _overrides = null;
+export async function loadOverridesMap() {
+  if (_overrides) return _overrides;
+  const map = {};
+  try {
+    const snap = await getDocs(collection(db(), "ticker_overrides"));
+    snap.docs.forEach(d => { const n = d.data() && d.data().name; if (n) map[d.id] = String(n); });
+  } catch { /* collection may not exist yet — leave empty */ }
+  _overrides = map;
+  return map;
+}
+function _displayName(sym, p) {
+  return (_overrides && _overrides[sym]) || (p && p.name) || "";
+}
+
+let _ttAdmin = false;
+export function setTickerAdmin(v) { _ttAdmin = !!v; }
+
+// Write (or clear, when blank) a name override. Requires a whitelisted admin;
+// Firestore rules enforce it.
+export async function saveTickerName(symbol, name) {
+  const sym = String(symbol || "").trim();
+  if (!sym) return;
+  const ref = doc(db(), "ticker_overrides", sym);
+  const clean = String(name || "").trim();
+  if (!clean) { await deleteDoc(ref); if (_overrides) delete _overrides[sym]; return; }
+  await setDoc(ref, { name: clean, updated_at: new Date().toISOString() }, { merge: true });
+  (_overrides = _overrides || {})[sym] = clean;
+}
+
+// Inline-edit wiring for the name cell — attached once, delegated on document
+// so it survives the detail panel being re-rendered on every item click.
+let _ttWired = false;
+function ensureTtEditWiring() {
+  if (_ttWired) return;
+  _ttWired = true;
+  document.addEventListener("click", async e => {
+    const editBtn = e.target.closest("[data-tt-edit]");
+    if (editBtn) {
+      const wrap = editBtn.closest(".tt-namewrap");
+      if (!wrap || wrap.querySelector(".tt-name-input")) return;
+      const sym = wrap.dataset.sym;
+      const cur = wrap.dataset.name || "";
+      wrap.innerHTML =
+        `<input class="tt-name-input" type="text" value="${esc(cur)}" maxlength="80" aria-label="公司名稱">` +
+        `<button class="tt-editbtn tt-save" data-tt-save="${esc(sym)}" title="儲存">✓</button>` +
+        `<button class="tt-editbtn tt-cancel" data-tt-cancel="${esc(sym)}" title="取消">✕</button>`;
+      wrap.querySelector(".tt-name-input").focus();
+      return;
+    }
+    const cancelBtn = e.target.closest("[data-tt-cancel]");
+    if (cancelBtn) {
+      const wrap = cancelBtn.closest(".tt-namewrap");
+      if (wrap) _paintNameWrap(wrap, wrap.dataset.name);
+      return;
+    }
+    const saveBtn = e.target.closest("[data-tt-save]");
+    if (saveBtn) {
+      const wrap = saveBtn.closest(".tt-namewrap");
+      if (!wrap) return;
+      const sym = wrap.dataset.sym;
+      const input = wrap.querySelector(".tt-name-input");
+      const val = input ? input.value.trim() : "";
+      saveBtn.disabled = true; saveBtn.textContent = "…";
+      try {
+        await saveTickerName(sym, val);
+        wrap.dataset.name = val;
+        _paintNameWrap(wrap, val);
+      } catch (err) {
+        saveBtn.disabled = false; saveBtn.textContent = "✓";
+        window.alert("儲存失敗：" + (err && err.code === "permission-denied" ? "需以白名單管理員登入。" : (err && err.message) || err));
+      }
+    }
+  });
+  // Enter = save, Esc = cancel inside the inline input
+  document.addEventListener("keydown", e => {
+    if (!e.target.classList || !e.target.classList.contains("tt-name-input")) return;
+    const wrap = e.target.closest(".tt-namewrap");
+    if (!wrap) return;
+    if (e.key === "Enter") { e.preventDefault(); wrap.querySelector("[data-tt-save]")?.click(); }
+    else if (e.key === "Escape") { e.preventDefault(); _paintNameWrap(wrap, wrap.dataset.name); }
+  });
+}
+function _paintNameWrap(wrap, name) {
+  const sym = wrap.dataset.sym;
+  wrap.dataset.name = name || "";
+  wrap.innerHTML =
+    `<span class="tt-name">${name ? esc(name) : '<i class="tt-noname">未命名</i>'}</span>` +
+    (_ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(sym)}" title="修正名稱">✎</button>` : "");
+}
+
 function _pct(v) {
   if (v == null || v === "" || isNaN(v)) return `<td class="tt-num tt-na">N/A</td>`;
   const n = Number(v);
@@ -218,10 +311,19 @@ function _mktCap(p) {
 export function tickerTrendCard(symbols, title = "相關個股近期表現") {
   const syms = [...new Set((symbols || []).map(s => String(s || "").trim()).filter(Boolean))];
   if (!syms.length) return "";
+  ensureTtEditWiring();
   const prices = getPricesMapSync();
+  const nameCellFor = (sym, p) => {
+    const nm = _displayName(sym, p);
+    const editBtn = _ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(sym)}" title="修正名稱">✎</button>` : "";
+    const nameWrap = (p || _ttAdmin)
+      ? `<span class="tt-namewrap" data-sym="${esc(sym)}" data-name="${esc(nm)}"><span class="tt-name">${nm ? esc(nm) : '<i class="tt-noname">未命名</i>'}</span>${editBtn}</span>`
+      : "";
+    return `<td class="tt-sym"><a href="${esc(chartUrl(sym))}" target="_blank" rel="noopener">${esc(sym)}</a>${nameWrap}</td>`;
+  };
   const rows = syms.map(sym => {
     const p = prices[sym];
-    const nameCell = `<td class="tt-sym"><a href="${esc(chartUrl(sym))}" target="_blank" rel="noopener">${esc(sym)}</a>${p && p.name ? `<span class="tt-name">${esc(p.name)}</span>` : ""}</td>`;
+    const nameCell = nameCellFor(sym, p);
     if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="7">N/A（watchlist 無此代號價格）</td></tr>`;
     const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
       ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;

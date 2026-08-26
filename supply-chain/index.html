@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>供應鏈瓶頸新聞 · Supply Chain Digest</title>
   <link rel="stylesheet" href="../css/style.css?v=20260824b" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260826a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260826b" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -32,13 +32,13 @@
     import { mountReportView } from "../js/reportview.js";
     import { detail } from "../js/scdetail.js";
     import { toggleCollected, isCollected, onCollectChange } from "../js/collect.js";
-    import { onAuth, loadPricesMap } from "../js/reports.js";
-    loadPricesMap();  // warm the prices snapshot for the per-item trend table
+    import { onAuth, loadPricesMap, loadOverridesMap, setTickerAdmin } from "../js/reports.js";
+    loadPricesMap(); loadOverridesMap();  // warm prices + name overrides for the trend table
 
     mountSidebar("supply-chain");
 
     let view = null, lastAdmin = false;
-    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; if (view) view.setAdmin(isAdmin); });
+    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; setTickerAdmin(isAdmin); if (view) view.setAdmin(isAdmin); });
     mountReportView({
       root: document.getElementById("reportRoot"),
       collection: "supply_chain_news",
