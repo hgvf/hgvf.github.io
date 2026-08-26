@@ -170,9 +170,76 @@
   padding: 0.1rem 0.45rem; border-radius: var(--radius-sm);
 }
 
+/* ── Four-quadrant chart ──────────────────────────────────────────────── */
+.st-quad { margin-top: 1.75rem; }
+.st-quad-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 0.7rem;
+}
+.st-quad-title { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }
+.st-quad-desc { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.25rem; max-width: 46rem; line-height: 1.5; }
+.st-quad-ctrls { display: inline-flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+.st-quad-axis { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-secondary); }
+.st-quad-sel.rv-select { min-width: 5.5rem; }
+
+.st-quad-canvas {
+  position: relative; width: 100%;
+  border: 1px solid var(--glass-border); border-radius: var(--radius-md);
+  background: var(--glass-bg); padding: 0.4rem; overflow: hidden;
+}
+.st-quad-svg { display: block; width: 100%; height: auto; }
+
+/* quadrant tints + frame + zero axes */
+.st-q-bg.pos { fill: var(--positive-bg); }
+.st-q-bg.neg { fill: var(--negative-bg); }
+.st-q-bg.mid { fill: var(--neutral-bg); }
+.st-q-frame { fill: none; stroke: var(--glass-border); stroke-width: 1; }
+.st-q-axis  { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.65; }
+.st-q-corner { fill: var(--text-muted); font-size: 10px; font-weight: 600; font-family: var(--font-mono); opacity: 0.8; }
+.st-q-tick   { fill: var(--text-muted); font-size: 10px; font-family: var(--font-mono); }
+.st-q-title-x, .st-q-title-y { fill: var(--text-secondary); font-size: 11px; font-weight: 600; }
+
+/* points */
+.st-q-dot { cursor: pointer; stroke-width: 1; transition: opacity .12s; }
+.st-q-dot.pos { fill: rgba(22,163,74,0.55);  stroke: var(--positive); }
+.st-q-dot.neg { fill: rgba(220,38,38,0.55);  stroke: var(--negative); }
+.st-q-dot.mid { fill: rgba(120,113,108,0.5); stroke: var(--neutral); }
+.st-q-dot:hover, .st-q-dot.hot { fill-opacity: 1; stroke-width: 2; }
+
+/* theme labels — fixed readable size, white halo, collision-avoided in JS */
+.st-q-label {
+  fill: var(--text-primary); font-size: 11px; font-weight: 500;
+  font-family: var(--font-sans); pointer-events: none;
+  paint-order: stroke; stroke: var(--bg-mid); stroke-width: 3px; stroke-linejoin: round;
+}
+
+/* hover tooltip */
+.st-quad-tip {
+  position: absolute; z-index: 30; min-width: 200px; max-width: 300px;
+  padding: 0.55rem 0.65rem; border-radius: var(--radius-md);
+  background: var(--glass-bg-solid, rgba(255,252,245,0.98));
+  border: 1px solid var(--glass-border); box-shadow: 0 8px 24px rgba(120,80,30,0.2);
+  pointer-events: none; font-size: 0.75rem;
+}
+.st-quad-tip[hidden] { display: none; }
+.st-qt-head { font-weight: 700; color: var(--text-primary); display: flex; align-items: baseline; gap: 0.4rem; }
+.st-qt-sector { font-size: 0.68rem; font-weight: 400; color: var(--text-muted); }
+.st-qt-axes { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 0.3rem 0; font-size: 0.72rem; color: var(--text-secondary); }
+.st-qt-axes b.pos { color: var(--positive); } .st-qt-axes b.neg { color: var(--negative); } .st-qt-axes b.neu { color: var(--neutral); }
+.st-qt-n { color: var(--text-muted); }
+.st-qt-listh { font-size: 0.68rem; color: var(--text-muted); margin: 0.2rem 0 0.15rem; }
+.st-qt-list { display: flex; flex-direction: column; gap: 0.1rem; }
+.st-qt-row { display: grid; grid-template-columns: auto 1fr auto; gap: 0.4rem; align-items: baseline; }
+.st-qt-sym { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); }
+.st-qt-nm { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-qt-v { font-family: var(--font-mono); text-align: right; }
+.st-qt-v.pos { color: var(--positive); } .st-qt-v.neg { color: var(--negative); } .st-qt-v.neu { color: var(--neutral); }
+.st-qt-more { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.15rem; }
+
 /* ── Responsive ───────────────────────────────────────────────────────── */
 @media (max-width: 820px) {
   .st-board { grid-template-columns: 1fr; }
   .st-tx { grid-template-columns: 1fr; }
   .st-chart-svg { width: 100%; }
+  .st-quad-head { align-items: flex-start; }
 }

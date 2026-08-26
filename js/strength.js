@@ -41,6 +41,11 @@ const DIMS = [
   { k: "month", label: "月" },
   { k: "year", label: "年" },
 ];
+const DIM_LABEL = Object.fromEntries(DIMS.map(d => [d.k, d.label]));
+// Quadrant chart: X = mid-term position, Y = short-term momentum by default,
+// so movement between quadrants reads as a theme strengthening / weakening.
+const QUAD_DEFAULT = { x: "month", y: "week" };
+const QUAD_KEY = "st_quad_axes_v1";
 const NEWS_DAYS = 30;      // supply-chain news lookback
 const CALL_DAYS = 90;      // earnings-call lookback (~one quarter)
 const TOP_N = 8;           // strongest / weakest columns
@@ -55,6 +60,34 @@ function median(nums) {
   if (!a.length) return null;
   const m = Math.floor(a.length / 2);
   return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+function mean(nums) {
+  const a = nums.filter(n => typeof n === "number" && isFinite(n));
+  return a.length ? a.reduce((s, x) => s + x, 0) / a.length : null;
+}
+// Robust theme value used by the quadrant chart. Drops outliers via the
+// median-absolute-deviation modified z-score (|z| > 3.5) — so one member
+// spiking on company-specific news doesn't drag the whole theme — then
+// averages the surviving inliers. Samples < 4 fall back to the median, which
+// is already outlier-resistant.
+function robustAgg(nums) {
+  const a = nums.filter(n => typeof n === "number" && isFinite(n));
+  if (!a.length) return null;
+  if (a.length < 4) return median(a);
+  const med = median(a);
+  const mad = median(a.map(v => Math.abs(v - med)));
+  if (!mad) return med;                     // near-identical members
+  const keep = a.filter(v => Math.abs(0.6745 * (v - med) / mad) <= 3.5);
+  return keep.length ? mean(keep) : med;
+}
+// Round a domain half-width up to a friendly 1/2/5×10ⁿ step.
+function niceMax(v) {
+  if (!(v > 0)) return 1;
+  const exp = Math.floor(Math.log10(v));
+  const base = Math.pow(10, exp);
+  const f = v / base;
+  const nice = f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10;
+  return nice * base;
 }
 function fmtPct(v) {
   if (v == null || !isFinite(v)) return "—";
@@ -181,6 +214,11 @@ function computeThemes(data) {
     const scores = { overall: median(priced.map(r => tickerOverall(r.p))) };
     for (const k in DIM_FIELD) scores[k] = median(priced.map(r => r.p[DIM_FIELD[k]]));
 
+    // outlier-trimmed aggregate (for the quadrant chart) — robust to a single
+    // member spiking on company-specific news
+    const robustScores = { overall: robustAgg(priced.map(r => tickerOverall(r.p))) };
+    for (const k in DIM_FIELD) robustScores[k] = robustAgg(priced.map(r => r.p[DIM_FIELD[k]]));
+
     // aggregate signals across member symbols (dedupe news by doc id)
     const seenNews = new Set();
     const news = [], calls = [], perSym = {};
@@ -199,7 +237,7 @@ function computeThemes(data) {
       name: sub.name || sub.id,
       sector: sectorName[sub.sector_id] || "",
       rows, pricedCount, totalCount: rows.length,
-      scores,
+      scores, robustScores,
       signals: { news, calls, newsColor, callColor, perSym },
     });
   }
@@ -274,7 +312,32 @@ export function mountStrength(opts) {
     <div class="st-board" data-role="board">
       <div class="st-empty">尚未計算 — 按 <b>↻ Update</b> 讀取 Firestore 並產生榜單。</div>
     </div>
-    <div class="st-detail" data-role="detail"></div>`;
+    <div class="st-detail" data-role="detail"></div>
+
+    <section class="st-quad" data-role="quad">
+      <div class="st-quad-head">
+        <div class="st-quad-titles">
+          <h3 class="st-quad-title">題材四象限圖</h3>
+          <p class="st-quad-desc">每個題材以去除離群個股後的漲跌幅定位；X／Y 可選不同時間尺度，觀察題材由強轉弱或由弱轉強的移動。</p>
+        </div>
+        <div class="st-quad-ctrls">
+          <label class="st-quad-axis">X 軸
+            <span class="rv-sel-wrap"><select class="rv-select st-quad-sel" data-role="qx">
+              ${DIMS.map(d => `<option value="${d.k}"${d.k === QUAD_DEFAULT.x ? " selected" : ""}>${d.label}</option>`).join("")}
+            </select></span>
+          </label>
+          <label class="st-quad-axis">Y 軸
+            <span class="rv-sel-wrap"><select class="rv-select st-quad-sel" data-role="qy">
+              ${DIMS.map(d => `<option value="${d.k}"${d.k === QUAD_DEFAULT.y ? " selected" : ""}>${d.label}</option>`).join("")}
+            </select></span>
+          </label>
+        </div>
+      </div>
+      <div class="st-quad-canvas" data-role="quad-canvas">
+        <div class="st-empty">按 <b>↻ Update</b> 後產生四象限圖。</div>
+      </div>
+      <div class="st-quad-tip" data-role="quad-tip" hidden></div>
+    </section>`;
 
   const updateBtn = root.querySelector('[data-role="update"]');
   const dimsEl = root.querySelector('[data-role="dims"]');
@@ -282,6 +345,19 @@ export function mountStrength(opts) {
   const ageEl = root.querySelector('[data-role="age"]');
   const boardEl = root.querySelector('[data-role="board"]');
   const detailEl = root.querySelector('[data-role="detail"]');
+  const quadCanvas = root.querySelector('[data-role="quad-canvas"]');
+  const quadTip = root.querySelector('[data-role="quad-tip"]');
+  const qxSel = root.querySelector('[data-role="qx"]');
+  const qySel = root.querySelector('[data-role="qy"]');
+
+  // Restore last-used axis choices.
+  let quadAxes = { ...QUAD_DEFAULT };
+  try {
+    const saved = JSON.parse(localStorage.getItem(QUAD_KEY) || "null");
+    if (saved && DIM_FIELD[saved.x] || saved?.x === "overall") quadAxes.x = saved.x;
+    if (saved && DIM_FIELD[saved.y] || saved?.y === "overall") quadAxes.y = saved.y;
+  } catch { /* ignore */ }
+  qxSel.value = quadAxes.x; qySel.value = quadAxes.y;
 
   function setStatus(msg, kind = "") { statusEl.textContent = msg || ""; statusEl.className = `st-status ${kind}`; }
 
@@ -469,6 +545,160 @@ export function mountStrength(opts) {
     return String(v);
   }
 
+  // ── Four-quadrant chart ──────────────────────────────────────────────────
+  const NSVG = "http://www.w3.org/2000/svg";
+  function themeAxisVal(t, k) { return t.robustScores ? t.robustScores[k] : null; }
+  function tickerDimVal(p, k) { return k === "overall" ? tickerOverall(p) : (p ? p[DIM_FIELD[k]] : null); }
+  // Rough on-screen text width (CJK glyphs ≈ 1em, latin ≈ 0.6em).
+  function textWidth(str, fs) {
+    let w = 0;
+    for (const ch of String(str)) w += (ch.charCodeAt(0) > 255 ? 1.0 : 0.6) * fs;
+    return w;
+  }
+  let _quadW = 0;
+
+  function renderQuadrant() {
+    if (!themes) {
+      quadCanvas.innerHTML = `<div class="st-empty">按 <b>↻ Update</b> 後產生四象限圖。</div>`;
+      return;
+    }
+    const xk = quadAxes.x, yk = quadAxes.y;
+    const pts = themes
+      .map(t => ({ t, x: themeAxisVal(t, xk), y: themeAxisVal(t, yk) }))
+      .filter(p => p.x != null && isFinite(p.x) && p.y != null && isFinite(p.y));
+    if (!pts.length) {
+      quadCanvas.innerHTML = `<div class="st-empty">此時間尺度沒有可定位的題材。</div>`;
+      return;
+    }
+
+    const W = Math.max(320, quadCanvas.clientWidth || 800);
+    _quadW = W;
+    const H = Math.round(Math.min(640, Math.max(430, W * 0.6)));
+    const m = { l: 50, r: 18, t: 26, b: 42 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const domX = Math.max(1, niceMax(Math.max(...pts.map(p => Math.abs(p.x))) * 1.12));
+    const domY = Math.max(1, niceMax(Math.max(...pts.map(p => Math.abs(p.y))) * 1.12));
+    const sx = v => m.l + (v + domX) / (2 * domX) * iw;
+    const sy = v => m.t + (domY - v) / (2 * domY) * ih;
+    const ox = sx(0), oy = sy(0);
+    const xlbl = DIM_LABEL[xk], ylbl = DIM_LABEL[yk];
+
+    const svg = [];
+    svg.push(`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" class="st-quad-svg" role="img" aria-label="題材四象限圖">`);
+    // quadrant tints
+    svg.push(`<rect x="${ox}" y="${m.t}" width="${m.l + iw - ox}" height="${oy - m.t}" class="st-q-bg pos"/>`);
+    svg.push(`<rect x="${m.l}" y="${oy}" width="${ox - m.l}" height="${m.t + ih - oy}" class="st-q-bg neg"/>`);
+    svg.push(`<rect x="${m.l}" y="${m.t}" width="${ox - m.l}" height="${oy - m.t}" class="st-q-bg mid"/>`);
+    svg.push(`<rect x="${ox}" y="${oy}" width="${m.l + iw - ox}" height="${m.t + ih - oy}" class="st-q-bg mid"/>`);
+    // plot border + zero axes
+    svg.push(`<rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" class="st-q-frame"/>`);
+    svg.push(`<line x1="${ox}" y1="${m.t}" x2="${ox}" y2="${m.t + ih}" class="st-q-axis"/>`);
+    svg.push(`<line x1="${m.l}" y1="${oy}" x2="${m.l + iw}" y2="${oy}" class="st-q-axis"/>`);
+    // corner tags
+    const corner = (x, y, anchor, txt) => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="st-q-corner">${esc(txt)}</text>`;
+    svg.push(corner(m.l + iw - 8, m.t + 15, "end",   `${xlbl}↑ ${ylbl}↑`));
+    svg.push(corner(m.l + 8,      m.t + 15, "start", `${xlbl}↓ ${ylbl}↑`));
+    svg.push(corner(m.l + iw - 8, m.t + ih - 8, "end",   `${xlbl}↑ ${ylbl}↓`));
+    svg.push(corner(m.l + 8,      m.t + ih - 8, "start", `${xlbl}↓ ${ylbl}↓`));
+    // tick labels
+    const tick = (x, y, anchor, txt) => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="st-q-tick">${esc(txt)}</text>`;
+    svg.push(tick(m.l, m.t + ih + 15, "start", `−${domX}%`));
+    svg.push(tick(m.l + iw, m.t + ih + 15, "end", `+${domX}%`));
+    svg.push(tick(ox, m.t + ih + 15, "middle", "0"));
+    svg.push(tick(m.l - 6, m.t + 4, "end", `+${domY}%`));
+    svg.push(tick(m.l - 6, m.t + ih, "end", `−${domY}%`));
+    // axis titles
+    svg.push(`<text x="${m.l + iw / 2}" y="${H - 6}" text-anchor="middle" class="st-q-title-x">${esc(xlbl)}漲跌幅（去離群）</text>`);
+    svg.push(`<text transform="translate(14 ${m.t + ih / 2}) rotate(-90)" text-anchor="middle" class="st-q-title-y">${esc(ylbl)}漲跌幅（去離群）</text>`);
+
+    // points, largest themes drawn first so small ones sit on top and stay hittable
+    const drawn = pts.slice().sort((a, b) => (b.t.pricedCount || 0) - (a.t.pricedCount || 0));
+    for (const p of drawn) {
+      const cx = sx(p.x), cy = sy(p.y);
+      const r = 4 + Math.min(8, Math.sqrt(p.t.pricedCount || 1));
+      const cls = p.x > 0 && p.y > 0 ? "pos" : p.x < 0 && p.y < 0 ? "neg" : "mid";
+      svg.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" class="st-q-dot ${cls}" data-id="${esc(p.t.id)}"/>`);
+    }
+
+    // labels — greedy, importance-ordered, skip on collision so names never
+    // pile up (font stays a fixed readable size)
+    const fs = 11;
+    const placed = [];
+    const clampBox = (b) => b.x0 >= 2 && b.x1 <= W - 2 && b.y0 >= 2 && b.y1 <= H - 2;
+    const hit = (b) => placed.some(q => b.x0 < q.x1 && b.x1 > q.x0 && b.y0 < q.y1 && b.y1 > q.y0);
+    const byImp = pts.slice().sort((a, b) =>
+      (b.t.pricedCount || 0) - (a.t.pricedCount || 0) ||
+      (Math.abs(b.x) + Math.abs(b.y)) - (Math.abs(a.x) + Math.abs(a.y)));
+    for (const p of byImp) {
+      const cx = sx(p.x), cy = sy(p.y);
+      const r = 4 + Math.min(8, Math.sqrt(p.t.pricedCount || 1));
+      let name = p.t.name || "";
+      if (name.length > 10) name = name.slice(0, 9) + "…";
+      const tw = textWidth(name, fs), th = fs;
+      const cands = [
+        { x: cx + r + 3, y: cy + th * 0.35, anchor: "start", x0: cx + r + 3, x1: cx + r + 3 + tw },
+        { x: cx - r - 3, y: cy + th * 0.35, anchor: "end",   x0: cx - r - 3 - tw, x1: cx - r - 3 },
+        { x: cx, y: cy - r - 4,             anchor: "middle", x0: cx - tw / 2, x1: cx + tw / 2 },
+        { x: cx, y: cy + r + th + 1,        anchor: "middle", x0: cx - tw / 2, x1: cx + tw / 2 },
+      ];
+      for (const c of cands) {
+        const box = { x0: c.x0 - 1, x1: c.x1 + 1, y0: c.y - th, y1: c.y + 3 };
+        if (!clampBox(box) || hit(box)) continue;
+        placed.push(box);
+        svg.push(`<text x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.anchor}" class="st-q-label">${esc(name)}</text>`);
+        break;
+      }
+    }
+    svg.push(`</svg>`);
+    quadCanvas.innerHTML = svg.join("");
+    wireQuadHover();
+  }
+
+  function quadTipHtml(t, xk, yk) {
+    const rows = t.rows
+      .map(r => ({ sym: r.symbol, name: r.name, v: tickerDimVal(r.p, yk) }))
+      .filter(r => r.v != null && isFinite(r.v))
+      .sort((a, b) => b.v - a.v);
+    const shown = rows.slice(0, 12);
+    const more = rows.length - shown.length;
+    const list = shown.map(r =>
+      `<div class="st-qt-row"><span class="st-qt-sym">${esc(r.sym)}</span>` +
+      `<span class="st-qt-nm">${esc(r.name || "")}</span>` +
+      `<span class="st-qt-v ${pctClass(r.v)}">${fmtPct(r.v)}</span></div>`).join("");
+    return `<div class="st-qt-head">${esc(t.name)}<span class="st-qt-sector">${esc(t.sector)}</span></div>` +
+      `<div class="st-qt-axes"><span>${esc(DIM_LABEL[xk])} <b class="${pctClass(themeAxisVal(t, xk))}">${fmtPct(themeAxisVal(t, xk))}</b></span>` +
+      `<span>${esc(DIM_LABEL[yk])} <b class="${pctClass(themeAxisVal(t, yk))}">${fmtPct(themeAxisVal(t, yk))}</b></span>` +
+      `<span class="st-qt-n">${t.pricedCount}/${t.totalCount} 有價</span></div>` +
+      `<div class="st-qt-listh">個股（依${esc(DIM_LABEL[yk])}漲跌幅）</div>` +
+      `<div class="st-qt-list">${list || '<div class="st-qt-row">無個股價格</div>'}` +
+      `${more > 0 ? `<div class="st-qt-more">＋ 其餘 ${more} 檔</div>` : ""}</div>`;
+  }
+
+  function positionTip(e) {
+    const rect = quadCanvas.getBoundingClientRect();
+    let x = e.clientX - rect.left + 14;
+    let y = e.clientY - rect.top + 14;
+    const tw = quadTip.offsetWidth, th = quadTip.offsetHeight;
+    if (x + tw > rect.width - 4) x = e.clientX - rect.left - tw - 14;
+    if (y + th > rect.height - 4) y = Math.max(4, rect.height - th - 4);
+    quadTip.style.left = x + "px";
+    quadTip.style.top = y + "px";
+  }
+  function wireQuadHover() {
+    quadCanvas.querySelectorAll(".st-q-dot").forEach(dot => {
+      dot.addEventListener("mouseenter", e => {
+        const t = themes.find(x => x.id === dot.dataset.id);
+        if (!t) return;
+        quadTip.innerHTML = quadTipHtml(t, quadAxes.x, quadAxes.y);
+        quadTip.hidden = false;
+        positionTip(e);
+        dot.classList.add("hot");
+      });
+      dot.addEventListener("mousemove", positionTip);
+      dot.addEventListener("mouseleave", () => { quadTip.hidden = true; dot.classList.remove("hot"); });
+    });
+  }
+
   // ── Update: read Firestore, compute, render ──────────────────────────────
   async function update() {
     updateBtn.disabled = true;
@@ -495,6 +725,7 @@ export function mountStrength(opts) {
       const meta = priceMetaOf(priceDocs);
       renderPriceAge(meta);
       renderBoard();
+      renderQuadrant();       // quadrant updates together with the board
       saveState(meta, now);   // persist so a reload restores this board
 
       const rankable = themes.length - skipped;
@@ -552,6 +783,7 @@ export function mountStrength(opts) {
     dimsEl.querySelectorAll(".st-dim").forEach(b => b.classList.toggle("on", b.dataset.dim === dim));
     renderPriceAge(s.priceMeta);
     renderBoard();
+    renderQuadrant();
     const when = s.computedAt ? new Date(s.computedAt).toLocaleString("en-GB") : "";
     setStatus(`顯示上次計算結果${when ? " · " + when : ""} · 按 ↻ Update 重新讀取`, "warn");
   }
@@ -573,6 +805,28 @@ export function mountStrength(opts) {
     else { openId = id; renderDetail(id); detailEl.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
     boardEl.querySelectorAll(".st-card").forEach(c => c.classList.toggle("open", c.dataset.theme === openId));
   });
+
+  // Quadrant axis selectors — re-plot from data already in memory (no re-read).
+  function onAxisChange() {
+    quadAxes = { x: qxSel.value, y: qySel.value };
+    try { localStorage.setItem(QUAD_KEY, JSON.stringify(quadAxes)); } catch { /* ignore */ }
+    renderQuadrant();
+  }
+  qxSel.addEventListener("change", onAxisChange);
+  qySel.addEventListener("change", onAxisChange);
+
+  // Re-plot on real width changes (responsive), guarded against self-triggered
+  // layout churn from our own innerHTML writes.
+  if (typeof ResizeObserver !== "undefined") {
+    let rt = null;
+    new ResizeObserver(() => {
+      if (!themes) return;
+      const w = quadCanvas.clientWidth || 0;
+      if (Math.abs(w - _quadW) < 3) return;
+      clearTimeout(rt);
+      rt = setTimeout(renderQuadrant, 120);
+    }).observe(quadCanvas);
+  }
 
   // Restore the last computed board (if any) so reopening the page isn't empty.
   restoreState();
