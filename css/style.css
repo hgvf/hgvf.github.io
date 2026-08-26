@@ -300,7 +300,9 @@ img { display: block; max-width: 100%; }
 .ticker-summary .ts-up   { color: var(--positive); }
 .ticker-summary .ts-down { color: var(--negative); }
 .ticker-summary .ts-flat { color: var(--neutral); }
-.ticker-summary .ticker-edit-btn { margin-left: auto; }
+.ticker-summary .ticker-legend { margin-left: auto; }
+/* When no legend is shown (e.g. empty sector), keep the edit button right-aligned. */
+.ticker-summary > .ticker-edit-btn:first-of-type { margin-left: auto; }
 
 /* Up / down zones side by side */
 .ticker-zones {
@@ -330,6 +332,13 @@ img { display: block; max-width: 100%; }
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
 }
 
+/* Collapsible zones */
+.ticker-zone .tz-head { cursor: pointer; user-select: none; }
+.ticker-zone .tz-caret { font-size: 0.7rem; transition: transform var(--transition); opacity: 0.75; }
+.ticker-zone.collapsed .tz-caret { transform: rotate(-90deg); }
+.ticker-zone.collapsed .tz-head { margin-bottom: 0; }
+.ticker-zone.collapsed .tz-grid { display: none; }
+
 /* Subsector ("依題材") view — neutral surface, each theme spans full width */
 .ticker-zone.tz-theme {
   grid-column: 1 / -1;
@@ -338,9 +347,31 @@ img { display: block; max-width: 100%; }
 .tz-theme .tz-head { color: var(--text-primary); }
 .tz-theme.tz-other .tz-head { color: var(--text-muted); }
 
+/* Tag legend popover (ⓘ 標籤) */
+.ticker-legend { position: relative; display: inline-flex; }
+.tl-btn {
+  border: 1px solid var(--glass-border); background: rgba(255,252,245,0.6);
+  cursor: pointer; font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600;
+  color: var(--text-muted); padding: 0.22rem 0.6rem; border-radius: 999px;
+  transition: background var(--transition), color var(--transition);
+}
+.tl-btn:hover { color: var(--text-primary); background: rgba(255,252,245,0.95); }
+.tl-pop {
+  display: none; position: absolute; top: calc(100% + 0.4rem); right: 0; z-index: 20;
+  min-width: 220px; padding: 0.6rem 0.7rem; border-radius: var(--radius-md);
+  background: rgba(255,252,245,0.98); border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 24px rgba(120,80,30,0.18);
+  flex-direction: column; gap: 0.4rem;
+}
+.ticker-legend.open .tl-pop { display: flex; }
+.tl-pop .tl-row {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.72rem; font-weight: 500; color: var(--text-primary); white-space: nowrap;
+}
+
 /* View toggle: 依漲跌 ⇄ 依題材 */
 .ticker-viewtoggle {
-  display: inline-flex; margin-left: auto; border-radius: 999px;
+  display: inline-flex; margin-left: 0.5rem; border-radius: 999px;
   background: rgba(0,0,0,0.05); padding: 0.15rem; gap: 0.1rem;
 }
 .ticker-viewtoggle + .ticker-edit-btn { margin-left: 0.5rem; }
@@ -356,13 +387,16 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 1px 3px rgba(120,80,30,0.15);
 }
 
-/* Event tags on a ticker card (供 / 產 / 法) */
-.ticker-card .tc-tags { display: flex; gap: 0.2rem; margin-top: 0.3rem; }
+/* Event tags on a ticker card (供 / 產 / 法) — clickable deep-links */
+.ticker-card .tc-tags { display: flex; gap: 0.2rem; margin-top: 0.3rem; position: relative; z-index: 1; }
 .ticker-card .tc-tag {
   font-size: 0.6rem; font-weight: 600; line-height: 1;
   padding: 0.16rem 0.28rem; border-radius: 4px;
   font-family: var(--font-sans); letter-spacing: 0.02em;
+  text-decoration: none; cursor: pointer;
+  transition: filter var(--transition), transform var(--transition);
 }
+.ticker-card a.tc-tag:hover { filter: brightness(0.94) saturate(1.15); transform: translateY(-1px); }
 .tc-tag.tg-supply   { background: rgba(37,99,235,0.14);  color: #2563EB; }
 .tc-tag.tg-industry { background: rgba(217,119,6,0.16);  color: #B45309; }
 .tc-tag.tg-earnings { background: rgba(124,58,237,0.14); color: #7C3AED; }
@@ -382,6 +416,11 @@ img { display: block; max-width: 100%; }
   background: var(--indicator-color, var(--neutral));
 }
 .ticker-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(120,80,30,0.15); background: rgba(255,252,245,0.8); }
+/* Inner link holds symbol/name/price/change; tags sit outside it as their own links. */
+.ticker-card .tc-main {
+  display: flex; flex-direction: column; gap: 0.15rem;
+  text-decoration: none; color: inherit; position: relative; z-index: 1;
+}
 .ticker-card .tc-symbol { font-size: 0.8rem; font-weight: 600; font-family: var(--font-mono); color: var(--text-primary); }
 .ticker-card .tc-name { font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
 .ticker-card .tc-price { font-size: 0.85rem; font-weight: 600; font-family: var(--font-mono); color: var(--text-primary); margin-top: 0.25rem; }

@@ -153,29 +153,37 @@ export function subscribePrices(symbols, callback) {
 
 // ─── Event tags (read-only) ────────────────────────────────────────────
 // Scans the report collections that reference tickers and returns a map
-// symbol → { supply, industry, earnings } marking which event types exist
-// for that symbol. Read-only; no schema/backend change. Cached after first
-// call. Any collection that fails to read is skipped silently.
+// symbol → { supply, industry, earnings } where each present key is the
+// LATEST matching doc for that symbol: { id, date }. Lets a ticker card link
+// straight to the most recent related item. Read-only; no schema/backend
+// change. Cached after first call. Any collection that fails to read is
+// skipped silently.
 let _eventTickerMap = null;
 export async function getEventTickerMap() {
   if (_eventTickerMap) return _eventTickerMap;
   const map = {};
-  const mark = (sym, kind) => {
-    if (!sym) return;
+  // Keep only the newest (by date string, YYYY-MM-DD sorts lexically) per kind.
+  const mark = (sym, kind, id, date) => {
+    if (!sym || !id) return;
     const s = String(sym).trim();
     if (!s) return;
-    (map[s] = map[s] || { supply: false, industry: false, earnings: false })[kind] = true;
+    const entry = (map[s] = map[s] || {});
+    const cur = entry[kind];
+    if (!cur || String(date || "") > String(cur.date || "")) entry[kind] = { id, date: date || "" };
   };
-  const scan = async (name, kind, extract) => {
+  const scan = async (name, kind, tickersOf, dateOf) => {
     try {
       const snap = await getDocs(collection(db(), name));
-      snap.docs.forEach(d => extract(d.data()).forEach(sym => mark(sym, kind)));
+      snap.docs.forEach(d => {
+        const data = d.data();
+        tickersOf(data).forEach(sym => mark(sym, kind, d.id, dateOf(data)));
+      });
     } catch { /* collection missing or read denied — skip */ }
   };
   await Promise.all([
-    scan("supply_chain_news",   "supply",   d => d.tickers || []),
-    scan("supply_chain_events", "industry", d => d.tickers || []),
-    scan("earnings_calls",      "earnings", d => (d.ticker ? [d.ticker] : [])),
+    scan("supply_chain_news",   "supply",   d => d.tickers || [],            d => d.date),
+    scan("supply_chain_events", "industry", d => d.tickers || [],            d => d.event_date || d.date),
+    scan("earnings_calls",      "earnings", d => (d.ticker ? [d.ticker] : []), d => d.date),
   ]);
   _eventTickerMap = map;
   return map;

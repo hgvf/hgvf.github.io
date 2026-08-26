@@ -55,27 +55,35 @@ export function parseMarkdown(text) {
 }
 
 /* ── Ticker bar card ─────────────────────────────────────────────── */
+// Deep-link to the latest related report item. `e` = { id, date } from the
+// event map; falls back to a ticker filter if no id is available.
+function eventLink(page, symbol, e) {
+  const base = `${page}/index.html`;
+  if (e && e.id) return `${base}#item=${encodeURIComponent(e.id)}`;
+  return `${base}#ticker=${encodeURIComponent(symbol)}`;
+}
 export function buildTickerCard(symbol, p, isAdmin, ev) {
   const dayChg = p.day_change_pct ?? null;
   const cls = changeClass(dayChg);
   const colorMap = { positive: 'var(--positive)', negative: 'var(--negative)', neutral: 'var(--neutral)' };
-  const card = document.createElement('a');
+  const card = document.createElement('div');
   card.className = 'ticker-card';
-  card.href = tradingViewUrl(symbol);
-  card.target = '_blank';
-  card.rel = 'noopener';
   card.style.setProperty('--indicator-color', colorMap[cls]);
-  card.title = 'Open in TradingView';
   const price = p.last != null ? formatPrice(p.last, symbol) : '—';
   const chgStr = dayChg != null ? (dayChg >= 0 ? '+' : '') + dayChg.toFixed(2) + '%' : '—';
-  // Event tags — flag symbols that have related supply-chain / industry /
-  // earnings-call records in Firestore (read-only lookup).
+  // Event tags — link a symbol to its latest related supply-chain / industry /
+  // earnings-call record in Firestore (read-only lookup).
+  const dateHint = e => (e && e.date) ? `（最新：${e.date}）` : '';
   const tags = [];
-  if (ev?.supply)   tags.push('<span class="tc-tag tg-supply" title="有相關供應鏈新聞">供</span>');
-  if (ev?.industry) tags.push('<span class="tc-tag tg-industry" title="有相關產業消息">產</span>');
-  if (ev?.earnings) tags.push('<span class="tc-tag tg-earnings" title="有法說會紀錄">法</span>');
-  const tagHtml = tags.length ? `<span class="tc-tags">${tags.join('')}</span>` : '';
-  card.innerHTML = `<span class="tc-symbol">${symbol}</span><span class="tc-name">${p.name || ''}</span><span class="tc-price">${price}</span><span class="tc-change ${cls}">${chgStr}</span>${tagHtml}`;
+  if (ev?.supply)   tags.push(`<a class="tc-tag tg-supply" href="${eventLink('supply-chain', symbol, ev.supply)}" title="相關供應鏈新聞，前往最新一篇${dateHint(ev.supply)}">供</a>`);
+  if (ev?.industry) tags.push(`<a class="tc-tag tg-industry" href="${eventLink('industry-news', symbol, ev.industry)}" title="相關產業消息，前往最新一則${dateHint(ev.industry)}">產</a>`);
+  if (ev?.earnings) tags.push(`<a class="tc-tag tg-earnings" href="${eventLink('earnings', symbol, ev.earnings)}" title="法說會紀錄，前往最新一季${dateHint(ev.earnings)}">法</a>`);
+  const tagHtml = tags.length ? `<div class="tc-tags">${tags.join('')}</div>` : '';
+  card.innerHTML =
+    `<a class="tc-main" href="${tradingViewUrl(symbol)}" target="_blank" rel="noopener" title="Open in TradingView">` +
+    `<span class="tc-symbol">${symbol}</span><span class="tc-name">${p.name || ''}</span>` +
+    `<span class="tc-price">${price}</span><span class="tc-change ${cls}">${chgStr}</span></a>` +
+    tagHtml;
 
   if (!isAdmin) return card;
 
@@ -261,6 +269,15 @@ function getTickerView() {
 }
 function setTickerView(v) { try { localStorage.setItem('wl_ticker_view', v); } catch { /* private mode */ } }
 
+// Collapsed zones are remembered per browser, keyed by "view::zone title".
+function loadCollapsed() {
+  try { return new Set(JSON.parse(localStorage.getItem('wl_ticker_collapsed') || '[]')); }
+  catch { return new Set(); }
+}
+let _collapsed = loadCollapsed();
+function saveCollapsed() { try { localStorage.setItem('wl_ticker_collapsed', JSON.stringify([..._collapsed])); } catch { /* private mode */ } }
+function zoneKey(title) { return `${getTickerView()}::${title}`; }
+
 let _barState = null;   // last args, so the view toggle can re-render in place
 let _barBound = false;  // toggle listener attached once
 
@@ -269,11 +286,27 @@ export function renderTickerBar(symbols, prices, isAdmin, sector, opts = {}) {
   const bar = document.getElementById('tickerBarInner');
   if (bar && !_barBound) {
     bar.addEventListener('click', e => {
-      const btn = e.target.closest('[data-action="toggle-ticker-view"]');
-      if (!btn) return;
-      e.preventDefault();
-      setTickerView(btn.dataset.view);
-      paintTickerBar();
+      const viewBtn = e.target.closest('[data-action="toggle-ticker-view"]');
+      if (viewBtn) { e.preventDefault(); setTickerView(viewBtn.dataset.view); paintTickerBar(); return; }
+      const legendBtn = e.target.closest('[data-action="toggle-legend"]');
+      if (legendBtn) {
+        e.preventDefault();
+        legendBtn.parentElement.classList.toggle('open');
+        return;
+      }
+      const head = e.target.closest('.tz-head');
+      if (head && !e.target.closest('a, button')) {
+        const zone = head.parentElement;
+        const key = zoneKey(zone.dataset.title || '');
+        const collapsed = zone.classList.toggle('collapsed');
+        if (collapsed) _collapsed.add(key); else _collapsed.delete(key);
+        saveCollapsed();
+      }
+    });
+    // Close the legend popover on an outside click.
+    document.addEventListener('click', e => {
+      if (e.target.closest('.ticker-legend')) return;
+      bar.querySelector('.ticker-legend.open')?.classList.remove('open');
     });
     _barBound = true;
   }
@@ -305,6 +338,18 @@ function paintTickerBar() {
     `<span class="ts-stat ts-down">下跌 <strong>${down}</strong></span>` +
     (flat ? `<span class="ts-stat ts-flat">平盤 <strong>${flat}</strong></span>` : '');
   if (unique.length > 0) {
+    // Legend explaining the 供 / 產 / 法 tags — sits left of the view toggle.
+    const legend = document.createElement('div');
+    legend.className = 'ticker-legend';
+    legend.innerHTML =
+      `<button class="tl-btn" data-action="toggle-legend" aria-label="標籤說明" title="標籤說明">ⓘ 標籤</button>` +
+      `<div class="tl-pop">` +
+        `<span class="tl-row"><span class="tc-tag tg-supply">供</span> 相關供應鏈新聞 · 點擊前往最新一篇</span>` +
+        `<span class="tl-row"><span class="tc-tag tg-industry">產</span> 相關產業消息 · 點擊前往最新一則</span>` +
+        `<span class="tl-row"><span class="tc-tag tg-earnings">法</span> 法說會紀錄 · 點擊前往最新一季</span>` +
+      `</div>`;
+    summary.appendChild(legend);
+
     const toggle = document.createElement('div');
     toggle.className = 'ticker-viewtoggle';
     toggle.setAttribute('role', 'tablist');
@@ -331,9 +376,14 @@ function paintTickerBar() {
     if (!syms.length) return;
     const zone = document.createElement('div');
     zone.className = `ticker-zone tz-${kind}${extraClass ? ' ' + extraClass : ''}`;
+    zone.dataset.title = title;
+    if (_collapsed.has(zoneKey(title))) zone.classList.add('collapsed');
     const head = document.createElement('div');
     head.className = 'tz-head';
-    head.innerHTML = `<span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.title = '點擊收合 / 展開';
+    head.innerHTML = `<span class="tz-caret" aria-hidden="true">▾</span><span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
     zone.appendChild(head);
     const grid = document.createElement('div');
     grid.className = 'tz-grid';
