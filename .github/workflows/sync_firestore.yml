@@ -2,8 +2,8 @@ name: Sync Firestore to JSON
 
 on:
   schedule:
-    # 12:00 UTC daily (= 00:00 in UTC+12)
-    - cron: '0 12 * * *'
+    # 00:00 UTC daily (= 00:00 in UTC+12)
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 permissions:
