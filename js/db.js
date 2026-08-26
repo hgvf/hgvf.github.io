@@ -151,6 +151,36 @@ export function subscribePrices(symbols, callback) {
   return () => unsubs.forEach(u => u());
 }
 
+// ─── Event tags (read-only) ────────────────────────────────────────────
+// Scans the report collections that reference tickers and returns a map
+// symbol → { supply, industry, earnings } marking which event types exist
+// for that symbol. Read-only; no schema/backend change. Cached after first
+// call. Any collection that fails to read is skipped silently.
+let _eventTickerMap = null;
+export async function getEventTickerMap() {
+  if (_eventTickerMap) return _eventTickerMap;
+  const map = {};
+  const mark = (sym, kind) => {
+    if (!sym) return;
+    const s = String(sym).trim();
+    if (!s) return;
+    (map[s] = map[s] || { supply: false, industry: false, earnings: false })[kind] = true;
+  };
+  const scan = async (name, kind, extract) => {
+    try {
+      const snap = await getDocs(collection(db(), name));
+      snap.docs.forEach(d => extract(d.data()).forEach(sym => mark(sym, kind)));
+    } catch { /* collection missing or read denied — skip */ }
+  };
+  await Promise.all([
+    scan("supply_chain_news",   "supply",   d => d.tickers || []),
+    scan("supply_chain_events", "industry", d => d.tickers || []),
+    scan("earnings_calls",      "earnings", d => (d.ticker ? [d.ticker] : [])),
+  ]);
+  _eventTickerMap = map;
+  return map;
+}
+
 // ─── Config / Auth ─────────────────────────────────────────────────────
 export async function getAllowedEmails() {
   const snap = await getDoc(doc(db(), "config", "auth"));
