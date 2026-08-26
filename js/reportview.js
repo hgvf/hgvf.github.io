@@ -216,6 +216,34 @@ export async function mountReportView(opts) {
     root.classList.toggle("rv-can-delete", canDelete);
   }
 
+  // Deep-link: open a specific item (#item=<id>) or pre-filter by ticker
+  // (#ticker=<sym>) when arrived at from a ticker-card tag link.
+  function applyDeepLink() {
+    const hash = location.hash || "";
+    const idM = /(?:^|[#&])item=([^&]+)/.exec(hash);
+    if (idM) {
+      const id = decodeURIComponent(idM[1]);
+      if (all.some(x => x.id === id)) {
+        ticker = "__all__"; year = "__all__";
+        if (tickerSel) tickerSel.value = "__all__";
+        if (yearSel) yearSel.value = "__all__";
+        renderLeft();
+        selectItem(id);
+        const row = leftEl.querySelector(`[data-id="${CSS.escape(id)}"]`);
+        if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+    }
+    const tkM = /(?:^|[#&])ticker=([^&]+)/.exec(hash);
+    if (tkM) {
+      const t = decodeURIComponent(tkM[1]);
+      const has = all.some(x => tickersOf(x).includes(t));
+      if (has) { ticker = t; if (tickerSel) tickerSel.value = t; renderLeft(); }
+    }
+  }
+
   await reload();
+  applyDeepLink();
+  window.addEventListener("hashchange", applyDeepLink);
   return { reload, setAdmin, refreshCollectStates, selectItem };
 }
