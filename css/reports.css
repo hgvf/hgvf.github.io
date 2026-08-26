@@ -91,6 +91,26 @@
 .rp-advise .rp-subcard-head { color: #3E6AB0; }
 .rp-tags { background: rgba(139,94,60,0.08); border-color: rgba(139,94,60,0.35); }
 .rp-tags .rp-subcard-head { color: var(--accent); }
+
+/* Ticker trend snapshot table (relevant tickers × recent change %) */
+.tt-card { background: rgba(120,113,108,0.07); border-color: rgba(120,113,108,0.32); }
+.tt-card .rp-subcard-head { color: var(--text-primary); }
+.tt-note { font-weight: 400; font-size: 0.7rem; color: var(--text-muted); }
+.tt-wrap { overflow-x: auto; }
+.tt-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.tt-table th, .tt-table td { padding: 0.4rem 0.55rem; text-align: right; white-space: nowrap; }
+.tt-table thead th { font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.tt-table tbody tr + tr td { border-top: 1px solid rgba(120,113,108,0.15); }
+.tt-table th:first-child, .tt-table td.tt-sym { text-align: left; }
+.tt-sym { display: flex; flex-direction: column; gap: 0.05rem; }
+.tt-sym a { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); text-decoration: none; }
+.tt-sym a:hover { color: var(--accent); text-decoration: underline; }
+.tt-name { font-size: 0.68rem; color: var(--text-muted); font-weight: 400; max-width: 14rem; overflow: hidden; text-overflow: ellipsis; }
+.tt-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.tt-num.pos { color: var(--positive); font-weight: 500; }
+.tt-num.neg { color: var(--negative); font-weight: 500; }
+.tt-num.neu { color: var(--neutral); }
+.tt-num.tt-na { color: var(--text-muted); font-style: italic; }
 .rp-chain { background: rgba(46,139,133,0.09); border-color: rgba(46,139,133,0.38); }
 .rp-chain .rp-subcard-head { color: #2E8B85; }
 .rp-alt { background: rgba(124,92,191,0.09); border-color: rgba(124,92,191,0.38); }

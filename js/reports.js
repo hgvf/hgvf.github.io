@@ -185,6 +185,57 @@ export function chartUrl(symbol) {
   return `https://www.tradingview.com/chart/?symbol=${encodeURIComponent(s)}`;
 }
 
+// ─── Ticker trend table (read-only snapshot of the `prices` collection) ────
+// A watchlist-style table of the tickers attached to a news / earnings item.
+// Values are whatever Firestore currently holds — a one-off snapshot at view
+// time; nothing here fetches or writes. Load the map once per page via
+// loadPricesMap() (before mounting), then tickerTrendCard() reads it in-sync.
+let _pricesMap = null;
+export async function loadPricesMap() {
+  if (_pricesMap) return _pricesMap;
+  const map = {};
+  try {
+    const snap = await getDocs(collection(db(), "prices"));
+    snap.docs.forEach(d => { map[d.id] = d.data(); });
+  } catch { /* leave empty — cells fall back to N/A */ }
+  _pricesMap = map;
+  return map;
+}
+export function getPricesMapSync() { return _pricesMap || {}; }
+
+function _pct(v) {
+  if (v == null || v === "" || isNaN(v)) return `<td class="tt-num tt-na">N/A</td>`;
+  const n = Number(v);
+  const cls = n > 0 ? "pos" : n < 0 ? "neg" : "neu";
+  return `<td class="tt-num ${cls}">${(n >= 0 ? "+" : "") + n.toFixed(2)}%</td>`;
+}
+function _mktCap(p) {
+  if (!p || p.market_cap == null || p.market_cap === "") return `<td class="tt-num tt-na">N/A</td>`;
+  const cur = p.market_cap_currency ? ` ${esc(p.market_cap_currency)}` : "";
+  return `<td class="tt-num">${esc(String(p.market_cap))}${esc(p.market_cap_suffix || "")}${cur}</td>`;
+}
+// Render the snapshot table. `symbols` = the item's ticker list (or [ticker]).
+export function tickerTrendCard(symbols, title = "相關個股近期表現") {
+  const syms = [...new Set((symbols || []).map(s => String(s || "").trim()).filter(Boolean))];
+  if (!syms.length) return "";
+  const prices = getPricesMapSync();
+  const rows = syms.map(sym => {
+    const p = prices[sym];
+    const nameCell = `<td class="tt-sym"><a href="${esc(chartUrl(sym))}" target="_blank" rel="noopener">${esc(sym)}</a>${p && p.name ? `<span class="tt-name">${esc(p.name)}</span>` : ""}</td>`;
+    if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="7">N/A（watchlist 無此代號價格）</td></tr>`;
+    const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
+      ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;
+    return `<tr>${nameCell}${_pct(p.day_change_pct)}${_pct(p.week_change_pct)}${_pct(p.month_change_pct)}${_pct(p.quarter_change_pct)}${_pct(p.year_change_pct)}${pe}${_mktCap(p)}</tr>`;
+  }).join("");
+  return `<div class="rp-subcard tt-card">
+    <div class="rp-subcard-head">📈 ${esc(title)}<span class="tt-note">· 擷取當下 watchlist 行情，不隨新聞更新</span></div>
+    <div class="tt-wrap"><table class="tt-table">
+      <thead><tr><th>Ticker</th><th>日</th><th>週</th><th>月</th><th>季</th><th>年</th><th>PE</th><th>Market Cap</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>`;
+}
+
 export function fmtDate(iso) {
   if (!iso) return "";
   const d = new Date(iso + (iso.length <= 10 ? "T00:00:00" : ""));

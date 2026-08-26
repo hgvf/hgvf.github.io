@@ -4,7 +4,7 @@
 // companies / financials / classification chips / sources. Shared by the
 // 產業消息 page and the consolidated 重點新聞 (highlights) page.
 
-import { esc, fmtDate, chartUrl } from "./reports.js";
+import { esc, fmtDate, chartUrl, tickerTrendCard } from "./reports.js";
 
 // ── Enum → label maps (front-end display only) ──────────────────────────
 export const EVENT_TYPE_LABEL = {
@@ -143,6 +143,7 @@ export function detail(ev) {
     ${chipsCard("🏷️", "題材 Themes", ev.themes)}
     ${chipsCard("🧩", "產品 / 材料", [...(ev.products || []), ...(ev.materials || [])])}
     ${chipsCard("🔍", "搜尋關鍵字", ev.search_keywords, "in-kw")}
+    ${tickerTrendCard(ev.tickers)}
     ${sourcesCard(ev.sources)}
   </article>`;
 }
