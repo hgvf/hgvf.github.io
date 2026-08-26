@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>財報電話會議分析 · Earnings Calls</title>
   <link rel="stylesheet" href="../css/style.css?v=20260806e" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260826a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260826b" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -61,11 +61,12 @@
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, loadPricesMap, tickerTrendCard } from "../js/reports.js";
+    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, loadPricesMap, loadOverridesMap, setTickerAdmin, tickerTrendCard } from "../js/reports.js";
 
     mountSidebar("earnings");
-    // Warm the prices snapshot so the per-call trend table is ready on click.
+    // Warm the prices snapshot + name overrides so the per-call trend table is ready on click.
     loadPricesMap();
+    loadOverridesMap();
 
     // Overall = bullish only if bullish count exceeds bearish + neutral combined
     // (and symmetrically for bearish); otherwise neutral.
@@ -168,7 +169,7 @@
     const importPanel = document.getElementById("importPanel");
     const pubStatus = document.getElementById("pubStatus");
     let lastAdmin = false;
-    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; importPanel.hidden = !isAdmin; if (view) view.setAdmin(isAdmin); });
+    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; importPanel.hidden = !isAdmin; setTickerAdmin(isAdmin); if (view) view.setAdmin(isAdmin); });
 
     document.getElementById("publishBtn").addEventListener("click", async () => {
       const raw = document.getElementById("jsonInput").value.trim();

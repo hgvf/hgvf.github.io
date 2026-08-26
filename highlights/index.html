@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>重點新聞 · Highlight Watchlist</title>
   <link rel="stylesheet" href="../css/style.css?v=20260824b" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260826a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260826b" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -31,10 +31,11 @@
     import { mountHighlight } from "../js/highlight.js";
     import { detail as scDetail } from "../js/scdetail.js";
     import { detail as industryDetail } from "../js/industrydetail.js";
-    import { loadPricesMap } from "../js/reports.js";
+    import { loadPricesMap, loadOverridesMap, setTickerAdmin, onAuth } from "../js/reports.js";
 
     mountSidebar("highlights");
-    loadPricesMap();  // warm the prices snapshot for the per-item trend table
+    loadPricesMap(); loadOverridesMap();  // warm prices + name overrides for the trend table
+    onAuth(({ isAdmin }) => setTickerAdmin(isAdmin));  // enable inline name-fix for admins
 
     // Dispatch to the right card renderer based on where the item was collected.
     function renderDetail(item) {
