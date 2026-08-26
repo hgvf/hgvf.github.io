@@ -32,13 +32,14 @@ async function loadAll(name) {
 const WEIGHTS = { day: 0.15, week: 0.35, month: 0.35, year: 0.15 };
 const DIM_FIELD = {
   day: "day_change_pct", week: "week_change_pct",
-  month: "month_change_pct", year: "year_change_pct",
+  month: "month_change_pct", quarter: "quarter_change_pct", year: "year_change_pct",
 };
 const DIMS = [
   { k: "overall", label: "綜合" },
   { k: "day", label: "日" },
   { k: "week", label: "週" },
   { k: "month", label: "月" },
+  { k: "quarter", label: "季" },
   { k: "year", label: "年" },
 ];
 const DIM_LABEL = Object.fromEntries(DIMS.map(d => [d.k, d.label]));
@@ -201,6 +202,7 @@ function computeThemes(data) {
         day_change_pct: full.day_change_pct ?? null,
         week_change_pct: full.week_change_pct ?? null,
         month_change_pct: full.month_change_pct ?? null,
+        quarter_change_pct: full.quarter_change_pct ?? null,
         year_change_pct: full.year_change_pct ?? null,
         day_volume: full.day_volume ?? null,
       } : null;
@@ -453,10 +455,10 @@ export function mountStrength(opts) {
         <td class="st-tsym"><a href="${esc(chartUrl(r.symbol))}" target="_blank" rel="noopener">${esc(r.symbol)}</a>
           <span class="st-tname">${esc(r.name)}</span></td>
         <td class="st-num">${p.last != null ? Number(p.last).toLocaleString("en-US", { maximumFractionDigits: 2 }) : "—"}</td>
-        ${cell(p.day_change_pct)}${cell(p.week_change_pct)}${cell(p.month_change_pct)}${cell(p.year_change_pct)}
+        ${cell(p.day_change_pct)}${cell(p.week_change_pct)}${cell(p.month_change_pct)}${cell(p.quarter_change_pct)}${cell(p.year_change_pct)}
         <td class="st-num">${p.day_volume ? fmtVol(p.day_volume) : "—"}</td>
       </tr>
-      <tr class="st-trow-x"><td colspan="7">
+      <tr class="st-trow-x"><td colspan="8">
         <div class="st-tx">
           <div class="st-chart" data-sym="${esc(r.symbol)}">${chartInner(cache[r.symbol])}</div>
           ${sigHtml || `<div class="st-sig st-sig-none">近期無供應鏈 / 財報訊號</div>`}
@@ -474,7 +476,7 @@ export function mountStrength(opts) {
       </div>
       <div class="st-table-wrap">
         <table class="st-table">
-          <thead><tr><th>成分股</th><th>價格</th><th>日</th><th>週</th><th>月</th><th>年</th><th>量</th></tr></thead>
+          <thead><tr><th>成分股</th><th>價格</th><th>日</th><th>週</th><th>月</th><th>季</th><th>年</th><th>量</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;

@@ -63,6 +63,7 @@ def fetch_prices(symbols):
             prev  = float(closes.iloc[-2])
             wk    = float(closes.iloc[-6])  if len(closes) > 5  else float(closes.iloc[0])
             mo    = float(closes.iloc[-22]) if len(closes) > 21 else float(closes.iloc[0])
+            qt    = float(closes.iloc[-64]) if len(closes) > 63 else float(closes.iloc[0])
             yr    = float(closes.iloc[0])
             def pct(a, b): return round((a - b) / b * 100, 2) if b else 0.0
             is_tw = symbol.endswith(".TW")
@@ -76,6 +77,7 @@ def fetch_prices(symbols):
                 "day_change_pct":   pct(last, prev),
                 "week_change_pct":  pct(last, wk),
                 "month_change_pct": pct(last, mo),
+                "quarter_change_pct": pct(last, qt),
                 "year_change_pct":  pct(last, yr),
                 "pe_ratio":         round(info.get("trailingPE") or 0, 2),
                 "market_cap":       mc_val,

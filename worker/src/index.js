@@ -397,9 +397,10 @@ async function fetchSparkData(symbols, session) {
         const last = closes[closes.length - 1];
         const pct  = prev => (prev && last) ? ((last - prev) / prev * 100) : null;
         out[sym] = {
-          week_change_pct:  pct(closes[closes.length - 6]),
-          month_change_pct: pct(closes[closes.length - 23]),
-          year_change_pct:  pct(closes[0]),
+          week_change_pct:    pct(closes[closes.length - 6]),
+          month_change_pct:   pct(closes[closes.length - 23]),
+          quarter_change_pct: pct(closes[closes.length - 64]),
+          year_change_pct:    pct(closes[0]),
         };
       }
     } catch { /* skip this chunk */ }
