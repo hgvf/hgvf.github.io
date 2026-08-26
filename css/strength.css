@@ -217,7 +217,7 @@
 
 /* hover tooltip */
 .st-quad-tip {
-  position: absolute; z-index: 30; min-width: 200px; max-width: 300px;
+  position: fixed; z-index: 60; min-width: 200px; max-width: 300px;
   padding: 0.55rem 0.65rem; border-radius: var(--radius-md);
   background: var(--glass-bg-solid, rgba(255,252,245,0.98));
   border: 1px solid var(--glass-border); box-shadow: 0 8px 24px rgba(120,80,30,0.2);

@@ -693,13 +693,16 @@ export function mountStrength(opts) {
       `${more > 0 ? `<div class="st-qt-more">＋ 其餘 ${more} 檔</div>` : ""}</div>`;
   }
 
+  // Tooltip is position:fixed, so place it in viewport coordinates right by the
+  // cursor (flipping near the right / bottom edges). Sibling-of-canvas nesting
+  // used to make absolute coords land near the top of the page.
   function positionTip(e) {
-    const rect = quadCanvas.getBoundingClientRect();
-    let x = e.clientX - rect.left + 14;
-    let y = e.clientY - rect.top + 14;
+    const pad = 14;
     const tw = quadTip.offsetWidth, th = quadTip.offsetHeight;
-    if (x + tw > rect.width - 4) x = e.clientX - rect.left - tw - 14;
-    if (y + th > rect.height - 4) y = Math.max(4, rect.height - th - 4);
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    if (x + tw > window.innerWidth - 6) x = Math.max(6, e.clientX - tw - pad);
+    if (y + th > window.innerHeight - 6) y = Math.max(6, window.innerHeight - th - 6);
     quadTip.style.left = x + "px";
     quadTip.style.top = y + "px";
   }
