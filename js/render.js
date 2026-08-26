@@ -252,16 +252,58 @@ export function renderTickerBar(symbols, prices, isAdmin, sector) {
   if (!bar) return;
   bar.innerHTML = '';
   const unique = [...new Set(symbols)];
-  unique.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {}, isAdmin)));
 
+  // Split into gainers / losers / flat-or-unknown, each sorted by magnitude.
+  const gainers = [], losers = [], neutrals = [];
+  unique.forEach(sym => {
+    const chg = prices[sym]?.day_change_pct;
+    if (chg > 0) gainers.push(sym);
+    else if (chg < 0) losers.push(sym);
+    else neutrals.push(sym);
+  });
+  gainers.sort((a, b) => (prices[b].day_change_pct) - (prices[a].day_change_pct));
+  losers.sort((a, b) => (prices[a].day_change_pct) - (prices[b].day_change_pct));
+
+  // Summary header: total / up / down counts + admin edit button.
+  const summary = document.createElement('div');
+  summary.className = 'ticker-summary';
+  summary.innerHTML =
+    `<span class="ts-label">總覽</span>` +
+    `<span class="ts-stat ts-up">上漲 <strong>${gainers.length}</strong></span>` +
+    `<span class="ts-stat ts-down">下跌 <strong>${losers.length}</strong></span>` +
+    (neutrals.length ? `<span class="ts-stat ts-flat">平盤 <strong>${neutrals.length}</strong></span>` : '');
   if (isAdmin && sector) {
     const btn = document.createElement('button');
     btn.className = 'ticker-edit-btn admin-only';
     btn.dataset.action = 'edit-ticker-overview';
     btn.title = 'Edit ticker overview list';
     btn.textContent = unique.length === 0 ? '+ Add Tickers' : '✎';
-    bar.appendChild(btn);
+    summary.appendChild(btn);
   }
+  bar.appendChild(summary);
+
+  if (unique.length === 0) return;
+
+  const zones = document.createElement('div');
+  zones.className = 'ticker-zones';
+  const buildZone = (title, syms, kind) => {
+    if (!syms.length) return;
+    const zone = document.createElement('div');
+    zone.className = `ticker-zone tz-${kind}`;
+    const head = document.createElement('div');
+    head.className = 'tz-head';
+    head.innerHTML = `<span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
+    zone.appendChild(head);
+    const grid = document.createElement('div');
+    grid.className = 'tz-grid';
+    syms.forEach(sym => grid.appendChild(buildTickerCard(sym, prices[sym] || {}, isAdmin)));
+    zone.appendChild(grid);
+    zones.appendChild(zone);
+  };
+  buildZone('上漲', gainers, 'up');
+  buildZone('下跌', losers, 'down');
+  buildZone('平盤 / 無資料', neutrals, 'flat');
+  bar.appendChild(zones);
 }
 
 export function updatePriceCells(prices) {
