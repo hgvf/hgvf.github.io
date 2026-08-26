@@ -3,7 +3,7 @@
 // page and the consolidated 重點新聞 (highlights) page render an item the same
 // way. All new fields are optional & backward-safe.
 
-import { sent, esc, fmtDate, chartUrl } from "./reports.js";
+import { sent, esc, fmtDate, chartUrl, tickerTrendCard } from "./reports.js";
 
 const CRED = { "高": "pos", "中": "neu", "低": "neg" };
 
@@ -57,6 +57,7 @@ export function detail(it) {
     ${textCard("rp-effect", "⛓️", "下游影響", it.effect)}
     ${textCard("rp-signals", "🔍", "財報 / 逐字稿線索", it.signals)}
     ${textCard("rp-advise", "💡", "投資建議", it.advise)}
+    ${tickerTrendCard(it.tickers)}
     ${sources}
   </article>`;
 }
