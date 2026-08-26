@@ -320,7 +320,7 @@ export function mountStrength(opts) {
       <div class="st-quad-head">
         <div class="st-quad-titles">
           <h3 class="st-quad-title">題材四象限圖</h3>
-          <p class="st-quad-desc">每個題材以去除離群個股後的漲跌幅定位；X／Y 可選不同時間尺度，觀察題材由強轉弱或由弱轉強的移動。座標軸依當前資料自動縮放，少數極端題材以虛線圈釘在邊緣。</p>
+          <p class="st-quad-desc">每個題材以去除離群個股後的漲跌幅定位；X／Y 可選不同時間尺度，觀察題材由強轉弱或由弱轉強的移動。座標軸依當前資料的最高／最低值自動縮放並留少許邊界，讓題材攤開、凸顯強弱差異。</p>
         </div>
         <div class="st-quad-ctrls">
           <label class="st-quad-axis">X 軸
@@ -578,28 +578,25 @@ export function mountStrength(opts) {
     const H = Math.round(Math.min(640, Math.max(430, W * 0.6)));
     const m = { l: 50, r: 18, t: 26, b: 42 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
-    // Dynamic axis scale: size the domain from the ~88th percentile of |value|,
-    // not the max — so a couple of extreme movers pin to the edge instead of
-    // squashing every other theme against the origin. Independent per axis.
-    const domainFor = vals => {
-      const a = vals.map(v => Math.abs(v)).filter(v => isFinite(v)).sort((p, q) => p - q);
-      if (!a.length) return 2;
-      const q = a[Math.min(a.length - 1, Math.floor(a.length * 0.88))];
-      return Math.max(2, niceMax(q * 1.1));
+    // Dynamic axis scale: fit the actual min..max of the data (always keeping 0
+    // in view so the quadrants stay meaningful) plus a small margin above/below,
+    // so no theme is glued to the border — the spread maximises differentiation.
+    // Independent, asymmetric per axis.
+    const axisDomain = vals => {
+      const a = vals.filter(v => isFinite(v));
+      let lo = Math.min(0, ...a), hi = Math.max(0, ...a);
+      if (hi - lo < 1) { const c = (hi + lo) / 2; lo = c - 0.5; hi = c + 0.5; } // tiny-span guard
+      const pad = (hi - lo) * 0.08;                                            // small headroom
+      return { lo: lo - pad, hi: hi + pad };
     };
-    const domX = domainFor(pts.map(p => p.x));
-    const domY = domainFor(pts.map(p => p.y));
-    const sx = v => m.l + (v + domX) / (2 * domX) * iw;
-    const sy = v => m.t + (domY - v) / (2 * domY) * ih;
+    const dx = axisDomain(pts.map(p => p.x));
+    const dy = axisDomain(pts.map(p => p.y));
+    const sx = v => m.l + (v - dx.lo) / (dx.hi - dx.lo) * iw;
+    const sy = v => m.t + (dy.hi - v) / (dy.hi - dy.lo) * ih;
     const ox = sx(0), oy = sy(0);
-    // Clamp a theme's coords into the plot; outliers past the domain pin to the
-    // border (marked so they read as "off-scale") rather than overflow.
-    const coord = p => {
-      const rx = sx(p.x), ry = sy(p.y);
-      const cx = Math.max(m.l, Math.min(m.l + iw, rx));
-      const cy = Math.max(m.t, Math.min(m.t + ih, ry));
-      return { cx, cy, edge: cx !== rx || cy !== ry };
-    };
+    // All data now fits inside the domain, so no clamping is needed.
+    const coord = p => ({ cx: sx(p.x), cy: sy(p.y) });
+    const axf = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + "%";
     const xlbl = DIM_LABEL[xk], ylbl = DIM_LABEL[yk];
 
     const svg = [];
@@ -621,11 +618,11 @@ export function mountStrength(opts) {
     svg.push(corner(m.l + 8,      m.t + ih - 8, "start", `${xlbl}↓ ${ylbl}↓`));
     // tick labels
     const tick = (x, y, anchor, txt) => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="st-q-tick">${esc(txt)}</text>`;
-    svg.push(tick(m.l, m.t + ih + 15, "start", `−${domX}%`));
-    svg.push(tick(m.l + iw, m.t + ih + 15, "end", `+${domX}%`));
+    svg.push(tick(m.l, m.t + ih + 15, "start", axf(dx.lo)));
+    svg.push(tick(m.l + iw, m.t + ih + 15, "end", axf(dx.hi)));
     svg.push(tick(ox, m.t + ih + 15, "middle", "0"));
-    svg.push(tick(m.l - 6, m.t + 4, "end", `+${domY}%`));
-    svg.push(tick(m.l - 6, m.t + ih, "end", `−${domY}%`));
+    svg.push(tick(m.l - 6, m.t + 4, "end", axf(dy.hi)));
+    svg.push(tick(m.l - 6, m.t + ih, "end", axf(dy.lo)));
     // axis titles
     svg.push(`<text x="${m.l + iw / 2}" y="${H - 6}" text-anchor="middle" class="st-q-title-x">${esc(xlbl)}漲跌幅（去離群）</text>`);
     svg.push(`<text transform="translate(14 ${m.t + ih / 2}) rotate(-90)" text-anchor="middle" class="st-q-title-y">${esc(ylbl)}漲跌幅（去離群）</text>`);
@@ -633,10 +630,10 @@ export function mountStrength(opts) {
     // points, largest themes drawn first so small ones sit on top and stay hittable
     const drawn = pts.slice().sort((a, b) => (b.t.pricedCount || 0) - (a.t.pricedCount || 0));
     for (const p of drawn) {
-      const { cx, cy, edge } = coord(p);
+      const { cx, cy } = coord(p);
       const r = 4 + Math.min(8, Math.sqrt(p.t.pricedCount || 1));
       const cls = p.x > 0 && p.y > 0 ? "pos" : p.x < 0 && p.y < 0 ? "neg" : "mid";
-      svg.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" class="st-q-dot ${cls}${edge ? " edge" : ""}" data-id="${esc(p.t.id)}"/>`);
+      svg.push(`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" class="st-q-dot ${cls}" data-id="${esc(p.t.id)}"/>`);
     }
 
     // labels — greedy, importance-ordered, skip on collision so names never
