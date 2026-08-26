@@ -1,7 +1,7 @@
 /* ── Main application ───────────────────────────────────────────── */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { firebaseConfig, WORKER_URL } from './config.js';
-import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices, getHomeProfile } from './db.js';
+import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices, getHomeProfile, getEventTickerMap } from './db.js';
 import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
@@ -25,6 +25,7 @@ let _currentSector    = null;
 let _unsubPrices      = null;
 let _prices           = {};
 let _subsectorSymbols = [];  // symbols from subsector watchlist tables, kept in sync with selectSector
+let _eventTickerMap   = {};  // symbol → {supply,industry,earnings}; loaded once, read-only
 
 /* ── Firebase init ─────────────────────────────────────────────── */
 const app  = initializeApp(firebaseConfig);
@@ -265,6 +266,12 @@ async function loadWatchlist() {
     console.error('selectSector failed:', err);
     if (statusEl) statusEl.textContent = 'Error: ' + err.message;
   }
+
+  // Load event tags in the background (never blocks the watchlist). When ready,
+  // re-render the current sector so cards pick up 供 / 產 / 法 tags.
+  getEventTickerMap()
+    .then(map => { _eventTickerMap = map; if (_currentSector) selectSector(_currentSector.id); })
+    .catch(err => console.warn('event tags unavailable:', err));
 }
 
 async function selectSector(sectorId) {
@@ -292,7 +299,13 @@ async function selectSector(sectorId) {
   // Ticker bar shows every ticker in the sector (US/TW/JP/KR), overview first.
   const allSymbols      = [...new Set([...overviewSymbols, ..._subsectorSymbols])];
 
-  renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
+  // Subsector groups for the "依題材" view (name → its watchlist symbols).
+  const groups = subsectorsData.map(({ subsector, tickers }) => ({
+    id: subsector.id, name: subsector.name, symbols: tickers.map(t => t.symbol),
+  }));
+  const barOpts = { groups, events: _eventTickerMap };
+
+  renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, barOpts);
 
   const sectorContentEl = document.getElementById('sectorContent');
   if (sectorContentEl) {
@@ -304,7 +317,7 @@ async function selectSector(sectorId) {
   _unsubPrices = subscribePrices(allSymbols, newPrices => {
     _prices = newPrices;
     updatePriceCells(_prices);
-    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
+    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, barOpts);
   });
 }
 

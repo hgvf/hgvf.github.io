@@ -55,7 +55,7 @@ export function parseMarkdown(text) {
 }
 
 /* ── Ticker bar card ─────────────────────────────────────────────── */
-export function buildTickerCard(symbol, p, isAdmin) {
+export function buildTickerCard(symbol, p, isAdmin, ev) {
   const dayChg = p.day_change_pct ?? null;
   const cls = changeClass(dayChg);
   const colorMap = { positive: 'var(--positive)', negative: 'var(--negative)', neutral: 'var(--neutral)' };
@@ -68,7 +68,14 @@ export function buildTickerCard(symbol, p, isAdmin) {
   card.title = 'Open in TradingView';
   const price = p.last != null ? formatPrice(p.last, symbol) : '—';
   const chgStr = dayChg != null ? (dayChg >= 0 ? '+' : '') + dayChg.toFixed(2) + '%' : '—';
-  card.innerHTML = `<span class="tc-symbol">${symbol}</span><span class="tc-name">${p.name || ''}</span><span class="tc-price">${price}</span><span class="tc-change ${cls}">${chgStr}</span>`;
+  // Event tags — flag symbols that have related supply-chain / industry /
+  // earnings-call records in Firestore (read-only lookup).
+  const tags = [];
+  if (ev?.supply)   tags.push('<span class="tc-tag tg-supply" title="有相關供應鏈新聞">供</span>');
+  if (ev?.industry) tags.push('<span class="tc-tag tg-industry" title="有相關產業消息">產</span>');
+  if (ev?.earnings) tags.push('<span class="tc-tag tg-earnings" title="有法說會紀錄">法</span>');
+  const tagHtml = tags.length ? `<span class="tc-tags">${tags.join('')}</span>` : '';
+  card.innerHTML = `<span class="tc-symbol">${symbol}</span><span class="tc-name">${p.name || ''}</span><span class="tc-price">${price}</span><span class="tc-change ${cls}">${chgStr}</span>${tagHtml}`;
 
   if (!isAdmin) return card;
 
@@ -247,21 +254,117 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
 }
 
 /* ── Ticker bar ──────────────────────────────────────────────────── */
-export function renderTickerBar(symbols, prices, isAdmin, sector) {
+// View mode is remembered per browser (localStorage), independent of Firestore.
+function getTickerView() {
+  try { return localStorage.getItem('wl_ticker_view') === 'subsector' ? 'subsector' : 'change'; }
+  catch { return 'change'; }
+}
+function setTickerView(v) { try { localStorage.setItem('wl_ticker_view', v); } catch { /* private mode */ } }
+
+let _barState = null;   // last args, so the view toggle can re-render in place
+let _barBound = false;  // toggle listener attached once
+
+export function renderTickerBar(symbols, prices, isAdmin, sector, opts = {}) {
+  _barState = { symbols, prices, isAdmin, sector, groups: opts.groups || [], events: opts.events || {} };
+  const bar = document.getElementById('tickerBarInner');
+  if (bar && !_barBound) {
+    bar.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action="toggle-ticker-view"]');
+      if (!btn) return;
+      e.preventDefault();
+      setTickerView(btn.dataset.view);
+      paintTickerBar();
+    });
+    _barBound = true;
+  }
+  paintTickerBar();
+}
+
+function paintTickerBar() {
+  if (!_barState) return;
+  const { symbols, prices, isAdmin, sector, groups, events } = _barState;
   const bar = document.getElementById('tickerBarInner');
   if (!bar) return;
   bar.innerHTML = '';
   const unique = [...new Set(symbols)];
-  unique.forEach(sym => bar.appendChild(buildTickerCard(sym, prices[sym] || {}, isAdmin)));
+  const view = getTickerView();
 
+  // Global up/down/flat tallies (shown in both views).
+  let up = 0, down = 0, flat = 0;
+  unique.forEach(sym => {
+    const chg = prices[sym]?.day_change_pct;
+    if (chg > 0) up++; else if (chg < 0) down++; else flat++;
+  });
+
+  // Summary header: counts + view toggle + admin edit button.
+  const summary = document.createElement('div');
+  summary.className = 'ticker-summary';
+  summary.innerHTML =
+    `<span class="ts-label">總覽</span>` +
+    `<span class="ts-stat ts-up">上漲 <strong>${up}</strong></span>` +
+    `<span class="ts-stat ts-down">下跌 <strong>${down}</strong></span>` +
+    (flat ? `<span class="ts-stat ts-flat">平盤 <strong>${flat}</strong></span>` : '');
+  if (unique.length > 0) {
+    const toggle = document.createElement('div');
+    toggle.className = 'ticker-viewtoggle';
+    toggle.setAttribute('role', 'tablist');
+    toggle.innerHTML =
+      `<button class="tvt-btn ${view === 'change' ? 'active' : ''}" data-action="toggle-ticker-view" data-view="change">依漲跌</button>` +
+      `<button class="tvt-btn ${view === 'subsector' ? 'active' : ''}" data-action="toggle-ticker-view" data-view="subsector">依題材</button>`;
+    summary.appendChild(toggle);
+  }
   if (isAdmin && sector) {
     const btn = document.createElement('button');
     btn.className = 'ticker-edit-btn admin-only';
     btn.dataset.action = 'edit-ticker-overview';
     btn.title = 'Edit ticker overview list';
     btn.textContent = unique.length === 0 ? '+ Add Tickers' : '✎';
-    bar.appendChild(btn);
+    summary.appendChild(btn);
   }
+  bar.appendChild(summary);
+
+  if (unique.length === 0) return;
+
+  const zones = document.createElement('div');
+  zones.className = 'ticker-zones';
+  const buildZone = (title, syms, kind, extraClass = '') => {
+    if (!syms.length) return;
+    const zone = document.createElement('div');
+    zone.className = `ticker-zone tz-${kind}${extraClass ? ' ' + extraClass : ''}`;
+    const head = document.createElement('div');
+    head.className = 'tz-head';
+    head.innerHTML = `<span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
+    zone.appendChild(head);
+    const grid = document.createElement('div');
+    grid.className = 'tz-grid';
+    syms.forEach(sym => grid.appendChild(buildTickerCard(sym, prices[sym] || {}, isAdmin, events[sym])));
+    zone.appendChild(grid);
+    zones.appendChild(zone);
+  };
+
+  if (view === 'subsector') {
+    // Group by subsector name; each zone sorted internally by day-change desc.
+    const seen = new Set();
+    const byChg = (a, b) => (prices[b]?.day_change_pct ?? -Infinity) - (prices[a]?.day_change_pct ?? -Infinity);
+    (groups || []).forEach(g => {
+      const syms = [...new Set(g.symbols)].filter(s => unique.includes(s) && !seen.has(s));
+      syms.forEach(s => seen.add(s));
+      syms.sort(byChg);
+      buildZone(g.name, syms, 'theme');
+    });
+    const leftovers = unique.filter(s => !seen.has(s)).sort(byChg);
+    buildZone('精選 / 其他', leftovers, 'theme', 'tz-other');
+  } else {
+    const gainers = unique.filter(s => prices[s]?.day_change_pct > 0)
+      .sort((a, b) => prices[b].day_change_pct - prices[a].day_change_pct);
+    const losers = unique.filter(s => prices[s]?.day_change_pct < 0)
+      .sort((a, b) => prices[a].day_change_pct - prices[b].day_change_pct);
+    const neutrals = unique.filter(s => !(prices[s]?.day_change_pct));
+    buildZone('上漲', gainers, 'up');
+    buildZone('下跌', losers, 'down');
+    buildZone('平盤 / 無資料', neutrals, 'flat');
+  }
+  bar.appendChild(zones);
 }
 
 export function updatePriceCells(prices) {
