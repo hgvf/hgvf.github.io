@@ -205,6 +205,8 @@
 .st-q-dot.neg { fill: rgba(220,38,38,0.55);  stroke: var(--negative); }
 .st-q-dot.mid { fill: rgba(120,113,108,0.5); stroke: var(--neutral); }
 .st-q-dot:hover, .st-q-dot.hot { fill-opacity: 1; stroke-width: 2; }
+/* off-scale themes pinned to the plot edge by the dynamic domain */
+.st-q-dot.edge { stroke-dasharray: 2 1.5; }
 
 /* theme labels — fixed readable size, white halo, collision-avoided in JS */
 .st-q-label {
@@ -215,7 +217,7 @@
 
 /* hover tooltip */
 .st-quad-tip {
-  position: absolute; z-index: 30; min-width: 200px; max-width: 300px;
+  position: fixed; z-index: 60; min-width: 200px; max-width: 300px;
   padding: 0.55rem 0.65rem; border-radius: var(--radius-md);
   background: var(--glass-bg-solid, rgba(255,252,245,0.98));
   border: 1px solid var(--glass-border); box-shadow: 0 8px 24px rgba(120,80,30,0.2);
