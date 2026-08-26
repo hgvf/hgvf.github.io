@@ -50,7 +50,7 @@ def load_symbols():
 
 
 def compute_changes(symbols):
-    """Return {symbol: {week_change_pct, month_change_pct, year_change_pct}}
+    """Return {symbol: {week_change_pct, month_change_pct, quarter_change_pct, year_change_pct}}
     using a single batched yfinance download (bounded request count)."""
     import yfinance as yf
 
@@ -84,13 +84,15 @@ def compute_changes(symbols):
         vals = [float(v) for v in closes.tolist()]
         last = vals[-1]
         # Indices mirror the Worker's spark logic so both data sources agree:
-        #   week  ≈ 5 trading days back, month ≈ 22 trading days back, year = first close.
+        #   week ≈ 5, month ≈ 22, quarter ≈ 63 trading days back, year = first close.
         wk = vals[-6]  if len(vals) > 5  else vals[0]
         mo = vals[-23] if len(vals) > 22 else vals[0]
+        qt = vals[-64] if len(vals) > 63 else vals[0]
         yr = vals[0]
         out[sym] = {
             "week_change_pct":  pct(last, wk),
             "month_change_pct": pct(last, mo),
+            "quarter_change_pct": pct(last, qt),
             "year_change_pct":  pct(last, yr),
         }
     return out
