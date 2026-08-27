@@ -126,6 +126,8 @@
 .tt-num.neg { color: var(--negative); font-weight: 500; }
 .tt-num.neu { color: var(--neutral); }
 .tt-num.tt-na { color: var(--text-muted); font-style: italic; }
+.tt-price { color: var(--text-primary); font-weight: 600; }
+.tt-cur { margin-left: 0.25rem; font-size: 0.66rem; font-weight: 400; color: var(--text-muted); }
 .rp-chain { background: rgba(46,139,133,0.09); border-color: rgba(46,139,133,0.38); }
 .rp-chain .rp-subcard-head { color: #2E8B85; }
 .rp-alt { background: rgba(124,92,191,0.09); border-color: rgba(124,92,191,0.38); }

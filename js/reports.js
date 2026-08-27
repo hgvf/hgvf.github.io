@@ -307,6 +307,17 @@ function _mktCap(p) {
   const cur = p.market_cap_currency ? ` ${esc(p.market_cap_currency)}` : "";
   return `<td class="tt-num">${esc(String(p.market_cap))}${esc(p.market_cap_suffix || "")}${cur}</td>`;
 }
+// Last traded price (from the watchlist prices snapshot). Uses the market-cap
+// currency as the price currency (Yahoo reports them in the same currency).
+function _price(p) {
+  if (!p || p.last == null || p.last === "" || isNaN(p.last)) return `<td class="tt-num tt-na">N/A</td>`;
+  const n = Number(p.last);
+  const num = n >= 1000
+    ? n.toLocaleString("en-US", { maximumFractionDigits: 0 })
+    : n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const cur = p.market_cap_currency ? `<span class="tt-cur">${esc(p.market_cap_currency)}</span>` : "";
+  return `<td class="tt-num tt-price">${num}${cur}</td>`;
+}
 // Render the snapshot table. `symbols` = the item's ticker list (or [ticker]).
 export function tickerTrendCard(symbols, title = "相關個股近期表現") {
   const syms = [...new Set((symbols || []).map(s => String(s || "").trim()).filter(Boolean))];
@@ -324,15 +335,15 @@ export function tickerTrendCard(symbols, title = "相關個股近期表現") {
   const rows = syms.map(sym => {
     const p = prices[sym];
     const nameCell = nameCellFor(sym, p);
-    if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="7">N/A（watchlist 無此代號價格）</td></tr>`;
+    if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="8">N/A（watchlist 無此代號價格）</td></tr>`;
     const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
       ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;
-    return `<tr>${nameCell}${_pct(p.day_change_pct)}${_pct(p.week_change_pct)}${_pct(p.month_change_pct)}${_pct(p.quarter_change_pct)}${_pct(p.year_change_pct)}${pe}${_mktCap(p)}</tr>`;
+    return `<tr>${nameCell}${_price(p)}${_pct(p.day_change_pct)}${_pct(p.week_change_pct)}${_pct(p.month_change_pct)}${_pct(p.quarter_change_pct)}${_pct(p.year_change_pct)}${pe}${_mktCap(p)}</tr>`;
   }).join("");
   return `<div class="rp-subcard tt-card">
     <div class="rp-subcard-head">📈 ${esc(title)}<span class="tt-note">· 擷取當下 watchlist 行情，不隨新聞更新</span></div>
     <div class="tt-wrap"><table class="tt-table">
-      <thead><tr><th>Ticker</th><th>日</th><th>週</th><th>月</th><th>季</th><th>年</th><th>PE</th><th>Market Cap</th></tr></thead>
+      <thead><tr><th>Ticker</th><th>股價</th><th>日</th><th>週</th><th>月</th><th>季</th><th>年</th><th>PE</th><th>Market Cap</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>
   </div>`;
