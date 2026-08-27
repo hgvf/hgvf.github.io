@@ -12,7 +12,7 @@ SVG 手繪圖表、零建置、全相對路徑、深灰嚴肅主題。
 | `mil/explorer/` | ① 武器探索 | 3D 檢視（Three.js 程序化近似）、技術 Tag→相似武器→比較、變體、時間軸、來源 | `data/weapons-modern.json`、`data/tags.json` |
 | `mil/war/` | ② 戰役消耗 | **多戰爭**時序＋海圖雙視圖、√尺度陣亡、戰爭切換選單、Timeline 戰役篩選、戰役↔武器 join、ADD JSON 新增戰爭 | `data/wars/*.json` + Firestore `mil_conflicts` |
 | `mil/arsenal/` | ③ 系統譜系 | **全時代**（WW2/冷戰/現代）武器繼承鏈、era/陣營/搜尋篩選、ADD JSON 新增武器 | `data/arsenal.json` + Firestore `mil_weapons` |
-| `mil/defense/` | ④ 每日軍武合約 | ADD JSON → Firestore `mil_defense_daily`；中文為主英文為輔、篩選、詳情 modal | Firestore；無資料時 `defense-sample.json` |
+| `mil/defense/` | ④ 每日軍武合約 | ADD JSON → Firestore `mil_defense_daily`；分頁（合約動態／ETL 分析）、月份＋條件篩選＋分批載入、中文為主英文為輔、詳情 modal | Firestore（讀單一索引 `indexes/mil_defense_daily`）；無資料時 `defense-sample.json` |
 
 ## 新增資料的方式（ADD JSON）
 
@@ -33,6 +33,16 @@ firebase deploy --only firestore:rules
 ```
 
 規則已在 `firestore.rules`（`mil_defense_daily / mil_conflicts / mil_weapons`：public read、白名單 write），部署設定於 `firebase.json`。寫入者的 email 也必須在 `config/auth.allowed_emails` 白名單內。
+
+## 每日軍武讀取索引（減少 Firestore 讀取）
+
+④ 每日軍武合約頁**只讀單一文件** `indexes/mil_defense_daily`（比照 watchlist 的 `indexes/ticker_events`），而非每次載入都掃整個 `mil_defense_daily` collection，避免讀取量隨事件累積線性成長。索引存最新 250 筆事件，維護方式：
+
+- **排程／CI**：`scripts/publish.py --type defense`（每次發布）與 `--type reindex`（每日 `reindex_events.yml` 全量重建）自動更新。
+- **前端白名單**：`ADD JSON`／刪除後由 `rebuildDefenseIndex()` 立即更新。
+- **手動**：`seed.html` 的「Rebuild Defense Index」按鈕。
+
+索引不存在時前端會自動退回即時掃描 collection，因此首次部署或索引遺失都不影響正確性。
 
 ## 本機預覽
 

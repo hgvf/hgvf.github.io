@@ -1,14 +1,15 @@
-name: Rebuild ticker event index
+name: Rebuild lookup indexes
 
-# Rebuilds indexes/ticker_events — the single doc the watchlist reads to tag
-# each ticker card with links to its latest related supply / industry /
-# earnings record. Without it the site scans three whole report collections on
-# every page load (a major Firestore-read-quota drain).
+# Rebuilds the single-doc lookup indexes the site reads instead of scanning
+# whole collections on every page load (a major Firestore-read-quota drain):
+#   · indexes/ticker_events    — watchlist ticker → latest supply/industry/
+#                                earnings record
+#   · indexes/mil_defense_daily — 每日軍武合約 page's newest events
 #
-# The index is already updated incrementally whenever scripts/publish.py runs
-# (news / earnings / events). This scheduled full rebuild is a safety net: it
-# backfills anything a missed publish skipped and prunes entries for reports
-# that were deleted (the incremental merge only ever adds/updates).
+# Both are updated incrementally whenever scripts/publish.py runs (news /
+# earnings / events / defense). This scheduled full rebuild is a safety net: it
+# backfills anything a missed publish skipped and prunes entries for docs that
+# were deleted (the incremental merge only ever adds/updates).
 #
 # Schedule: 23:59 UTC Sun–Thu = 07:59 Taiwan time (UTC+8) Mon–Fri, just before
 # the morning news scheduling jobs finish (~08:00 TW). Adjust the cron if those
@@ -40,5 +41,5 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
-      - name: Rebuild indexes/ticker_events
+      - name: Rebuild lookup indexes
         run: python scripts/publish.py --type reindex --credentials "$RUNNER_TEMP/sa.json"

@@ -490,6 +490,38 @@ def rebuild_event_index(session, base, token, now_iso):
         print(f"Rebuilt indexes/{INDEX_DOC}: {len(mp)} symbol(s).")
 
 
+# ─── Defense daily → single-doc index (indexes/mil_defense_daily) ──────
+# The military "每日軍武合約" page reads this ONE doc instead of scanning the
+# whole mil_defense_daily collection on every page load (Firestore reads grow
+# linearly with accumulated events otherwise — same problem ticker_events
+# solved for the watchlist). Holds the most-recent N events flattened to the
+# exact rows the front-end expects (mil/js/milstore.js loadDefenseEvents):
+#   indexes/mil_defense_daily = { updated_at, count, events: [
+#       { id, _date, _country, _type, _score, data:<event> }, ... ] }
+# ~3KB/event × 250 ≈ 0.7MB, safely under Firestore's 1MB doc limit.
+DEFENSE_INDEX_DOC = "mil_defense_daily"
+DEFENSE_INDEX_MAX = 250
+
+
+def rebuild_defense_index(session, base, token, now_iso):
+    docs = list_collection(session, base, token, "mil_defense_daily")
+    rows = []
+    for doc_id, f in docs:
+        rows.append({
+            "id": doc_id,
+            "_date": f.get("_date", ""),
+            "_country": f.get("_country", ""),
+            "_type": f.get("_type", ""),
+            "_score": f.get("_score", 0),
+            "data": f.get("data", {}),
+        })
+    rows.sort(key=lambda r: str(r.get("_date", "")), reverse=True)
+    rows = rows[:DEFENSE_INDEX_MAX]
+    if upsert(session, base, token, INDEX_COLLECTION, DEFENSE_INDEX_DOC,
+              {"updated_at": now_iso, "count": len(rows), "events": rows}):
+        print(f"Rebuilt indexes/{DEFENSE_INDEX_DOC}: {len(rows)} event(s).")
+
+
 def update_event_index(session, base, token, entries, now_iso):
     entries = [e for e in entries if e[0] and e[2] and e[3]]
     if not entries:
@@ -552,6 +584,7 @@ def main():
 
     if args.type == "reindex":
         rebuild_event_index(session, base, token, now_iso)
+        rebuild_defense_index(session, base, token, now_iso)
         return
 
     collection = {
@@ -611,6 +644,9 @@ def main():
     elif args.type == "earnings":
         update_event_index(session, base, token,
                            list(index_entries("earnings", docs)), now_iso)
+    elif args.type == "defense":
+        # Refresh the single-doc index the 每日軍武合約 page reads (1 read/load).
+        rebuild_defense_index(session, base, token, now_iso)
 
 
 if __name__ == "__main__":

@@ -77,17 +77,57 @@ export async function saveDefenseEvents(events) {
   return n;
 }
 
-export async function loadDefenseEvents(max = 300) {
+// ── 每日軍武索引（indexes/mil_defense_daily）──────────────────────────
+// 比照 indexes/ticker_events：把最新 N 筆事件彙整進「單一」文件，讓一般
+// 訪客只讀 1 份文件即可呈現整頁，而非每次載入都掃 mil_defense_daily 整個
+// collection（Firestore 讀取量隨事件累積線性增加）。索引由：
+//   ① scripts/publish.py（排程/CI，REST 略過規則）
+//   ② 白名單使用者在前端新增/刪除後 rebuildDefenseIndex()
+// 維護。文件過大風險：每筆事件約 3KB，上限 250 筆 ≈ 0.7MB，仍在 1MB 內。
+const DEFENSE_INDEX_MAX = 250;
+
+// 掃 collection、依日期新→舊排序，回傳展平的 rows（供索引與 fallback 共用）。
+async function scanDefenseCollection(max = 300) {
+  let docs;
   try {
     const snap = await getDocs(query(collection(db(), "mil_defense_daily"), orderBy("_date", "desc"), limit(max)));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    docs = snap.docs;
   } catch {
     const snap = await getDocs(collection(db(), "mil_defense_daily"));
-    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => String(b._date || "").localeCompare(String(a._date || "")));
-    return rows.slice(0, max);
+    docs = snap.docs;
   }
+  const rows = docs.map(d => ({ id: d.id, ...d.data() }));
+  rows.sort((a, b) => String(b._date || "").localeCompare(String(a._date || "")));
+  return rows.slice(0, max);
 }
+
+export async function loadDefenseEvents(max = 300) {
+  // 快路徑：單一索引文件（1 read）。有就用它，沒有再退回掃 collection。
+  try {
+    const snap = await getDoc(doc(db(), "indexes", "mil_defense_daily"));
+    if (snap.exists()) {
+      const ev = snap.data().events;
+      if (Array.isArray(ev) && ev.length) return ev.slice(0, max);
+    }
+  } catch { /* 索引不存在或讀取失敗 → 退回即時掃描 */ }
+  return scanDefenseCollection(max);
+}
+
+// 重建 indexes/mil_defense_daily：掃 collection、取最新 N 筆寫入單一文件。
+// 白名單前端在新增/刪除事件後呼叫，讓索引即時反映（不必等 CI 排程）。
+// 回傳展平後的 rows，讓呼叫端可直接沿用而不必再讀一次。
+export async function rebuildDefenseIndex() {
+  const rows = await scanDefenseCollection(DEFENSE_INDEX_MAX);
+  try {
+    await setDoc(doc(db(), "indexes", "mil_defense_daily"), {
+      updated_at: new Date().toISOString(),
+      count: rows.length,
+      events: rows,
+    }, { merge: false });
+  } catch { /* 權限不足（非白名單）時忽略：索引由 CI 維護即可 */ }
+  return rows;
+}
+
 export const deleteDefenseEvent = id => deleteDoc(doc(db(), "mil_defense_daily", id));
 
 // ── 戰爭 mil_conflicts（白名單前端寫；每份文件是一場自足的戰爭）──
