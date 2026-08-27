@@ -8,6 +8,7 @@
     button { padding: 0.6rem 1.4rem; background: #4f8ef7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; margin-right: 0.6rem; margin-bottom: 0.6rem; }
     button.prices { background: #2fae62; }
     button.cleanup { background: #d9534f; }
+    button.reindex { background: #8e6fd8; }
     button:disabled { background: #555; cursor: default; }
     #log { margin-top: 1.5rem; white-space: pre-wrap; line-height: 1.6; }
     .ok  { color: #6f6; }
@@ -20,6 +21,7 @@
   <button id="btnWatchlist">Seed Watchlist（data/watchlist.json）</button>
   <button id="btnPrices" class="prices">Seed Prices（data/prices.json）</button>
   <button id="btnCleanup" class="cleanup">Cleanup Zombies（清除孤兒資料）</button>
+  <button id="btnReindex" class="reindex">Rebuild Event Index（重建 ticker 事件索引）</button>
   <div id="log"></div>
 
   <script type="module">
@@ -203,6 +205,58 @@
         }
 
         print('\nCleanup 完成！請重新整理主站。', 'ok');
+      } catch (e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
+
+    /* ── Rebuild ticker → latest-event index ─────────────
+       Same result as `python scripts/publish.py --type reindex`, but from the
+       browser. Scans the three report collections once and writes a single
+       indexes/ticker_events doc that the watchlist reads to tag cards — so the
+       site stops scanning those whole collections on every page load. Run this
+       once after deploying, and any time you want to re-sync (e.g. after
+       deleting reports). Costs a one-time full read of the three collections. */
+    document.getElementById('btnReindex').addEventListener('click', async () => {
+      const btn = document.getElementById('btnReindex');
+      btn.disabled = true;
+      log.innerHTML = '';
+      if (!(await ensureSignedIn())) { btn.disabled = false; return; }
+
+      try {
+        const map = {};
+        // mark(symbol, kind, id, date) — keep the newest date per (symbol,kind).
+        const mark = (sym, kind, id, date) => {
+          const s = String(sym || '').trim();
+          if (!s || !id) return;
+          const entry = (map[s] = map[s] || {});
+          const cur = entry[kind];
+          if (!cur || String(date || '') > String(cur.date || '')) {
+            entry[kind] = { id, date: String(date || '') };
+          }
+        };
+        const scan = async (name, kind, tickersOf, dateOf) => {
+          const snap = await getDocs(collection(db, name));
+          let n = 0;
+          snap.docs.forEach(d => {
+            const data = d.data();
+            tickersOf(data).forEach(sym => { mark(sym, kind, d.id, dateOf(data)); n++; });
+          });
+          print(`  ${name}: ${snap.size} docs`, 'ok');
+        };
+
+        print('掃描報導 collection...');
+        await scan('supply_chain_news',   'supply',   d => d.tickers || [],              d => d.date);
+        await scan('supply_chain_events', 'industry', d => d.tickers || [],              d => d.event_date || d.date);
+        await scan('earnings_calls',      'earnings', d => (d.ticker ? [d.ticker] : []), d => d.date);
+
+        await setDoc(doc(db, 'indexes', 'ticker_events'), {
+          map,
+          updated_at: new Date().toISOString(),
+        });
+        print(`\n寫入 indexes/ticker_events：${Object.keys(map).length} 檔 symbol ✓`, 'ok');
+        print('完成！主站現在只讀這 1 份文件即可顯示 供/產/法 標籤。', 'ok');
       } catch (e) {
         print('錯誤: ' + e.message, 'err');
       }
