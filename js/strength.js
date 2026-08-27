@@ -64,7 +64,9 @@ const QUAD_DEFAULT = { x: "month", y: "week" };
 const QUAD_KEY = "st_quad_axes_v1";
 const NEWS_DAYS = 30;      // supply-chain news lookback
 const CALL_DAYS = 90;      // earnings-call lookback (~one quarter)
-const TOP_N = 8;           // strongest / weakest columns
+const COUNT_MIN = 5;       // slider bounds for how many themes per column
+const COUNT_MAX = 20;
+const COUNT_DEFAULT = 8;
 const CHART_RANGE = "6mo"; // per-ticker trend when a theme is expanded
 const CHART_KEY = "st_price_series_v1";
 const STATE_KEY = "st_state_v1"; // last computed board, restored on reload
@@ -308,6 +310,7 @@ function sparkSvg(series) {
 export function mountStrength(opts) {
   const { root } = opts;
   let dim = "overall";
+  let count = COUNT_DEFAULT;  // how many themes to show per column (slider)
   let themes = null;         // computed themes, or null before first Update
   let skipped = 0;           // themes with no priced members
   let openId = null;         // expanded theme id
@@ -323,6 +326,10 @@ export function mountStrength(opts) {
       <div class="st-dims" data-role="dims" role="tablist">
         ${DIMS.map(d => `<button class="st-dim${d.k === dim ? " on" : ""}" data-dim="${d.k}">${d.label}</button>`).join("")}
       </div>
+      <label class="st-count" title="每欄顯示的題材數量">
+        <span class="st-count-label">顯示 <b data-role="count-val">${COUNT_DEFAULT}</b> 檔</span>
+        <input type="range" class="st-count-range" data-role="count" min="${COUNT_MIN}" max="${COUNT_MAX}" step="1" value="${COUNT_DEFAULT}" />
+      </label>
       <span class="st-status" data-role="status"></span>
     </div>
     <div class="st-age" data-role="age"></div>
@@ -358,6 +365,8 @@ export function mountStrength(opts) {
 
   const updateBtn = root.querySelector('[data-role="update"]');
   const dimsEl = root.querySelector('[data-role="dims"]');
+  const countEl = root.querySelector('[data-role="count"]');
+  const countValEl = root.querySelector('[data-role="count-val"]');
   const statusEl = root.querySelector('[data-role="status"]');
   const ageEl = root.querySelector('[data-role="age"]');
   const boardEl = root.querySelector('[data-role="board"]');
@@ -415,8 +424,10 @@ export function mountStrength(opts) {
       boardEl.innerHTML = `<div class="st-empty">此維度沒有可排名的題材。</div>`;
       return;
     }
-    const top = ranked.slice(0, TOP_N);
-    const bottom = ranked.slice(-TOP_N).reverse();
+    // Cap at half the list so Top and Bottom never overlap/duplicate.
+    const n = Math.min(count, Math.ceil(ranked.length / 2));
+    const top = ranked.slice(0, n);
+    const bottom = ranked.slice(-n).reverse();
     const col = (title, arr, kind, startRank, reverse) => `
       <div class="st-col ${kind}">
         <div class="st-col-head">${title}</div>
@@ -798,7 +809,7 @@ export function mountStrength(opts) {
   //    instead of showing an empty list (and without re-reading Firestore). ──
   function saveState(priceMeta, computedAt) {
     try {
-      localStorage.setItem(STATE_KEY, JSON.stringify({ v: 1, themes, skipped, priceMeta, computedAt, dim }));
+      localStorage.setItem(STATE_KEY, JSON.stringify({ v: 1, themes, skipped, priceMeta, computedAt, dim, count }));
     } catch { /* quota — skip persisting */ }
   }
   function loadState() {
@@ -814,6 +825,11 @@ export function mountStrength(opts) {
     themes = s.themes;
     skipped = s.skipped || 0;
     dim = s.dim || "overall";
+    if (Number.isFinite(s.count)) {
+      count = Math.min(COUNT_MAX, Math.max(COUNT_MIN, s.count));
+      countEl.value = count;
+      countValEl.textContent = count;
+    }
     dimsEl.querySelectorAll(".st-dim").forEach(b => b.classList.toggle("on", b.dataset.dim === dim));
     renderPriceAge(s.priceMeta);
     renderBoard();
@@ -830,6 +846,16 @@ export function mountStrength(opts) {
     dim = btn.dataset.dim;
     dimsEl.querySelectorAll(".st-dim").forEach(b => b.classList.toggle("on", b.dataset.dim === dim));
     renderBoard();  // re-sort only; no Firestore read
+  });
+  countEl.addEventListener("input", () => {
+    count = parseInt(countEl.value, 10) || COUNT_DEFAULT;
+    countValEl.textContent = count;
+    renderBoard();  // re-slice only; no Firestore read
+    // remember the choice alongside the cached board
+    try {
+      const s = loadState();
+      if (s) { s.count = count; localStorage.setItem(STATE_KEY, JSON.stringify(s)); }
+    } catch { /* ignore */ }
   });
   boardEl.addEventListener("click", e => {
     const card = e.target.closest("[data-theme]");
