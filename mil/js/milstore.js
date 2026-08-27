@@ -5,14 +5,30 @@
 import { firebaseConfig } from "../../js/config.js";
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, orderBy, limit,
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, orderBy, limit,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const app = () => (getApps().length ? getApp() : initializeApp(firebaseConfig));
-const db = () => getFirestore(app());
+// Firestore with IndexedDB offline persistence — repeat reads served from the
+// local cache, no quota cost until data changes; plain instance if already
+// initialized on this page or persistence unavailable.
+let _db = null;
+const db = () => {
+  if (!_db) {
+    try {
+      _db = initializeFirestore(app(), {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      });
+    } catch {
+      _db = getFirestore(app());
+    }
+  }
+  return _db;
+};
 const auth = () => getAuth(app());
 
 export function onAuth(cb) {

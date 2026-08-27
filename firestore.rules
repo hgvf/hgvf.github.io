@@ -37,6 +37,14 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    // Precomputed lookup indexes (e.g. indexes/ticker_events — symbol → latest
+    // related supply/industry/earnings doc). Maintained server-side by
+    // scripts/publish.py (Admin/REST, bypasses rules); public read so cards
+    // render without login, whitelisted client writes as a fallback.
+    match /indexes/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
     // Manual company-name overrides for tickers whose auto-fetched name is
     // wrong. Kept separate from prices/ (which is locked and overwritten by the
     // price refresh) so a correction survives. Whitelisted admins may write.

@@ -1,7 +1,7 @@
 /* ── Main application ───────────────────────────────────────────── */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { firebaseConfig, WORKER_URL } from './config.js';
-import { initDB, getSectors, updateSector, getSubsectors, getTickers, getAnalysis, getResearchNotes, subscribePrices, getHomeProfile, getEventTickerMap } from './db.js';
+import { initDB, getSectors, updateSector, getSectorTree, subscribePrices, getHomeProfile, getEventTickerMap } from './db.js';
 import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
 import {
@@ -284,15 +284,9 @@ async function selectSector(sectorId) {
 
   _unsubPrices?.();
 
-  const subsectors = await getSubsectors(sectorId);
-  const subsectorsData = await Promise.all(
-    subsectors.map(async sub => ({
-      subsector:      sub,
-      tickers:        await getTickers(sub.id),
-      analysis:       await getAnalysis(sub.id),
-      research_notes: await getResearchNotes(sub.id),
-    }))
-  );
+  // One query per collection for the whole sector (see getSectorTree) instead
+  // of three queries per subsector.
+  const subsectorsData = await getSectorTree(sectorId);
 
   _subsectorSymbols     = subsectorsData.flatMap(({ tickers }) => tickers.map(t => t.symbol));
   const overviewSymbols = _currentSector.ticker_overview || [];

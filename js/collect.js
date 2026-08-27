@@ -13,7 +13,8 @@
 
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot,
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, setDoc, deleteDoc, onSnapshot,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./config.js";
 
@@ -22,7 +23,17 @@ const KEY  = "sc_collected_news_v1";   // localStorage mirror (also legacy sourc
 const EVT  = "sc-collect-change";
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+// Firestore with IndexedDB offline persistence (repeat reads served from local
+// cache, no quota cost until data changes); plain instance if already
+// initialized on this page or persistence unavailable.
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  });
+} catch {
+  db = getFirestore(app);
+}
 
 // ─── localStorage mirror ────────────────────────────────────────────────
 function readLocal() {

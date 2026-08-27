@@ -1,5 +1,8 @@
 import {
   getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   collection,
   doc,
   getDocs,
@@ -20,8 +23,23 @@ import {
 let _db = null;
 
 export function initDB(app) {
-  _db = getFirestore(app);
+  _db = makeCachedDb(app);
   return _db;
+}
+
+// Firestore with IndexedDB offline persistence. Repeat reads (revisits, page
+// switches, other tabs) are served from the local cache and do NOT count
+// against the daily read quota until the data actually changes on the server.
+// Falls back to a plain instance if the DB was already initialized on this
+// page or persistence is unavailable (e.g. private-mode browsers).
+export function makeCachedDb(app) {
+  try {
+    return initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
+  } catch {
+    return getFirestore(app);
+  }
 }
 
 function db() {
@@ -93,6 +111,55 @@ export async function deleteSubsector(id) {
 
 export async function updateSubsectorNotes(id, notes) {
   return updateDoc(doc(db(), "subsectors", id), { notes });
+}
+
+// ─── Whole-sector tree (fewer reads) ────────────────────────────────
+// Loads a sector's subsectors plus all their tickers / analysis /
+// research_notes in ONE query per collection (batched with `in`, 30 ids max
+// per Firestore query), instead of 3 separate queries per subsector. This
+// avoids the per-subsector minimum-1-read charge on subsectors that have no
+// analysis / notes, cutting reads on sparse sectors. Results are grouped back
+// by subsector, mirroring the shape selectSector() built before.
+function chunk(arr, n) {
+  const out = [];
+  for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
+  return out;
+}
+
+async function getBySubsectorIds(coll, subIds) {
+  if (!subIds.length) return [];
+  const groups = await Promise.all(
+    chunk(subIds, 30).map(async ids => {
+      const snap = await getDocs(
+        query(collection(db(), coll), where("subsector_id", "in", ids))
+      );
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    })
+  );
+  return groups.flat();
+}
+
+export async function getSectorTree(sectorId) {
+  const subsectors = await getSubsectors(sectorId);
+  const subIds = subsectors.map(s => s.id);
+  const [tickers, analysis, notes] = await Promise.all([
+    getBySubsectorIds("tickers", subIds),
+    getBySubsectorIds("analysis", subIds),
+    getBySubsectorIds("research_notes", subIds),
+  ]);
+  const groupBy = arr => {
+    const m = {};
+    arr.forEach(x => (m[x.subsector_id] ??= []).push(x));
+    Object.values(m).forEach(list => list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+    return m;
+  };
+  const t = groupBy(tickers), a = groupBy(analysis), n = groupBy(notes);
+  return subsectors.map(sub => ({
+    subsector:      sub,
+    tickers:        t[sub.id] || [],
+    analysis:       a[sub.id] || [],
+    research_notes: n[sub.id] || [],
+  }));
 }
 
 // ─── Tickers ───────────────────────────────────────────────────────────
@@ -187,6 +254,20 @@ export function subscribePrices(symbols, callback) {
 let _eventTickerMap = null;
 export async function getEventTickerMap() {
   if (_eventTickerMap) return _eventTickerMap;
+
+  // Fast path: a single precomputed index doc (indexes/ticker_events),
+  // maintained server-side by scripts/publish.py. One document read instead of
+  // scanning three whole report collections on every page load.
+  try {
+    const snap = await getDoc(doc(db(), "indexes", "ticker_events"));
+    if (snap.exists()) {
+      const m = snap.data().map;
+      if (m && typeof m === "object") { _eventTickerMap = m; return m; }
+    }
+  } catch { /* index missing or unreadable — fall through to the live scan */ }
+
+  // Fallback: scan the report collections directly. Used until the index doc
+  // has been generated at least once (run publish.py), or if it can't be read.
   const map = {};
   // Keep only the newest (by date string, YYYY-MM-DD sorts lexically) per kind.
   const mark = (sym, kind, id, date) => {
