@@ -129,6 +129,30 @@ def encode(v):
     return {"stringValue": str(v)}
 
 
+def decode(v):
+    """Firestore typed value -> Python (inverse of encode; used to read back
+    the small index doc before merging)."""
+    if not isinstance(v, dict):
+        return v
+    if "nullValue" in v:
+        return None
+    if "booleanValue" in v:
+        return v["booleanValue"]
+    if "integerValue" in v:
+        return int(v["integerValue"])
+    if "doubleValue" in v:
+        return v["doubleValue"]
+    if "stringValue" in v:
+        return v["stringValue"]
+    if "timestampValue" in v:
+        return v["timestampValue"]
+    if "arrayValue" in v:
+        return [decode(x) for x in v["arrayValue"].get("values", [])]
+    if "mapValue" in v:
+        return {k: decode(x) for k, x in v["mapValue"].get("fields", {}).items()}
+    return None
+
+
 def upsert(session, base, token, collection, doc_id, data):
     # PATCH with no updateMask creates the doc if missing, or overwrites it.
     url = f"{base}/{collection}/{doc_id}"
@@ -138,6 +162,18 @@ def upsert(session, base, token, collection, doc_id, data):
         print(f"  ERROR {r.status_code} writing {collection}/{doc_id}: {r.text[:300]}")
         return False
     return True
+
+
+def get_doc(session, base, token, collection, doc_id):
+    """Return a doc's fields as a Python dict, or None if it doesn't exist."""
+    url = f"{base}/{collection}/{doc_id}"
+    r = session.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+    if r.status_code == 404:
+        return None
+    if r.status_code >= 300:
+        print(f"  WARN {r.status_code} reading {collection}/{doc_id}: {r.text[:200]}")
+        return None
+    return {k: decode(v) for k, v in r.json().get("fields", {}).items()}
 
 
 # ─── Payload builders ──────────────────────────────────────────────────
@@ -386,12 +422,100 @@ def digest_doc(payload, events, now_iso):
     }
 
 
+# ─── Ticker → latest-event index (indexes/ticker_events) ───────────────
+# Front-end reads this single doc to tag each ticker card with links to the
+# latest related supply / industry / earnings record — one read instead of
+# scanning three whole collections on every page load (js/db.js
+# getEventTickerMap). Merged incrementally: each publish folds its batch in,
+# keeping the newest date per (symbol, kind). Shape:
+#   indexes/ticker_events = { updated_at, map: { "<symbol>": {
+#       "supply":   {id, date},   # supply_chain_news
+#       "industry": {id, date},   # supply_chain_events
+#       "earnings": {id, date} } } }  # earnings_calls
+INDEX_COLLECTION = "indexes"
+INDEX_DOC = "ticker_events"
+
+
+def index_entries(kind, docs):
+    """From published (doc_id, payload) pairs, yield (symbol, kind, id, date).
+    `supply`/`industry` read tickers[]; `earnings` reads the scalar ticker."""
+    for doc_id, payload in docs:
+        if kind == "earnings":
+            syms = [payload.get("ticker")] if payload.get("ticker") else []
+            date = payload.get("date", "")
+        else:
+            syms = payload.get("tickers", []) or []
+            date = payload.get("event_date") or payload.get("date", "")
+        for sym in syms:
+            if sym and date:
+                yield str(sym).strip(), kind, doc_id, str(date)
+
+
+def list_collection(session, base, token, collection):
+    """Read every doc in a collection via the REST list API (paginated).
+    Returns [(doc_id, fields_dict), ...]. Used only by --type reindex."""
+    docs, page_token = [], None
+    while True:
+        url = f"{base}/{collection}?pageSize=300"
+        if page_token:
+            url += f"&pageToken={page_token}"
+        r = session.get(url, headers={"Authorization": f"Bearer {token}"}, timeout=60)
+        if r.status_code >= 300:
+            print(f"  WARN {r.status_code} listing {collection}: {r.text[:200]}")
+            break
+        j = r.json()
+        for d in j.get("documents", []):
+            doc_id = d["name"].rsplit("/", 1)[-1]
+            docs.append((doc_id, {k: decode(v) for k, v in d.get("fields", {}).items()}))
+        page_token = j.get("nextPageToken")
+        if not page_token:
+            break
+    return docs
+
+
+def rebuild_event_index(session, base, token, now_iso):
+    """One-time full rebuild of indexes/ticker_events from the existing report
+    collections (backfills history the incremental merge never saw)."""
+    mp = {}
+    def fold(kind, docs):
+        for symbol, k, doc_id, date in index_entries(kind, docs):
+            cur = (mp.get(symbol) or {}).get(k)
+            if not cur or date > str(cur.get("date", "")):
+                mp.setdefault(symbol, {})[k] = {"id": doc_id, "date": date}
+    fold("supply",   list_collection(session, base, token, "supply_chain_news"))
+    fold("industry", list_collection(session, base, token, "supply_chain_events"))
+    fold("earnings", list_collection(session, base, token, "earnings_calls"))
+    if upsert(session, base, token, INDEX_COLLECTION, INDEX_DOC,
+              {"map": mp, "updated_at": now_iso}):
+        print(f"Rebuilt indexes/{INDEX_DOC}: {len(mp)} symbol(s).")
+
+
+def update_event_index(session, base, token, entries, now_iso):
+    entries = [e for e in entries if e[0] and e[2] and e[3]]
+    if not entries:
+        return
+    existing = get_doc(session, base, token, INDEX_COLLECTION, INDEX_DOC) or {}
+    mp = existing.get("map") or {}
+    changed = 0
+    for symbol, kind, doc_id, date in entries:
+        cur = (mp.get(symbol) or {}).get(kind)
+        if not cur or date > str(cur.get("date", "")):
+            mp.setdefault(symbol, {})[kind] = {"id": doc_id, "date": date}
+            changed += 1
+    if not changed:
+        print("Event index already current.")
+        return
+    if upsert(session, base, token, INDEX_COLLECTION, INDEX_DOC,
+              {"map": mp, "updated_at": now_iso}):
+        print(f"Updated indexes/{INDEX_DOC}: {changed} entr(y/ies).")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
     ap.add_argument("--type", required=True,
                     choices=["news", "earnings", "defense", "conflict",
-                             "arsenal", "explorer", "events"])
-    ap.add_argument("--file", required=True, help="Path to input JSON")
+                             "arsenal", "explorer", "events", "reindex"])
+    ap.add_argument("--file", help="Path to input JSON (not needed for reindex)")
     ap.add_argument("--credentials", help="Path to Firebase service account JSON")
     ap.add_argument("--collection",
                     help="Override target collection (events only; "
@@ -407,8 +531,12 @@ def main():
         print("ERROR: requests not installed. Run: pip install google-auth requests")
         sys.exit(1)
 
-    with open(args.file, encoding="utf-8") as f:
-        data = json.load(f)
+    if args.type != "reindex":
+        if not args.file:
+            print("ERROR: --file is required for --type " + args.type)
+            sys.exit(1)
+        with open(args.file, encoding="utf-8") as f:
+            data = json.load(f)
 
     info = load_service_account(args.credentials)
     project = info.get("project_id")
@@ -420,6 +548,12 @@ def main():
     base = f"https://firestore.googleapis.com/v1/projects/{project}/databases/(default)/documents"
     now_iso = datetime.now(timezone.utc).isoformat()
 
+    session = requests.Session()
+
+    if args.type == "reindex":
+        rebuild_event_index(session, base, token, now_iso)
+        return
+
     collection = {
         "news": "supply_chain_news",
         "earnings": "earnings_calls",
@@ -429,8 +563,6 @@ def main():
         "explorer": "mil_weapons_modern",
         "events": args.collection or "supply_chain_events",
     }[args.type]
-
-    session = requests.Session()
 
     # 產業消息: events + a per-day digest (two collections).
     if args.type == "events":
@@ -447,12 +579,17 @@ def main():
             dcol = args.digest_collection or "supply_chain_daily_digest"
             if upsert(session, base, token, dcol, date_key, digest):
                 print(f"Wrote digest for {date_key} to {dcol}.")
+        # Only fold the default events collection into the ticker index (an
+        # override collection is a separate feed and shouldn't pollute it).
+        if collection == "supply_chain_events":
+            update_event_index(session, base, token,
+                               list(index_entries("industry", docs)), now_iso)
         return
 
     if args.type == "news":
-        docs = news_docs(as_list(data, "items"), now_iso)
+        docs = list(news_docs(as_list(data, "items"), now_iso))
     elif args.type == "earnings":
-        docs = earnings_docs(as_list(data, "calls"), now_iso)
+        docs = list(earnings_docs(as_list(data, "calls"), now_iso))
     elif args.type == "defense":
         docs = defense_docs(defense_events_from(data), now_iso)
     elif args.type == "conflict":
@@ -465,6 +602,15 @@ def main():
         if upsert(session, base, token, collection, doc_id, payload):
             ok += 1
     print(f"Published {ok} {args.type} document(s) to {collection}.")
+
+    # Fold news/earnings into the ticker → latest-event index (see
+    # update_event_index). `docs` is materialized above for these two types.
+    if args.type == "news":
+        update_event_index(session, base, token,
+                           list(index_entries("supply", docs)), now_iso)
+    elif args.type == "earnings":
+        update_event_index(session, base, token,
+                           list(index_entries("earnings", docs)), now_iso)
 
 
 if __name__ == "__main__":

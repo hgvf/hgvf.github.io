@@ -11,14 +11,29 @@
 import { firebaseConfig, WORKER_URL } from "./config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs,
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, getDocs,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { esc, fmtDate, chartUrl, sent } from "./reports.js";
 
 // ─── Firestore (own read-only handle, mirrors reports.js) ──────────────────
 let _app = null, _db = null;
 function app() { if (!_app) _app = initializeApp(firebaseConfig); return _app; }
-function db() { if (!_db) _db = getFirestore(app()); return _db; }
+// Firestore with IndexedDB offline persistence — repeat reads served from the
+// local cache, no quota cost until data changes; plain instance if already
+// initialized on this page or persistence unavailable.
+function db() {
+  if (!_db) {
+    try {
+      _db = initializeFirestore(app(), {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      });
+    } catch {
+      _db = getFirestore(app());
+    }
+  }
+  return _db;
+}
 
 async function loadAll(name) {
   const snap = await getDocs(collection(db(), name));

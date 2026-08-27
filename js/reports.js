@@ -4,7 +4,8 @@
 import { firebaseConfig } from "./config.js";
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, getDoc, query, orderBy, doc, setDoc, deleteDoc,
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, getDocs, getDoc, query, orderBy, doc, setDoc, deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
@@ -14,7 +15,22 @@ let _app = null, _db = null, _auth = null;
 // Reuse an already-initialized app (collect.js / app.js may init first) to
 // avoid a "duplicate app" throw.
 function app() { if (!_app) _app = getApps().length ? getApp() : initializeApp(firebaseConfig); return _app; }
-function db() { if (!_db) _db = getFirestore(app()); return _db; }
+// Firestore with IndexedDB offline persistence — repeat reads are served from
+// the local cache and don't count against the daily read quota until the data
+// changes. Falls back to a plain instance if the app was already initialized
+// on this page or persistence is unavailable.
+function db() {
+  if (!_db) {
+    try {
+      _db = initializeFirestore(app(), {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+      });
+    } catch {
+      _db = getFirestore(app());
+    }
+  }
+  return _db;
+}
 function auth() { if (!_auth) _auth = getAuth(app()); return _auth; }
 
 // ─── Auth (Google sign-in + whitelist check) ───────────────────────────

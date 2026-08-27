@@ -450,8 +450,8 @@ export async function submitResearchNote(onDone) {
 }
 
 export async function handleDeleteSector(id, name, onDone) {
-  if (!confirmDialog(`確定要刪除題材「${name}」嗎？\n此操作會刪除該 tab，但不會自動刪除其下的 subsector / ticker / note 等子資料。`)) return;
-  if (!confirmDialog(`再次確認：永久刪除「${name}」tab？`)) return;
+  if (!confirmDialog(`確定要刪除題材「${name}」嗎？\n此操作會一併刪除其下所有 subsector / ticker / analysis / note 等子資料。`)) return;
+  if (!confirmDialog(`再次確認：永久刪除「${name}」tab 及其所有子資料？`)) return;
   await deleteSector(id);
   onDone?.();
 }
