@@ -1,0 +1,44 @@
+name: Rebuild ticker event index
+
+# Rebuilds indexes/ticker_events — the single doc the watchlist reads to tag
+# each ticker card with links to its latest related supply / industry /
+# earnings record. Without it the site scans three whole report collections on
+# every page load (a major Firestore-read-quota drain).
+#
+# The index is already updated incrementally whenever scripts/publish.py runs
+# (news / earnings / events). This scheduled full rebuild is a safety net: it
+# backfills anything a missed publish skipped and prunes entries for reports
+# that were deleted (the incremental merge only ever adds/updates).
+#
+# Schedule: 23:59 UTC Sun–Thu = 07:59 Taiwan time (UTC+8) Mon–Fri, just before
+# the morning news scheduling jobs finish (~08:00 TW). Adjust the cron if those
+# jobs move.
+#
+# Required repo secret (Settings → Secrets and variables → Actions):
+#   FIREBASE_SERVICE_ACCOUNT — the service-account JSON (same secret the other
+#                              Firestore workflows use).
+
+on:
+  schedule:
+    - cron: '59 23 * * 0-4'   # 07:59 Taiwan (UTC+8) Mon–Fri
+  workflow_dispatch:          # allow a manual one-click rebuild from the Actions tab
+
+permissions:
+  contents: read
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install google-auth requests
+      - name: Write service account credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+      - name: Rebuild indexes/ticker_events
+        run: python scripts/publish.py --type reindex --credentials "$RUNNER_TEMP/sa.json"
