@@ -15,7 +15,10 @@ let EVENTS = [];         // 已展平的 event 物件（data）
 let META = [];           // {id, data}
 let usingSample = false;
 let isAdmin = false;
-let activeTag = "", q = "", country = "", type = "", market = "", sort = "date";
+let activeTag = "", q = "", country = "", type = "", market = "", sort = "date", month = "";
+let activeView = "list";        // 分頁：list（合約動態）/ eta（合約分析 · ETL）
+const PAGE_SIZE = 30;           // 動態清單一次顯示上限，其餘隱藏、按鈕載入更多
+let shownLimit = PAGE_SIZE;
 
 const countryZh = { US: "美國", TW: "台灣", JP: "日本", KR: "韓國", AU: "澳洲", GB: "英國" };
 const typeZh = { contract_award: "新合約", contract_modification: "合約修改", development: "研發", program_decision: "計畫決策", procurement: "採購", research: "研究", test: "測試" };
@@ -40,15 +43,17 @@ async function loadSample() {
   usingSample = true;
 }
 
-async function refresh() {
+// rebuildIndex=true 時（白名單新增/刪除後）改走 rebuildDefenseIndex()，
+// 順便把 indexes/mil_defense_daily 更新成最新，一般載入只讀該索引 1 份文件。
+async function refresh(rebuildIndex = false) {
   const s = await getStore();
-  if (!s) { await loadSample(); renderShell(); applyFilters(); renderAnalytics(); return; }
+  if (!s) { await loadSample(); renderShell(); applyView(); return; }
   try {
-    META = await s.loadDefenseEvents();
+    META = rebuildIndex ? await s.rebuildDefenseIndex() : await s.loadDefenseEvents();
     if (META.length) { EVENTS = META.map(m => ({ __id: m.id, ...m.data })); usingSample = false; }
     else { await loadSample(); }
   } catch { await loadSample(); }
-  renderShell(); applyFilters(); renderAnalytics();
+  renderShell(); applyView();
 }
 
 function renderShell() {
@@ -72,30 +77,68 @@ function renderShell() {
       <div class="mil-stat"><div class="label">最高重要度</div><div class="value">${Math.max(0, ...EVENTS.map(e => e.importance_score || 0))}</div></div>
     </div>
 
-    <div class="def-toolbar">
-      <input id="fSearch" class="mil-input" placeholder="搜尋標題 / 計畫 / 承包商 / ticker…" />
-      <select id="fCountry" class="mil-select"></select>
-      <select id="fType" class="mil-select"></select>
-      <select id="fMarket" class="mil-select"><option value="">全部承包商</option><option value="listed">僅上市</option><option value="private">非上市</option></select>
-      <select id="fSort" class="mil-select"><option value="date">最新優先</option><option value="importance">重要度</option><option value="amount">金額</option></select>
+    <div class="def-tabs" id="defTabs" role="tablist">
+      <button class="def-tab ${activeView === "list" ? "active" : ""}" data-view="list" role="tab">合約動態</button>
+      <button class="def-tab ${activeView === "eta" ? "active" : ""}" data-view="eta" role="tab">合約分析 · ETL</button>
     </div>
-    <div class="def-chips" id="chips"></div>
-    <div class="mil-panel-head" style="margin-top:0.8rem"><h2 class="mil-panel-title">事件</h2><span class="mil-panel-note" id="count"></span></div>
-    <div class="def-list" id="list"></div>
 
-    <section class="mil-panel def-ana" id="analytics"></section>`;
+    <section class="def-pane" id="pane-list" ${activeView === "list" ? "" : "hidden"}>
+      <div class="def-toolbar">
+        <input id="fSearch" class="mil-input" placeholder="搜尋標題 / 計畫 / 承包商 / ticker…" value="${esc(q)}" />
+        <select id="fMonth" class="mil-select"></select>
+        <select id="fCountry" class="mil-select"></select>
+        <select id="fType" class="mil-select"></select>
+        <select id="fMarket" class="mil-select"><option value="">全部承包商</option><option value="listed">僅上市</option><option value="private">非上市</option></select>
+        <select id="fSort" class="mil-select"><option value="date">最新優先</option><option value="importance">重要度</option><option value="amount">金額</option></select>
+      </div>
+      <div class="def-chips" id="chips"></div>
+      <div class="mil-panel-head" style="margin-top:0.8rem"><h2 class="mil-panel-title">事件</h2><span class="mil-panel-note" id="count"></span></div>
+      <div class="def-list" id="list"></div>
+      <div class="def-more" id="moreWrap" hidden><button class="mil-btn mil-btn-ghost" id="moreBtn"></button></div>
+    </section>
+
+    <section class="def-pane" id="pane-eta" ${activeView === "eta" ? "" : "hidden"}>
+      <section class="mil-panel def-ana" id="analytics"></section>
+    </section>`;
 
   // filters options
-  const fc = root.querySelector("#fCountry"); fc.innerHTML = `<option value="">全部國家</option>` + [...new Set(EVENTS.map(e => e.country))].filter(Boolean).sort().map(c => `<option value="${c}">${cZ(c)}</option>`).join("");
-  const ft = root.querySelector("#fType"); ft.innerHTML = `<option value="">全部類型</option>` + [...new Set(EVENTS.map(e => e.event_type))].filter(Boolean).sort().map(t => `<option value="${t}">${tZ(t)}</option>`).join("");
-  root.querySelector("#fSearch").oninput = e => { q = e.target.value.trim().toLowerCase(); applyFilters(); };
-  fc.onchange = e => { country = e.target.value; applyFilters(); };
-  ft.onchange = e => { type = e.target.value; applyFilters(); };
-  root.querySelector("#fMarket").onchange = e => { market = e.target.value; applyFilters(); };
-  root.querySelector("#fSort").onchange = e => { sort = e.target.value; applyFilters(); };
+  const months = [...new Set(EVENTS.map(e => (e.publication_date || e.event_date || "").slice(0, 7)).filter(Boolean))].sort().reverse();
+  const fm = root.querySelector("#fMonth");
+  if (month && !months.includes(month)) month = "";
+  fm.innerHTML = `<option value="">全部月份</option>` + months.map(m => `<option value="${m}" ${m === month ? "selected" : ""}>${m}</option>`).join("");
+  const fc = root.querySelector("#fCountry"); fc.innerHTML = `<option value="">全部國家</option>` + [...new Set(EVENTS.map(e => e.country))].filter(Boolean).sort().map(c => `<option value="${c}" ${c === country ? "selected" : ""}>${cZ(c)}</option>`).join("");
+  const ft = root.querySelector("#fType"); ft.innerHTML = `<option value="">全部類型</option>` + [...new Set(EVENTS.map(e => e.event_type))].filter(Boolean).sort().map(t => `<option value="${t}" ${t === type ? "selected" : ""}>${tZ(t)}</option>`).join("");
+  root.querySelector("#fSort").value = sort;
+  root.querySelector("#fMarket").value = market;
+  root.querySelector("#fSearch").oninput = e => { q = e.target.value.trim().toLowerCase(); shownLimit = PAGE_SIZE; applyFilters(); };
+  fm.onchange = e => { month = e.target.value; shownLimit = PAGE_SIZE; applyFilters(); };
+  fc.onchange = e => { country = e.target.value; shownLimit = PAGE_SIZE; applyFilters(); };
+  ft.onchange = e => { type = e.target.value; shownLimit = PAGE_SIZE; applyFilters(); };
+  root.querySelector("#fMarket").onchange = e => { market = e.target.value; shownLimit = PAGE_SIZE; applyFilters(); };
+  root.querySelector("#fSort").onchange = e => { sort = e.target.value; shownLimit = PAGE_SIZE; applyFilters(); };
+  root.querySelector("#moreBtn").onclick = () => { shownLimit += PAGE_SIZE; applyFilters(); };
+
+  // 分頁切換：ETL 分析只在切到該頁時才繪製（drawTrend 需要可見寬度）。
+  root.querySelectorAll("#defTabs [data-view]").forEach(b => b.onclick = () => setView(b.dataset.view));
 
   if (isAdmin) wireImporter();
   const p = document.getElementById("importPanel"); if (p) p.hidden = !isAdmin;
+}
+
+function setView(v) {
+  if (v === activeView) return;
+  activeView = v;
+  root.querySelectorAll("#defTabs [data-view]").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  const pl = root.querySelector("#pane-list"), pe = root.querySelector("#pane-eta");
+  if (pl) pl.hidden = v !== "list";
+  if (pe) pe.hidden = v !== "eta";
+  applyView();
+}
+
+// 依目前分頁只渲染需要的內容（分析頁的趨勢圖需要 pane 可見才有寬度）。
+function applyView() {
+  applyFilters();
+  if (activeView === "eta") renderAnalytics();
 }
 
 function wireImporter() {
@@ -109,7 +152,7 @@ function wireImporter() {
       status.textContent = `寫入 ${events.length} 筆…`;
       const n = await s.saveDefenseEvents(events);
       status.className = "mil-status ok"; status.textContent = `✓ 已發布 ${n} 筆`;
-      ta.value = ""; await refresh();
+      ta.value = ""; await refresh(true);
     } catch (e) {
       status.className = "mil-status err";
       if (/insufficient permissions|Missing or insufficient|permission-denied/i.test(e.message || "")) {
@@ -127,11 +170,13 @@ function collectTags(list) {
 }
 
 function applyFilters() {
+  if (!root.querySelector("#list")) return;   // 目前不在動態分頁，略過
   let list = EVENTS.filter(e => {
     const c = e.contractor || {};
     const hay = JSON.stringify({ a: e.title, b: e.title_zh, c: e.summary_zh, d: e.summary, t: e.tags, p: e.programs, k: c.name, tk: c.ticker, pt: c.parent_ticker, ag: e.agency }).toLowerCase();
     const mk = !market || (market === "listed" && isListed(e)) || (market === "private" && !isListed(e));
-    return (!q || hay.includes(q)) && (!country || e.country === country) && (!type || e.event_type === type) && mk && (!activeTag || (e.tags || []).includes(activeTag));
+    const mo = !month || (e.publication_date || e.event_date || "").slice(0, 7) === month;
+    return (!q || hay.includes(q)) && (!country || e.country === country) && (!type || e.event_type === type) && mk && mo && (!activeTag || (e.tags || []).includes(activeTag));
   });
   if (sort === "importance") list.sort((a, b) => (b.importance_score || 0) - (a.importance_score || 0));
   else if (sort === "amount") list.sort((a, b) => (b.contract?.amount || 0) - (a.contract?.amount || 0));
@@ -140,14 +185,23 @@ function applyFilters() {
   // chips
   const chips = root.querySelector("#chips");
   chips.innerHTML = collectTags(EVENTS).map(([t, c]) => `<button class="mil-chip ${activeTag === t ? "active" : ""}" data-tag="${esc(t)}">#${esc(t)} <span class="chip-count">${c}</span></button>`).join("");
-  chips.querySelectorAll("[data-tag]").forEach(b => b.onclick = () => { activeTag = activeTag === b.dataset.tag ? "" : b.dataset.tag; applyFilters(); });
+  chips.querySelectorAll("[data-tag]").forEach(b => b.onclick = () => { activeTag = activeTag === b.dataset.tag ? "" : b.dataset.tag; shownLimit = PAGE_SIZE; applyFilters(); });
 
-  root.querySelector("#count").textContent = `${list.length} 筆`;
+  // 只渲染前 shownLimit 筆，其餘隱藏於「載入更多」之後（避免一次塞爆整頁）。
+  const shown = list.slice(0, shownLimit);
+  root.querySelector("#count").textContent = list.length > shown.length ? `顯示 ${shown.length} / ${list.length} 筆` : `${list.length} 筆`;
   const box = root.querySelector("#list");
-  if (!list.length) { box.innerHTML = `<p class="mil-meta">沒有符合條件的事件。</p>`; return; }
-  box.innerHTML = list.map(cardHTML).join("");
-  box.querySelectorAll("[data-open]").forEach(el => el.onclick = () => openDetail(list.find(e => (e.__id || e.event_id || e.title) === el.dataset.open)));
-  if (isAdmin) box.querySelectorAll("[data-del]").forEach(b => b.onclick = async ev => { ev.stopPropagation(); if (confirm("刪除此事件？")) { const s = await getStore(); if (s) { await s.deleteDefenseEvent(b.dataset.del); await refresh(); } } });
+  if (!list.length) { box.innerHTML = `<p class="mil-meta">沒有符合條件的事件。</p>`; }
+  else {
+    box.innerHTML = shown.map(cardHTML).join("");
+    box.querySelectorAll("[data-open]").forEach(el => el.onclick = () => openDetail(list.find(e => (e.__id || e.event_id || e.title) === el.dataset.open)));
+    if (isAdmin) box.querySelectorAll("[data-del]").forEach(b => b.onclick = async ev => { ev.stopPropagation(); if (confirm("刪除此事件？")) { const s = await getStore(); if (s) { await s.deleteDefenseEvent(b.dataset.del); await refresh(true); } } });
+  }
+
+  const moreWrap = root.querySelector("#moreWrap"), moreBtn = root.querySelector("#moreBtn");
+  const rest = list.length - shown.length;
+  moreWrap.hidden = rest <= 0;
+  if (rest > 0) moreBtn.textContent = `載入更多（+${Math.min(PAGE_SIZE, rest)}，剩 ${rest} 筆）`;
 }
 
 function cardHTML(e) {
@@ -258,9 +312,20 @@ function renderAnalytics() {
   inCcy.forEach(e => { const k = contractorKey(e); const cur = contractors.get(k.name) || { value: 0, n: 0, ticker: k.ticker }; cur.value += e.contract.amount; cur.n++; cur.ticker = cur.ticker || k.ticker; contractors.set(k.name, cur); });
   const topContractors = [...contractors.entries()].map(([name, o]) => ({ label: name, value: o.value, sub: o.ticker ? o.ticker : (o.n + " 筆"), color: o.ticker ? "var(--allied)" : "var(--brass)" })).sort((a, b) => b.value - a.value).slice(0, 10);
 
+  // 國別分布：以「筆數」計（跨幣別，不受上方幣別選單過濾），否則只有 JPY
+  // 合約的國家（如日本）在 USD 檢視下會整個消失。金額改列在標籤下依幣別分開。
   const byCountry = {};
-  inCcy.forEach(e => { const c = e.country || "?"; (byCountry[c] ||= { v: 0, n: 0 }); byCountry[c].v += e.contract.amount; byCountry[c].n++; });
-  const countryRows = Object.entries(byCountry).map(([c, o]) => ({ label: cZ(c), value: o.v, sub: o.n + " 筆" })).sort((a, b) => b.value - a.value);
+  E.forEach(e => {
+    const c = e.country || "?";
+    const o = (byCountry[c] ||= { n: 0, ccy: {} });
+    o.n++;
+    const amt = e.contract?.amount, cc = e.contract?.currency || (amt != null ? "USD" : null);
+    if (amt != null && cc) o.ccy[cc] = (o.ccy[cc] || 0) + amt;
+  });
+  const countryRows = Object.entries(byCountry).map(([c, o]) => ({
+    label: cZ(c), value: o.n,
+    sub: Object.entries(o.ccy).sort((a, b) => b[1] - a[1]).map(([cc, v]) => fmtAmt(v, cc)).join(" · ") || null,
+  })).sort((a, b) => b.value - a.value);
 
   const byType = {};
   E.forEach(e => { const t = e.event_type || "other"; byType[t] = (byType[t] || 0) + 1; });
@@ -300,7 +365,7 @@ function renderAnalytics() {
 
     <div class="ana-grid">
       <div class="ana-card"><h3>承包商合約總值 Top 10 <span>（${anaCcy}）</span></h3>${hbars(topContractors, v => fmtAmt(v, anaCcy))}</div>
-      <div class="ana-card"><h3>國別合約總額 <span>（${anaCcy}）</span></h3>${hbars(countryRows, v => fmtAmt(v, anaCcy), "var(--allied)")}</div>
+      <div class="ana-card"><h3>國別合約分布 <span>（筆數 · 金額依幣別）</span></h3>${hbars(countryRows, v => v + " 筆", "var(--allied)")}</div>
       <div class="ana-card"><h3>事件類型分布 <span>（筆數）</span></h3>${hbars(typeRows, v => v + " 筆", "var(--civil)")}</div>
       <div class="ana-card"><h3>計畫類別分布 <span>（筆數）</span></h3>${hbars(catRows, v => v + " 筆", "var(--ok)")}</div>
       <div class="ana-card ana-wide"><h3>月度合約金額趨勢 <span>（${anaCcy}）</span></h3><div id="anaTrend"></div></div>

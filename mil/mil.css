@@ -429,7 +429,12 @@ body.mil .main-content {
 .link:hover { color: var(--paper); }
 
 /* ── ⑦ 每日軍武動態 ── */
-.def-toolbar { display: grid; grid-template-columns: minmax(200px, 2fr) repeat(4, minmax(110px, 1fr)); gap: 0.5rem; margin-bottom: 0.8rem; }
+.def-tabs { display: flex; gap: 0.4rem; border-bottom: 1px solid var(--rule); margin: 0.4rem 0 1rem; }
+.def-tab { appearance: none; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-family: var(--font-head); font-size: 1rem; letter-spacing: 0.03em; padding: 0.55rem 0.9rem; cursor: pointer; transition: var(--transition); }
+.def-tab:hover { color: var(--paper); }
+.def-tab.active { color: var(--brass); border-bottom-color: var(--brass); }
+.def-more { display: flex; justify-content: center; margin-top: 1rem; }
+.def-toolbar { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(5, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.8rem; }
 @media (max-width: 760px) { .def-toolbar { grid-template-columns: 1fr 1fr; } }
 .def-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .def-chips .chip-count { color: var(--brass); font-family: var(--font-mono); font-size: 0.7rem; }

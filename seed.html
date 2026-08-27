@@ -22,6 +22,7 @@
   <button id="btnPrices" class="prices">Seed Prices（data/prices.json）</button>
   <button id="btnCleanup" class="cleanup">Cleanup Zombies（清除孤兒資料）</button>
   <button id="btnReindex" class="reindex">Rebuild Event Index（重建 ticker 事件索引）</button>
+  <button id="btnReindexDefense" class="reindex">Rebuild Defense Index（重建每日軍武索引）</button>
   <div id="log"></div>
 
   <script type="module">
@@ -257,6 +258,41 @@
         });
         print(`\n寫入 indexes/ticker_events：${Object.keys(map).length} 檔 symbol ✓`, 'ok');
         print('完成！主站現在只讀這 1 份文件即可顯示 供/產/法 標籤。', 'ok');
+      } catch (e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
+
+    /* ── Rebuild every-day military → single-doc index ───
+       Same result as `python scripts/publish.py --type defense/reindex`, but
+       from the browser. Scans mil_defense_daily once and writes a single
+       indexes/mil_defense_daily doc (newest 250 events) that the 每日軍武合約
+       page reads — so the site stops scanning the whole collection on every
+       page load. Run once after deploying, or any time to re-sync after
+       deleting events. Costs a one-time full read of mil_defense_daily. */
+    document.getElementById('btnReindexDefense').addEventListener('click', async () => {
+      const btn = document.getElementById('btnReindexDefense');
+      btn.disabled = true;
+      log.innerHTML = '';
+      if (!(await ensureSignedIn())) { btn.disabled = false; return; }
+
+      try {
+        print('掃描 mil_defense_daily...');
+        const snap = await getDocs(collection(db, 'mil_defense_daily'));
+        const rows = snap.docs.map(d => {
+          const x = d.data();
+          return { id: d.id, _date: x._date || '', _country: x._country || '', _type: x._type || '', _score: x._score || 0, data: x.data || {} };
+        });
+        rows.sort((a, b) => String(b._date || '').localeCompare(String(a._date || '')));
+        const events = rows.slice(0, 250);
+        await setDoc(doc(db, 'indexes', 'mil_defense_daily'), {
+          updated_at: new Date().toISOString(),
+          count: events.length,
+          events,
+        });
+        print(`\n寫入 indexes/mil_defense_daily：${events.length} 筆事件 ✓`, 'ok');
+        print('完成！每日軍武合約頁現在只讀這 1 份文件即可呈現。', 'ok');
       } catch (e) {
         print('錯誤: ' + e.message, 'err');
       }
