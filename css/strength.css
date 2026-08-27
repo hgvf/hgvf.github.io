@@ -34,6 +34,17 @@
 .st-dim:hover { color: var(--text-primary); }
 .st-dim.on { background: var(--accent); color: var(--text-on-accent); }
 
+/* Count slider — how many themes per column (5–20) */
+.st-count { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.76rem; color: var(--text-secondary); }
+.st-count-label b { font-family: var(--font-mono); color: var(--accent); font-weight: 700; }
+.st-count-range { -webkit-appearance: none; appearance: none; width: 110px; height: 4px; border-radius: 999px;
+  background: var(--accent-light); outline: none; cursor: pointer; }
+.st-count-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 15px; height: 15px;
+  border-radius: 50%; background: var(--accent); border: 2px solid var(--bg-base); box-shadow: var(--glass-shadow); cursor: pointer; }
+.st-count-range::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: var(--accent);
+  border: 2px solid var(--bg-base); cursor: pointer; }
+.st-count-range:hover::-webkit-slider-thumb { background: var(--accent-hover); }
+
 .st-status { font-size: 0.78rem; font-family: var(--font-mono); color: var(--text-muted); }
 .st-status.ok { color: var(--positive); }
 .st-status.warn { color: var(--accent); }
