@@ -7,6 +7,7 @@
     body { font-family: monospace; background: #111; color: #eee; padding: 2rem; }
     button { padding: 0.6rem 1.4rem; background: #4f8ef7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; margin-right: 0.6rem; margin-bottom: 0.6rem; }
     button.prices { background: #2fae62; }
+    button.cleanup { background: #d9534f; }
     button:disabled { background: #555; cursor: default; }
     #log { margin-top: 1.5rem; white-space: pre-wrap; line-height: 1.6; }
     .ok  { color: #6f6; }
@@ -18,6 +19,7 @@
   <p>必須先登入 Google（在主站登入後再開此頁），點下方按鈕將冷資料寫入 Firestore。</p>
   <button id="btnWatchlist">Seed Watchlist（data/watchlist.json）</button>
   <button id="btnPrices" class="prices">Seed Prices（data/prices.json）</button>
+  <button id="btnCleanup" class="cleanup">Cleanup Zombies（清除孤兒資料）</button>
   <div id="log"></div>
 
   <script type="module">
@@ -146,6 +148,61 @@
           }
         }
         print('\nWatchlist 完成！請重新整理主站。', 'ok');
+      } catch (e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
+
+    /* ── Cleanup orphaned (zombie) docs ─────────────────
+       Removes docs whose parent no longer exists:
+         · subsectors      → sector_id points to a missing sector
+         · tickers         → subsector_id points to a missing subsector
+         · analysis        → subsector_id points to a missing subsector
+         · research_notes  → subsector_id points to a missing subsector
+       These accumulate when a sector/subsector was deleted before cascade
+       delete existed. Safe to run repeatedly. */
+    document.getElementById('btnCleanup').addEventListener('click', async () => {
+      const btn = document.getElementById('btnCleanup');
+      btn.disabled = true;
+      log.innerHTML = '';
+      if (!(await ensureSignedIn())) { btn.disabled = false; return; }
+
+      try {
+        const idsOf = async (coll) => {
+          const snap = await getDocs(collection(db, coll));
+          return new Set(snap.docs.map(d => d.id));
+        };
+        const sectorIds = await idsOf('sectors');
+
+        // 1) subsectors whose sector_id is gone.
+        const subSnap = await getDocs(collection(db, 'subsectors'));
+        const liveSubIds = new Set();
+        const orphanSubs = [];
+        subSnap.docs.forEach(d => {
+          if (sectorIds.has(d.data().sector_id)) liveSubIds.add(d.id);
+          else orphanSubs.push(d);
+        });
+        print(`subsectors: ${subSnap.size} total, ${orphanSubs.length} orphaned`);
+        for (const d of orphanSubs) {
+          await deleteDoc(d.ref);
+          print(`  🗑 subsector ${d.id} — ${d.data().name || ''}`, 'ok');
+        }
+
+        // 2) children whose subsector_id is not a surviving subsector.
+        for (const coll of ['tickers', 'analysis', 'research_notes']) {
+          const snap = await getDocs(collection(db, coll));
+          let n = 0;
+          for (const d of snap.docs) {
+            if (!liveSubIds.has(d.data().subsector_id)) {
+              await deleteDoc(d.ref);
+              n++;
+            }
+          }
+          print(`${coll}: ${snap.size} total, deleted ${n} orphaned`, n ? 'ok' : '');
+        }
+
+        print('\nCleanup 完成！請重新整理主站。', 'ok');
       } catch (e) {
         print('錯誤: ' + e.message, 'err');
       }

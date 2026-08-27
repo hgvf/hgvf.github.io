@@ -12,6 +12,7 @@ import {
   where,
   orderBy,
   onSnapshot,
+  writeBatch,
   arrayUnion,
   arrayRemove,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -42,7 +43,18 @@ export async function updateSector(id, data) {
   return updateDoc(doc(db(), "sectors", id), data);
 }
 
+// Cascade delete: removes the sector AND every subsector under it (each with
+// its own tickers / analysis / research_notes). Without this, deleting a
+// sector left orphaned "zombie" subsectors/tickers in Firestore that no UI
+// could reach. Children are deleted per-subsector (each in its own batch) so
+// no single batch exceeds Firestore's 500-write limit.
 export async function deleteSector(id) {
+  const subs = await getDocs(
+    query(collection(db(), "subsectors"), where("sector_id", "==", id))
+  );
+  for (const sub of subs.docs) {
+    await deleteSubsector(sub.id);
+  }
   return deleteDoc(doc(db(), "sectors", id));
 }
 
@@ -61,8 +73,22 @@ export async function updateSubsector(id, data) {
   return updateDoc(doc(db(), "subsectors", id), data);
 }
 
+// Cascade delete: removes the subsector AND all tickers / analysis /
+// research_notes that reference it, in one atomic batch. Previously only the
+// subsector doc was removed, orphaning its child docs in Firestore.
 export async function deleteSubsector(id) {
-  return deleteDoc(doc(db(), "subsectors", id));
+  const batch = writeBatch(db());
+  const childCollections = ["tickers", "analysis", "research_notes"];
+  await Promise.all(
+    childCollections.map(async name => {
+      const snap = await getDocs(
+        query(collection(db(), name), where("subsector_id", "==", id))
+      );
+      snap.docs.forEach(d => batch.delete(d.ref));
+    })
+  );
+  batch.delete(doc(db(), "subsectors", id));
+  return batch.commit();
 }
 
 export async function updateSubsectorNotes(id, notes) {
