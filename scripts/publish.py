@@ -18,6 +18,8 @@ Usage:
     python scripts/publish.py --type arsenal  --file weapons.json    # -> mil_weapons     (③ 系統譜系)
     python scripts/publish.py --type explorer --file modern.json     # -> mil_weapons_modern (① 武器探索)
     python scripts/publish.py --type events   --file sc_events.json   # -> supply_chain_events + supply_chain_daily_digest (產業消息)
+    python scripts/publish.py --type military --file military.json    # -> military_news
+    python scripts/publish.py --type industry --file industry.json    # -> industry_news (one daily payload/doc)
 
 A scheduler can call this after producing the JSON, e.g.:
     claude ... > /tmp/defense.json && \
@@ -422,6 +424,81 @@ def digest_doc(payload, events, now_iso):
     }
 
 
+
+# ─── Military events (military_news) ────────────────────────────────────
+# Accepts a single Military Event JSON object, a bare list, or {"events": [...]}.
+# Each event is stored FLAT at military_news/<event_id>. The event_id is the
+# deterministic Firestore document id, so reruns/revisions upsert cleanly.
+def military_events_from(data):
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        if isinstance(data.get("events"), list):
+            return data["events"]
+        if data.get("event_id"):
+            return [data]
+    print('ERROR: military expects a single event, a list, or {"events":[...]}')
+    sys.exit(1)
+
+
+def military_news_docs(events, now_iso):
+    for e in events:
+        if not isinstance(e, dict):
+            print(f"  skip (military event is not an object): {e!r}")
+            continue
+
+        eid = e.get("event_id")
+        if not eid:
+            print(f"  skip (missing event_id): {json.dumps(e, ensure_ascii=False)[:100]}")
+            continue
+        if not e.get("event_date"):
+            print(f"  skip (missing event_date): {eid}")
+            continue
+
+        version = str(e.get("schema_version", ""))
+        if version and not version.startswith("1."):
+            print(f"  WARN military event {eid}: unexpected schema_version {version!r}")
+
+        doc = dict(e)
+        # Preserve skill-provided ingested_at when present; otherwise stamp publish time.
+        if not doc.get("ingested_at"):
+            doc["ingested_at"] = now_iso
+        doc["updated_at"] = now_iso
+
+        # Firestore document IDs cannot contain '/'. Keep all other characters/case.
+        doc_id = str(eid).replace("/", "-")[:1500]
+        yield doc_id, doc
+
+
+# ─── Industry daily payloads (industry_news) ────────────────────────────
+# Input is the complete industry-news-daily schema v2.0 envelope. One daily
+# payload is stored intact at industry_news/<event_window.start>, preserving
+# run_metadata, digest, event_count, and events[] exactly as emitted by the skill.
+def industry_daily_doc(data, now_iso):
+    if not isinstance(data, dict):
+        print('ERROR: industry expects the schema 2.0 top-level JSON object')
+        sys.exit(1)
+
+    version = str(data.get("schema_version", ""))
+    if not version.startswith("2."):
+        print(f"ERROR: industry schema_version must be 2.x, got {version!r}")
+        sys.exit(1)
+
+    window = data.get("event_window")
+    if not isinstance(window, dict) or not window.get("start"):
+        print('ERROR: industry payload missing event_window.start')
+        sys.exit(1)
+    if not isinstance(data.get("events"), list):
+        print('ERROR: industry payload missing events[]')
+        sys.exit(1)
+
+    date_key = str(window["start"])
+    doc = dict(data)
+    # Keep generated_at / events[].ingested_at from the skill unchanged and add
+    # a publisher-side timestamp for operational auditing.
+    doc["updated_at"] = now_iso
+    return date_key.replace("/", "-")[:1500], doc
+
 # ─── Ticker → latest-event index (indexes/ticker_events) ───────────────
 # Front-end reads this single doc to tag each ticker card with links to the
 # latest related supply / industry / earnings record — one read instead of
@@ -546,7 +623,8 @@ def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
     ap.add_argument("--type", required=True,
                     choices=["news", "earnings", "defense", "conflict",
-                             "arsenal", "explorer", "events", "reindex"])
+                             "arsenal", "explorer", "events", "military",
+                             "industry", "reindex"])
     ap.add_argument("--file", help="Path to input JSON (not needed for reindex)")
     ap.add_argument("--credentials", help="Path to Firebase service account JSON")
     ap.add_argument("--collection",
@@ -595,6 +673,8 @@ def main():
         "arsenal": "mil_weapons",
         "explorer": "mil_weapons_modern",
         "events": args.collection or "supply_chain_events",
+        "military": "military_news",
+        "industry": "industry_news",
     }[args.type]
 
     # 產業消息: events + a per-day digest (two collections).
@@ -617,6 +697,27 @@ def main():
         if collection == "supply_chain_events":
             update_event_index(session, base, token,
                                list(index_entries("industry", docs)), now_iso)
+        return
+
+
+    # Military Event JSON: one event per Firestore document.
+    if args.type == "military":
+        docs = list(military_news_docs(military_events_from(data), now_iso))
+        ok = 0
+        for doc_id, payload in docs:
+            if upsert(session, base, token, collection, doc_id, payload):
+                ok += 1
+        print(f"Published {ok} military event document(s) to {collection}.")
+        return
+
+    # Industry News JSON schema 2.x: preserve the complete daily envelope in
+    # one document, keyed by event_window.start (YYYY-MM-DD).
+    if args.type == "industry":
+        doc_id, payload = industry_daily_doc(data, now_iso)
+        if upsert(session, base, token, collection, doc_id, payload):
+            print(f"Published industry payload for {doc_id} to {collection}/{doc_id}.")
+        else:
+            sys.exit(1)
         return
 
     if args.type == "news":
