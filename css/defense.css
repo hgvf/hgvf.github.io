@@ -105,6 +105,14 @@
 @media (max-width: 640px) { .df-crow { grid-template-columns: 1fr auto; } .df-crow-date, .df-crow-type { display: none; } }
 
 /* main chart */
+.df-chart-hint { margin: 0 0 0.6rem; }
+.df-legend { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.7rem; }
+.df-legend-chip { display: inline-flex; align-items: center; gap: 0.35rem; font: inherit; font-size: 0.74rem; cursor: pointer; background: var(--glass-bg-solid); border: 1px solid var(--glass-border); border-radius: 999px; padding: 0.2rem 0.6rem 0.2rem 0.45rem; color: var(--text-secondary); transition: var(--transition); }
+.df-legend-chip:hover { border-color: var(--accent); color: var(--text-primary); }
+.df-legend-chip.sel { border-color: var(--accent); color: var(--text-primary); font-weight: 600; box-shadow: 0 0 0 1px var(--accent) inset; }
+.df-legend-chip.dim { opacity: 0.5; }
+.df-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.df-legend-clear { font: inherit; font-size: 0.74rem; cursor: pointer; background: var(--accent-light); border: 1px solid var(--accent); border-radius: 999px; padding: 0.2rem 0.6rem; color: var(--accent); }
 .df-chart-ctl { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .df-toggle { display: inline-flex; border: 1px solid var(--glass-border); border-radius: 999px; overflow: hidden; }
 .df-toggle button { appearance: none; background: transparent; border: none; padding: 0.32rem 0.75rem; font-size: 0.78rem; color: var(--text-secondary); cursor: pointer; }

@@ -59,18 +59,31 @@ function fmtAmt(v, ccy = "USD") {
 }
 const usd = v => fmtAmt(v, "USD");
 
-const listedTicker = c => !c ? null : (c.ticker ? { t: c.ticker, ex: c.exchange, basis: "direct" } : c.parent_ticker ? { t: c.parent_ticker, ex: c.exchange, basis: "parent" } : null);
+// ticker 正規化：去頭尾空白、轉大寫、去掉尾端的點（"BA." → "BA"，與 "BA" 視為同一間）。
+const normTicker = t => t ? String(t).trim().toUpperCase().replace(/[.\s]+$/, "") : null;
+const listedTicker = c => !c ? null : (c.ticker ? { t: normTicker(c.ticker), ex: c.exchange, basis: "direct" } : c.parent_ticker ? { t: normTicker(c.parent_ticker), ex: c.exchange, basis: "parent" } : null);
 const isListed = e => !!listedTicker(e.contractor);
 const evYear = e => (e.publication_date || e.event_date || "").slice(0, 4);
 const evMonth = e => (e.publication_date || e.event_date || "").slice(0, 7);
 const evUSD = e => toUSD(e.contract?.amount, e.contract?.currency || "USD");
 // 承包商顯示名 + 縮寫（histogram x 軸用）。
+const CORP_SUFFIX = /\b(inc|corp|corporation|co|company|ltd|limited|llc|lp|plc|gmbh|ag|sa|nv|bv|as)\b\.?/gi;
 function contractorName(e) { const c = e.contractor || {}; return c.name || c.name_raw || "未列承包商"; }
 function contractorShort(e) {
   const c = e.contractor || {}, tk = listedTicker(c);
   if (tk) return tk.t;
   const n = contractorName(e);
-  return n.length > 12 ? n.replace(/\b(Inc|Corp|Corporation|Co|Company|Ltd|LLC|LP|GmbH|AG)\b\.?/gi, "").trim().slice(0, 12) : n;
+  return n.length > 12 ? n.replace(CORP_SUFFIX, "").trim().slice(0, 12) : n;
+}
+// 正規化公司名（合併大小寫、法人後綴、標點差異）。
+const normName = n => String(n || "").toLowerCase().replace(CORP_SUFFIX, "").replace(/[^a-z0-9]+/g, " ").trim();
+// 統一的公司識別：有 ticker 用正規化 ticker，否則用正規化名稱 —— 讓
+// "BA" / "BA." / "The Boeing Co." 等同一間合併成單一長條 / 單一顏色。
+function companyIdentity(e) {
+  const tk = listedTicker(e.contractor);
+  const name = contractorName(e);
+  const key = tk ? "T:" + tk.t : "N:" + (normName(name) || name.toLowerCase());
+  return { key, ticker: tk ? tk.t : null, name, short: contractorShort(e) };
 }
 
 // ── SVG helper ─────────────────────────────────────────────────────────
@@ -262,6 +275,14 @@ function openDetail(e) {
 let anaContractor = "";      // 承包商深入檢視選取
 let chartYear = "";          // histogram/line 年份 filter
 let chartMode = "bar";       // bar | line
+let selectedCompanies = new Set();  // 圖表上被點選的公司（跨長條/折線共用）
+
+// 公司配色（cream 背景可辨識）。依當前 pool 的總額排序，前 N 名各給一色，
+// 其餘統一灰色。點 legend 或長條可加入/移除 selectedCompanies。
+const CHART_PALETTE = ["#8B5E3C", "#2563EB", "#DC2626", "#059669", "#D97706", "#7C3AED", "#DB2777", "#0891B2", "#65A30D", "#9333EA", "#E11D48", "#0D9488", "#CA8A04", "#4F46E5", "#B45309", "#15803D"];
+const MUTED_COLOR = "#B8A894";
+let _colorMap = new Map();
+const colorFor = name => _colorMap.get(name) || MUTED_COLOR;
 
 function hbars(rows, fmt, color = "var(--accent)") {
   if (!rows.length) return `<p class="df-meta">無資料</p>`;
@@ -343,6 +364,8 @@ function renderAnalytics() {
           </div>
         </div>
       </div>
+      <p class="df-meta df-chart-hint">點選下方公司（或長條）加入/移除比較；折線圖會疊出各公司的<b>累積合約金額</b>曲線，未選取時顯示全部加總。</p>
+      <div id="chartLegend" class="df-legend"></div>
       <div id="mainChart" class="df-chartbox"></div>
     </div>
 
@@ -394,68 +417,126 @@ function renderContractorPanel() {
   host.querySelectorAll("[data-open]").forEach(el => el.onclick = () => openDetail(rows.find(e => (e.__id || e.event_id || e.title) === el.dataset.open)));
 }
 
+// 當前 pool 內、依總額排序的公司（依 companyIdentity 合併同一間）；並指派配色。
+function rankCompanies(pool) {
+  const m = new Map();
+  pool.forEach(e => {
+    const id = companyIdentity(e);
+    const cur = m.get(id.key) || { key: id.key, name: id.name, value: 0, short: id.short, ticker: id.ticker };
+    cur.value += evUSD(e);
+    if (id.ticker && !cur.ticker) cur.ticker = id.ticker;
+    m.set(id.key, cur);
+  });
+  const ranked = [...m.values()].sort((a, b) => b.value - a.value);
+  _colorMap = new Map();
+  ranked.forEach((c, i) => { if (i < CHART_PALETTE.length) _colorMap.set(c.key, CHART_PALETTE[i]); });
+  return ranked;
+}
+
+function toggleCompany(name) {
+  if (selectedCompanies.has(name)) selectedCompanies.delete(name); else selectedCompanies.add(name);
+  drawMainChart();
+}
+
+function renderLegend(ranked) {
+  const host = document.getElementById("chartLegend");
+  if (!host) return;
+  const shown = ranked.slice(0, CHART_PALETTE.length);
+  const anySel = selectedCompanies.size > 0;
+  host.innerHTML =
+    (anySel ? `<button class="df-legend-clear" id="legendClear">✕ 清除選取（${selectedCompanies.size}）</button>` : "") +
+    shown.map(c => {
+      const sel = selectedCompanies.has(c.key);
+      return `<button class="df-legend-chip ${sel ? "sel" : ""} ${anySel && !sel ? "dim" : ""}" data-key="${esc(c.key)}" title="${esc(c.name)} — ${usd(c.value)}">
+        <span class="df-legend-dot" style="background:${colorFor(c.key)}"></span>${esc(c.ticker || c.short)}</button>`;
+    }).join("");
+  host.querySelectorAll("[data-key]").forEach(b => b.onclick = () => toggleCompany(b.dataset.key));
+  const clr = host.querySelector("#legendClear");
+  if (clr) clr.onclick = () => { selectedCompanies.clear(); drawMainChart(); };
+}
+
 function drawMainChart() {
   const host = document.getElementById("mainChart");
   if (!host) return;
   const pool = EVENTS.filter(e => e.contract?.amount != null && (!chartYear || evYear(e) === chartYear));
-  if (chartMode === "bar") {
-    const m = new Map();
-    pool.forEach(e => { const k = contractorShort(e); const cur = m.get(k) || { value: 0, full: contractorName(e) }; cur.value += evUSD(e); m.set(k, cur); });
-    const rows = [...m.entries()].map(([label, o]) => ({ label, value: o.value, full: o.full })).sort((a, b) => b.value - a.value).slice(0, 15);
-    drawBar(host, rows);
-  } else {
-    // 折線：依日期的「累積」合約總值（USD），永遠有資料點且符合 accumulate 語意。
-    const byDay = {};
-    pool.forEach(e => { const d = e.publication_date || e.event_date || ""; if (d) byDay[d] = (byDay[d] || 0) + evUSD(e); });
-    let cum = 0;
-    const series = Object.keys(byDay).sort().map(d => ({ x: d, v: (cum += byDay[d]) }));
-    drawLine(host, series);
-  }
+  const ranked = rankCompanies(pool);
+  renderLegend(ranked);
+  if (chartMode === "bar") drawBar(host, ranked.slice(0, 15));
+  else drawLine(host, pool, ranked);
 }
 
-function drawBar(host, rows) {
+function drawBar(host, ranked) {
   host.innerHTML = "";
-  if (!rows.length) { host.innerHTML = `<p class="df-meta">此區間無資料。</p>`; return; }
+  if (!ranked.length) { host.innerHTML = `<p class="df-meta">此區間無資料。</p>`; return; }
+  const anySel = selectedCompanies.size > 0;
   const W = Math.max(host.clientWidth || 720, 480), H = 300, padL = 56, padR = 14, padT = 14, padB = 74;
-  const max = Math.max(...rows.map(r => r.value), 1);
-  const bw = (W - padL - padR) / rows.length;
+  const max = Math.max(...ranked.map(r => r.value), 1);
+  const bw = (W - padL - padR) / ranked.length;
   const Y = v => H - padB - (v / max) * (H - padT - padB);
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "df-svg", width: "100%", height: H });
   [0, 0.25, 0.5, 0.75, 1].forEach(g => {
     svg.appendChild(svgEl("line", { x1: padL, y1: Y(max * g), x2: W - padR, y2: Y(max * g), class: "df-grid" }));
     const t = svgEl("text", { x: padL - 6, y: Y(max * g) + 3, class: "df-axis", "text-anchor": "end" }); t.textContent = usd(max * g); svg.appendChild(t);
   });
-  rows.forEach((r, i) => {
+  ranked.forEach((r, i) => {
+    const sel = selectedCompanies.has(r.key);
     const x = padL + i * bw + bw * 0.15, w = bw * 0.7, y = Y(r.value);
-    const rect = svgEl("rect", { x, y, width: w, height: H - padB - y, rx: 3, fill: "var(--accent)" });
-    const title = svgEl("title"); title.textContent = `${r.full} — ${usd(r.value)}`; rect.appendChild(title);
+    const rect = svgEl("rect", { x, y, width: w, height: H - padB - y, rx: 3, fill: colorFor(r.key), style: "cursor:pointer", opacity: anySel && !sel ? "0.32" : "1" });
+    if (sel) { rect.setAttribute("stroke", "var(--text-primary)"); rect.setAttribute("stroke-width", "1.5"); }
+    const title = svgEl("title"); title.textContent = `${r.name} — ${usd(r.value)}（點選比較）`; rect.appendChild(title);
+    rect.addEventListener("click", () => toggleCompany(r.key));
     svg.appendChild(rect);
     const lab = svgEl("text", { x: x + w / 2, y: H - padB + 14, class: "df-axis", "text-anchor": "end", transform: `rotate(-40 ${x + w / 2} ${H - padB + 14})` });
-    lab.textContent = r.label.length > 12 ? r.label.slice(0, 12) + "…" : r.label; svg.appendChild(lab);
+    lab.textContent = (r.ticker || r.short).length > 12 ? (r.ticker || r.short).slice(0, 12) + "…" : (r.ticker || r.short); svg.appendChild(lab);
     const val = svgEl("text", { x: x + w / 2, y: y - 4, class: "df-axis val", "text-anchor": "middle" }); val.textContent = usd(r.value); svg.appendChild(val);
   });
   host.appendChild(svg);
 }
 
-function drawLine(host, series) {
+// 折線：一或多條「累積合約金額」曲線。未選取公司 → 全部加總單線；
+// 有選取 → 每家一條彩色線（如比較圖）。x 軸為日期。
+function drawLine(host, pool, ranked) {
   host.innerHTML = "";
-  if (series.length < 2) { host.innerHTML = `<p class="df-meta">資料點不足以繪製折線（需 ≥ 2 個日期）。</p>`; return; }
-  const W = Math.max(host.clientWidth || 720, 480), H = 300, padL = 56, padR = 14, padT = 14, padB = 40;
-  const max = Math.max(...series.map(s => s.v), 1);
-  const X = i => padL + (i / (series.length - 1)) * (W - padL - padR);
+  const dates = [...new Set(pool.map(e => e.publication_date || e.event_date || "").filter(Boolean))].sort();
+  if (dates.length < 2) { host.innerHTML = `<p class="df-meta">資料點不足以繪製折線（需 ≥ 2 個日期）。</p>`; return; }
+
+  const keys = selectedCompanies.size ? [...selectedCompanies] : ["__ALL__"];
+  // 每條線：對每個日期累加到當日為止的 USD 總額。
+  const cumFor = key => {
+    const byDay = {};
+    pool.forEach(e => {
+      if (key !== "__ALL__" && companyIdentity(e).key !== key) return;
+      const d = e.publication_date || e.event_date || ""; if (d) byDay[d] = (byDay[d] || 0) + evUSD(e);
+    });
+    let cum = 0;
+    return dates.map(d => { cum += (byDay[d] || 0); return cum; });
+  };
+  const lines = keys.map(k => { const r = ranked.find(x => x.key === k); return { key: k, color: k === "__ALL__" ? "var(--accent)" : colorFor(k), label: k === "__ALL__" ? "全部加總" : (r?.ticker || r?.short || r?.name || k), vals: cumFor(k) }; });
+  const max = Math.max(1, ...lines.flatMap(l => l.vals));
+
+  const W = Math.max(host.clientWidth || 720, 480), H = 320, padL = 56, padR = 14, padT = 14, padB = 40;
+  const X = i => padL + (i / (dates.length - 1)) * (W - padL - padR);
   const Y = v => H - padB - (v / max) * (H - padT - padB);
   const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, class: "df-svg", width: "100%", height: H });
-  [0, 0.5, 1].forEach(g => {
+  [0, 0.25, 0.5, 0.75, 1].forEach(g => {
     svg.appendChild(svgEl("line", { x1: padL, y1: Y(max * g), x2: W - padR, y2: Y(max * g), class: "df-grid" }));
     const t = svgEl("text", { x: padL - 6, y: Y(max * g) + 3, class: "df-axis", "text-anchor": "end" }); t.textContent = usd(max * g); svg.appendChild(t);
   });
-  const area = svgEl("polyline", { points: `${X(0)},${H - padB} ` + series.map((s, i) => `${X(i)},${Y(s.v)}`).join(" ") + ` ${X(series.length - 1)},${H - padB}`, fill: "var(--accent-light)", stroke: "none" });
-  svg.appendChild(area);
-  svg.appendChild(svgEl("polyline", { points: series.map((s, i) => `${X(i)},${Y(s.v)}`).join(" "), fill: "none", stroke: "var(--accent)", "stroke-width": 2 }));
-  series.forEach((s, i) => {
-    const c = svgEl("circle", { cx: X(i), cy: Y(s.v), r: 3, fill: "var(--accent)" });
-    const title = svgEl("title"); title.textContent = `${s.x} — ${usd(s.v)}`; c.appendChild(title); svg.appendChild(c);
-    if (i % Math.ceil(series.length / 10) === 0 || i === series.length - 1) { const t = svgEl("text", { x: X(i), y: H - padB + 16, class: "df-axis", "text-anchor": "middle" }); t.textContent = s.x.length > 7 ? s.x.slice(5) : s.x.slice(2); svg.appendChild(t); }
+  // 單線（全部加總）填色面積；多線比較時不填色以免互相遮蔽。
+  if (lines.length === 1 && keys[0] === "__ALL__") {
+    svg.appendChild(svgEl("polyline", { points: `${X(0)},${H - padB} ` + lines[0].vals.map((v, i) => `${X(i)},${Y(v)}`).join(" ") + ` ${X(dates.length - 1)},${H - padB}`, fill: "var(--accent-light)", stroke: "none" }));
+  }
+  lines.forEach(l => {
+    svg.appendChild(svgEl("polyline", { points: l.vals.map((v, i) => `${X(i)},${Y(v)}`).join(" "), fill: "none", stroke: l.color, "stroke-width": 2.2 }));
+    l.vals.forEach((v, i) => {
+      if (dates.length <= 24 || i % Math.ceil(dates.length / 24) === 0 || i === dates.length - 1) {
+        const c = svgEl("circle", { cx: X(i), cy: Y(v), r: 2.8, fill: l.color });
+        const title = svgEl("title"); title.textContent = `${l.label} · ${dates[i]} — ${usd(v)}`; c.appendChild(title); svg.appendChild(c);
+      }
+    });
+  });
+  dates.forEach((d, i) => {
+    if (i % Math.ceil(dates.length / 10) === 0 || i === dates.length - 1) { const t = svgEl("text", { x: X(i), y: H - padB + 16, class: "df-axis", "text-anchor": "middle" }); t.textContent = d.length > 7 ? d.slice(5) : d.slice(2); svg.appendChild(t); }
   });
   host.appendChild(svg);
 }
