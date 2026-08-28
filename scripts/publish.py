@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 publish.py — Write report data into Firestore (news / earnings).
 
