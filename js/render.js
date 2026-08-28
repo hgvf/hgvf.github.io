@@ -185,6 +185,16 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     const title = document.createElement('h3');
     title.className = 'subsector-title';
     title.textContent = subsector.name;
+    if (isAdmin) {
+      // Drag handle — reorder subsector blocks; the ticker bar's 依題材 zones
+      // follow this order (wired up in app.js).
+      const handle = document.createElement('span');
+      handle.className = 'subsector-drag-handle';
+      handle.title = '拖曳排序';
+      handle.setAttribute('aria-label', '拖曳排序');
+      handle.textContent = '⠿';
+      titleRow.appendChild(handle);
+    }
     titleRow.appendChild(title);
     if (isAdmin) {
       const ctrls = document.createElement('span');
