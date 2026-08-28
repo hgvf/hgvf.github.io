@@ -1,0 +1,328 @@
+name: Sync daily news from notion to firestore (industry & military)
+
+on:
+  workflow_dispatch:
+
+  # 如果之後要每天自動跑，例如台灣時間 11:30：
+  schedule:
+    - cron: "0 5 * * 1-5"   # UTC+8 13:00
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    env:
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      MILITARY_NOTION_PAGE_ID: ${{ vars.MILITARY_NOTION_PAGE_ID }}
+      INDUSTRY_NOTION_PAGE_ID: ${{ vars.INDUSTRY_NOTION_PAGE_ID }}
+
+    steps:
+      # ------------------------------------------------------------
+      # 1. Checkout repo
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------
+      # 2. Python
+      # ------------------------------------------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests google-auth
+
+      # ------------------------------------------------------------
+      # 3. 建立 Notion JSON fetch helper
+      # ------------------------------------------------------------
+      - name: Create Notion fetch helper
+        run: |
+          cat > /tmp/fetch_notion_json.py <<'PY'
+          import argparse
+          import json
+          import re
+          import sys
+          import requests
+
+
+          NOTION_VERSION = "2022-06-28"
+
+
+          def headers(token):
+              return {
+                  "Authorization": f"Bearer {token}",
+                  "Notion-Version": NOTION_VERSION,
+                  "Content-Type": "application/json",
+              }
+
+
+          def get_all_children(block_id, token):
+              """
+              Retrieve all child blocks with pagination.
+              """
+              results = []
+              cursor = None
+
+              while True:
+                  url = f"https://api.notion.com/v1/blocks/{block_id}/children?page_size=100"
+
+                  if cursor:
+                      url += f"&start_cursor={cursor}"
+
+                  r = requests.get(
+                      url,
+                      headers=headers(token),
+                      timeout=30,
+                  )
+
+                  if r.status_code >= 300:
+                      print(
+                          f"ERROR reading Notion block {block_id}: "
+                          f"{r.status_code} {r.text}"
+                      )
+                      sys.exit(1)
+
+                  data = r.json()
+                  results.extend(data.get("results", []))
+
+                  if not data.get("has_more"):
+                      break
+
+                  cursor = data.get("next_cursor")
+
+              return results
+
+
+          def find_latest_date_page(parent_page_id, token):
+              """
+              Find child_page whose title is YYYY-MM-DD.
+              Return latest date + page id.
+              """
+              children = get_all_children(parent_page_id, token)
+
+              candidates = []
+
+              for block in children:
+                  if block.get("type") != "child_page":
+                      continue
+
+                  title = (
+                      block.get("child_page", {})
+                      .get("title", "")
+                      .strip()
+                  )
+
+                  if re.fullmatch(r"\d{4}-\d{2}-\d{2}", title):
+                      candidates.append(
+                          (title, block["id"])
+                      )
+
+              if not candidates:
+                  print(
+                      "ERROR: no YYYY-MM-DD child page found "
+                      f"under Notion parent {parent_page_id}"
+                  )
+                  sys.exit(1)
+
+              candidates.sort(
+                  key=lambda x: x[0],
+                  reverse=True,
+              )
+
+              return candidates[0]
+
+
+          def rich_text_to_text(items):
+              return "".join(
+                  item.get("plain_text", "")
+                  for item in items or []
+              )
+
+
+          def extract_text(block, token):
+              """
+              Extract JSON text from common Notion block types.
+
+              Supports:
+              - code
+              - paragraph
+              - quote
+              - callout
+              - bulleted_list_item
+              - numbered_list_item
+              """
+              block_type = block.get("type")
+              obj = block.get(block_type, {})
+
+              text = ""
+
+              if isinstance(obj, dict):
+                  text = rich_text_to_text(
+                      obj.get("rich_text", [])
+                  )
+
+              pieces = []
+
+              if text:
+                  pieces.append(text)
+
+              if block.get("has_children"):
+                  for child in get_all_children(
+                      block["id"],
+                      token,
+                  ):
+                      child_text = extract_text(
+                          child,
+                          token,
+                      )
+                      if child_text:
+                          pieces.append(child_text)
+
+              return "\n".join(pieces)
+
+
+          def clean_json_text(text):
+              text = text.strip()
+
+              # 防止 Notion 裡面存的是 markdown code fence
+              text = re.sub(
+                  r"^```(?:json)?\s*",
+                  "",
+                  text,
+                  flags=re.IGNORECASE,
+              )
+
+              text = re.sub(
+                  r"\s*```$",
+                  "",
+                  text,
+              )
+
+              return text.strip()
+
+
+          def main():
+              ap = argparse.ArgumentParser()
+              ap.add_argument("--token", required=True)
+              ap.add_argument("--page-id", required=True)
+              ap.add_argument("--output", required=True)
+              args = ap.parse_args()
+
+              date, child_page_id = find_latest_date_page(
+                  args.page_id,
+                  args.token,
+              )
+
+              print(
+                  f"Latest Notion page: {date} "
+                  f"({child_page_id})"
+              )
+
+              blocks = get_all_children(
+                  child_page_id,
+                  args.token,
+              )
+
+              parts = []
+
+              for block in blocks:
+                  text = extract_text(
+                      block,
+                      args.token,
+                  )
+
+                  if text:
+                      parts.append(text)
+
+              raw = clean_json_text(
+                  "\n".join(parts)
+              )
+
+              if not raw:
+                  print(
+                      f"ERROR: Notion page {date} contains no text"
+                  )
+                  sys.exit(1)
+
+              try:
+                  payload = json.loads(raw)
+              except json.JSONDecodeError as e:
+                  print(
+                      f"ERROR: invalid JSON in Notion page {date}"
+                  )
+                  print(str(e))
+                  print("--- First 1000 chars ---")
+                  print(raw[:1000])
+                  sys.exit(1)
+
+              with open(
+                  args.output,
+                  "w",
+                  encoding="utf-8",
+              ) as f:
+                  json.dump(
+                      payload,
+                      f,
+                      ensure_ascii=False,
+                      indent=2,
+                  )
+
+              print(
+                  f"Saved valid JSON to {args.output}"
+              )
+
+
+          if __name__ == "__main__":
+              main()
+          PY
+
+      # ============================================================
+      # MILITARY NEWS
+      # ============================================================
+
+      - name: Fetch latest Military News from Notion
+        run: |
+          python /tmp/fetch_notion_json.py \
+            --token "$NOTION_API_KEY" \
+            --page-id "$MILITARY_NOTION_PAGE_ID" \
+            --output /tmp/military_news.json
+
+      - name: Validate Military JSON
+        run: |
+          python -m json.tool \
+            /tmp/military_news.json \
+            > /dev/null
+
+      - name: Publish Military News to Firestore
+        run: |
+          python scripts/publish.py \
+            --type military \
+            --file /tmp/military_news.json
+
+      # ============================================================
+      # INDUSTRY NEWS
+      # ============================================================
+
+      - name: Fetch latest Industry News from Notion
+        run: |
+          python /tmp/fetch_notion_json.py \
+            --token "$NOTION_API_KEY" \
+            --page-id "$INDUSTRY_NOTION_PAGE_ID" \
+            --output /tmp/industry_news.json
+
+      - name: Validate Industry JSON
+        run: |
+          python -m json.tool \
+            /tmp/industry_news.json \
+            > /dev/null
+
+      - name: Publish Industry News to Firestore
+        run: |
+          python scripts/publish.py \
+            --type industry \
+            --file /tmp/industry_news.json
