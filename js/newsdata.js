@@ -12,7 +12,7 @@ import { firebaseConfig } from "./config.js";
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, orderBy, limit,
+  collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, orderBy, limit, documentId,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = () => (getApps().length ? getApp() : initializeApp(firebaseConfig));
@@ -36,6 +36,39 @@ export function toEvent(row) {
   return { __id: row && row.id != null ? row.id : null, ...ev };
 }
 
+// Newer publishers keep a complete daily payload in one date-keyed document:
+//   <collection>/2026-08-27 = { event_window, digest, events: [...] }
+// Older data (and the browser importer) stores one event per document. Flatten
+// either shape here so both News pages always receive a plain event array.
+function eventsFromRow(row) {
+  const dailyEvents = Array.isArray(row?.events)
+    ? row.events
+    : (Array.isArray(row?.data?.events) ? row.data.events : null);
+  if (dailyEvents) {
+    return dailyEvents
+      .filter(ev => ev && typeof ev === "object")
+      .map(ev => ({
+        // A nested event cannot safely use the parent date document as its
+        // delete id: doing so would delete every event for that day.
+        __id: null,
+        __parentId: row.id ?? null,
+        ...ev,
+      }));
+  }
+  return [toEvent(row)];
+}
+
+const eventDate = ev => String(
+  ev.event_date || ev.publication_date || ev.published_at || ev.ingested_at || ""
+).slice(0, 10);
+
+function flattenRows(rows, max) {
+  return rows
+    .flatMap(eventsFromRow)
+    .sort((a, b) => eventDate(b).localeCompare(eventDate(a)))
+    .slice(0, max);
+}
+
 // Read newest-first events for a news collection. Never throws — an absent
 // collection, missing index, or denied read all resolve to [].
 export async function loadNews(col, { dateField = "_date", max = 500 } = {}) {
@@ -43,19 +76,18 @@ export async function loadNews(col, { dateField = "_date", max = 500 } = {}) {
     const snap = await getDoc(doc(db(), "indexes", col));
     if (snap.exists()) {
       const ev = snap.data().events;
-      if (Array.isArray(ev)) return ev.slice(0, max).map(toEvent);
+      if (Array.isArray(ev)) return flattenRows(ev, max);
     }
   } catch { /* index missing / read denied → fall through to a live scan */ }
   try {
     let docs;
     try {
-      docs = (await getDocs(query(collection(db(), col), orderBy(dateField, "desc"), limit(max)))).docs;
-    } catch {
-      docs = (await getDocs(collection(db(), col))).docs;
-    }
+      // Daily documents have no `_date`, so an orderBy(_date) query silently
+      // excludes them. Their YYYY-MM-DD document ids sort chronologically.
+      docs = (await getDocs(query(collection(db(), col), orderBy(documentId(), "desc"), limit(max)))).docs;
+    } catch { docs = (await getDocs(collection(db(), col))).docs; }
     const rows = docs.map(d => ({ id: d.id, ...d.data() }));
-    rows.sort((a, b) => String(b[dateField] || "").localeCompare(String(a[dateField] || "")));
-    return rows.slice(0, max).map(toEvent);
+    return flattenRows(rows, max);
   } catch { return []; }
 }
 
@@ -104,5 +136,5 @@ export async function rebuildNewsIndex(col, dateField = "_date", max = 250) {
   try {
     await setDoc(doc(db(), "indexes", col), { updated_at: new Date().toISOString(), count: events.length, events }, { merge: false });
   } catch { /* 權限不足時忽略 */ }
-  return events.map(toEvent);
+  return flattenRows(events, max);
 }
