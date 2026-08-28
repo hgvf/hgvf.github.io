@@ -113,6 +113,15 @@ export async function updateSubsectorNotes(id, notes) {
   return updateDoc(doc(db(), "subsectors", id), { notes });
 }
 
+// Persist a new subsector display order: writes order = position for each id,
+// in one batch. Callers pass the ids already in the desired order.
+export async function reorderSubsectors(orderedIds) {
+  if (!orderedIds || !orderedIds.length) return;
+  const batch = writeBatch(db());
+  orderedIds.forEach((id, i) => batch.update(doc(db(), "subsectors", id), { order: i }));
+  return batch.commit();
+}
+
 // ─── Whole-sector tree (fewer reads) ────────────────────────────────
 // Loads a sector's subsectors plus all their tickers / analysis /
 // research_notes in ONE query per collection (batched with `in`, 30 ids max
