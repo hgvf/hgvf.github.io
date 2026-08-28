@@ -297,7 +297,20 @@ async function selectSector(sectorId) {
   const groups = subsectorsData.map(({ subsector, tickers }) => ({
     id: subsector.id, name: subsector.name, symbols: tickers.map(t => t.symbol),
   }));
-  const barOpts = { groups, events: _eventTickerMap };
+  // Admin: drag a 依題材 zone in the ticker bar to reorder. Persist the new
+  // order and make the lower notes/watchlist blocks follow (they aren't
+  // draggable themselves). Only real subsector zones carry an id — the
+  // leftover 精選/其他 zone is excluded by render.js.
+  const onReorderGroups = _isAdmin ? async orderedIds => {
+    subsectorsData.sort((a, b) => orderedIds.indexOf(a.subsector.id) - orderedIds.indexOf(b.subsector.id));
+    barOpts.groups = subsectorsData.map(({ subsector, tickers }) => ({
+      id: subsector.id, name: subsector.name, symbols: tickers.map(t => t.symbol),
+    }));
+    reorderSubsectorBlocks(orderedIds);
+    try { await reorderSubsectors(orderedIds); }
+    catch (err) { console.error('reorder persist failed:', err); }
+  } : null;
+  const barOpts = { groups, events: _eventTickerMap, onReorderGroups };
 
   renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, barOpts);
 
@@ -307,7 +320,6 @@ async function selectSector(sectorId) {
     sectorContentEl.appendChild(renderSectorContent(_currentSector, subsectorsData, _prices, _isAdmin));
   }
   bindSectorEvents(subsectorsData);
-  if (_isAdmin) setupSubsectorDnD(subsectorsData, allSymbols, barOpts);
 
   _unsubPrices = subscribePrices(allSymbols, newPrices => {
     _prices = newPrices;
@@ -316,58 +328,24 @@ async function selectSector(sectorId) {
   });
 }
 
-/* ── Subsector drag-to-reorder (admin) ───────────────────────────────────
-   Drag a subsector block by its ⠿ handle to reorder. On drop we persist the
-   new order to Firestore and rebuild the ticker-bar 依題材 groups so the top
-   price cards follow the same order (the top bar itself isn't draggable). */
-function setupSubsectorDnD(subsectorsData, allSymbols, barOpts) {
+/* ── Reorder lower subsector blocks to follow the ticker-bar drag ────────
+   The 依題材 zones (top) are the draggable surface; when one is dropped this
+   moves the matching lower notes/watchlist blocks into the same order in
+   place (no re-render, no refetch). */
+function reorderSubsectorBlocks(orderedIds) {
   const container = document.getElementById('sectorContent');
   if (!container) return;
-  let dragEl = null;
-
-  const finish = async () => {
-    if (!dragEl) return;
-    dragEl.classList.remove('dragging');
-    dragEl.draggable = false;
-    dragEl = null;
-    const ids = [...container.querySelectorAll('.subsector-block')].map(b => b.dataset.subsectorId);
-    // Match in-memory data + ticker-bar groups to the new DOM order.
-    subsectorsData.sort((a, b) => ids.indexOf(a.subsector.id) - ids.indexOf(b.subsector.id));
-    barOpts.groups = subsectorsData.map(({ subsector, tickers }) => ({
-      id: subsector.id, name: subsector.name, symbols: tickers.map(t => t.symbol),
-    }));
-    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, barOpts);
-    try { await reorderSubsectors(ids); }
-    catch (err) { console.error('reorder persist failed:', err); }
-  };
-
-  container.querySelectorAll('.subsector-drag-handle').forEach(handle => {
-    const block = handle.closest('.subsector-block');
+  const blocks = new Map(
+    [...container.querySelectorAll('.subsector-block')].map(b => [b.dataset.subsectorId, b])
+  );
+  // Leave the first block where it sits and chain the rest after it — this
+  // keeps the run between the "+ Add Subsector" and "Delete tab" buttons.
+  let prev = null;
+  orderedIds.forEach(id => {
+    const block = blocks.get(id);
     if (!block) return;
-    // The block is only draggable while the handle is held, so text selection
-    // and inputs elsewhere in the block keep working normally.
-    handle.addEventListener('pointerdown', () => { block.draggable = true; });
-    handle.addEventListener('pointerup',   () => { if (dragEl !== block) block.draggable = false; });
-    block.addEventListener('dragstart', e => {
-      dragEl = block;
-      block.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      try { e.dataTransfer.setData('text/plain', block.dataset.subsectorId || ''); } catch { /* ignore */ }
-    });
-    block.addEventListener('dragend', finish);
-  });
-
-  container.addEventListener('dragover', e => {
-    if (!dragEl) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const others = [...container.querySelectorAll('.subsector-block:not(.dragging)')];
-    const after = others.find(b => {
-      const r = b.getBoundingClientRect();
-      return e.clientY <= r.top + r.height / 2;
-    });
-    if (after) after.before(dragEl);
-    else others[others.length - 1]?.after(dragEl);
+    if (prev) prev.after(block);
+    prev = block;
   });
 }
 
