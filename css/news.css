@@ -1,0 +1,77 @@
+/* news.css — News · Military / Industry pages. Extends defense.css (df-*)
+   with a world-map view, live-status badges and content-node styling. */
+
+.nm-sub { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0.4rem 0 0.2rem; max-width: 74ch; }
+
+/* toolbar with an extra column for the news filters */
+.nm-toolbar { grid-template-columns: minmax(180px, 2fr) repeat(5, minmax(96px, 1fr)); }
+@media (max-width: 820px) { .nm-toolbar { grid-template-columns: 1fr 1fr; } }
+
+/* card side badges */
+.nm-card .df-card-side { gap: 0.35rem; }
+.nm-score { font-size: 0.8rem; color: var(--text-secondary); }
+.nm-score b { font-family: var(--font-mono); color: var(--accent); font-size: 1.05rem; }
+.nm-cat { font-size: 0.74rem; color: var(--text-muted); background: var(--accent-light); border-radius: 4px; padding: 0.12rem 0.42rem; }
+.nm-verify { font-size: 0.7rem; color: var(--text-muted); }
+.nm-loc { font-size: 0.74rem; color: var(--text-secondary); }
+.nm-status { font-size: 0.7rem; font-weight: 600; border-radius: 999px; padding: 0.1rem 0.5rem; }
+.nm-status-ongoing { background: rgba(220, 38, 38, 0.14); color: #DC2626; }
+.nm-status-upcoming { background: rgba(37, 99, 235, 0.14); color: #2563EB; }
+.nm-status-ended { background: var(--neutral-bg); color: var(--text-muted); }
+.nm-status-unknown { background: var(--neutral-bg); color: var(--text-muted); }
+.nm-why { margin: 0.6rem 0; padding: 0.55rem 0.8rem; border-left: 3px solid var(--accent); background: var(--accent-light); border-radius: 4px; font-size: 0.86rem; line-height: 1.6; color: var(--text-secondary); }
+
+/* ── world map ── */
+.nm-map-head { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.nm-map-hint { margin: 0 0 0.7rem; line-height: 1.6; max-width: 80ch; }
+.nm-map-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--glass-border); border-radius: var(--radius-md); background: var(--glass-bg); box-shadow: var(--glass-shadow); }
+.nm-map { display: block; min-width: 640px; }
+.nm-ocean { fill: rgba(37, 99, 235, 0.05); }
+.nm-grat { stroke: var(--glass-border); stroke-width: 0.6; }
+.nm-grat.eq { stroke: var(--text-muted); stroke-width: 0.8; stroke-dasharray: 3 3; opacity: 0.5; }
+.nm-land { fill: var(--accent-light); stroke: var(--accent); stroke-width: 0.8; stroke-opacity: 0.35; fill-opacity: 0.85; }
+.nm-marker { transition: r 0.1s; }
+.nm-marker:hover { r: 8; }
+.nm-map-legend { display: flex; flex-wrap: wrap; gap: 0.7rem; margin: 0.7rem 0; }
+.nm-leg { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: var(--text-secondary); }
+.nm-leg-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.nm-map-list { display: flex; flex-direction: column; gap: 0.2rem; margin-top: 0.4rem; }
+.nm-map-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 0.6rem; align-items: center; padding: 0.4rem 0.55rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.82rem; }
+.nm-map-row:hover { background: var(--accent-light); }
+.nm-map-row-title { color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nm-map-row-loc { font-size: 0.74rem; color: var(--text-muted); white-space: nowrap; }
+@media (max-width: 620px) { .nm-map-row { grid-template-columns: auto 1fr auto; } .nm-map-row-loc { display: none; } }
+
+.nm-stats { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .nm-stats { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── industry: tier / tickers / content nodes ── */
+.in-why { margin: 0.3rem 0 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+.in-tier { color: #fff; font-size: 0.74rem; font-weight: 700; border-radius: 5px; padding: 0.18rem 0.5rem; font-family: var(--font-mono); }
+.in-tickers { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+.in-nodecount { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+.in-nodes { display: flex; flex-direction: column; gap: 0.6rem; }
+.in-node { border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; background: var(--glass-bg); }
+.in-node-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+.in-node-type { font-size: 0.72rem; font-weight: 700; color: var(--accent); background: var(--accent-light); border-radius: 4px; padding: 0.1rem 0.42rem; }
+.in-node-ev { font-size: 0.66rem; color: var(--text-muted); font-family: var(--font-mono); }
+.in-node-title { font-size: 0.86rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; }
+.in-node-sum { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+.in-node-bullets { margin: 0.35rem 0 0; padding-left: 1.1rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
+
+.in-cos { display: flex; flex-direction: column; gap: 0.5rem; }
+.in-co { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.45rem 0.6rem; border-radius: var(--radius-sm); background: var(--glass-bg); border: 1px solid var(--glass-border); }
+.in-co-name { font-size: 0.88rem; color: var(--text-primary); font-weight: 600; }
+.in-co-meta { font-size: 0.74rem; color: var(--text-muted); }
+.in-co-mech { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+
+.in-scchain { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.in-scnode { font-size: 0.8rem; color: var(--text-secondary); background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 0.3rem 0.55rem; }
+.in-scnode b { color: var(--accent); font-weight: 600; margin-right: 0.2rem; }
+.in-scarrow { color: var(--text-muted); font-weight: 700; }
+
+.in-ms { display: flex; gap: 0.6rem; font-size: 0.82rem; color: var(--text-secondary); padding: 0.2rem 0; }
+.in-ms span { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted); min-width: 82px; }
+.in-ms i { color: var(--text-muted); font-style: normal; font-size: 0.72rem; }
+.in-watch { margin: 0; padding-left: 1.1rem; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6; }

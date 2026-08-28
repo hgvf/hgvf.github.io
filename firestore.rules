@@ -106,6 +106,20 @@ service cloud.firestore {
       allow write: if isWhitelisted();
     }
 
+    // ── News section ───────────────────────────────────────────
+    // 軍武動態（military-dynamics-intelligence skill）— 全球軍事事件、演習、
+    // 部署與地圖資料。Whitelisted users publish via the "ADD JSON" importer;
+    // downstream ETL may also write server-side (Admin/REST, bypasses rules).
+    match /military_news/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+    // 產業動態（industry-news-daily skill）— 科技產業／價值鏈事件與投資內容節點。
+    match /industry_news/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+
     // Editable site content (home 頁 About Me / Interests 等)。公開讀，白名單寫。
     match /site_content/{id} {
       allow read: if true;
