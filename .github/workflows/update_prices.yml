@@ -1,4 +1,4 @@
-name: Update Stock Prices (disabled)
+name: Update Stock Prices
 # Superseded by sync_firestore.yml — prices.json is now synced from Firestore.
 
 on:
