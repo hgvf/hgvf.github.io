@@ -433,24 +433,19 @@ img { display: block; max-width: 100%; }
 .tc-change.neutral  { background: var(--neutral-bg);  color: var(--neutral);  }
 
 #sectorContent .subsector-block { margin-bottom: 1.5rem; }
-#sectorContent .subsector-block.dragging { opacity: 0.45; }
-#sectorContent .subsector-block.dragging * { pointer-events: none; }
 .subsector-title {
   font-size: 0.9rem; font-weight: 600; color: var(--text-primary);
   margin-bottom: 1rem; padding-left: 0.5rem; border-left: 3px solid var(--accent);
 }
-/* Drag handle for reordering subsector blocks (admin only). */
-.subsector-drag-handle {
-  cursor: grab; user-select: none; margin-right: 0.15rem;
-  color: var(--text-secondary); opacity: 0.5; font-size: 1rem; line-height: 1;
-  align-self: center;
+/* Drag handle for reordering 依題材 zones in the ticker bar (admin only). */
+.tz-drag {
+  cursor: grab; user-select: none; margin-right: 0.1rem;
+  opacity: 0.5; font-size: 0.85rem; line-height: 1;
 }
-.subsector-drag-handle:hover  { opacity: 1; }
-.subsector-drag-handle:active { cursor: grabbing; }
-.subsector-title-row .subsector-title { margin-bottom: 0; }
-.subsector-title-row {
-  display: flex; align-items: center; gap: 0.35rem; margin-bottom: 1rem;
-}
+.tz-drag:hover  { opacity: 1; }
+.tz-drag:active { cursor: grabbing; }
+.ticker-zone.dragging { opacity: 0.45; }
+.ticker-zone.dragging * { pointer-events: none; }
 .subsector-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.1rem; align-items: start; }
 
 .notes-card { padding: 1.25rem 1.4rem; }

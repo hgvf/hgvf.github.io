@@ -185,16 +185,6 @@ export function renderSectorContent(sector, subsectorsData, prices, isAdmin) {
     const title = document.createElement('h3');
     title.className = 'subsector-title';
     title.textContent = subsector.name;
-    if (isAdmin) {
-      // Drag handle — reorder subsector blocks; the ticker bar's 依題材 zones
-      // follow this order (wired up in app.js).
-      const handle = document.createElement('span');
-      handle.className = 'subsector-drag-handle';
-      handle.title = '拖曳排序';
-      handle.setAttribute('aria-label', '拖曳排序');
-      handle.textContent = '⠿';
-      titleRow.appendChild(handle);
-    }
     titleRow.appendChild(title);
     if (isAdmin) {
       const ctrls = document.createElement('span');
@@ -292,7 +282,7 @@ let _barState = null;   // last args, so the view toggle can re-render in place
 let _barBound = false;  // toggle listener attached once
 
 export function renderTickerBar(symbols, prices, isAdmin, sector, opts = {}) {
-  _barState = { symbols, prices, isAdmin, sector, groups: opts.groups || [], events: opts.events || {} };
+  _barState = { symbols, prices, isAdmin, sector, groups: opts.groups || [], events: opts.events || {}, onReorderGroups: opts.onReorderGroups || null };
   const bar = document.getElementById('tickerBarInner');
   if (bar && !_barBound) {
     bar.addEventListener('click', e => {
@@ -305,7 +295,7 @@ export function renderTickerBar(symbols, prices, isAdmin, sector, opts = {}) {
         return;
       }
       const head = e.target.closest('.tz-head');
-      if (head && !e.target.closest('a, button')) {
+      if (head && !e.target.closest('a, button, .tz-drag')) {
         const zone = head.parentElement;
         const key = zoneKey(zone.dataset.title || '');
         const collapsed = zone.classList.toggle('collapsed');
@@ -325,7 +315,7 @@ export function renderTickerBar(symbols, prices, isAdmin, sector, opts = {}) {
 
 function paintTickerBar() {
   if (!_barState) return;
-  const { symbols, prices, isAdmin, sector, groups, events } = _barState;
+  const { symbols, prices, isAdmin, sector, groups, events, onReorderGroups } = _barState;
   const bar = document.getElementById('tickerBarInner');
   if (!bar) return;
   bar.innerHTML = '';
@@ -382,18 +372,24 @@ function paintTickerBar() {
 
   const zones = document.createElement('div');
   zones.className = 'ticker-zones';
-  const buildZone = (title, syms, kind, extraClass = '') => {
+  // Admin can drag 依題材 zones to reorder; only real subsector zones (with a
+  // subId) get a handle and become draggable.
+  const canReorder = isAdmin && typeof onReorderGroups === 'function';
+  const buildZone = (title, syms, kind, { extraClass = '', subId = null } = {}) => {
     if (!syms.length) return;
     const zone = document.createElement('div');
     zone.className = `ticker-zone tz-${kind}${extraClass ? ' ' + extraClass : ''}`;
     zone.dataset.title = title;
+    if (subId) zone.dataset.subsectorId = subId;
     if (_collapsed.has(zoneKey(title))) zone.classList.add('collapsed');
     const head = document.createElement('div');
     head.className = 'tz-head';
     head.setAttribute('role', 'button');
     head.setAttribute('tabindex', '0');
     head.title = '點擊收合 / 展開';
-    head.innerHTML = `<span class="tz-caret" aria-hidden="true">▾</span><span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
+    const dragHandle = (canReorder && subId)
+      ? `<span class="tz-drag" title="拖曳排序" aria-label="拖曳排序">⠿</span>` : '';
+    head.innerHTML = `${dragHandle}<span class="tz-caret" aria-hidden="true">▾</span><span class="tz-title">${title}</span><span class="tz-count">${syms.length}</span>`;
     zone.appendChild(head);
     const grid = document.createElement('div');
     grid.className = 'tz-grid';
@@ -410,10 +406,10 @@ function paintTickerBar() {
       const syms = [...new Set(g.symbols)].filter(s => unique.includes(s) && !seen.has(s));
       syms.forEach(s => seen.add(s));
       syms.sort(byChg);
-      buildZone(g.name, syms, 'theme');
+      buildZone(g.name, syms, 'theme', { subId: g.id });
     });
     const leftovers = unique.filter(s => !seen.has(s)).sort(byChg);
-    buildZone('精選 / 其他', leftovers, 'theme', 'tz-other');
+    buildZone('精選 / 其他', leftovers, 'theme', { extraClass: 'tz-other' });
   } else {
     const gainers = unique.filter(s => prices[s]?.day_change_pct > 0)
       .sort((a, b) => prices[b].day_change_pct - prices[a].day_change_pct);
@@ -425,6 +421,51 @@ function paintTickerBar() {
     buildZone('平盤 / 無資料', neutrals, 'flat');
   }
   bar.appendChild(zones);
+  if (canReorder && view === 'subsector') setupZoneDnD(zones, onReorderGroups);
+}
+
+// Drag-to-reorder for the 依題材 zones. Grabbing a zone's ⠿ handle makes that
+// zone draggable; on drop we read the new order of subsector ids and hand it to
+// the callback (app.js), which persists it and reorders the lower blocks.
+function setupZoneDnD(zonesEl, onReorderGroups) {
+  let dragEl = null;
+  const ids = () => [...zonesEl.querySelectorAll('.ticker-zone[data-subsector-id]')]
+    .map(z => z.dataset.subsectorId);
+
+  zonesEl.querySelectorAll('.tz-drag').forEach(handle => {
+    const zone = handle.closest('.ticker-zone');
+    if (!zone || !zone.dataset.subsectorId) return;
+    handle.addEventListener('pointerdown', () => { zone.draggable = true; });
+    handle.addEventListener('pointerup',   () => { if (dragEl !== zone) zone.draggable = false; });
+    zone.addEventListener('dragstart', e => {
+      dragEl = zone;
+      zone.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', zone.dataset.subsectorId); } catch { /* ignore */ }
+    });
+    zone.addEventListener('dragend', () => {
+      const moved = !!dragEl;
+      zone.classList.remove('dragging');
+      zone.draggable = false;
+      dragEl = null;
+      if (moved) onReorderGroups(ids());
+    });
+  });
+
+  zonesEl.addEventListener('dragover', e => {
+    if (!dragEl) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const others = [...zonesEl.querySelectorAll('.ticker-zone[data-subsector-id]:not(.dragging)')];
+    // Reading-order (row-major) insertion point for the 2-column grid.
+    const after = others.find(z => {
+      const r = z.getBoundingClientRect();
+      if (e.clientY < r.top) return true;                                   // pointer above this row
+      return e.clientY <= r.bottom && e.clientX < r.left + r.width / 2;      // same row, left half
+    });
+    if (after) after.before(dragEl);
+    else others[others.length - 1]?.after(dragEl);
+  });
 }
 
 export function updatePriceCells(prices) {
