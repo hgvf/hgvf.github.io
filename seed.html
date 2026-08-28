@@ -13,6 +13,14 @@
     #log { margin-top: 1.5rem; white-space: pre-wrap; line-height: 1.6; }
     .ok  { color: #6f6; }
     .err { color: #f66; }
+    .warn { color: #fc3; }
+    .purge-box { margin-top: 1.5rem; padding: 1rem 1.2rem; border: 1px solid #d9534f; border-radius: 8px; background: #1c1414; }
+    .purge-box h3 { margin: 0 0 0.5rem; color: #f88; font-size: 1rem; }
+    .purge-box p { margin: 0.3rem 0; color: #bbb; font-size: 0.85rem; }
+    .purge-box code { color: #fc9; }
+    .purge-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.8rem; }
+    .purge-row input[type=date] { padding: 0.5rem; background: #222; color: #eee; border: 1px solid #555; border-radius: 6px; font-family: monospace; font-size: 1rem; }
+    .purge-box label { color: #ddd; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem; }
   </style>
 </head>
 <body>
@@ -23,12 +31,27 @@
   <button id="btnCleanup" class="cleanup">Cleanup Zombies（清除孤兒資料）</button>
   <button id="btnReindex" class="reindex">Rebuild Event Index（重建 ticker 事件索引）</button>
   <button id="btnReindexDefense" class="reindex">Rebuild Defense Index（重建每日軍武索引）</button>
+
+  <div class="purge-box">
+    <h3>🗑 按日期清除舊資料（Purge before date）</h3>
+    <p>刪除選定日期<b>之前</b>（不含當天）的所有時間序列資料，避免 Firestore 空間爆炸。涵蓋：
+      軍武動態 <code>military_news</code>、每日軍武合約 <code>mil_defense_daily</code>、
+      供應鏈新聞 <code>supply_chain_news</code>、產業事件 <code>supply_chain_events</code> 與其日摘要、
+      產業動態 <code>industry_news</code>、財報電話 <code>earnings_calls</code>。</p>
+    <p class="warn">⚠ 此操作<b>不可復原</b>。無法判斷日期的文件會被保留（不刪除），並在下方列出。</p>
+    <div class="purge-row">
+      <label>刪除此日期之前：<input type="date" id="purgeDate" /></label>
+      <label><input type="checkbox" id="purgeDryRun" checked /> 先試算（Dry run，不實際刪除）</label>
+      <button id="btnPurge" class="cleanup">執行清除</button>
+    </div>
+  </div>
+
   <div id="log"></div>
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDocs, deleteDoc, collection, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+    import { getFirestore, doc, setDoc, getDoc, getDocs, deleteDoc, collection, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
       apiKey:            "AIzaSyDT4eEQZXnqTBn17LGrg9isYFRFFNCbI-I",
@@ -318,6 +341,96 @@
           print(`  prices/${sym} ✓`, 'ok');
         }
         print('\nPrices 完成！請重新整理主站。', 'ok');
+      } catch (e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
+
+    /* ── Purge time-series docs before a chosen date ─────
+       Manual housekeeping: delete every document dated strictly before the
+       chosen date across the growing time-series collections, so Firestore
+       storage doesn't balloon. Each collection is matched against the date
+       field(s) it actually uses (checked both at the top level and inside a
+       nested `data` object, since some collections wrap the event in `data`).
+       Docs with no parseable date are KEPT and listed, never deleted. After a
+       real purge the single-doc read indexes are pruned in place so the pages
+       stop showing removed rows. Dry-run first to preview counts. */
+    const PURGE_TARGETS = [
+      { col: 'military_news',           label: '軍武動態',       index: 'military_news' },
+      { col: 'mil_defense_daily',       label: '每日軍武合約',   index: 'mil_defense_daily' },
+      { col: 'supply_chain_news',       label: '供應鏈新聞' },
+      { col: 'supply_chain_events',     label: '產業事件' },
+      { col: 'supply_chain_daily_digest', label: '產業事件日摘要' },
+      { col: 'industry_news',           label: '產業動態',       index: 'industry_news' },
+      { col: 'earnings_calls',          label: '財報電話會議' },
+    ];
+    // First 10-char date found among the known date fields (top level + nested data + doc id).
+    function docDate(id, d) {
+      const cands = [];
+      const pick = o => { if (!o || typeof o !== 'object') return;
+        ['_date','date','event_date','publication_date','published_at','event_end_date','run_date','fiscal_period_end','filing_date','_year']
+          .forEach(k => { if (o[k]) cands.push(String(o[k])); }); };
+      pick(d); pick(d && d.data);
+      if (/^\d{4}-\d{2}-\d{2}/.test(id)) cands.push(id);
+      for (const c of cands) { const m = c.match(/\d{4}-\d{2}-\d{2}/); if (m) return m[0]; }
+      // year-only (e.g. annual _year) → treat as Jan 1 of that year
+      for (const c of cands) { const m = c.match(/^\d{4}$/); if (m) return m[0] + '-01-01'; }
+      return null;
+    }
+
+    document.getElementById('btnPurge').addEventListener('click', async () => {
+      const btn = document.getElementById('btnPurge');
+      const cutoff = document.getElementById('purgeDate').value;   // YYYY-MM-DD
+      const dryRun = document.getElementById('purgeDryRun').checked;
+      log.innerHTML = '';
+      if (!cutoff) { print('請先選擇日期。', 'err'); return; }
+      if (!dryRun && !window.confirm('確定要永久刪除 ' + cutoff + ' 之前的所有資料嗎？此操作不可復原。')) return;
+
+      btn.disabled = true;
+      if (!(await ensureSignedIn())) { btn.disabled = false; return; }
+      print((dryRun ? '【試算模式】' : '【實際刪除】') + '刪除 ' + cutoff + ' 之前的資料\n');
+
+      let grandDel = 0, grandKeepUndated = 0;
+      try {
+        for (const t of PURGE_TARGETS) {
+          let snap;
+          try { snap = await getDocs(collection(db, t.col)); }
+          catch (e) { print(`  ${t.label} <${t.col}>：讀取失敗 ${e.message}`, 'err'); continue; }
+          if (snap.empty) { print(`  ${t.label} <${t.col}>：空或不存在，略過`); continue; }
+
+          let toDelete = [], undated = 0;
+          snap.docs.forEach(dref => {
+            const dt = docDate(dref.id, dref.data());
+            if (dt == null) { undated++; return; }
+            if (dt < cutoff) toDelete.push(dref);
+          });
+
+          if (!dryRun) { for (const dref of toDelete) await deleteDoc(dref.ref); }
+          grandDel += toDelete.length; grandKeepUndated += undated;
+          const verb = dryRun ? '將刪除' : '已刪除';
+          print(`  ${t.label} <${t.col}>：${snap.size} 筆，${verb} ${toDelete.length} 筆` +
+                (undated ? `，保留 ${undated} 筆無日期` : ''), toDelete.length ? 'ok' : '');
+
+          // Prune the single-doc read index in place so pages stop showing removed rows.
+          if (!dryRun && t.index && toDelete.length) {
+            try {
+              const iref = doc(db, 'indexes', t.col);
+              const isnap = await getDoc(iref);
+              if (isnap.exists() && Array.isArray(isnap.data().events)) {
+                const kept = isnap.data().events.filter(ev => {
+                  const dt = docDate(ev.id || '', ev);
+                  return dt == null || dt >= cutoff;
+                });
+                await setDoc(iref, { updated_at: new Date().toISOString(), count: kept.length, events: kept });
+                print(`    indexes/${t.col} 已同步：保留 ${kept.length} 筆`, 'ok');
+              }
+            } catch (e) { print(`    indexes/${t.col} 同步失敗（可稍後用上方按鈕重建）：${e.message}`, 'warn'); }
+          }
+        }
+        print(`\n${dryRun ? '試算完成' : '清除完成'}：共 ${grandDel} 筆${dryRun ? '將' : '已'}刪除` +
+              (grandKeepUndated ? `，${grandKeepUndated} 筆無日期保留` : '') + '。', 'ok');
+        if (dryRun) print('取消勾選「先試算」後再次執行即會實際刪除。', 'warn');
       } catch (e) {
         print('錯誤: ' + e.message, 'err');
       }
