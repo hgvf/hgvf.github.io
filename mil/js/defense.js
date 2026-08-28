@@ -57,7 +57,13 @@ async function refresh(rebuildIndex = false) {
 }
 
 function renderShell() {
-  const total = EVENTS.reduce((s, e) => s + (e.contract?.amount || 0), 0);
+  // 合約總額須「依幣別」加總，不能把 USD/JPY/KRW… 混加成單一數字（否則會得到
+  // 像 $5222B 這種無意義的值，也和下方 ETL 依幣別分開的數字對不上）。
+  const byCcyTotal = {};
+  EVENTS.forEach(e => { const a = e.contract?.amount, c = e.contract?.currency || (a != null ? "USD" : null); if (a != null && c) byCcyTotal[c] = (byCcyTotal[c] || 0) + a; });
+  const ccyOrder = Object.keys(byCcyTotal).sort((a, b) => byCcyTotal[b] - byCcyTotal[a]);
+  const primaryCcy = ccyOrder[0] || "USD";
+  const otherCcy = ccyOrder.slice(1).map(c => fmtAmt(byCcyTotal[c], c)).join(" · ");
   const dates = EVENTS.map(e => e.publication_date).filter(Boolean).sort();
   root.innerHTML = `
     ${usingSample ? `<div class="mil-banner"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
@@ -72,7 +78,7 @@ function renderShell() {
 
     <div class="mil-stats">
       <div class="mil-stat"><div class="label">事件數</div><div class="value">${EVENTS.length}</div><div class="sub">${dates[0] ? fmtDate(dates[0]) + " – " + fmtDate(dates[dates.length-1]) : ""}</div></div>
-      <div class="mil-stat"><div class="label">合約總額</div><div class="value brass">${money(total)}</div></div>
+      <div class="mil-stat"><div class="label">合約總額 ${primaryCcy}</div><div class="value brass">${fmtAmt(byCcyTotal[primaryCcy] || 0, primaryCcy)}</div>${otherCcy ? `<div class="sub">${otherCcy}</div>` : ""}</div>
       <div class="mil-stat"><div class="label">上市承包商事件</div><div class="value allied">${EVENTS.filter(isListed).length}</div></div>
       <div class="mil-stat"><div class="label">最高重要度</div><div class="value">${Math.max(0, ...EVENTS.map(e => e.importance_score || 0))}</div></div>
     </div>
