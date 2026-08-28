@@ -249,7 +249,7 @@ def earnings_docs(calls, now_iso):
 
 
 # ─── Military defense contracts (mil_defense_daily) ────────────────────
-# Doc shape MUST match the front-end writer (mil/js/milstore.js saveDefenseEvents)
+# Doc shape MUST match the front-end writer (js/defensedata.js saveDefenseEvents)
 # so the page renders scheduler-written and hand-pasted events identically:
 #   { _date, _country, _type, _score, updated_at, data: <event> }
 # Accepts {"run":{...},"events":[...]}, a bare list, or a single event object.
@@ -291,7 +291,7 @@ def defense_docs(events, now_iso):
 
 
 # ─── Military war conflicts (mil_conflicts) + weapon pools ─────────────
-# Doc shapes mirror the front-end writers (mil/js/milstore.js) so scheduler
+# Doc shapes mirror the front-end writers (js/defensedata.js) so scheduler
 # and hand-pasted data upsert identically:
 #   mil_conflicts/{id}        -> { id, updated_at, data:<conflict> }
 #   mil_weapons/{id}          -> { updated_at, data:<weapon> }   (arsenal ③)
@@ -495,7 +495,7 @@ def rebuild_event_index(session, base, token, now_iso):
 # whole mil_defense_daily collection on every page load (Firestore reads grow
 # linearly with accumulated events otherwise — same problem ticker_events
 # solved for the watchlist). Holds the most-recent N events flattened to the
-# exact rows the front-end expects (mil/js/milstore.js loadDefenseEvents):
+# exact rows the front-end expects (js/defensedata.js loadDefenseEvents):
 #   indexes/mil_defense_daily = { updated_at, count, events: [
 #       { id, _date, _country, _type, _score, data:<event> }, ... ] }
 # ~3KB/event × 250 ≈ 0.7MB, safely under Firestore's 1MB doc limit.
