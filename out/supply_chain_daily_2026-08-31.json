@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-01T06:13:43+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-08-31",
+    "end": "2026-08-31"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "rare earth": 1,
+      "permanent magnet": 1,
+      "critical minerals": 1,
+      "defense": 1,
+      "semiconductor": 1,
+      "advanced packaging": 1,
+      "AI infrastructure": 1,
+      "data center": 1
+    },
+    "importance_distribution": {
+      "critical": 1,
+      "high": 1
+    },
+    "top_tickers": ["USAR", "NVDA", "2454.TW", "GOOGL", "AVGO", "MRVL"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260831-001",
+      "slug": "usa-rare-earth-serra-verde-acquisition-approval",
+      "event_date": "2026-08-31",
+      "published_at": "2026-08-31",
+      "ingested_at": "2026-09-01T06:13:43+08:00",
+
+      "event_type": "strategic_investment",
+      "event_type_secondary": ["supply_agreement"],
+      "themes": ["rare earth", "permanent magnet", "critical minerals", "defense"],
+      "regions": ["US", "BR"],
+      "importance_score": 91,
+      "importance_tier": "critical",
+      "evidence_level": "confirmed",
+
+      "title_zh": "USA Rare Earth 股東通過收購巴西 Serra Verde 稀土礦，戰爭部主導的15.5億美元特殊目的公司完成增資",
+      "title_original": "USA Rare Earth Shareholders Approve $2.83B Serra Verde Acquisition; DoW-Backed SPV Upsized to $1.55B",
+      "summary_zh": "USA Rare Earth（USAR）股東以98.7%高票通過發行1.269億股，完成對巴西稀土礦業公司Serra Verde（持有Pela Ema礦場）約28.3億美元的收購案，掃除交割最後一道股東核准門檻。同日美國戰爭部（DoW）主導的特殊目的公司（SPV）增資至15.5億美元，含7.5億美元股權投資、5億美元融資，以及至少5年3億美元的保底採購合約，並首次為鏑（Dy）、鋱（Tb）設定價格下限。",
+      "why_it_matters": "此交易讓USAR取代私募基金成為Pela Ema礦場的實質控制者，使美國首度擁有規模化、垂直整合、且非亞洲產製全部四種磁性稀土（Nd/Pr/Dy/Tb）的供應來源；戰爭部主導的SPV附帶Dy/Tb價格下限與至少5年3億美元的保底採購合約，等於為美國國防與磁鐵供應鏈建立首個具價格保護的非中國來源，長期可望削弱中國在重稀土精煉端的議價力，並降低通用汽車、特斯拉等下游磁鐵買家對中國供應的曝險；反面而言，原先向中國出售早期產出的Serra Verde獨立礦業公司股東結構被吸收進美國主導體系，象徵中國稀土供應鏈版圖進一步收窄。",
+
+      "tickers": ["USAR"],
+      "companies": [
+        {
+          "name": "USA Rare Earth, Inc.",
+          "ticker": "USAR",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Serra Verde Rare Earths Ltd",
+          "ticker": null,
+          "exchange": null,
+          "country": "BR",
+          "role": "investee"
+        },
+        {
+          "name": "U.S. Department of War",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "investor"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["NdPr ore", "Dy/Tb ore (Pela Ema deposit)"],
+        "component": "magnetic rare earth oxides (Nd, Pr, Dy, Tb) / NdFeB magnet feedstock",
+        "supplier": ["USA Rare Earth, Inc.", "Serra Verde Rare Earths Ltd"],
+        "customer": ["U.S. Department of War", "US defense and magnet supply chain"],
+        "end_market": ["defense", "permanent magnet", "EV traction motors", "robotics"]
+      },
+
+      "products": ["magnetic rare earth oxides", "NdFeB permanent magnets"],
+      "materials": ["Nd", "Pr", "Dy", "Tb"],
+
+      "change": {
+        "type": "acquisition_closing_condition_cleared",
+        "before": "Serra Verde為Denham Capital、Vision Blue Resources等私募基金持有的獨立巴西稀土礦業公司，USAR與其僅有先前簽署、尚待股東核准的收購協議",
+        "after": "USAR股東通過發行1.269億股完成收購，交割後USAR垂直整合擁有全球唯一大規模、非亞洲產製全部四種磁性稀土的Pela Ema礦場，並由美國戰爭部主導的15.5億美元SPV提供7.5億美元股權與5億美元融資，附Dy/Tb價格下限保護"
+      },
+
+      "financial_data": {
+        "amount": 2830000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 5,
+        "effective_date": "2026-08-31"
+      },
+
+      "search_keywords": [
+        "usa rare earth", "usar", "serra verde", "pela ema",
+        "rare earth", "稀土", "ndfeb", "permanent magnet", "永磁",
+        "neodymium", "praseodymium", "dysprosium", "terbium",
+        "department of war", "dow", "美國戰爭部", "dod",
+        "brazil", "巴西", "magnetic rare earth", "critical minerals", "關鍵礦物",
+        "strategic investment", "offtake", "acquisition", "收購", "sec 8-k"
+      ],
+
+      "sources": [
+        {
+          "publisher": "USA Rare Earth, Inc. — SEC Form 8-K (Item 5.07)",
+          "source_type": "primary",
+          "url": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000061/usar-20260828.htm",
+          "is_primary": true,
+          "accessed_at": "2026-08-31T23:00:00+08:00"
+        },
+        {
+          "publisher": "USA Rare Earth, Inc. — Press Release (Ex-99.1)",
+          "source_type": "primary",
+          "url": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026092810/ea030292401ex99-1.htm",
+          "is_primary": false,
+          "accessed_at": "2026-08-31T23:00:00+08:00"
+        },
+        {
+          "publisher": "Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bloomberg.com/news/articles/2026-08-31/brazil-rare-earth-mine-shows-hurdles-of-breaking-free-from-china",
+          "is_primary": false,
+          "accessed_at": "2026-08-31T23:05:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260831-002",
+      "slug": "nvidia-mediatek-3-5b-convertible-bond-nvlink-fusion",
+      "event_date": "2026-08-31",
+      "published_at": "2026-08-31",
+      "ingested_at": "2026-09-01T06:13:43+08:00",
+
+      "event_type": "strategic_investment",
+      "event_type_secondary": ["supplier_change"],
+      "themes": ["semiconductor", "advanced packaging", "AI infrastructure", "data center"],
+      "regions": ["US", "TW"],
+      "importance_score": 87,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+
+      "title_zh": "NVIDIA以35億美元認購聯發科可轉債，聯發科納入NVLink Fusion生態系搶進客製化AI晶片",
+      "title_original": "NVIDIA Invests $3.5B in MediaTek via Convertible Bonds, Extends NVLink Fusion for Custom AI Chips",
+      "summary_zh": "NVIDIA宣布以可轉換公司債方式投資聯發科35億美元，約占聯發科39億美元海外可轉債發行的九成，為台灣資本市場史上最大規模同類發行（Alphabet／Google同步參與部分金額未揭露）。聯發科同步採用NVIDIA的NVLink Fusion平台，成為NVIDIA機架級AI基礎設施的晶片協同設計夥伴，合作範圍並擴及RTX Spark／DGX Spark PC晶片與Dimensity Auto／DRIVE AGX車用平台。",
+      "why_it_matters": "NVIDIA以近九成資金認購聯發科史上最大規模台灣可轉債，並同步將聯發科導入NVLink Fusion生態系，使聯發科從單純智慧型手機SoC廠商躍升為NVIDIA機架級AI工廠的協同設計夥伴，直接切入原本由Broadcom與Marvell合計壟斷近95%的超大規模業者客製ASIC市場（消息公布後Broadcom股價重挫逾一成）；此舉為超大規模業者的客製AI晶片採購新增一個NVIDIA背書的替代供應商，有助分散對Broadcom／Marvell的單一依賴，但市場同時質疑NVIDIA資金反向流入合作夥伴、再購買NVIDIA平台的「循環融資」風險是否墊高整體AI供應鏈的財務槓桿（消息公布當日NVIDIA股價下跌逾4%）。",
+
+      "tickers": ["NVDA", "2454.TW", "GOOGL", "AVGO", "MRVL"],
+      "companies": [
+        {
+          "name": "NVIDIA Corporation",
+          "ticker": "NVDA",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "investor"
+        },
+        {
+          "name": "MediaTek Inc.",
+          "ticker": "2454.TW",
+          "exchange": "TWSE",
+          "country": "TW",
+          "role": "investee"
+        },
+        {
+          "name": "Alphabet Inc.",
+          "ticker": "GOOGL",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "investor"
+        },
+        {
+          "name": "Broadcom Inc.",
+          "ticker": "AVGO",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "affected_party"
+        },
+        {
+          "name": "Marvell Technology, Inc.",
+          "ticker": "MRVL",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "affected_party"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["TSMC advanced packaging (CoWoS)", "NVLink chiplet IP"],
+        "component": "custom AI ASIC / XPU design, NVLink-C2C interconnect, NVHBM memory integration",
+        "supplier": ["MediaTek Inc."],
+        "customer": ["hyperscalers (e.g. Alphabet/Google)", "cloud AI infrastructure providers"],
+        "end_market": ["AI infrastructure", "data center", "AI accelerators"]
+      },
+
+      "products": ["custom AI ASIC (XPU)", "NVLink Fusion chiplets", "RTX Spark / DGX Spark PC chips", "Dimensity Auto / DRIVE AGX"],
+      "materials": [],
+
+      "change": {
+        "type": "strategic_investment_and_ecosystem_onboarding",
+        "before": "聯發科主要為智慧型手機與物聯網SoC供應商，尚未被納入NVIDIA NVLink客製化AI晶片生態系；Broadcom與Marvell合計壟斷約95%的超大規模業者客製ASIC協同設計市場",
+        "after": "NVIDIA認購聯發科35億美元可轉債（占聯發科39億美元海外可轉債發行約九成），聯發科同步採用NVLink Fusion平台，成為NVIDIA晶片協同設計夥伴，直接挑戰Broadcom／Marvell的客製ASIC雙占地位"
+      },
+
+      "financial_data": {
+        "amount": 3500000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 5,
+        "effective_date": "2026-09-08"
+      },
+
+      "search_keywords": [
+        "nvidia", "nvda", "mediatek", "聯發科", "2454",
+        "nvlink fusion", "nvlink", "convertible bond", "可轉債",
+        "custom asic", "xpu", "broadcom", "avgo", "marvell", "mrvl",
+        "alphabet", "google", "hyperscaler", "ai infrastructure", "ai chip",
+        "advanced packaging", "先進封裝", "semiconductor", "半導體",
+        "data center", "資料中心", "chiplet"
+      ],
+
+      "sources": [
+        {
+          "publisher": "NVIDIA Newsroom",
+          "source_type": "primary",
+          "url": "https://nvidianews.nvidia.com/news/nvidia-and-mediatek-deepen-long-standing-partnership-to-build-ai-edge-to-cloud-computing-platforms",
+          "is_primary": true,
+          "accessed_at": "2026-08-31T23:10:00+08:00"
+        },
+        {
+          "publisher": "Reuters (via Investing.com)",
+          "source_type": "wire",
+          "url": "https://www.investing.com/news/stock-market-news/nvidia-invests-35-billion-in-mediatek-convertible-bonds-4882793",
+          "is_primary": false,
+          "accessed_at": "2026-08-31T23:12:00+08:00"
+        },
+        {
+          "publisher": "StockTitan",
+          "source_type": "trade",
+          "url": "https://www.stocktitan.net/news/NVDA/nvidia-and-media-tek-deepen-long-standing-partnership-to-build-ai-tvzqviljqlok.html",
+          "is_primary": false,
+          "accessed_at": "2026-08-31T23:15:00+08:00"
+        }
+      ]
+    }
+  ]
+}
