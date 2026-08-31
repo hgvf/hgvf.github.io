@@ -332,19 +332,21 @@ const MARKER_COLOR = {
 };
 const markerColor = e => MARKER_COLOR[e.map?.marker_category || e.event_type] || MARKER_COLOR.default;
 
-// Real coastline backdrop: a simplified Natural Earth 110m land outline
-// (data/world-land.json — an array of [lon,lat] rings, coords rounded to 0.1°,
-// ~63KB) drawn in the same equirectangular projection as the markers. Loaded
-// lazily on first map draw and cached; until it arrives (or if the fetch fails)
-// the coarse CONTINENTS blobs below are used as an instant, offline fallback.
+// Real country backdrop: a simplified Natural Earth 110m admin-0 countries
+// outline (data/world-countries.json — one entry per country, each an array of
+// [lon,lat] rings, coords rounded to 0.1°, ~127KB) drawn in the same
+// equirectangular projection as the markers, one SVG path per country so
+// national borders show. Loaded lazily on first map draw and cached; until it
+// arrives (or if the fetch fails) the coarse CONTINENTS blobs below are used as
+// an instant, offline fallback.
 let LAND = null, landTried = false;
 async function ensureLand() {
   if (LAND || landTried) return;
   landTried = true;
   try {
-    const url = new URL("../data/world-land.json", import.meta.url);
-    const rings = await (await fetch(url)).json();
-    if (Array.isArray(rings) && rings.length) { LAND = rings; if (activeView === "map") drawMap(); }
+    const url = new URL("../data/world-countries.json", import.meta.url);
+    const countries = await (await fetch(url)).json();
+    if (Array.isArray(countries) && countries.length) { LAND = countries; if (activeView === "map") drawMap(); }
   } catch { /* offline / missing — keep the coarse fallback */ }
 }
 
@@ -388,12 +390,15 @@ function drawMap() {
   // graticule
   for (let lon = -150; lon <= 150; lon += 30) svg.appendChild(svgEl("line", { x1: X(lon), y1: padY, x2: X(lon), y2: H - padY, class: "nm-grat" }));
   for (let lat = -60; lat <= 60; lat += 30) svg.appendChild(svgEl("line", { x1: padX, y1: Y(lat), x2: W - padX, y2: Y(lat), class: `nm-grat ${lat === 0 ? "eq" : ""}` }));
-  // land: detailed coastline once loaded, else the coarse fallback blobs
+  // land: detailed countries (one path each, so borders show) once loaded,
+  // else the coarse fallback blobs
   ensureLand();
   if (LAND) {
-    const d = LAND.map(ring =>
-      "M" + ring.map(([lon, lat]) => `${X(lon).toFixed(1)} ${Y(lat).toFixed(1)}`).join("L") + "Z").join("");
-    svg.appendChild(svgEl("path", { d, class: "nm-land", "fill-rule": "evenodd" }));
+    LAND.forEach(country => {
+      const d = country.map(ring =>
+        "M" + ring.map(([lon, lat]) => `${X(lon).toFixed(1)} ${Y(lat).toFixed(1)}`).join("L") + "Z").join("");
+      svg.appendChild(svgEl("path", { d, class: "nm-land", "fill-rule": "evenodd" }));
+    });
   } else {
     CONTINENTS.forEach(ring => {
       const pts = ring.map(([lon, lat]) => `${X(lon).toFixed(1)},${Y(lat).toFixed(1)}`).join(" ");
