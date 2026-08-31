@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>事實追蹤 · Fact Tracking</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260806e" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260827a" />
+  <link rel="stylesheet" href="../css/facts.css?v=20260831a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head">
+      <div>
+        <h2 class="page-title">事實追蹤 · Fact Tracking</h2>
+        <p class="rp-subtitle">把法說承諾轉成可持續驗證的投資假設</p>
+      </div>
+      <a class="rp-skill-link fx-nav-link" href="../earnings/index.html" title="回到財報電話會議分析">
+        <span>← 財報分析</span>
+      </a>
+    </div>
+
+    <div id="factsRoot"></div>
+  </main>
+
+  <script type="module">
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountFacts } from "../js/factsview.js?v=20260831a";
+
+    mountSidebar("earnings");
+    mountFacts({ root: document.getElementById("factsRoot") });
+  </script>
+</body>
+</html>
