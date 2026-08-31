@@ -130,6 +130,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // 事實追蹤 — 從法說事實 / 未來看點收藏出的可驗證投資假設與其進度更新。
+    // 跨裝置 / 跨帳號共用同一份清單。公開讀，白名單寫。
+    match /tracked_facts/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
 
     match /config/auth {
       allow read: if isSignedIn();
