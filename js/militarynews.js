@@ -332,8 +332,24 @@ const MARKER_COLOR = {
 };
 const markerColor = e => MARKER_COLOR[e.map?.marker_category || e.event_type] || MARKER_COLOR.default;
 
-// Coarse continent outlines (lon/lat) — a lightweight, fully-offline backdrop
-// so markers read against real geography without shipping a heavy GeoJSON.
+// Real coastline backdrop: a simplified Natural Earth 110m land outline
+// (data/world-land.json — an array of [lon,lat] rings, coords rounded to 0.1°,
+// ~63KB) drawn in the same equirectangular projection as the markers. Loaded
+// lazily on first map draw and cached; until it arrives (or if the fetch fails)
+// the coarse CONTINENTS blobs below are used as an instant, offline fallback.
+let LAND = null, landTried = false;
+async function ensureLand() {
+  if (LAND || landTried) return;
+  landTried = true;
+  try {
+    const url = new URL("../data/world-land.json", import.meta.url);
+    const rings = await (await fetch(url)).json();
+    if (Array.isArray(rings) && rings.length) { LAND = rings; if (activeView === "map") drawMap(); }
+  } catch { /* offline / missing — keep the coarse fallback */ }
+}
+
+// Coarse continent outlines (lon/lat) — instant offline fallback shown until the
+// detailed coastline (LAND, above) finishes loading, or if that load fails.
 const CONTINENTS = [
   [[-168,66],[-160,71],[-128,70],[-100,68],[-82,73],[-60,60],[-52,47],[-66,44],[-70,41],[-81,25],[-97,26],[-97,18],[-105,20],[-117,32],[-124,40],[-124,48],[-135,58],[-152,58]],
   [[-80,8],[-60,10],[-50,0],[-35,-6],[-40,-22],[-48,-25],[-58,-34],[-65,-48],[-71,-52],[-75,-45],[-71,-30],[-70,-18],[-78,-4]],
@@ -372,11 +388,18 @@ function drawMap() {
   // graticule
   for (let lon = -150; lon <= 150; lon += 30) svg.appendChild(svgEl("line", { x1: X(lon), y1: padY, x2: X(lon), y2: H - padY, class: "nm-grat" }));
   for (let lat = -60; lat <= 60; lat += 30) svg.appendChild(svgEl("line", { x1: padX, y1: Y(lat), x2: W - padX, y2: Y(lat), class: `nm-grat ${lat === 0 ? "eq" : ""}` }));
-  // continents
-  CONTINENTS.forEach(ring => {
-    const pts = ring.map(([lon, lat]) => `${X(lon).toFixed(1)},${Y(lat).toFixed(1)}`).join(" ");
-    svg.appendChild(svgEl("polygon", { points: pts, class: "nm-land" }));
-  });
+  // land: detailed coastline once loaded, else the coarse fallback blobs
+  ensureLand();
+  if (LAND) {
+    const d = LAND.map(ring =>
+      "M" + ring.map(([lon, lat]) => `${X(lon).toFixed(1)} ${Y(lat).toFixed(1)}`).join("L") + "Z").join("");
+    svg.appendChild(svgEl("path", { d, class: "nm-land", "fill-rule": "evenodd" }));
+  } else {
+    CONTINENTS.forEach(ring => {
+      const pts = ring.map(([lon, lat]) => `${X(lon).toFixed(1)},${Y(lat).toFixed(1)}`).join(" ");
+      svg.appendChild(svgEl("polygon", { points: pts, class: "nm-land" }));
+    });
+  }
 
   // markers
   const events = EVENTS.filter(e => (!mapType || e.event_type === mapType) && (mapStatus === "all" || liveStatus(e) === mapStatus || (mapStatus === "ongoing" && !["exercise", "deployment"].includes(e.event_type) && displayableLocs(e).length && liveStatus(e) === "unknown")));
