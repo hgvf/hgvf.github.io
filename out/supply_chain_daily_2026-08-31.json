@@ -1,0 +1,318 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-01T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-08-31",
+    "end": "2026-08-31"
+  },
+  "event_count": 3,
+  "digest": {
+    "themes_distribution": {
+      "data center": 1,
+      "AI infrastructure": 1,
+      "defense": 1,
+      "critical minerals": 1
+    },
+    "importance_distribution": {
+      "high": 2,
+      "relevant": 1
+    },
+    "top_tickers": ["SLB", "APO", "SLI", "EQNR", "373220.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260831-001",
+      "slug": "slb-kelvion-data-center-cooling-acquisition",
+      "event_date": "2026-08-31",
+      "published_at": "2026-08-31",
+      "ingested_at": "2026-09-01T09:00:00+08:00",
+
+      "event_type": "strategic_investment",
+      "event_type_secondary": [],
+      "themes": ["data center", "AI infrastructure"],
+      "regions": ["US", "DE"],
+      "importance_score": 84,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+
+      "title_zh": "SLB以34億美元收購資料中心散熱大廠Kelvion，跨足AI基礎設施冷卻供應鏈",
+      "title_original": "SLB to Acquire Kelvion, Expanding its Role Across Data Center Infrastructure",
+      "summary_zh": "油田服務巨擘SLB同意以34億美元現金並承接約7億美元債務，向Apollo管理基金與Triton旗下基金收購全球熱交換與散熱設備供應商Kelvion。Kelvion 2026年營收預估23-24億美元，其中資料中心業務營收預估12-13億美元，是成長最快的終端市場，交易預計2027上半年完成。",
+      "why_it_matters": "資料中心液冷／散熱設備是AI伺服器機櫃升級的關鍵瓶頸之一；Kelvion併入資金雄厚的SLB後可望加速擴產，強化其對Vertiv等散熱競爭對手的規模優勢，也讓SLB從傳統能源服務跨入AI資料中心基礎設施供應鏈；隨著超大規模業者持續擴建AI資料中心，散熱設備的供應集中度與議價結構可能因此改變。",
+
+      "tickers": ["SLB", "APO"],
+      "companies": [
+        {
+          "name": "SLB Limited",
+          "ticker": "SLB",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "investor"
+        },
+        {
+          "name": "Kelvion Holding GmbH",
+          "ticker": null,
+          "exchange": null,
+          "country": "DE",
+          "role": "investee"
+        },
+        {
+          "name": "Apollo Global Management, Inc.",
+          "ticker": "APO",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "affected_party"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["heat exchanger components", "cooling coils", "compressors"],
+        "component": "data center thermal management / heat exchange systems",
+        "supplier": ["Kelvion Holding GmbH"],
+        "customer": ["hyperscale data center operators"],
+        "end_market": ["data center", "AI infrastructure", "industrial process cooling"]
+      },
+
+      "products": ["heat exchangers", "data center cooling systems"],
+      "materials": [],
+
+      "change": {
+        "type": "acquisition_vertical_expansion",
+        "before": "Kelvion由Apollo管理基金與Triton旗下基金持有，以獨立工業／資料中心散熱設備廠身分營運",
+        "after": "Kelvion併入SLB旗下，成為SLB資料中心解決方案事業群的核心散熱技術資產，可望獲得更大資本支持擴大產能"
+      },
+
+      "financial_data": {
+        "amount": 3400000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "slb", "schlumberger", "kelvion",
+        "data center cooling", "散熱", "資料中心", "冷卻",
+        "heat exchanger", "熱交換器",
+        "apollo", "triton",
+        "strategic investment", "併購", "acquisition",
+        "ai infrastructure", "data center", "thermal management",
+        "liquid cooling", "oilfield services"
+      ],
+
+      "sources": [
+        {
+          "publisher": "SLB — Newsroom",
+          "source_type": "primary",
+          "url": "https://www.slb.com/newsroom/press-release/2026/pr-2026-0831",
+          "is_primary": true,
+          "accessed_at": "2026-09-01T08:30:00+08:00"
+        },
+        {
+          "publisher": "Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bloomberg.com/news/articles/2026-08-31/slb-to-buy-data-center-cooling-firm-kelvion-for-3-4-billion",
+          "is_primary": false,
+          "accessed_at": "2026-09-01T08:35:00+08:00"
+        },
+        {
+          "publisher": "Apollo Global Management — Investor Relations",
+          "source_type": "primary",
+          "url": "https://ir.apollo.com/news-events/press-releases/detail/645/apollo-funds-agree-to-sell-kelvion-a-global-leader-in",
+          "is_primary": false,
+          "accessed_at": "2026-09-01T08:36:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260831-002",
+      "slug": "action-manufacturing-army-m739a1-fuze-sole-source",
+      "event_date": "2026-08-31",
+      "published_at": "2026-08-31",
+      "ingested_at": "2026-09-01T09:00:00+08:00",
+
+      "event_type": "supply_agreement",
+      "event_type_secondary": ["capacity"],
+      "themes": ["defense"],
+      "regions": ["US"],
+      "importance_score": 82,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+
+      "title_zh": "美國陸軍與Action Manufacturing簽署7.125億美元獨家合約，鎖定M739A1砲彈引信單一供應來源至2031年",
+      "title_original": "U.S. Army Awards Action Manufacturing Co. up to $712.5M Sole-Source IDIQ for M739A1 PD/DLY Fuzes",
+      "summary_zh": "美國陸軍簽約辦公室（紐澤西州紐華克）與賓州Bristol廠商Action Manufacturing Co.簽訂上限7.125億美元的不定期交貨／不定量（IDIQ）合約，負責生產、檢驗、測試、包裝並交付M739A1觸發/延遲引信，合約執行至2031年8月31日；本案僅一家廠商投標，屬獨家來源採購。",
+      "why_it_matters": "引信長期是美軍155公厘砲彈量產擴大的關鍵瓶頸零組件，此案將未來數年絕大部分M739A1引信需求集中鎖定給單一供應商Action Manufacturing，確保陸軍砲彈引信供應以支撐155公厘彈藥產能擴張目標，但同時凸顯引信供應鏈缺乏替代來源的結構性風險——一旦該廠產能或品質出狀況，將直接衝擊美國及盟邦（含對烏克蘭軍援）的砲彈交付進度。",
+
+      "tickers": [],
+      "companies": [
+        {
+          "name": "Action Manufacturing Co.",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "new_supplier"
+        },
+        {
+          "name": "U.S. Department of War (Army Contracting Command)",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "customer"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["precision-machined fuze components", "explosive initiator train"],
+        "component": "M739A1 point detonating/delay artillery fuze",
+        "supplier": ["Action Manufacturing Co."],
+        "customer": ["U.S. Army"],
+        "end_market": ["defense", "155mm artillery ammunition"]
+      },
+
+      "products": ["M739A1 PD/DLY fuze"],
+      "materials": [],
+
+      "change": {
+        "type": "sole_source_supply_lock_in",
+        "before": "M739A1引信生產能量分散於多期短約與多輪招標，供應來源相對彈性",
+        "after": "至2031年止、上限7.125億美元的引信需求集中由單一得標商Action Manufacturing供應，屬獨家來源合約"
+      },
+
+      "financial_data": {
+        "amount": 712500000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 5,
+        "effective_date": "2026-08-31"
+      },
+
+      "search_keywords": [
+        "action manufacturing", "m739a1", "fuze", "引信",
+        "artillery", "砲彈", "155mm",
+        "us army", "美國陸軍",
+        "sole source", "獨家供應", "idiq",
+        "defense", "國防", "ammunition", "彈藥",
+        "army contracting command"
+      ],
+
+      "sources": [
+        {
+          "publisher": "U.S. Department of War — Contract Announcements",
+          "source_type": "primary",
+          "url": "https://www.war.gov/News/Contracts/Contract/Article/4586879/contracts-for-aug-31-2026/",
+          "is_primary": true,
+          "accessed_at": "2026-09-01T08:20:00+08:00"
+        },
+        {
+          "publisher": "Defence Blog",
+          "source_type": "trade",
+          "url": "https://defence-blog.com/u-s-army-orders-712-5-million-worth-of-artillery-fuzes/",
+          "is_primary": false,
+          "accessed_at": "2026-09-01T08:22:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260831-003",
+      "slug": "smackover-lithium-lg-energy-solution-offtake",
+      "event_date": "2026-08-31",
+      "published_at": "2026-08-31",
+      "ingested_at": "2026-09-01T09:00:00+08:00",
+
+      "event_type": "supply_agreement",
+      "event_type_secondary": [],
+      "themes": ["critical minerals"],
+      "regions": ["US", "KR"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+
+      "title_zh": "Smackover Lithium與LG新能源簽署第二筆長約，美國阿肯色鋰專案鎖定近9成目標承購量",
+      "title_original": "Smackover Lithium Signs Binding Customer Offtake with LG Energy Solution for the South West Arkansas Project",
+      "summary_zh": "Standard Lithium與Equinor合資的Smackover Lithium宣布，與LG新能源（LG Energy Solution）簽署具約束力的take-or-pay長期承購協議，自量產起10年內每年供應8,000公噸電池級碳酸鋰；加計先前與Trafigura簽署的每年8,000公噸協議，South West Arkansas專案（一期名目產能2.25萬公噸/年、目標承購量約1.8萬公噸/年）目前約9成目標承購量已鎖定。",
+      "why_it_matters": "此協議讓LG新能源取得位於美國本土、非中國來源的電池級碳酸鋰長期供應，有助其電動車電池供應鏈符合美國在地含量與去中國化要求；對Smackover Lithium而言，承購量達目標近9成使專案更接近最終投資決定（FID），一旦如期量產，將強化北美鋰化學品自主供應能力，降低美系電池廠對中國與智利精煉鋰供應鏈的依賴。",
+
+      "tickers": ["SLI", "EQNR", "373220.KS"],
+      "companies": [
+        {
+          "name": "Standard Lithium Ltd. (Smackover Lithium JV)",
+          "ticker": "SLI",
+          "exchange": "NYSE American",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Equinor ASA (Smackover Lithium JV)",
+          "ticker": "EQNR",
+          "exchange": "NYSE",
+          "country": "NO",
+          "role": "supplier"
+        },
+        {
+          "name": "LG Energy Solution, Ltd.",
+          "ticker": "373220.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "customer"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["brine resource", "direct lithium extraction (DLE)"],
+        "component": "battery-grade lithium carbonate",
+        "supplier": ["Standard Lithium Ltd.", "Equinor ASA"],
+        "customer": ["LG Energy Solution, Ltd."],
+        "end_market": ["EV batteries", "battery manufacturing"]
+      },
+
+      "products": ["battery-grade lithium carbonate"],
+      "materials": ["lithium carbonate", "lithium"],
+
+      "change": {
+        "type": "long_term_offtake_agreement",
+        "before": "South West Arkansas專案承購量僅有Trafigura每年8,000公噸一筆合約，約4成目標承購量鎖定",
+        "after": "新增LG新能源每年8,000公噸、10年期take-or-pay合約，累計約9成（約1.6萬/1.8萬公噸目標）承購量鎖定"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 10,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "smackover lithium", "standard lithium", "equinor",
+        "lg energy solution", "lg新能源",
+        "lithium carbonate", "碳酸鋰", "鋰",
+        "south west arkansas", "offtake", "承購協議", "take-or-pay",
+        "critical minerals", "關鍵礦產",
+        "ev battery", "電動車電池",
+        "direct lithium extraction", "dle"
+      ],
+
+      "sources": [
+        {
+          "publisher": "GlobeNewswire — Standard Lithium / Smackover Lithium",
+          "source_type": "primary",
+          "url": "https://www.globenewswire.com/news-release/2026/08/31/3353295/0/en/smackover-lithium-signs-binding-customer-offtake-with-lg-energy-solution-for-the-south-west-arkansas-project.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-01T08:10:00+08:00"
+        }
+      ]
+    }
+  ]
+}
