@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-02T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-01",
+    "end": "2026-09-01"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "PCB": 1,
+      "CCL": 1,
+      "advanced packaging": 1,
+      "semiconductor": 2
+    },
+    "importance_distribution": {
+      "relevant": 2
+    },
+    "top_tickers": ["6752.T", "QCOM", "005930.KS", "1810.HK"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260901-001",
+      "slug": "panasonic-ccl-ic-substrate-price-hike-2026",
+      "event_date": "2026-09-01",
+      "published_at": "2026-08-06",
+      "ingested_at": "2026-09-02T09:00:00+08:00",
+
+      "event_type": "raw_material_bom",
+      "event_type_secondary": [],
+      "themes": ["PCB", "CCL", "advanced packaging", "semiconductor"],
+      "regions": ["JP"],
+      "importance_score": 76,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+
+      "title_zh": "Panasonic年內二度調漲CCL/PP及IC基板材料價格，最高漲幅達30%",
+      "title_original": "Panasonic Reportedly Raises CCL and PP Prices Again as IC Substrate Costs Jump 30%",
+      "summary_zh": "Panasonic Industry於8月6日發出調價通知，針對9月1日起出貨（ex-factory基準）之銅箔基板（CCL）、預浸材（PP）及IC基板材料進行今年第二次調漲：一般多層玻纖環氧樹脂與LEXCM GX基板材料漲幅達30%，MEGTRON/XPEDION與軟性電路板材料（FCCL）漲幅15%，CEM-3玻纖複合材料同樣調漲30%；官方說明主因為主要原物料持續上漲，加上輔材、能源、物流等成本墊高。",
+      "why_it_matters": "作為全球主要CCL/IC基板材料供應商之一，Panasonic此次調價將直接推高下游PCB廠與IC載板廠的BOM成本，尤其衝擊AI伺服器主機板與先進封裝載板等高階應用；下游廠商若無法完全轉嫁成本，毛利率恐受壓縮，也可能加速部分客戶轉向日商Resonac、台廠南亞塑膠等替代供應源以分散風險，進一步強化CCL/IC基板供應鏈的價格傳導壓力與客戶分散採購誘因。",
+
+      "tickers": ["6752.T"],
+      "companies": [
+        {
+          "name": "Panasonic Industry Co., Ltd. (Panasonic Holdings Corporation)",
+          "ticker": "6752.T",
+          "exchange": "TSE",
+          "country": "JP",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["copper foil", "glass fiber cloth", "epoxy resin"],
+        "component": "copper-clad laminate (CCL) / prepreg / IC substrate material",
+        "supplier": ["Panasonic Industry Co., Ltd."],
+        "customer": ["PCB fabricators", "IC substrate makers", "AI server board manufacturers"],
+        "end_market": ["AI infrastructure", "data center", "advanced packaging"]
+      },
+
+      "products": ["copper-clad laminate", "prepreg", "IC substrate material", "flexible circuit board material"],
+      "materials": ["copper foil", "glass fiber", "epoxy resin"],
+
+      "change": {
+        "type": "supplier_list_price_increase",
+        "before": "Panasonic CCL／PP／IC基板材料維持今年稍早（4月、6月）調漲後的價格水準",
+        "after": "自9月1日起出貨（ex-factory）之CCL、PP、IC基板材料價格再調漲，一般多層玻纖環氧樹脂與LEXCM GX基板材料漲幅達30%，MEGTRON/XPEDION與FCCL漲幅15%"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": 30,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-01"
+      },
+
+      "search_keywords": [
+        "panasonic", "panasonic industry", "松下",
+        "ccl", "copper clad laminate", "覆銅箔基板",
+        "prepreg", "pp", "預浸材",
+        "ic substrate", "ic基板", "pcb", "印刷電路板",
+        "megtron", "xpedion", "lexcm gx", "cem-3", "fccl",
+        "flexible circuit board material", "軟性電路板",
+        "price increase", "調漲", "漲價",
+        "raw material bom", "advanced packaging", "先進封裝",
+        "ai server", "ai伺服器", "semiconductor", "半導體",
+        "6752", "6752.t"
+      ],
+
+      "sources": [
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260901PD243/panasonic-ccl-pcb-ic-substrate-materials.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-02T08:40:00+08:00"
+        },
+        {
+          "publisher": "EBest Circuit (bestpcbs.com)",
+          "source_type": "trade",
+          "url": "https://www.bestpcbs.com/blog/2026/08/panasonic-laminate-price-increase/",
+          "is_primary": false,
+          "accessed_at": "2026-09-02T08:42:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260901-002",
+      "slug": "qualcomm-snapdragon-price-increase-2026",
+      "event_date": "2026-09-01",
+      "published_at": "2026-07-24",
+      "ingested_at": "2026-09-02T09:00:00+08:00",
+
+      "event_type": "raw_material_bom",
+      "event_type_secondary": [],
+      "themes": ["semiconductor"],
+      "regions": ["US", "KR", "CN"],
+      "importance_score": 75,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+
+      "title_zh": "高通9月1日起晶片全線調漲雙位數價格，衝擊Android陣營BOM成本",
+      "title_original": "Qualcomm Raises Chip Prices by Double Digits Citing Supply Chain Costs",
+      "summary_zh": "高通於7月24日致函客戶，宣布自9月1日起出貨之晶片將全面調漲雙位數百分比價格，涵蓋Snapdragon穿戴式平台、Windows on Arm處理器、平板晶片組、智慧眼鏡模組與物聯網硬體；執行長Cristiano Amon表示，公司已無法再吸收台積電先進製程與記憶體成本上漲，決定將成本轉嫁客戶，確切漲幅百分比未公開揭露。",
+      "why_it_matters": "高通為三星、小米等Android品牌之核心晶片供應商，此次全線調漲雙位數價格將直接推升下游手機、穿戴裝置與物聯網硬體之BOM成本，三星、小米等OEM恐被迫轉嫁漲價予消費者或壓縮自身毛利；若調價壓力持續，可能加速部分中低階機型轉向聯發科等替代晶片供應商以控制成本，進而改變Android陣營晶片採購版圖。",
+
+      "tickers": ["QCOM", "005930.KS", "1810.HK"],
+      "companies": [
+        {
+          "name": "Qualcomm Incorporated",
+          "ticker": "QCOM",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "customer"
+        },
+        {
+          "name": "Xiaomi Corporation",
+          "ticker": "1810.HK",
+          "exchange": "HKEX",
+          "country": "CN",
+          "role": "customer"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["TSMC advanced-node wafers", "DRAM/NAND memory components"],
+        "component": "Snapdragon SoC / wearable / IoT / Windows-on-Arm chipsets",
+        "supplier": ["Qualcomm Incorporated"],
+        "customer": ["Samsung Electronics Co., Ltd.", "Xiaomi Corporation", "Android OEMs"],
+        "end_market": ["smartphones", "wearables", "tablets", "IoT devices"]
+      },
+
+      "products": ["Snapdragon SoC", "wearable platform chipset", "Windows on Arm processor", "IoT module"],
+      "materials": [],
+
+      "change": {
+        "type": "supplier_list_price_increase",
+        "before": "Qualcomm晶片對品牌客戶維持原報價",
+        "after": "自9月1日起出貨的晶片全面調漲雙位數百分比價格，涵蓋Snapdragon穿戴式平台、Windows on Arm處理器、平板晶片組、智慧眼鏡模組與物聯網硬體"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-01"
+      },
+
+      "search_keywords": [
+        "qualcomm", "高通", "snapdragon", "驍龍",
+        "chip price increase", "調漲", "漲價",
+        "list price", "double-digit price hike",
+        "semiconductor", "半導體",
+        "wearable platform", "windows on arm", "tablet chipset",
+        "iot", "smart eyewear",
+        "samsung", "三星", "xiaomi", "小米",
+        "android oem", "smartphone bom",
+        "qcom", "005930", "005930.ks", "1810", "1810.hk",
+        "tsmc", "cristiano amon"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bloomberg.com/news/articles/2026-07-24/qualcomm-tells-customers-that-prices-are-going-up-by-double-digits",
+          "is_primary": true,
+          "accessed_at": "2026-09-02T08:45:00+08:00"
+        },
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260727VL208/qualcomm-price-increase-capacity-smartphone-supplier.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-02T08:47:00+08:00"
+        }
+      ]
+    }
+  ]
+}
