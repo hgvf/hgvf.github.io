@@ -16,6 +16,7 @@ import {
   openEditHome, submitHome,
   openEditPubs, submitPubs, addBlankPubRow,
 } from './admin.js';
+import { initExperience } from './experience.js';
 
 /* ── App state ─────────────────────────────────────────────── */
 let _isAdmin          = false;
@@ -187,6 +188,9 @@ async function loadHomeProfile() {
   renderAllHome();
 }
 loadHomeProfile();
+
+/* ── Experience & Education (editable timeline) ─────────────────────── */
+initExperience();
 
 document.getElementById('btnEditHome')?.addEventListener('click', () => openEditHome(resolvedProfile()));
 document.getElementById('formHome')?.addEventListener('submit', async e => {
