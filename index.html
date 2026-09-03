@@ -35,7 +35,7 @@
       </a>
 
       <!-- Stock folder -->
-      <div class="nav-folder open" data-folder="stock">
+      <div class="nav-folder" data-folder="stock">
         <button type="button" class="nav-folder-header">
           <span class="folder-chevron">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
@@ -92,7 +92,7 @@
       </div>
 
       <!-- News folder -->
-      <div class="nav-folder open" data-folder="news">
+      <div class="nav-folder" data-folder="news">
         <button type="button" class="nav-folder-header">
           <span class="folder-chevron">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
@@ -119,7 +119,7 @@
       </div>
 
       <!-- Personal folder -->
-      <div class="nav-folder open" data-folder="personal">
+      <div class="nav-folder" data-folder="personal">
         <button type="button" class="nav-folder-header">
           <span class="folder-chevron">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
@@ -252,63 +252,19 @@
     <section id="page-experience" class="page">
       <div class="page-header">
         <h2 class="page-title">Experience &amp; Education</h2>
+        <button id="btnEditExperience" class="btn-edit-inline admin-only" style="display:none" title="編輯 Experience / Education">✎ Edit</button>
       </div>
 
-      <!-- Work experience timeline -->
+      <!-- Work experience timeline (rendered by js/experience.js; newest first) -->
       <div class="timeline-section">
         <h3 class="timeline-heading">Work Experience</h3>
-        <div class="timeline">
-          <div class="timeline-item">
-            <span class="timeline-marker"></span>
-            <div class="glass-card timeline-content">
-              <span class="timeline-date">2024/10-2025/7</span>
-              <h4 class="timeline-title">AI Engineer</h4>
-              <span class="timeline-org">Nanya Technology Corporation - IT</span>
-              <p class="timeline-desc">
-                • Developed and deployed computer vision systems for face recognition and person re-identification.<br>
-                • Optimized computer vision models and deployment pipelines to improve recognition accuracy and practical usability.<br>
-                • Designed zero-shot prompting workflows for LLM-based text-to-SQL generation, enabling natural language database querying.
-              </p>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <span class="timeline-marker"></span>
-            <div class="glass-card timeline-content">
-              <span class="timeline-date">2025/8-</span>
-              <h4 class="timeline-title">AI Engineer</h4>
-              <span class="timeline-org">National Taiwan University Hospital (NTUH)</span>
-              <p class="timeline-desc">
-                • Built LLM-based applications with memory mechanisms and retrieval-augmented generation pipelines, supporting summarization, knowledge retrieval, and slide generation workflows.<br>
-                • Developed ASR applications using Whisper for speech-to-text processing and downstream language understanding tasks.<br>
-                • Trained, evaluated, and deployed medical AI models for clinical and healthcare-related applications.
-              </p>
-            </div>
-          </div>
-        </div>
+        <div class="timeline" id="experienceWork"></div>
       </div>
 
-      <!-- Education timeline -->
+      <!-- Education timeline (rendered by js/experience.js; newest first) -->
       <div class="timeline-section">
         <h3 class="timeline-heading">Education</h3>
-        <div class="timeline">
-          <div class="timeline-item">
-            <span class="timeline-marker"></span>
-            <div class="glass-card timeline-content">
-              <span class="timeline-date">2017/9-2021/6</span>
-              <h4 class="timeline-title">B.S. in Computer Science and Information Engineering</h4>
-              <span class="timeline-org">National Chung Cheng University (CCU)</span>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <span class="timeline-marker"></span>
-            <div class="glass-card timeline-content">
-              <span class="timeline-date">2021/9-2023/12</span>
-              <h4 class="timeline-title">M.S. in Computer Science and Information Engineering</h4>
-              <span class="timeline-org">National Taiwan University of Science and Technology (NTUST)</span>
-              <p class="timeline-desc">NLP Lab</p>
-            </div>
-          </div>
-        </div>
+        <div class="timeline" id="experienceEducation"></div>
       </div>
     </section>
 
@@ -469,6 +425,27 @@
         <button type="button" id="btnAddPub" class="btn-add-pub">＋ Add publication</button>
         <div class="modal-actions">
           <button type="button" class="btn-modal modal-cancel" data-modal="modalPublications">Cancel</button>
+          <button type="submit" class="btn-modal btn-modal-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalExperience">
+    <div class="modal-box modal-box-wide">
+      <h3 class="modal-title">Edit Experience &amp; Education</h3>
+      <button class="modal-close" data-modal="modalExperience">×</button>
+      <form id="formExperience">
+        <p class="exp-editor-group-label">Work Experience（由上到下即顯示順序）</p>
+        <div id="expWorkEditor" class="exp-editor"></div>
+        <button type="button" id="btnAddExpWork" class="btn-add-exp">＋ Add work</button>
+
+        <p class="exp-editor-group-label" style="margin-top:1.2rem">Education（由上到下即顯示順序）</p>
+        <div id="expEduEditor" class="exp-editor"></div>
+        <button type="button" id="btnAddExpEdu" class="btn-add-exp">＋ Add education</button>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal modal-cancel" data-modal="modalExperience">Cancel</button>
           <button type="submit" class="btn-modal btn-modal-primary">Save</button>
         </div>
       </form>
