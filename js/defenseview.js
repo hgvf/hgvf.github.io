@@ -272,7 +272,10 @@ function openDetail(e) {
 }
 
 // ── ETL 分析 ────────────────────────────────────────────────────────────
-let anaContractor = "";      // 承包商深入檢視選取
+// 多維複選搜尋（2×2 search sector）：承包商 / 國家 / 事件類型 / 計畫類別。
+// 同一維度內為「或」、不同維度之間為「且」（nested search）。
+const searchSel = { contractor: new Set(), country: new Set(), type: new Set(), category: new Set() };
+const searchQ = { contractor: "", country: "", type: "", category: "" };  // 各維度的字面篩選
 let chartYear = "";          // histogram/line 年份 filter
 let chartMode = "bar";       // bar | line
 let selectedCompanies = new Set();  // 圖表上被點選的公司（跨長條/折線共用）
@@ -330,7 +333,6 @@ function renderAnalytics() {
   const catRows = Object.entries(byCat).map(([c, n]) => ({ label: catZ(c), value: n })).sort((a, b) => b.value - a.value).slice(0, 12);
 
   const distinctPrograms = new Set(E.flatMap(e => (e.programs || []).map(p => p.program_id || p.canonical_name || p.name_zh).filter(Boolean))).size;
-  const contractorNames = [...contractors.keys()].sort();
 
   host.innerHTML = `
     <p class="df-meta df-note">就地彙整目前載入的 ${E.length} 筆事件；金額<b>統一以近似匯率換算為 USD</b> 以便跨國比較（ceiling ≠ 實支；匯率為靜態近似值）。</p>
@@ -342,15 +344,35 @@ function renderAnalytics() {
       <div class="df-stat"><div class="df-stat-l">計畫數</div><div class="df-stat-v">${distinctPrograms}</div></div>
     </div>
 
-    <div class="df-anacard df-contractor">
+    <div class="df-anacard df-search">
       <div class="df-anacard-head">
-        <h4>承包商深入檢視</h4>
-        <span class="rv-sel-wrap"><select class="rv-select" id="anaContractor">
-          <option value="">— 選擇承包商查看其所有合約 —</option>
-          ${contractorNames.map(n => `<option value="${esc(n)}" ${n === anaContractor ? "selected" : ""}>${esc(n)}${contractors.get(n).ticker ? " (" + esc(contractors.get(n).ticker) + ")" : ""}</option>`).join("")}
-        </select></span>
+        <h4>合約搜尋 · 多維複選</h4>
+        <span class="df-meta" id="searchSummary"></span>
       </div>
-      <div id="contractorPanel"></div>
+      <p class="df-meta df-chart-hint">於下列四個維度<b>複選</b>條件：同一維度內為「或」、不同維度之間為「且」（nested search）。各維度旁數字為<b>在其他條件下</b>符合的筆數。</p>
+      <div class="df-search-grid">
+        <div class="df-facet" data-facet="contractor">
+          <div class="df-facet-head"><span class="df-facet-title">承包商</span><button class="df-facet-clear" data-clear="contractor" hidden>清除</button></div>
+          <input class="df-facet-filter df-input" data-q="contractor" placeholder="篩選承包商…" value="${esc(searchQ.contractor)}" />
+          <div class="df-facet-chips" data-chips="contractor"></div>
+        </div>
+        <div class="df-facet" data-facet="country">
+          <div class="df-facet-head"><span class="df-facet-title">國家</span><button class="df-facet-clear" data-clear="country" hidden>清除</button></div>
+          <input class="df-facet-filter df-input" data-q="country" placeholder="篩選國家…" value="${esc(searchQ.country)}" />
+          <div class="df-facet-chips" data-chips="country"></div>
+        </div>
+        <div class="df-facet" data-facet="type">
+          <div class="df-facet-head"><span class="df-facet-title">事件類型</span><button class="df-facet-clear" data-clear="type" hidden>清除</button></div>
+          <input class="df-facet-filter df-input" data-q="type" placeholder="篩選事件類型…" value="${esc(searchQ.type)}" />
+          <div class="df-facet-chips" data-chips="type"></div>
+        </div>
+        <div class="df-facet" data-facet="category">
+          <div class="df-facet-head"><span class="df-facet-title">計畫類別</span><button class="df-facet-clear" data-clear="category" hidden>清除</button></div>
+          <input class="df-facet-filter df-input" data-q="category" placeholder="篩選計畫類別…" value="${esc(searchQ.category)}" />
+          <div class="df-facet-chips" data-chips="category"></div>
+        </div>
+      </div>
+      <div class="df-search-results" id="searchResults"></div>
     </div>
 
     <div class="df-anacard df-chartcard">
@@ -383,25 +405,103 @@ function renderAnalytics() {
   ySel.onchange = e => { chartYear = e.target.value; drawMainChart(); };
   host.querySelectorAll("#chartMode [data-mode]").forEach(b => b.onclick = () => { chartMode = b.dataset.mode; host.querySelectorAll("#chartMode [data-mode]").forEach(x => x.classList.toggle("active", x.dataset.mode === chartMode)); drawMainChart(); });
 
-  const cSel = host.querySelector("#anaContractor");
-  cSel.onchange = e => { anaContractor = e.target.value; renderContractorPanel(); };
-  renderContractorPanel();
+  // 2×2 搜尋維度：各維度的字面篩選框 + 清除鈕
+  host.querySelectorAll(".df-facet-filter[data-q]").forEach(inp => {
+    inp.oninput = e => { searchQ[e.target.dataset.q] = e.target.value.trim().toLowerCase(); renderFacetChips(e.target.dataset.q); };
+  });
+  host.querySelectorAll(".df-facet-clear[data-clear]").forEach(b => {
+    b.onclick = () => { searchSel[b.dataset.clear].clear(); renderSearch(); };
+  });
+  renderSearch();
   drawMainChart();
 }
 
-function renderContractorPanel() {
-  const host = document.getElementById("contractorPanel");
+// ── 2×2 多維複選搜尋 ────────────────────────────────────────────────────
+// 每個事件在各維度上的取值（可能多值 → 用陣列）。
+const FACET_VALUES = {
+  contractor: e => [contractorName(e)],
+  country: e => (e.country ? [e.country] : []),
+  type: e => (e.event_type ? [e.event_type] : []),
+  category: e => [...new Set((e.programs || []).map(p => p.category || "unknown"))],
+};
+const FACET_LABEL = { contractor: v => v, country: cZ, type: tZ, category: catZ };
+
+// 某事件是否符合「除了 exceptKey 以外」的所有維度選取（faceted / nested search）。
+function eventMatchesExcept(e, exceptKey) {
+  for (const key of Object.keys(searchSel)) {
+    if (key === exceptKey) continue;
+    const sel = searchSel[key];
+    if (!sel.size) continue;
+    const vals = FACET_VALUES[key](e);
+    if (!vals.some(v => sel.has(v))) return false;
+  }
+  return true;
+}
+const eventMatchesSearch = e => eventMatchesExcept(e, null);
+
+// 某維度的候選值（value/label/count）；count 依「其他維度」的選取即時計算。
+function facetOptions(key) {
+  const pool = EVENTS.filter(e => eventMatchesExcept(e, key));
+  const counts = new Map();
+  pool.forEach(e => FACET_VALUES[key](e).forEach(v => counts.set(v, (counts.get(v) || 0) + 1)));
+  // 已選但目前 count 為 0 的值仍保留，方便取消。
+  searchSel[key].forEach(v => { if (!counts.has(v)) counts.set(v, 0); });
+  return [...counts.entries()]
+    .map(([value, count]) => ({ value, label: FACET_LABEL[key](value), count }))
+    .sort((a, b) => (b.count - a.count) || String(a.label).localeCompare(String(b.label)));
+}
+
+function renderFacetChips(key) {
+  const host = document.querySelector(`[data-chips="${key}"]`);
   if (!host) return;
-  if (!anaContractor) { host.innerHTML = `<p class="df-meta">選擇一家承包商，列出其所有合約與累積金額。</p>`; return; }
-  const rows = EVENTS.filter(e => contractorName(e) === anaContractor)
+  const sel = searchSel[key];
+  const q = searchQ[key];
+  let opts = facetOptions(key);
+  if (q) opts = opts.filter(o => String(o.label).toLowerCase().includes(q) || String(o.value).toLowerCase().includes(q));
+  const anySel = sel.size > 0;
+  if (!opts.length) { host.innerHTML = `<p class="df-meta df-facet-empty">無符合項目</p>`; }
+  else host.innerHTML = opts.map(o => {
+    const on = sel.has(o.value);
+    return `<button class="df-legend-chip df-facet-chip ${on ? "sel" : ""} ${anySel && !on ? "dim" : ""}" data-val="${esc(o.value)}" title="${esc(String(o.label))} — ${o.count} 筆">${esc(String(o.label))} <span class="df-facet-n">${o.count}</span></button>`;
+  }).join("");
+  host.querySelectorAll("[data-val]").forEach(b => b.onclick = () => {
+    const v = b.dataset.val;
+    if (sel.has(v)) sel.delete(v); else sel.add(v);
+    renderSearch();
+  });
+  // 清除鈕顯示
+  const clr = document.querySelector(`[data-clear="${key}"]`);
+  if (clr) clr.hidden = !anySel;
+}
+
+// 重繪整個搜尋區塊：四維度 chips + 結果。點任一 chip 都會牽動其他維度的
+// 即時筆數，故一律整體重繪（nested search）。
+function renderSearch() {
+  Object.keys(searchSel).forEach(renderFacetChips);
+  renderSearchResults();
+}
+
+function renderSearchResults() {
+  const host = document.getElementById("searchResults");
+  const summary = document.getElementById("searchSummary");
+  if (!host) return;
+  const anySel = Object.values(searchSel).some(s => s.size);
+  if (!anySel) {
+    if (summary) summary.textContent = "";
+    host.innerHTML = `<p class="df-meta">於上方任一維度<b>複選</b>條件即可查詢；可跨維度組合（如「美國 × 飛彈 × 新合約」）。</p>`;
+    return;
+  }
+  const rows = EVENTS.filter(eventMatchesSearch)
     .sort((a, b) => String(b.publication_date || "").localeCompare(String(a.publication_date || "")));
   const total = rows.filter(e => e.contract?.amount != null).reduce((s, e) => s + evUSD(e), 0);
-  const tk = rows.map(e => listedTicker(e.contractor)).find(Boolean);
+  const nContractors = new Set(rows.map(companyIdentity).map(x => x.key)).size;
+  if (summary) summary.textContent = `${rows.length} 筆 · ${usd(total)} · ${nContractors} 家承包商`;
+  if (!rows.length) { host.innerHTML = `<p class="df-meta">沒有符合所有條件的合約。</p>`; return; }
   host.innerHTML = `
     <div class="df-contractor-sum">
-      <span>${rows.length} 筆合約</span>
+      <span><b>${rows.length}</b> 筆合約</span>
       <span>累積 <b class="accent">${usd(total)}</b>（USD 約）</span>
-      ${tk ? `<span class="df-tk">${esc(tk.t)}${tk.ex ? " · " + esc(tk.ex) : ""}</span>` : ""}
+      <span>${nContractors} 家承包商</span>
     </div>
     <div class="df-contractor-list">
       ${rows.map(e => {
@@ -409,7 +509,7 @@ function renderContractorPanel() {
         return `<div class="df-crow" data-open="${esc(e.__id || e.event_id || e.title)}">
           <span class="df-crow-date">${esc(e.publication_date || "—")}</span>
           <span class="df-crow-title">${esc(e.title_zh || e.title)}</span>
-          <span class="df-crow-type">${tZ(e.event_type)}</span>
+          <span class="df-crow-type">${cZ(e.country)} · ${tZ(e.event_type)}</span>
           <span class="df-crow-amt">${fmtAmt(ct.amount, ct.currency || "USD")}${ct.currency && ct.currency !== "USD" && ct.amount != null ? ` <i>≈${usd(evUSD(e))}</i>` : ""}</span>
         </div>`;
       }).join("")}
