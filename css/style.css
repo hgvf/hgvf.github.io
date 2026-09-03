@@ -290,7 +290,10 @@ img { display: block; max-width: 100%; }
 .lang-toggle .lang-opt:not(.active):hover { background: rgba(139,94,60,0.14); }
 
 /* Experience editor (modal) — mirrors the publications editor */
-.exp-editor { display: flex; flex-direction: column; gap: 0.9rem; max-height: 52vh; overflow-y: auto; padding-right: 0.25rem; }
+/* The Experience modal is wider and taller than the default wide modal, and
+   scrolls as a single window (no nested inner scrollbars). */
+#modalExperience .modal-box { max-width: 960px; max-height: 92vh; }
+.exp-editor { display: flex; flex-direction: column; gap: 0.9rem; padding-right: 0.25rem; }
 .exp-editor-group-label {
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-muted); margin: 0.4rem 0 -0.2rem;
