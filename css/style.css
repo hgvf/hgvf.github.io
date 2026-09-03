@@ -276,6 +276,19 @@ img { display: block; max-width: 100%; }
 .timeline-org { display: block; font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
 .timeline-desc { font-size: 0.83rem; line-height: 1.65; color: var(--text-secondary); margin-top: 0.55rem; }
 
+/* Language toggle (中 / EN) — segmented pill in the page header */
+.lang-toggle {
+  display: inline-flex; padding: 2px; border-radius: 999px;
+  background: var(--accent-light); border: 1px solid rgba(139,94,60,0.25);
+}
+.lang-toggle .lang-opt {
+  font-size: 0.72rem; font-weight: 600; line-height: 1; cursor: pointer;
+  padding: 0.28rem 0.7rem; border: none; background: transparent;
+  color: var(--accent); border-radius: 999px; transition: background var(--transition), color var(--transition);
+}
+.lang-toggle .lang-opt.active { background: var(--accent); color: #fff; }
+.lang-toggle .lang-opt:not(.active):hover { background: rgba(139,94,60,0.14); }
+
 /* Experience editor (modal) — mirrors the publications editor */
 .exp-editor { display: flex; flex-direction: column; gap: 0.9rem; max-height: 52vh; overflow-y: auto; padding-right: 0.25rem; }
 .exp-editor-group-label {
@@ -302,6 +315,7 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius-sm);
 }
 .exp-edit-icon-status { font-size: 0.62rem; font-weight: 500; color: var(--text-muted); min-height: 0.8rem; text-align: center; }
+.exp-edit-icon-note { font-size: 0.6rem; color: var(--text-muted); text-align: center; }
 .exp-edit-actions { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
 .exp-edit-remove, .exp-edit-move {
   font-size: 0.72rem; font-weight: 600; padding: 0.25rem 0.6rem; cursor: pointer; border-radius: var(--radius-sm);

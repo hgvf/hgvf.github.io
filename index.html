@@ -251,19 +251,25 @@
     <!-- EXPERIENCE PAGE (Personal) -->
     <section id="page-experience" class="page">
       <div class="page-header">
-        <h2 class="page-title">Experience &amp; Education</h2>
-        <button id="btnEditExperience" class="btn-edit-inline admin-only" style="display:none" title="編輯 Experience / Education">✎ Edit</button>
+        <h2 class="page-title" id="expPageTitle">Experience &amp; Education</h2>
+        <div class="page-header-actions">
+          <div class="lang-toggle" id="expLangToggle" role="group" aria-label="Language">
+            <button type="button" class="lang-opt" data-lang="zh">中</button>
+            <button type="button" class="lang-opt" data-lang="en">EN</button>
+          </div>
+          <button id="btnEditExperience" class="btn-edit-inline admin-only" style="display:none" title="編輯 Experience / Education">✎ Edit</button>
+        </div>
       </div>
 
       <!-- Work experience timeline (rendered by js/experience.js; newest first) -->
       <div class="timeline-section">
-        <h3 class="timeline-heading">Work Experience</h3>
+        <h3 class="timeline-heading" id="expWorkHeading">Work Experience</h3>
         <div class="timeline" id="experienceWork"></div>
       </div>
 
       <!-- Education timeline (rendered by js/experience.js; newest first) -->
       <div class="timeline-section">
-        <h3 class="timeline-heading">Education</h3>
+        <h3 class="timeline-heading" id="expEduHeading">Education</h3>
         <div class="timeline" id="experienceEducation"></div>
       </div>
     </section>
