@@ -136,6 +136,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isWhitelisted();
     }
+    // 產業情報站 — 使用者手動輸入的產業／社群消息（每筆為一個事件或資訊單位，
+    // 含 ticker、來源、bullet 內容、markdown 筆記與未來看點）。內容 bullet／
+    // 未來看點可收藏進 tracked_facts。公開讀，白名單寫。
+    match /intel_notes/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
 
     match /config/auth {
       allow read: if isSignedIn();
