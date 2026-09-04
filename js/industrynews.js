@@ -6,7 +6,9 @@
 // throwing.
 import { esc, onAuth } from "./reports.js";
 import { loadNews, saveNews, deleteNews, rebuildNewsIndex, parseNewsRun } from "./newsdata.js";
+import { makeFacetState, renderFacetSearch } from "./facetsearch.js";
 
+const searchState = makeFacetState();  // 2×2 多維複選搜尋的選取狀態（跨分頁切換保留）
 const COL = "industry_news";
 const root = document.getElementById("app");
 let EVENTS = [];
@@ -299,6 +301,8 @@ function renderAnalytics() {
       <div class="df-stat"><div class="df-stat-l">平均重要度</div><div class="df-stat-v">${avgScore}</div></div>
     </div>
 
+    <section id="inSearch"></section>
+
     <div class="df-anagrid">
       <div class="df-anacard"><h4>產業分布</h4>${hbars(byIndustry, v => v + " 筆", "var(--accent)")}</div>
       <div class="df-anacard"><h4>事件類型分布</h4>${hbars(byType, v => v + " 筆", "#9C6B44")}</div>
@@ -310,6 +314,31 @@ function renderAnalytics() {
     <div class="df-anacard"><h4>事件時間序列 <span class="df-meta">（每月筆數）</span></h4><div id="inTimeline" class="df-chartbox"></div></div>`;
 
   drawTimeline(host.querySelector("#inTimeline"));
+
+  renderFacetSearch(host.querySelector("#inSearch"), searchState, {
+    title: "事件搜尋 · 多維複選",
+    facets: [
+      { key: "industry", title: "產業", placeholder: "篩選產業…", values: e => (e.industry ? [e.industry] : []), label: indZ },
+      { key: "type", title: "事件類型", placeholder: "篩選事件類型…", values: e => (e.event_type ? [e.event_type] : []), label: tZ },
+      { key: "ticker", title: "相關 ticker", placeholder: "篩選 ticker…", values: e => [...new Set(e.tickers || [])], label: v => v },
+      { key: "theme", title: "主題", placeholder: "篩選主題…", values: e => [...new Set(e.themes || [])], label: v => v },
+    ],
+    getEvents: () => EVENTS,
+    keyOf,
+    sortRows: (a, b) => impScore(b) - impScore(a) || String(evDate(b)).localeCompare(String(evDate(a))),
+    summary: rows => `${rows.length} 筆 · ${new Set(rows.map(e => e.industry).filter(Boolean)).size} 產業`,
+    emptyHint: "於上方任一維度<b>複選</b>條件即可查詢；可跨維度組合（如「半導體 × NVDA × AI」）。",
+    renderRow: e => {
+      const t = tierOf(e), tk = (e.tickers || []).slice(0, 4).join(" ");
+      return `<div class="df-crow" data-open="${esc(String(keyOf(e)))}">
+        <span class="df-crow-date">${esc(evDate(e) || "—")}</span>
+        <span class="df-crow-title">${esc(e.title_zh || e.title)}</span>
+        <span class="df-crow-type">${esc(indZ(e.industry))} · <span style="color:${tierColor[t] || "inherit"}">${esc(tierZh[t] || t)}</span></span>
+        <span class="df-crow-amt">${tk ? esc(tk) : "重要度 " + impScore(e)}</span>
+      </div>`;
+    },
+    onOpen: openDetail,
+  });
 }
 
 function drawTimeline(host) {
