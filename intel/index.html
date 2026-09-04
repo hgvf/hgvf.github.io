@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>產業情報站 · Intel Desk</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260806e" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260904a" />
+  <link rel="stylesheet" href="../css/facts.css?v=20260831a" />
+  <link rel="stylesheet" href="../css/intel.css?v=20260904a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="siteSidebar"></div>
+
+  <main class="main-content">
+    <div class="rp-head">
+      <div>
+        <h2 class="page-title">產業情報站 · Intel Desk</h2>
+        <p class="rp-subtitle">把社群 / 產業消息，手動整理成可追蹤、可驗證的交易情報</p>
+      </div>
+      <div class="rp-head-links">
+        <a class="rp-skill-link" href="../facts/index.html" title="前往事實追蹤頁面">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>事實追蹤</span>
+        </a>
+        <a class="rp-skill-link" href="../index.html#watchlist" title="回到自選股 Watchlist">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Watchlist</span>
+        </a>
+      </div>
+    </div>
+
+    <div id="intelRoot"></div>
+  </main>
+
+  <script type="module">
+    import { mountSidebar } from "../js/sidebar.js";
+    import { mountIntelDesk } from "../js/inteldesk.js?v=20260904a";
+
+    mountSidebar("intel");
+    mountIntelDesk({ root: document.getElementById("intelRoot") });
+  </script>
+</body>
+</html>

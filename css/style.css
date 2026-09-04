@@ -467,6 +467,14 @@ img { display: block; max-width: 100%; }
 .tc-tag.tg-supply   { background: rgba(37,99,235,0.14);  color: #2563EB; }
 .tc-tag.tg-industry { background: rgba(217,119,6,0.16);  color: #B45309; }
 .tc-tag.tg-earnings { background: rgba(124,58,237,0.14); color: #7C3AED; }
+/* 訊 — 手動輸入的產業情報則數（Intel Desk） */
+.tc-tag.tg-intel    { background: rgba(13,148,136,0.16); color: #0F766E; display: inline-flex; align-items: center; gap: 0.16rem; }
+.tc-tag.tg-intel .tc-tag-n {
+  font-family: var(--font-mono); font-size: 0.58rem; font-weight: 700;
+  min-width: 0.85rem; height: 0.85rem; padding: 0 0.12rem; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #0F766E; color: #fff;
+}
 
 .ticker-card {
   display: flex; flex-direction: column; gap: 0.15rem;

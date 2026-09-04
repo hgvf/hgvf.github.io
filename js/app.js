@@ -4,6 +4,7 @@ import { firebaseConfig, WORKER_URL } from './config.js';
 import { initDB, getSectors, updateSector, getSectorTree, reorderSubsectors, subscribePrices, getHomeProfile, getEventTickerMap } from './db.js';
 import { initAuth, signIn, signOutUser, onAuthChange, getIdToken } from './auth.js';
 import { renderTickerBar, renderSectorContent, updatePriceCells } from './render.js';
+import { getCountsByTicker as getIntelCounts, onIntelChange } from './intel.js';
 import {
   initAdminModals,
   openAddSector, openEditSector, submitSector, handleDeleteSector,
@@ -27,6 +28,20 @@ let _unsubPrices      = null;
 let _prices           = {};
 let _subsectorSymbols = [];  // symbols from subsector watchlist tables, kept in sync with selectSector
 let _eventTickerMap   = {};  // symbol → {supply,industry,earnings}; loaded once, read-only
+let _intelCounts      = {};  // symbol → # of手動輸入的產業情報 (intel_notes); live via onIntelChange
+
+// Merge the read-only event map with the live intel-note counts so ticker cards
+// render 供 / 產 / 法 tags AND the 訊<n> intel-count badge from one events object.
+function mergedEvents() {
+  const out = {};
+  const syms = new Set([...Object.keys(_eventTickerMap), ...Object.keys(_intelCounts)]);
+  syms.forEach(sym => {
+    const ev = _eventTickerMap[sym];
+    const n = _intelCounts[sym] || 0;
+    out[sym] = { ...(ev || {}), ...(n ? { intel: { count: n } } : {}) };
+  });
+  return out;
+}
 
 /* ── Firebase init ─────────────────────────────────────────────── */
 const app  = initializeApp(firebaseConfig);
@@ -276,6 +291,15 @@ async function loadWatchlist() {
   getEventTickerMap()
     .then(map => { _eventTickerMap = map; if (_currentSector) selectSector(_currentSector.id); })
     .catch(err => console.warn('event tags unavailable:', err));
+
+  // Intel-note counts arrive from a live Firestore listener (intel.js). Seed the
+  // current counts and re-render the ticker bar whenever a note is added / edited
+  // / removed so the 訊<n> badge stays in sync across tabs and devices.
+  _intelCounts = getIntelCounts();
+  onIntelChange(() => {
+    _intelCounts = getIntelCounts();
+    if (_currentSector) selectSector(_currentSector.id);
+  });
 }
 
 async function selectSector(sectorId) {
@@ -314,7 +338,7 @@ async function selectSector(sectorId) {
     try { await reorderSubsectors(orderedIds); }
     catch (err) { console.error('reorder persist failed:', err); }
   } : null;
-  const barOpts = { groups, events: _eventTickerMap, onReorderGroups };
+  const barOpts = { groups, events: mergedEvents(), onReorderGroups };
 
   renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, barOpts);
 
@@ -513,12 +537,12 @@ document.getElementById('tickerBarInner')?.addEventListener('click', async e => 
     await updateSector(_currentSector.id, { ticker_overview: updated });
     _currentSector.ticker_overview = updated;
     const allSymbols = [...new Set([...updated, ..._subsectorSymbols])];
-    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
+    renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, { events: mergedEvents() });
     _unsubPrices?.();
     _unsubPrices = subscribePrices(allSymbols, newPrices => {
       _prices = newPrices;
       updatePriceCells(_prices);
-      renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector);
+      renderTickerBar(allSymbols, _prices, _isAdmin, _currentSector, { events: mergedEvents() });
     });
   }
 });
