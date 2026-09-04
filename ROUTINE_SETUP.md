@@ -164,3 +164,32 @@ STEPS:
 `js/reports.js` 的 `renderTimeline(host, items, { priceSeries })` 已支援：
 只要傳入 `priceSeries: [{date, close}]`，節點就會落在股價線上（圖一那樣）。
 目前 worker 只存漲跌%、沒存整條收盤序列；要畫線需另外提供每日收盤資料。
+
+---
+
+## 事實追蹤 — 自動更新 Routine（`fact-tracker` skill）
+
+把 `事實追蹤`（`tracked_facts` collection）裡「追蹤中」的法說事實 / 未來看點，每隔幾天自動上網找最新進展並回填。事實**由你在網站上收藏建立**，Routine 只負責更新、不新增。
+
+| 元件 | 用途 |
+|------|------|
+| `skills/fact-tracker/SKILL.md` | 給 Claude Code 的技能（跨市場，含研究準則與 JSON 格式） |
+| `scripts/facts_pull.py` | 把追蹤事實拉下來給模型研究 |
+| `scripts/facts_push.py` | 把研究出的更新 merge 回 Firestore（只更新、去重、可 `--dry-run`） |
+
+**設定 Routine**（[claude.ai/code/routines](https://claude.ai/code/routines) → New routine）：
+1. **Repository**：`hgvf/hgvf.github.io`（取得 skill 與 scripts）。
+2. **Trigger → Schedule**：每 3 天一次即可。
+3. 環境變數 `FIREBASE_SERVICE_ACCOUNT` = service account JSON 原文（同 `publish.py`）。
+4. **Prompt** 例：`使用 fact-tracker skill 更新我的事實追蹤`。
+
+技能會自動跑：
+```
+pip install -q google-auth requests
+python scripts/facts_pull.py --status due --out /tmp/facts.json   # 只挑到期/未設下次檢查的
+# → 逐一上網研究，只對「真的有新消息」的事實寫成 /tmp/facts_updates.json
+python scripts/facts_push.py --file /tmp/facts_updates.json       # 先 --dry-run 預覽亦可
+```
+
+- `facts_push.py` 是 **read-merge-write**：不覆蓋既有欄位、`(date,text)` 重複的更新會跳過，重跑安全。
+- 更新內容附來源與日期，並視證據推進狀態（待驗證→進展符合／落後預期／已驗證／已失效），寫入後網站即時反映。
