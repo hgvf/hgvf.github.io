@@ -276,6 +276,7 @@ function openDetail(e) {
 // 同一維度內為「或」、不同維度之間為「且」（nested search）。
 const searchSel = { contractor: new Set(), country: new Set(), type: new Set(), category: new Set() };
 const searchQ = { contractor: "", country: "", type: "", category: "" };  // 各維度的字面篩選
+let searchOpen = false;      // 搜尋 sector 展開/收合（預設收合）
 let chartYear = "";          // histogram/line 年份 filter
 let chartMode = "bar";       // bar | line
 let selectedCompanies = new Set();  // 圖表上被點選的公司（跨長條/折線共用）
@@ -344,11 +345,11 @@ function renderAnalytics() {
       <div class="df-stat"><div class="df-stat-l">計畫數</div><div class="df-stat-v">${distinctPrograms}</div></div>
     </div>
 
-    <div class="df-anacard df-search">
-      <div class="df-anacard-head">
+    <details class="df-anacard df-search"${searchOpen ? " open" : ""}>
+      <summary class="df-anacard-head df-search-toggle">
         <h4>合約搜尋 · 多維複選</h4>
         <span class="df-meta" id="searchSummary"></span>
-      </div>
+      </summary>
       <p class="df-meta df-chart-hint">於下列四個維度<b>複選</b>條件：同一維度內為「或」、不同維度之間為「且」（nested search）。各維度旁數字為<b>在其他條件下</b>符合的筆數。</p>
       <div class="df-search-grid">
         <div class="df-facet" data-facet="contractor">
@@ -373,7 +374,7 @@ function renderAnalytics() {
         </div>
       </div>
       <div class="df-search-results" id="searchResults"></div>
-    </div>
+    </details>
 
     <div class="df-anacard df-chartcard">
       <div class="df-anacard-head">
@@ -412,6 +413,8 @@ function renderAnalytics() {
   host.querySelectorAll(".df-facet-clear[data-clear]").forEach(b => {
     b.onclick = () => { searchSel[b.dataset.clear].clear(); renderSearch(); };
   });
+  const searchDet = host.querySelector("details.df-search");
+  if (searchDet) searchDet.addEventListener("toggle", () => { searchOpen = searchDet.open; });
   renderSearch();
   drawMainChart();
 }
