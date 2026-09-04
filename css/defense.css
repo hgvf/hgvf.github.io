@@ -105,6 +105,13 @@
 @media (max-width: 640px) { .df-crow { grid-template-columns: 1fr auto; } .df-crow-date, .df-crow-type { display: none; } }
 
 /* 2×2 多維複選搜尋 sector */
+details.df-search > summary.df-search-toggle { list-style: none; cursor: pointer; user-select: none; justify-content: flex-start; margin-bottom: 0; }
+details.df-search > summary.df-search-toggle::-webkit-details-marker { display: none; }
+details.df-search > summary.df-search-toggle h4 { margin: 0; }
+details.df-search > summary.df-search-toggle .df-meta { margin-left: auto; }
+details.df-search > summary.df-search-toggle::after { content: "▾"; margin-left: 0.55rem; color: var(--text-muted); transition: transform 0.2s ease; }
+details.df-search[open] > summary.df-search-toggle::after { transform: rotate(180deg); }
+details.df-search[open] > summary.df-search-toggle { margin-bottom: 0.6rem; }
 .df-search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-bottom: 1rem; }
 .df-facet { display: flex; flex-direction: column; min-width: 0; background: var(--glass-bg-solid); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); padding: 0.7rem 0.8rem; }
 .df-facet-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }

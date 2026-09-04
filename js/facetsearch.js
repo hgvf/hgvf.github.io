@@ -27,11 +27,11 @@ export function renderFacetSearch(host, state, cfg) {
   facets.forEach(f => { state.sel[f.key] ||= new Set(); if (state.q[f.key] == null) state.q[f.key] = ""; });
 
   host.innerHTML = `
-    <div class="df-anacard df-search">
-      <div class="df-anacard-head">
+    <details class="df-anacard df-search"${state.open ? " open" : ""}>
+      <summary class="df-anacard-head df-search-toggle">
         <h4>${esc(cfg.title || "多維複選搜尋")}</h4>
         <span class="df-meta" data-fs="summary"></span>
-      </div>
+      </summary>
       <p class="df-meta df-chart-hint">${cfg.intro || "於下列維度<b>複選</b>條件：同一維度內為「或」、不同維度之間為「且」（nested search）。各維度旁數字為<b>在其他條件下</b>符合的筆數。"}</p>
       <div class="df-search-grid">
         ${facets.map(f => `
@@ -42,7 +42,11 @@ export function renderFacetSearch(host, state, cfg) {
           </div>`).join("")}
       </div>
       <div class="df-search-results" data-fs="results"></div>
-    </div>`;
+    </details>`;
+
+  // 記住展開/收合狀態（預設收合），使切換分頁後重繪能保留使用者的選擇。
+  const det = host.querySelector("details.df-search");
+  if (det) det.addEventListener("toggle", () => { state.open = det.open; });
 
   const facetByKey = Object.fromEntries(facets.map(f => [f.key, f]));
 
