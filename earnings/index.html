@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>財報電話會議分析 · Earnings Calls</title>
   <link rel="stylesheet" href="../css/style.css?v=20260806e" />
-  <link rel="stylesheet" href="../css/reports.css?v=20260827a" />
+  <link rel="stylesheet" href="../css/reports.css?v=20260904a" />
   <link rel="stylesheet" href="../css/facts.css?v=20260831a" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -68,7 +68,7 @@
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, loadPricesMap, loadOverridesMap, setTickerAdmin, tickerTrendCard } from "../js/reports.js";
+    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, updateEarningsCall, loadPricesMap, loadOverridesMap, setTickerAdmin, tickerTrendCard } from "../js/reports.js";
     import { factId, isFactTracked, hasFactsForTicker, toggleFactBookmark, onFactsChange } from "../js/facts.js";
 
     mountSidebar("earnings");
@@ -112,8 +112,10 @@
         + `>📌 事實追蹤</a>`;
     }
     let currentCall = null;
+    let editing = false;               // whether the detail panel is in edit mode
     function detail(c) {
       currentCall = c;
+      if (editing && lastAdmin) return detailEdit(c);
       const s = sent(overall(c));
       const hls = (c.highlights || []).map((h, i) =>
         hlHTML(h, { kind: "fact", idx: i, tracked: isFactTracked(factId(c.ticker, "fact", h.text)) })).join("");
@@ -123,18 +125,71 @@
             <ul class="ec-watch-list">${watch.map((w, i) =>
               `<li><span class="ec-watch-tx">${esc(w)}</span>${fbmBtn("watch", i, isFactTracked(factId(c.ticker, "watch", w)))}</li>`).join("")}</ul></div>`
         : "";
+      const editBtn = lastAdmin
+        ? `<button class="ec-editbtn" data-ec-edit title="編輯此財報卡（新增／刪除 節點與未來重點）">✎ 編輯</button>` : "";
       return `<article class="rv-detail ${s.cls}">
         <div class="ec-head">
           <span class="ec-ticker">${esc(c.ticker)}</span>
           <span class="ec-company">${esc(c.company || "")}</span>
           <a class="ec-kbtn" href="${esc(chartUrl(c.ticker))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(c.ticker)} 線圖">📈 K線</a>
           ${factLinkHTML(c)}
+          ${editBtn}
           <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
         </div>
         ${c.summary ? `<p class="ec-summary">${esc(c.summary)}</p>` : ""}
         ${hls ? `<div class="ec-hls">${hls}</div>` : ""}
         ${watchCard}
         ${tickerTrendCard([c.ticker])}
+      </article>`;
+    }
+
+    // ── Inline editor ────────────────────────────────────────────────────
+    // Order matters: cycling a node's sentiment steps through this list.
+    const SENT_CYCLE = ["bullish", "bearish", "neutral"];
+    const sentIcon = s => (s === "bullish" ? "▲" : s === "bearish" ? "▼" : "—");
+    // One editable highlight row: sentiment-cycle button + text input + delete.
+    function editHlRow(h = { text: "", sentiment: "neutral" }) {
+      const s = sent(h.sentiment);
+      return `<div class="ec-ed-row" data-ec-hlrow data-sent="${esc(h.sentiment)}">
+        <button class="ec-ed-sent sent-tag ${s.cls}" data-ec-cyclesent title="切換 偏多 / 偏空 / 中性">${sentIcon(h.sentiment)}</button>
+        <input class="ec-ed-input" data-ec-hltext type="text" value="${esc(h.text)}" placeholder="輸入重點節點內容…" />
+        <button class="ec-ed-del" data-ec-delrow title="刪除此節點" aria-label="刪除">✕</button>
+      </div>`;
+    }
+    // One editable future-watch row: text input + delete.
+    function editWatchRow(w = "") {
+      return `<div class="ec-ed-row" data-ec-watchrow>
+        <span class="ec-ed-bullet">▸</span>
+        <input class="ec-ed-input" data-ec-watchtext type="text" value="${esc(w)}" placeholder="輸入未來重點事項…" />
+        <button class="ec-ed-del" data-ec-delrow title="刪除此項" aria-label="刪除">✕</button>
+      </div>`;
+    }
+    function detailEdit(c) {
+      const hlRows = (c.highlights || []).map(editHlRow).join("");
+      const watchRows = (c.watch || []).filter(w => w).map(editWatchRow).join("");
+      return `<article class="rv-detail ec-editing">
+        <div class="ec-head">
+          <span class="ec-ticker">${esc(c.ticker)}</span>
+          <span class="ec-company">${esc(c.company || "")}</span>
+          <span class="ec-editing-tag">編輯中</span>
+          <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
+        </div>
+        <label class="ec-ed-label">摘要</label>
+        <textarea class="ec-ed-summary" data-ec-summary rows="2" placeholder="一句話總結本次財報電話會議…">${esc(c.summary || "")}</textarea>
+
+        <label class="ec-ed-label">重點節點（偏多 / 偏空 / 中性）</label>
+        <div class="ec-ed-list" data-ec-hllist>${hlRows}</div>
+        <button class="rp-btn ghost ec-ed-add" data-ec-addhl>＋ 新增節點</button>
+
+        <label class="ec-ed-label">🔮 未來重點事項</label>
+        <div class="ec-ed-list" data-ec-watchlist>${watchRows}</div>
+        <button class="rp-btn ghost ec-ed-add" data-ec-addwatch>＋ 新增未來重點</button>
+
+        <div class="ec-ed-actions">
+          <button class="rp-btn" data-ec-save>💾 儲存</button>
+          <button class="rp-btn ghost" data-ec-cancel>取消</button>
+          <span class="rp-status" data-ec-status></span>
+        </div>
       </article>`;
     }
 
@@ -238,11 +293,74 @@
       updateFactLink(c);
     });
 
+    // ── Inline editor wiring (admin only) ────────────────────────────────
+    function reRenderDetail() {
+      if (currentCall) reportRoot.querySelector(".rv-right").innerHTML = detail(currentCall);
+    }
+    reportRoot.addEventListener("click", async e => {
+      // Enter edit mode
+      if (e.target.closest("[data-ec-edit]")) { editing = true; reRenderDetail(); return; }
+      // Cancel — drop unsaved changes, return to read view
+      if (e.target.closest("[data-ec-cancel]")) { editing = false; reRenderDetail(); return; }
+      // Cycle a node's sentiment (偏多 → 偏空 → 中性)
+      const cyc = e.target.closest("[data-ec-cyclesent]");
+      if (cyc) {
+        const row = cyc.closest("[data-ec-hlrow]");
+        const cur = row.dataset.sent || "neutral";
+        const next = SENT_CYCLE[(SENT_CYCLE.indexOf(cur) + 1) % SENT_CYCLE.length];
+        row.dataset.sent = next;
+        const s = sent(next);
+        cyc.className = `ec-ed-sent sent-tag ${s.cls}`;
+        cyc.textContent = sentIcon(next);
+        return;
+      }
+      // Add a blank node / watch row
+      if (e.target.closest("[data-ec-addhl]")) {
+        reportRoot.querySelector("[data-ec-hllist]").insertAdjacentHTML("beforeend", editHlRow());
+        return;
+      }
+      if (e.target.closest("[data-ec-addwatch]")) {
+        reportRoot.querySelector("[data-ec-watchlist]").insertAdjacentHTML("beforeend", editWatchRow());
+        return;
+      }
+      // Delete a row
+      const del = e.target.closest("[data-ec-delrow]");
+      if (del) { del.closest("[data-ec-hlrow], [data-ec-watchrow]").remove(); return; }
+      // Save — collect the form and patch Firebase
+      if (e.target.closest("[data-ec-save]")) {
+        if (!currentCall) return;
+        const status = reportRoot.querySelector("[data-ec-status]");
+        const summary = reportRoot.querySelector("[data-ec-summary]").value.trim();
+        const highlights = [...reportRoot.querySelectorAll("[data-ec-hlrow]")].map(r => ({
+          text: r.querySelector("[data-ec-hltext]").value,
+          sentiment: r.dataset.sent || "neutral",
+        })).filter(h => h.text.trim());
+        const watch = [...reportRoot.querySelectorAll("[data-ec-watchtext]")]
+          .map(i => i.value).filter(w => w.trim());
+        status.className = "rp-status"; status.textContent = "儲存中…";
+        try {
+          await updateEarningsCall(currentCall.id, { summary, highlights, watch });
+          editing = false;
+          if (view) await view.reload();   // reload refreshes the timeline + detail from Firebase
+        } catch (err) {
+          status.className = "rp-status err";
+          status.textContent = "儲存失敗：" + (err.code === "permission-denied" ? "需以白名單管理員登入。" : err.message);
+        }
+        return;
+      }
+    });
+
     // Admin importer + delete (sign-in handled in the sidebar)
     const importPanel = document.getElementById("importPanel");
     const pubStatus = document.getElementById("pubStatus");
     let lastAdmin = false;
-    onAuth(({ isAdmin }) => { lastAdmin = isAdmin; importPanel.hidden = !isAdmin; setTickerAdmin(isAdmin); if (view) view.setAdmin(isAdmin); });
+    onAuth(({ isAdmin }) => {
+      lastAdmin = isAdmin; importPanel.hidden = !isAdmin; setTickerAdmin(isAdmin);
+      if (view) view.setAdmin(isAdmin);
+      // Leaving admin (or the edit button appearing on sign-in) → refresh the open card.
+      if (!isAdmin && editing) editing = false;
+      reRenderDetail();
+    });
 
     document.getElementById("publishBtn").addEventListener("click", async () => {
       const raw = document.getElementById("jsonInput").value.trim();
