@@ -95,6 +95,28 @@ export async function saveEarnings(calls) {
   return n;
 }
 
+// Patch a single earnings call in place (whitelisted users only; enforced by
+// Firestore rules). Used by the inline card editor to add / remove / re-classify
+// highlight nodes and future-watch points without re-pasting the whole JSON.
+// `patch` may carry summary (string), highlights ([{text,sentiment}]) and/or
+// watch ([string]); only the provided keys are written.
+export async function updateEarningsCall(id, patch = {}) {
+  if (!id) throw new Error("缺少會議 id");
+  const out = { updated_at: new Date().toISOString() };
+  if ("summary" in patch) out.summary = String(patch.summary || "");
+  if ("highlights" in patch) {
+    out.highlights = (patch.highlights || [])
+      .filter(h => h && String(h.text).trim())
+      .map(h => ({ text: String(h.text).trim(), sentiment: normSent(h.sentiment) }));
+  }
+  if ("watch" in patch) {
+    out.watch = (patch.watch || [])
+      .filter(w => w != null && String(w).trim())
+      .map(w => String(w).trim());
+  }
+  await setDoc(doc(db(), "earnings_calls", id), out, { merge: true });
+}
+
 // ─── Annual reports ────────────────────────────────────────────────────
 // Accepts {reports:[...]}, a bare array, or a single annual-report object
 // (the annual_report_summary schema, detected by schema_version/document/company).
