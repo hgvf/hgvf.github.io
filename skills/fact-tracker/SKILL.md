@@ -93,6 +93,20 @@ happened since its latest update. Tailor queries to the market and the claim:
 - Look specifically for evidence that moves the assumption: product/test
   milestones, capacity or shipment data, design wins, order/booking figures,
   guidance changes, regulatory approvals, delays, cancellations, accidents.
+- **X /社群 as a lead source.** X (Twitter) and similar communities often surface
+  developments before the press — teardown accounts, supply-chain trackers,
+  sell-side and industry insiders, the company's and its executives' own
+  handles. Worth scanning, but weight by credibility:
+  - Prefer **established accounts with a real track record and a meaningful,
+    non-trivial follower count** in the relevant field; the company's / execs'
+    **official (verified) accounts** rank highest.
+  - Treat posts as **leads, not proof.** Before recording anything from X,
+    confirm it against a primary source (press release, filing, exchange) — or,
+    if none yet exists, log it explicitly as *unconfirmed / 市場傳聞* with the
+    account name and date, and keep the fact's `state` unchanged.
+  - Discount anonymous hype, pumpers, screenshot-only claims, and accounts with
+    no history; never let a single unverified post drive a `verified` /
+    `invalidated` verdict.
 - Note the **date** of each development and whether it is confirmed or reported.
 
 If nothing material is found, or you only find restatements of what
