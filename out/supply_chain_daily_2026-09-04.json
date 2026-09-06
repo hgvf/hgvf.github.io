@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-07T06:09:52+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude"
+  },
+  "event_window": {
+    "start": "2026-09-04",
+    "end": "2026-09-04"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "HBM": 1,
+      "memory": 1,
+      "semiconductor": 2,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "high": 2
+    },
+    "top_tickers": ["MU", "NVDA", "005930.KS", "000660.KS", "WCH.DE", "GLW"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260904-001",
+      "slug": "micron-hbm4-capacity-doubling-samsung-sk-hynix",
+      "event_date": "2026-09-04",
+      "published_at": "2026-09-04",
+      "ingested_at": "2026-09-07T06:09:52+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["HBM", "memory", "semiconductor", "AI infrastructure"],
+      "regions": ["US", "TW", "SG", "JP"],
+      "importance_score": 83,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "美光傳年底前HBM月產能倍增至10萬片，加速追趕三星、SK海力士",
+      "title_original": "Micron Reportedly Plans to Double Monthly HBM Capacity to 100,000 Wafers by Year-End 2026",
+      "summary_zh": "據韓聯社引述業界人士消息，美光計畫透過台灣銅鑼廠、新加坡兀蘭廠擴產並籌備日本廣島廠設備投資，年底前將HBM月產能從目前約4-5萬片提升至約10萬片；其中專供NVIDIA次世代Vera Rubin平台的HBM4 12層產品占比，將由年初的20-30%拉高到年底約50%，量產爬坡速度約為HBM3E的兩倍。",
+      "why_it_matters": "美光此舉將把HBM月產能倍增，大幅縮小與三星（月產能約15-20萬片、2026Q2市佔32%）、SK海力士（月產能約15-20萬片、市佔50%）的規模差距，若如期達成，NVIDIA Vera Rubin平台的HBM4供給瓶頸可望緩解，美光在AI記憶體市場的議價力與毛利率可望改善；但三星與SK海力士規模仍是美光的3-4倍，短期市佔版圖預料不會劇烈翻轉，AI伺服器/GPU廠商的記憶體採購來源可望更多元、交期風險略降。",
+
+      "tickers": ["MU", "NVDA", "005930.KS", "000660.KS"],
+      "companies": [
+        {
+          "name": "Micron Technology, Inc.",
+          "ticker": "MU",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "NVIDIA Corporation",
+          "ticker": "NVDA",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "customer"
+        },
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "affected_party"
+        },
+        {
+          "name": "SK hynix Inc.",
+          "ticker": "000660.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "affected_party"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["DRAM wafer", "TSV (through-silicon via) process"],
+        "component": "HBM4 12-layer DRAM",
+        "supplier": ["Micron Technology, Inc."],
+        "customer": ["NVIDIA Corporation"],
+        "end_market": ["AI accelerators", "data center", "AI infrastructure"]
+      },
+
+      "products": ["HBM4", "HBM"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "美光月產能約4-5萬片HBM晶圓，HBM4占比約20-30%，2026Q2 HBM市佔僅約18%，遠落後三星(32%)與SK海力士(50%)",
+        "after": "美光計畫年底前將HBM月產能倍增至約10萬片，HBM4占比拉升至約50%，藉此縮小與三星、SK海力士的規模差距"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": 100,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-12-31"
+      },
+
+      "search_keywords": [
+        "micron", "美光", "hbm", "hbm4", "high bandwidth memory", "高頻寬記憶體",
+        "samsung", "三星", "sk hynix", "sk海力士", "nvidia", "vera rubin",
+        "capacity expansion", "擴產", "產能", "tongluo", "銅鑼", "woodlands",
+        "hiroshima", "廣島", "dram", "memory", "記憶體", "semiconductor", "半導體",
+        "ai infrastructure", "wafer", "晶圓", "mu", "nvda", "005930", "000660"
+      ],
+
+      "sources": [
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260904VL206/micron-hbm-capacity-sk-hynix-samsung.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        },
+        {
+          "publisher": "Electronic Times (etnews, citing Yonhap)",
+          "source_type": "trade",
+          "url": "https://en.etnews.com/20260904200006",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        },
+        {
+          "publisher": "TradingKey",
+          "source_type": "analyst",
+          "url": "https://www.tradingkey.com/analysis/stocks/us-stocks/262151809-micron-mu-hbm-capacity-doubling-samsung-sk-hynix-hbm4-ai-memory-vera-rubin-tradingkey",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260904-002",
+      "slug": "wacker-tennessee-polysilicon-closure-risk-tariff-backfire",
+      "event_date": "2026-09-04",
+      "published_at": "2026-09-04",
+      "ingested_at": "2026-09-07T06:09:52+08:00",
+
+      "event_type": "supply_disruption",
+      "event_type_secondary": ["trade_policy"],
+      "themes": ["semiconductor"],
+      "regions": ["US"],
+      "importance_score": 81,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "美國多晶矽關稅暨價格底線恐弄巧成拙，Wacker田納西廠瀕臨關廠",
+      "title_original": "Trump's Bid to Shield Chip Supply Chain Could Backfire in Tennessee",
+      "summary_zh": "路透獨家報導，德國Wacker Chemie位於田納西州查爾斯頓、投資25億美元、年產能逾2萬公噸的多晶矽廠（半導體及太陽能級），因美國政府8月6日簽署的232條款關稅公告（進口多晶矽課徵15%關稅、每公斤21美元價格底線，12月4日生效）未實質嘉惠美製多晶矽（美製成本約為進口的4倍），導致該廠僅剩的兩家客戶相繼求去，公司評估未來數週內是否關閉此廠；僅存的美國同業Hemlock Semiconductor（Corning／信越合資）因垂直整合至晶圓生產、較不受衝擊。",
+      "why_it_matters": "此案凸顯美國以關稅保護半導體多晶矽供應鏈的政策可能適得其反：價格底線對進口與美製多晶矽一視同仁，未實質墊高美製多晶矽的競爭力，Wacker恐步入關廠一途；一旦成真，美國將僅剩Hemlock Semiconductor一家具規模的獨立多晶矽供應商，半導體晶圓與太陽能模組的美國本土多晶矽供給集中度將大幅提高，反而弱化政策原欲強化的供應鏈韌性目標，長期可能推升美系晶圓廠與太陽能製造商的多晶矽採購成本與斷鏈風險，Hemlock/Corning的議價力則相對上升。",
+
+      "tickers": ["WCH.DE", "GLW"],
+      "companies": [
+        {
+          "name": "Wacker Chemie AG",
+          "ticker": "WCH.DE",
+          "exchange": "XETRA",
+          "country": "DE",
+          "role": "affected_party"
+        },
+        {
+          "name": "Hemlock Semiconductor Group (Corning / Shin-Etsu JV)",
+          "ticker": "GLW",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "affected_party"
+        },
+        {
+          "name": "The White House (Section 232 Proclamation)",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "regulator"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["metallurgical-grade silicon", "trichlorosilane"],
+        "component": "polysilicon (semiconductor & solar grade)",
+        "supplier": ["Wacker Chemie AG"],
+        "customer": ["undisclosed semiconductor/solar wafer producers (2 remaining, unnamed per Reuters)"],
+        "end_market": ["semiconductor wafers", "solar panels"]
+      },
+
+      "products": ["polysilicon"],
+      "materials": ["polysilicon", "metallurgical-grade silicon"],
+
+      "change": {
+        "type": "supply_disruption_risk",
+        "before": "Wacker查爾斯頓廠（田納西州，年產能逾2萬公噸多晶矽、投資額25億美元、員工約600人）持續營運，供應半導體及太陽能級多晶矽",
+        "after": "受8月6日Section 232關稅暨價格底線公告影響（12月4日生效），該廠最後兩家客戶已求去，Wacker評估未來數週內是否關廠，全美僅存Hemlock（Corning／信越合資）具規模的同業"
+      },
+
+      "financial_data": {
+        "amount": 2500000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-12-04"
+      },
+
+      "search_keywords": [
+        "wacker", "wacker chemie", "polysilicon", "多晶矽", "tennessee", "charleston",
+        "hemlock semiconductor", "corning", "shin-etsu", "section 232", "tariff",
+        "關稅", "price floor", "價格底線", "trade policy", "貿易政策",
+        "semiconductor", "半導體", "solar", "太陽能", "reshoring", "美國製造",
+        "supply disruption", "wch"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Reuters (via 93.3 The Drive)",
+          "source_type": "wire",
+          "url": "https://www.933thedrive.com/2026/09/04/exclusive-trumps-bid-to-shield-chip-supply-chain-could-backfire-in-tennessee/",
+          "is_primary": true,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        },
+        {
+          "publisher": "Reuters (via Lufkin Daily News)",
+          "source_type": "wire",
+          "url": "https://lufkindailynews.com/news_reuters/business/exclusive-trumps-bid-to-shield-chip-supply-chain-could-backfire-in-tennessee/article_a21f67c8-c767-5cf4-8c28-3fabc84320c5.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        },
+        {
+          "publisher": "White & Case LLP",
+          "source_type": "analyst",
+          "url": "https://www.whitecase.com/insight-alert/president-trump-orders-tariffs-and-price-floors-polysilicon-section-232-action",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T06:09:52+08:00"
+        }
+      ]
+    }
+  ]
+}
