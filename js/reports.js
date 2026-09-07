@@ -241,25 +241,49 @@ export async function loadPricesMap() {
 }
 export function getPricesMapSync() { return _pricesMap || {}; }
 
-// Manual company-name overrides (ticker_overrides/{symbol}.name). Loaded once
-// per page; admins can edit inline and it's written straight back to Firestore.
-let _overrides = null;
+// Manual per-ticker corrections, loaded once per page and edited inline by
+// admins (writes straight back to Firestore):
+//   · company name  → ticker_overrides/{symbol}.name
+//   · symbol itself → ticker_aliases/{wrongSymbol}.symbol  (e.g. a .TW that
+//     should be .TWO). The alias is a global remap: everywhere that symbol is
+//     rendered — chip, trend table, chart link, price lookup — resolves to the
+//     corrected one, so a single edit fixes it now and in future data.
+let _overrides = null, _aliases = null;
 export async function loadOverridesMap() {
   if (_overrides) return _overrides;
-  const map = {};
+  const names = {}, aliases = {};
   try {
-    const snap = await getDocs(collection(db(), "ticker_overrides"));
-    snap.docs.forEach(d => { const n = d.data() && d.data().name; if (n) map[d.id] = String(n); });
-  } catch { /* collection may not exist yet — leave empty */ }
-  _overrides = map;
-  return map;
+    const [ov, ax] = await Promise.all([
+      getDocs(collection(db(), "ticker_overrides")),
+      getDocs(collection(db(), "ticker_aliases")),
+    ]);
+    ov.docs.forEach(d => { const n = d.data() && d.data().name; if (n) names[d.id] = String(n); });
+    ax.docs.forEach(d => { const s = d.data() && d.data().symbol; if (s) aliases[d.id] = String(s); });
+  } catch { /* collections may not exist yet — leave empty */ }
+  _overrides = names; _aliases = aliases;
+  return names;
 }
-function _displayName(sym, p) {
-  return (_overrides && _overrides[sym]) || (p && p.name) || "";
+// Resolve a raw symbol through the alias map to its corrected form.
+export function resolveSymbol(sym) {
+  const s = String(sym || "").trim();
+  return (_aliases && _aliases[s]) || s;
+}
+// Name lookup tries the raw symbol, then the corrected one, then the price row.
+function _displayName(sym, eff, p) {
+  return (_overrides && (_overrides[sym] || _overrides[eff])) || (p && p.name) || "";
 }
 
 let _ttAdmin = false;
 export function setTickerAdmin(v) { _ttAdmin = !!v; }
+
+// ── Re-render bus: fired after a ticker correction so the surrounding
+// master/detail view can rebuild the panel (a symbol change alters chips, the
+// chart link, and which price row shows — a full repaint, unlike a name tweak).
+const _TICKER_EVT = "sc-ticker-data-change";
+export function onTickerDataChange(cb) {
+  window.addEventListener(_TICKER_EVT, cb);
+  return () => window.removeEventListener(_TICKER_EVT, cb);
+}
 
 // Write (or clear, when blank) a name override. Requires a whitelisted admin;
 // Firestore rules enforce it.
@@ -271,6 +295,23 @@ export async function saveTickerName(symbol, name) {
   if (!clean) { await deleteDoc(ref); if (_overrides) delete _overrides[sym]; return; }
   await setDoc(ref, { name: clean, updated_at: new Date().toISOString() }, { merge: true });
   (_overrides = _overrides || {})[sym] = clean;
+}
+
+// Write (or clear) a symbol alias: raw → corrected. Clearing when the corrected
+// symbol is blank or equals the raw one. Whitelist write (Firestore rules).
+export async function saveTickerAlias(rawSymbol, aliasSymbol) {
+  const raw = String(rawSymbol || "").trim();
+  if (!raw) return;
+  const ref = doc(db(), "ticker_aliases", raw);
+  const clean = String(aliasSymbol || "").trim().toUpperCase();
+  if (!clean || clean === raw.toUpperCase()) {
+    await deleteDoc(ref);
+    if (_aliases) delete _aliases[raw];
+  } else {
+    await setDoc(ref, { symbol: clean, updated_at: new Date().toISOString() }, { merge: true });
+    (_aliases = _aliases || {})[raw] = clean;
+  }
+  window.dispatchEvent(new CustomEvent(_TICKER_EVT, { detail: { raw } }));
 }
 
 // Inline-edit wiring for the name cell — attached once, delegated on document
@@ -315,16 +356,71 @@ function ensureTtEditWiring() {
         saveBtn.disabled = false; saveBtn.textContent = "✓";
         window.alert("儲存失敗：" + (err && err.code === "permission-denied" ? "需以白名單管理員登入。" : (err && err.message) || err));
       }
+      return;
+    }
+    // ── Ticker-symbol edit (alias: raw → corrected, e.g. .TW → .TWO) ──
+    const tkEditBtn = e.target.closest("[data-tk-edit]");
+    if (tkEditBtn) {
+      const wrap = tkEditBtn.closest(".tt-tkwrap");
+      if (!wrap || wrap.querySelector(".tt-tk-input")) return;
+      const raw = wrap.dataset.raw;
+      const cur = wrap.dataset.eff || raw;
+      wrap.innerHTML =
+        `<input class="tt-tk-input" type="text" value="${esc(cur)}" maxlength="20" aria-label="股票代號" spellcheck="false">` +
+        `<button class="tt-editbtn tt-save" data-tk-save="${esc(raw)}" title="儲存">✓</button>` +
+        `<button class="tt-editbtn tt-cancel" data-tk-cancel="${esc(raw)}" title="取消">✕</button>`;
+      const inp = wrap.querySelector(".tt-tk-input"); inp.focus(); inp.select();
+      return;
+    }
+    const tkCancelBtn = e.target.closest("[data-tk-cancel]");
+    if (tkCancelBtn) {
+      const wrap = tkCancelBtn.closest(".tt-tkwrap");
+      if (wrap) _paintTkWrap(wrap);
+      return;
+    }
+    const tkSaveBtn = e.target.closest("[data-tk-save]");
+    if (tkSaveBtn) {
+      const wrap = tkSaveBtn.closest(".tt-tkwrap");
+      if (!wrap) return;
+      const raw = wrap.dataset.raw;
+      const input = wrap.querySelector(".tt-tk-input");
+      const val = input ? input.value.trim() : "";
+      tkSaveBtn.disabled = true; tkSaveBtn.textContent = "…";
+      try {
+        // Fires the re-render event, which rebuilds the whole detail panel.
+        await saveTickerAlias(raw, val);
+      } catch (err) {
+        tkSaveBtn.disabled = false; tkSaveBtn.textContent = "✓";
+        window.alert("儲存失敗：" + (err && err.code === "permission-denied" ? "需以白名單管理員登入。" : (err && err.message) || err));
+      }
+      return;
     }
   });
-  // Enter = save, Esc = cancel inside the inline input
+  // Enter = save, Esc = cancel inside either inline input
   document.addEventListener("keydown", e => {
-    if (!e.target.classList || !e.target.classList.contains("tt-name-input")) return;
-    const wrap = e.target.closest(".tt-namewrap");
-    if (!wrap) return;
-    if (e.key === "Enter") { e.preventDefault(); wrap.querySelector("[data-tt-save]")?.click(); }
-    else if (e.key === "Escape") { e.preventDefault(); _paintNameWrap(wrap, wrap.dataset.name); }
+    const cls = e.target.classList;
+    if (!cls) return;
+    if (cls.contains("tt-name-input")) {
+      const wrap = e.target.closest(".tt-namewrap");
+      if (!wrap) return;
+      if (e.key === "Enter") { e.preventDefault(); wrap.querySelector("[data-tt-save]")?.click(); }
+      else if (e.key === "Escape") { e.preventDefault(); _paintNameWrap(wrap, wrap.dataset.name); }
+    } else if (cls.contains("tt-tk-input")) {
+      const wrap = e.target.closest(".tt-tkwrap");
+      if (!wrap) return;
+      if (e.key === "Enter") { e.preventDefault(); wrap.querySelector("[data-tk-save]")?.click(); }
+      else if (e.key === "Escape") { e.preventDefault(); _paintTkWrap(wrap); }
+    }
   });
+}
+// Repaint a ticker wrap to its non-editing state (used on cancel).
+function _paintTkWrap(wrap) {
+  const raw = wrap.dataset.raw;
+  const eff = wrap.dataset.eff || raw;
+  const corrected = eff !== raw ? `<span class="tt-tk-note" title="已從 ${esc(raw)} 校正">↺</span>` : "";
+  const tkEdit = _ttAdmin ? `<button class="tt-editbtn tt-tk-edit" data-tk-edit="${esc(raw)}" title="修正代號（TW／TWO）">✎</button>` : "";
+  wrap.innerHTML =
+    `<a class="tt-tklink" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener">${esc(eff)}</a>${corrected}${tkEdit}`;
 }
 function _paintNameWrap(wrap, name) {
   const sym = wrap.dataset.sym;
@@ -362,17 +458,24 @@ export function tickerTrendCard(symbols, title = "相關個股近期表現") {
   if (!syms.length) return "";
   ensureTtEditWiring();
   const prices = getPricesMapSync();
-  const nameCellFor = (sym, p) => {
-    const nm = _displayName(sym, p);
-    const editBtn = _ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(sym)}" title="修正名稱">✎</button>` : "";
+  // Symbol cell: shows the corrected (alias-resolved) symbol as the chart link,
+  // an ✎ to edit it (admin), and the company-name wrap underneath.
+  const symCellFor = (raw, eff, p) => {
+    const nm = _displayName(raw, eff, p);
+    const nameEdit = _ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(raw)}" title="修正名稱">✎</button>` : "";
     const nameWrap = (p || _ttAdmin)
-      ? `<span class="tt-namewrap" data-sym="${esc(sym)}" data-name="${esc(nm)}"><span class="tt-name">${nm ? esc(nm) : '<i class="tt-noname">未命名</i>'}</span>${editBtn}</span>`
+      ? `<span class="tt-namewrap" data-sym="${esc(raw)}" data-name="${esc(nm)}"><span class="tt-name">${nm ? esc(nm) : '<i class="tt-noname">未命名</i>'}</span>${nameEdit}</span>`
       : "";
-    return `<td class="tt-sym"><a href="${esc(chartUrl(sym))}" target="_blank" rel="noopener">${esc(sym)}</a>${nameWrap}</td>`;
+    const corrected = eff !== raw ? `<span class="tt-tk-note" title="已從 ${esc(raw)} 校正">↺</span>` : "";
+    const tkEdit = _ttAdmin ? `<button class="tt-editbtn tt-tk-edit" data-tk-edit="${esc(raw)}" title="修正代號（TW／TWO）">✎</button>` : "";
+    const tkWrap = `<span class="tt-tkwrap" data-raw="${esc(raw)}" data-eff="${esc(eff)}">` +
+      `<a class="tt-tklink" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener">${esc(eff)}</a>${corrected}${tkEdit}</span>`;
+    return `<td class="tt-sym">${tkWrap}${nameWrap}</td>`;
   };
-  const rows = syms.map(sym => {
-    const p = prices[sym];
-    const nameCell = nameCellFor(sym, p);
+  const rows = syms.map(raw => {
+    const eff = resolveSymbol(raw);
+    const p = prices[eff];
+    const nameCell = symCellFor(raw, eff, p);
     if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="8">N/A（watchlist 無此代號價格）</td></tr>`;
     const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
       ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;

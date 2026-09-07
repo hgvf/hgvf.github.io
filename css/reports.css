@@ -121,6 +121,16 @@
   border: 1px solid var(--accent); border-radius: 4px; width: 11rem;
   background: var(--glass-bg); color: var(--text-primary);
 }
+/* Ticker-symbol edit (alias: wrong .TW/.TWO → corrected) */
+.tt-tkwrap { display: inline-flex; align-items: center; gap: 0.2rem; }
+.tt-tk-edit { opacity: 0; transition: opacity var(--transition); }
+.tt-sym:hover .tt-tk-edit, .tt-tk-edit:focus { opacity: 1; }
+.tt-tk-note { font-size: 0.66rem; color: var(--accent); cursor: help; }
+.tt-tk-input {
+  font-size: 0.72rem; font-family: var(--font-mono); padding: 0.1rem 0.3rem;
+  border: 1px solid var(--accent); border-radius: 4px; width: 6.5rem;
+  background: var(--glass-bg); color: var(--text-primary); text-transform: uppercase;
+}
 .tt-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-secondary); }
 .tt-num.pos { color: var(--positive); font-weight: 500; }
 .tt-num.neg { color: var(--negative); font-weight: 500; }

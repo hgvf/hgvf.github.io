@@ -3,7 +3,7 @@
 // = detail of the node the user clicks. Nothing is shown on the right until a
 // node is selected. A toggle switches the left column between the two layouts.
 
-import { loadDocs, deleteReport, sent, esc, fmtDate } from "./reports.js";
+import { loadDocs, deleteReport, sent, esc, fmtDate, onTickerDataChange } from "./reports.js";
 
 const DOW = ["日", "一", "二", "三", "四", "五", "六"];
 
@@ -245,5 +245,8 @@ export async function mountReportView(opts) {
   await reload();
   applyDeepLink();
   window.addEventListener("hashchange", applyDeepLink);
+  // A ticker correction (symbol alias) changes chips / chart link / price row —
+  // rebuild the open detail so it reflects the fix immediately.
+  onTickerDataChange(() => { if (selectedId) selectItem(selectedId); });
   return { reload, setAdmin, refreshCollectStates, selectItem };
 }
