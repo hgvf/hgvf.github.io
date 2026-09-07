@@ -3,7 +3,7 @@
 // page and the consolidated 重點新聞 (highlights) page render an item the same
 // way. All new fields are optional & backward-safe.
 
-import { sent, esc, fmtDate, chartUrl, tickerTrendCard } from "./reports.js";
+import { sent, esc, fmtDate, chartUrl, tickerTrendCard, resolveSymbol } from "./reports.js";
 
 const CRED = { "高": "pos", "中": "neu", "低": "neg" };
 
@@ -38,7 +38,10 @@ function altCard(alts) {
 
 export function detail(it) {
   const s = sent(it.sentiment);
-  const tickers = (it.tickers || []).map(t => `<a class="rp-ticker" href="${esc(chartUrl(t))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(t)} 線圖">${esc(t)}</a>`).join("");
+  const tickers = (it.tickers || []).map(t => {
+    const eff = resolveSymbol(t);  // show the corrected symbol (alias, e.g. .TW → .TWO)
+    return `<a class="rp-ticker" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener" title="在 TradingView 看 ${esc(eff)} 線圖">${esc(eff)}</a>`;
+  }).join("");
   const sources = (it.sources || []).length
     ? `<div class="news-src">來源：${it.sources.map(o => `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || o.url)}</a>`).join("")}</div>`
     : "";
