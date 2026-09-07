@@ -147,7 +147,15 @@ function normFact(f) {
     state,
     confidence: CONFIDENCE[f.confidence] ? f.confidence : "medium",
     source: f.source && typeof f.source === "object" ? {
+      // `origin` distinguishes where a tracked fact was collected from:
+      // "earnings" (default, from a 法說會 highlight) or "intel" (from the
+      // 產業情報站). `label`/`url` carry the intel provenance so the fact page
+      // can show the right back-link instead of always pointing at 財報分析.
+      origin: String(f.source.origin || ""),
       quarter: String(f.source.quarter || ""),
+      label: String(f.source.label || ""),
+      url: String(f.source.url || ""),
+      note_id: String(f.source.note_id || ""),
       date: String(f.source.date || ""),
       sentiment: String(f.source.sentiment || ""),
     } : null,

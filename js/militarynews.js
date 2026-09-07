@@ -8,6 +8,9 @@
 // without throwing.
 import { esc, onAuth } from "./reports.js";
 import { loadNews, saveNews, deleteNews, rebuildNewsIndex, parseNewsRun } from "./newsdata.js";
+import { makeFacetState, renderFacetSearch } from "./facetsearch.js";
+
+const searchState = makeFacetState();  // 2×2 多維複選搜尋的選取狀態（跨分頁切換保留）
 
 const COL = "military_news";
 const root = document.getElementById("app");
@@ -502,6 +505,8 @@ function renderAnalytics() {
 
     ${needsReview ? `<p class="df-meta">其中 <b>${needsReview}</b> 筆標記需人工複核。</p>` : ""}
 
+    <section id="nmSearch"></section>
+
     <div class="df-anagrid">
       <div class="df-anacard"><h4>國別事件分布</h4>${hbars(byCountry, v => v + " 筆", "var(--accent)")}</div>
       <div class="df-anacard"><h4>事件類型分布</h4>${hbars(byType, v => v + " 筆", "#9C6B44")}</div>
@@ -512,6 +517,28 @@ function renderAnalytics() {
     <div class="df-anacard"><h4>事件時間序列 <span class="df-meta">（每月筆數）</span></h4><div id="nmTimeline" class="df-chartbox"></div></div>`;
 
   drawTimeline(host.querySelector("#nmTimeline"));
+
+  renderFacetSearch(host.querySelector("#nmSearch"), searchState, {
+    title: "事件搜尋 · 多維複選",
+    facets: [
+      { key: "country", title: "國家", placeholder: "篩選國家…", values: e => (e.country ? [e.country] : []), label: cZ },
+      { key: "type", title: "事件類型", placeholder: "篩選事件類型…", values: e => (e.event_type ? [e.event_type] : []), label: tZ },
+      { key: "service", title: "軍種", placeholder: "篩選軍種…", values: e => (e.service ? [e.service] : []), label: sZ },
+      { key: "category", title: "系統類別", placeholder: "篩選系統類別…", values: e => [...new Set((e.systems || []).map(s => s.category).filter(Boolean))], label: catZ },
+    ],
+    getEvents: () => EVENTS,
+    keyOf,
+    sortRows: (a, b) => String(evDate(b)).localeCompare(String(evDate(a))),
+    summary: rows => `${rows.length} 筆 · ${new Set(rows.map(e => e.country).filter(Boolean)).size} 國`,
+    emptyHint: "於上方任一維度<b>複選</b>條件即可查詢；可跨維度組合（如「美國 × 演習 × 海軍」）。",
+    renderRow: e => `<div class="df-crow" data-open="${esc(String(keyOf(e)))}">
+        <span class="df-crow-date">${esc(evDate(e) || "—")}</span>
+        <span class="df-crow-title">${esc(e.title_zh || e.title)}</span>
+        <span class="df-crow-type">${esc(cZ(e.country))} · ${esc(tZ(e.event_type))}</span>
+        <span class="df-crow-amt">重要度 ${impScore(e)}</span>
+      </div>`,
+    onOpen: openDetail,
+  });
 }
 
 // tally by keyFn (single) or listFn (array of keys); returns sorted [key,count].

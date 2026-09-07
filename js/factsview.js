@@ -235,17 +235,36 @@ export function mountFacts(opts) {
   function sourceTab(f) {
     const src = f.source || {};
     const s = src.sentiment ? sent(src.sentiment) : null;
-    const rows = [
-      ["來源類型", f.kind === "watch" ? "未來看點" : "法說事實"],
-      ["法說季度", src.quarter || "—"],
-      ["法說日期", src.date ? fmtDate(src.date) : "—"],
-      ["當時看法", s ? `<span class="fx-badge s-${s.cls === 'pos' ? 'ontrack' : s.cls === 'neg' ? 'behind' : 'notstart'}">${esc(s.label)}</span>` : "—"],
-      ["建立追蹤", (f.created_at || "").slice(0, 10) || "—"],
-    ];
+    // Facts collected from the 產業情報站 carry origin === "intel"; everything
+    // else is treated as a 法說會 highlight (the original behaviour).
+    const isIntel = src.origin === "intel";
+    const rows = isIntel
+      ? [
+          ["來源類型", f.kind === "watch" ? "未來看點" : "產業情報"],
+          ["情報來源", src.label
+            ? (src.url
+                ? `<a class="fx-src-a" href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.label)}</a>`
+                : esc(src.label))
+            : "—"],
+          ["記錄日期", src.date ? fmtDate(src.date) : "—"],
+          ["建立追蹤", (f.created_at || "").slice(0, 10) || "—"],
+        ]
+      : [
+          ["來源類型", f.kind === "watch" ? "未來看點" : "法說事實"],
+          ["法說季度", src.quarter || "—"],
+          ["法說日期", src.date ? fmtDate(src.date) : "—"],
+          ["當時看法", s ? `<span class="fx-badge s-${s.cls === 'pos' ? 'ontrack' : s.cls === 'neg' ? 'behind' : 'notstart'}">${esc(s.label)}</span>` : "—"],
+          ["建立追蹤", (f.created_at || "").slice(0, 10) || "—"],
+        ];
+    const backLink = isIntel
+      ? `<a class="fx-src-link" href="../intel/index.html?ticker=${encodeURIComponent(f.ticker)}">→ 回到 ${esc(f.ticker)} 產業情報</a>`
+      : (f.source && f.source.quarter
+          ? `<a class="fx-src-link" href="../earnings/index.html#ticker=${encodeURIComponent(f.ticker)}">→ 回到 ${esc(f.ticker)} 財報分析</a>`
+          : "");
     return `<div class="fx-src-card">
       <div class="fx-card-h">來源紀錄</div>
       <dl class="fx-src-dl">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
-      ${f.source && f.source.quarter ? `<a class="fx-src-link" href="../earnings/index.html#ticker=${encodeURIComponent(f.ticker)}">→ 回到 ${esc(f.ticker)} 財報分析</a>` : ""}
+      ${backLink}
     </div>`;
   }
 

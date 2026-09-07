@@ -10,7 +10,13 @@ export async function mountSidebar(activeReport) {
     host.innerHTML = await (await fetch("../partials/sidebar.html")).text();
   } catch (e) { console.error("sidebar load failed", e); return; }
 
-  if (activeReport) host.querySelector(`[data-report="${activeReport}"]`)?.classList.add("active");
+  if (activeReport) {
+    const activeLink = host.querySelector(`[data-report="${activeReport}"]`);
+    activeLink?.classList.add("active");
+    // Folders default collapsed; open only the one holding the current page so
+    // its context is visible (matches the SPA's newest-first layout).
+    activeLink?.closest(".nav-folder")?.classList.add("open");
+  }
 
   host.querySelectorAll(".nav-folder-header").forEach(btn =>
     btn.addEventListener("click", () => btn.closest(".nav-folder")?.classList.toggle("open")));

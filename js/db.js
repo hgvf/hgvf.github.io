@@ -341,3 +341,15 @@ export async function getHomeProfile() {
 export async function saveHomeProfile(data) {
   return setDoc(doc(db(), "site_content", "home"), data, { merge: true });
 }
+
+// ─── Editable Experience & Education timeline ───────────────────────────
+// Stored at site_content/experience: { work: [...], education: [...] }, each
+// item { date, title, org, desc, icon }. Public read, whitelist write.
+export async function getExperience() {
+  const snap = await getDoc(doc(db(), "site_content", "experience"));
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function saveExperience(data) {
+  return setDoc(doc(db(), "site_content", "experience"), data, { merge: true });
+}

@@ -78,6 +78,9 @@ export function buildTickerCard(symbol, p, isAdmin, ev) {
   if (ev?.supply)   tags.push(`<a class="tc-tag tg-supply" href="${eventLink('supply-chain', symbol, ev.supply)}" title="相關供應鏈新聞，前往最新一篇${dateHint(ev.supply)}">供</a>`);
   if (ev?.industry) tags.push(`<a class="tc-tag tg-industry" href="${eventLink('industry-news', symbol, ev.industry)}" title="相關產業消息，前往最新一則${dateHint(ev.industry)}">產</a>`);
   if (ev?.earnings) tags.push(`<a class="tc-tag tg-earnings" href="${eventLink('earnings', symbol, ev.earnings)}" title="法說會紀錄，前往最新一季${dateHint(ev.earnings)}">法</a>`);
+  // 訊 — count of手動輸入的產業情報 (intel_notes) referencing this symbol,
+  // one event/information unit each. Links to the 產業情報站 filtered by ticker.
+  if (ev?.intel?.count) tags.push(`<a class="tc-tag tg-intel" href="intel/index.html#ticker=${encodeURIComponent(symbol)}" title="我記錄的產業情報 ${ev.intel.count} 則，前往查看">訊<span class="tc-tag-n">${ev.intel.count}</span></a>`);
   const tagHtml = tags.length ? `<div class="tc-tags">${tags.join('')}</div>` : '';
   card.innerHTML =
     `<a class="tc-main" href="${tradingViewUrl(symbol)}" target="_blank" rel="noopener" title="Open in TradingView">` +
@@ -347,6 +350,7 @@ function paintTickerBar() {
         `<span class="tl-row"><span class="tc-tag tg-supply">供</span> 相關供應鏈新聞 · 點擊前往最新一篇</span>` +
         `<span class="tl-row"><span class="tc-tag tg-industry">產</span> 相關產業消息 · 點擊前往最新一則</span>` +
         `<span class="tl-row"><span class="tc-tag tg-earnings">法</span> 法說會紀錄 · 點擊前往最新一季</span>` +
+        `<span class="tl-row"><span class="tc-tag tg-intel">訊</span> 我手動記錄的產業情報 · 數字為則數</span>` +
       `</div>`;
     summary.appendChild(legend);
 
