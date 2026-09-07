@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-07T22:30:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-04",
+    "end": "2026-09-04"
+  },
+  "event_count": 3,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "HBM": 1,
+      "semiconductor": 3,
+      "memory": 1,
+      "rare earth": 1,
+      "critical minerals": 1,
+      "defense": 1,
+      "aerospace": 1
+    },
+    "importance_distribution": {
+      "high": 3
+    },
+    "top_tickers": [
+      "MU",
+      "NVDA",
+      "005930.KS",
+      "000660.KS",
+      "WCH.DE",
+      "GLW"
+    ]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260904-003",
+      "slug": "china-rare-earth-exporters-halt-us-shipments-yttrium-gallium",
+      "event_date": "2026-09-04",
+      "published_at": "2026-09-04",
+      "ingested_at": "2026-09-07T22:30:00+08:00",
+      "event_type": "supply_disruption",
+      "event_type_secondary": ["trade_policy"],
+      "themes": ["rare earth", "critical minerals", "semiconductor", "defense", "aerospace"],
+      "regions": ["CN", "US"],
+      "importance_score": 82,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "路透調查：多家中國稀土出口商忌憚北京株連而自行斷供美國，釔、鎵、鋱出口驟減",
+      "title_original": "China rare earth firms halt some US shipments over geopolitical worries, sources say",
+      "summary_zh": "路透獨家報導，部分中國稀土供應商今年8月起自行暫停對美出貨，原因是擔憂配合美方「負責任商業聯盟(RBA)」盡職調查框架、遭北京比照8月對RBA的制裁一併株連；統計顯示今年對美釔出口僅約2024年水準的一半、且今年稍早曾連續掛零達兩個月，對日鋱出口今年迄今掛零（去年同期約20公噸）、鎵對日出口驟減65%，磷化銦與鎢報價逼近歷史高點，部分美國企業等待稀土出口許可證已逾半年，衝擊半導體、航太、國防與醫療器材產業，事件發生於習近平9月24日訪美前夕，成為雙邊磋商的敏感籌碼。",
+      "why_it_matters": "這是稀土供應風險從「政府明文禁令」擴散為「企業自我審查式斷供」的訊號——即便北京未新增正式出口禁令，供應商因懼怕被牽連制裁而主動斷供，讓美國下游半導體、航太、國防與醫療器材產業實質面臨與正式管制相同的關鍵材料缺口，且更難預期、更難靠外交協商解除；若此模式擴散至釹、鏑、鋱等磁性材料，將直接推升MP Materials、Lynas等非中國稀土供應商的長約議價力與客戶黏著度，並加重美國晶片與國防供應鏈尋求非中國稀土來源的急迫性，成為習近平9月24日訪美前的關鍵籌碼。",
+
+      "tickers": [],
+      "companies": [
+        {
+          "name": "Unnamed Chinese rare earth exporters",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "disruptor"
+        },
+        {
+          "name": "Ministry of Commerce of the People's Republic of China (MOFCOM)",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "regulator"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["rare earth mining and separation (China)"],
+        "component": "yttrium / gallium / terbium / indium phosphide / tungsten",
+        "supplier": ["Unnamed Chinese rare earth exporters"],
+        "customer": ["U.S. semiconductor, aerospace, defense, and medical-device manufacturers (unnamed)"],
+        "end_market": ["semiconductor", "aerospace", "defense", "medical devices"]
+      },
+
+      "products": ["yttrium oxide", "gallium", "terbium", "indium phosphide", "tungsten"],
+      "materials": ["yttrium", "gallium", "terbium", "indium phosphide", "tungsten"],
+
+      "change": {
+        "type": "informal_export_halt",
+        "before": "中國稀土供應商在既有出口許可框架下持續對美出貨，雖已受2025年4月與10月官方管制影響、交期拉長，但供貨管道未完全中斷",
+        "after": "部分供應商自2026年8月起主動暫停對美出貨；2026年對美釔出口僅約2024年水準50%、稍早曾連續兩個月掛零，對日鋱出口全年掛零、鎵對日出口減65%，美國廠商取得出口許可證常需逾半年"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "rare earth", "稀土", "yttrium", "釔", "gallium", "鎵",
+        "terbium", "鋱", "indium phosphide", "磷化銦", "tungsten", "鎢",
+        "china", "中國", "export control", "出口管制", "rba",
+        "responsible business alliance", "supply disruption", "斷供",
+        "semiconductor", "半導體", "defense", "國防", "aerospace", "航太",
+        "critical minerals", "關鍵礦產", "xi jinping", "習近平", "trade policy",
+        "mofcom", "medical devices"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Reuters (via Yahoo Finance)",
+          "source_type": "wire",
+          "url": "https://finance.yahoo.com/news/china-rare-earth-firms-halt-071537922.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-07T22:15:00+08:00"
+        },
+        {
+          "publisher": "Reuters (via Free Malaysia Today)",
+          "source_type": "wire",
+          "url": "https://www.freemalaysiatoday.com/category/business/2026/09/04/china-rare-earth-firms-halt-some-us-shipments-over-geopolitical-worries",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T22:15:00+08:00"
+        },
+        {
+          "publisher": "U.S. News & World Report (Reuters wire)",
+          "source_type": "wire",
+          "url": "https://www.usnews.com/news/top-news/articles/2026-09-04/china-rare-earth-firms-halt-some-us-shipments-over-geopolitical-worries-sources-say",
+          "is_primary": false,
+          "accessed_at": "2026-09-07T22:15:00+08:00"
+        }
+      ]
+    }
+  ]
+}
