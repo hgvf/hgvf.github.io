@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-08T10:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-07",
+    "end": "2026-09-07"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 1,
+      "HBM": 1,
+      "memory": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "high": 1
+    },
+    "top_tickers": ["005930.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260907-001",
+      "slug": "samsung-4nm-foundry-hbm4-base-die-reallocation",
+      "event_date": "2026-09-07",
+      "published_at": "2026-09-07",
+      "ingested_at": "2026-09-08T10:00:00+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "HBM", "memory", "AI infrastructure"],
+      "regions": ["KR"],
+      "importance_score": 83,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "三星平澤4奈米代工產能過半轉供HBM4基礎晶粒，外部客戶邏輯晶片產能遭排擠",
+      "title_original": "Samsung Foundry Allocates Over Half of Pyeongtaek 4nm Capacity to HBM4 Base Dies",
+      "summary_zh": "南韓媒體ZDNet Korea於9月7日報導，三星電子平澤二廠、三廠（Campus 2/3）的S5、S6產線，將月產能約3萬片的4奈米製程中逾50%（約1.5萬片/月）轉用於生產HBM4基礎晶粒（base die），以因應下半年對全球大型科技客戶的HBM4出貨需求；此配置預期於2026年下半年維持高檔。",
+      "why_it_matters": "三星將原本供一般邏輯晶片代工客戶使用的4奈米產能大幅挪用於自家HBM4基礎晶粒生產，意味著使用三星4奈米製程的外部代工客戶將面臨產能排擠、交期拉長的風險，形同三星以自有記憶體業務優先權犧牲部分代工業務的客戶關係；同時此舉大幅提升三星HBM4基礎晶粒（邏輯製程）產出量，強化其在HBM4世代對SK海力士的追趕籌碼，若如期於下半年放量，可望緩解NVIDIA等AI晶片客戶在HBM4基礎晶粒供給上的瓶頸，但也讓三星代工事業與記憶體事業之間出現產能排擠的內部競合關係。",
+
+      "tickers": ["005930.KS"],
+      "companies": [
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["4nm logic wafer capacity"],
+        "component": "HBM4 base die",
+        "supplier": ["Samsung Electronics Co., Ltd. (Foundry)"],
+        "customer": ["global AI accelerator / big tech customers (unnamed)"],
+        "end_market": ["AI infrastructure", "data center", "AI accelerators"]
+      },
+
+      "products": ["HBM4 base die", "4nm foundry logic"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_reallocation",
+        "before": "平澤S5/S6產線約3萬片/月4奈米產能主要供一般邏輯代工客戶使用",
+        "after": "逾50%（約1.5萬片/月）4奈米產能轉供三星自家HBM4基礎晶粒生產，外部代工客戶可用產能相對縮減"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": 50,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "samsung", "samsung electronics", "三星", "三星電子",
+        "hbm4", "hbm", "base die", "基礎晶粒", "高頻寬記憶體",
+        "4nm", "4奈米", "foundry", "代工", "pyeongtaek", "平澤",
+        "capacity allocation", "產能配置", "產能排擠",
+        "memory", "記憶體", "ai infrastructure",
+        "sk hynix", "sk海力士",
+        "005930", "005930.ks",
+        "zdnet korea", "digitimes"
+      ],
+
+      "sources": [
+        {
+          "publisher": "ZDNet Korea",
+          "source_type": "trade",
+          "url": "https://zdnet.co.kr/view/?no=20260907110055",
+          "is_primary": true,
+          "accessed_at": "2026-09-08T09:30:00+08:00"
+        },
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260908VL205/samsung-hbm4-capacity-4nm-hbm.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-08T09:35:00+08:00"
+        },
+        {
+          "publisher": "TechPowerUp",
+          "source_type": "trade",
+          "url": "https://www.techpowerup.com/352432/samsung-foundry-allocates-half-of-4-nm-capacity-for-hbm4-base-dies",
+          "is_primary": false,
+          "accessed_at": "2026-09-08T09:40:00+08:00"
+        },
+        {
+          "publisher": "TrendForce",
+          "source_type": "trade",
+          "url": "https://www.trendforce.com/news/2026/03/20/news-samsung-reportedly-allocates-50-of-pyeongtaek-foundry-capacity-to-hbm4-base-die-said-to-win-openai-as-customer/",
+          "is_primary": false,
+          "accessed_at": "2026-09-08T09:45:00+08:00"
+        }
+      ]
+    }
+  ]
+}
