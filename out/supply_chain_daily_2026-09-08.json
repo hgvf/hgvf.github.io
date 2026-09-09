@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-09T10:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-08",
+    "end": "2026-09-08"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "data center": 1,
+      "semiconductor": 1,
+      "optical communication": 1
+    },
+    "importance_distribution": {
+      "critical": 1
+    },
+    "top_tickers": ["QCOM", "AMZN"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260908-001",
+      "slug": "qualcomm-aws-custom-ai-inference-silicon-deal",
+      "event_date": "2026-09-08",
+      "published_at": "2026-09-08",
+      "ingested_at": "2026-09-09T10:00:00+08:00",
+
+      "event_type": "supply_agreement",
+      "event_type_secondary": ["strategic_investment"],
+      "themes": ["AI infrastructure", "data center", "semiconductor", "optical communication"],
+      "regions": ["US"],
+      "importance_score": 91,
+      "importance_tier": "critical",
+      "evidence_level": "confirmed",
+
+      "title_zh": "高通與 AWS 簽署多世代客製化 AI 推論晶片合作協議，潛在採購金額上看 600 億美元",
+      "title_original": "Qualcomm Announces Multi-Generational Product Collaboration with Amazon to Build Next-Generation AI Data Center Infrastructure",
+      "summary_zh": "高通（Qualcomm）於 2026 年 9 月 8 日宣布與 Amazon Web Services（AWS）簽署多世代合作協議，將為 AWS 大型 AI 資料中心設計客製化 AI 推論用 ASIC 晶片，並共同開發最高 1.6T 的光通訊連接技術。作為交易一部分，高通授予 Amazon 認購最多 2,500 萬股高通股票的認股權證（履約價 161.26 美元、總值約 40 億美元），該權證將隨 Amazon 對高通伺服器晶片與相關技術的採購訂單分批歸屬，累計採購金額上看 600 億美元，權證於 2036 年 9 月到期。",
+      "why_it_matters": "此協議讓高通首次打入西方主要雲端服務商的大型 AI 資料中心客製化晶片供應鏈，是其在智慧型手機以外最重要的新營收來源；對 AWS 而言，則是在自研 Trainium/Inferentia 與 Nvidia GPU 之外，新增第三家 AI 推論晶片供應夥伴，藉此分散單一供應商集中風險並強化議價力。對 Broadcom、Marvell 等既有雲端客製化 ASIC 設計服務供應商而言，AWS 未來部分客製晶片訂單可能轉向高通，構成潛在市占壓力；雙方同時在 1.6T 光通訊連接技術上的合作，也可能牽動資料中心光通訊元件供應商在 AWS 供應鏈中的份額布局。",
+
+      "tickers": ["QCOM", "AMZN"],
+      "companies": [
+        {
+          "name": "Qualcomm Incorporated",
+          "ticker": "QCOM",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Amazon.com, Inc. (Amazon Web Services)",
+          "ticker": "AMZN",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "customer"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": [],
+        "component": "custom AI inference ASIC (application-specific integrated circuit) and 1.6T optical connectivity modules",
+        "supplier": ["Qualcomm Incorporated"],
+        "customer": ["Amazon Web Services (AWS)"],
+        "end_market": ["AI infrastructure", "cloud data centers", "AI inference workloads"]
+      },
+
+      "products": ["custom AI inference ASIC", "1.6T optical connectivity module"],
+      "materials": [],
+
+      "change": {
+        "type": "new_hyperscaler_supply_relationship",
+        "before": "高通尚未成為任何西方雲端服務商大型 AI 資料中心客製化晶片供應鏈的供應商，AWS 的 AI 推論晶片供應以自研 Trainium/Inferentia 與 Nvidia GPU 為主",
+        "after": "高通成為 AWS 首個西方雲端巨頭客製化 AI 推論晶片供應夥伴，合作橫跨多世代晶片設計與 1.6T 光通訊連接技術，Amazon 並取得認購最多 40 億美元高通股權的認股權證，隨最高 600 億美元的採購訂單分批歸屬"
+      },
+
+      "financial_data": {
+        "amount": 60000000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 10,
+        "effective_date": "2026-09-08"
+      },
+
+      "search_keywords": [
+        "qcom", "qualcomm", "高通", "amzn", "amazon", "aws",
+        "amazon web services", "亞馬遜", "ai infrastructure", "ai inference",
+        "data center", "資料中心", "custom silicon", "asic", "客製化晶片",
+        "optical connectivity", "1.6t", "optical communication", "光通訊",
+        "warrant", "認股權證", "supply agreement", "供應協議",
+        "strategic investment", "hyperscaler", "broadcom", "marvell",
+        "trainium", "inferentia", "chip design", "eda", "bedrock",
+        "semiconductor", "半導體"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Qualcomm — Newsroom",
+          "source_type": "primary",
+          "url": "https://www.qualcomm.com/news/releases/2026/09/qualcomm-announces-multi-generational-product-collaboration-with",
+          "is_primary": true,
+          "accessed_at": "2026-09-09T10:00:00+08:00"
+        },
+        {
+          "publisher": "Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bloomberg.com/news/articles/2026-09-08/qualcomm-signs-deal-to-provide-amazon-with-custom-ai-chips",
+          "is_primary": false,
+          "accessed_at": "2026-09-09T10:00:00+08:00"
+        },
+        {
+          "publisher": "CNBC",
+          "source_type": "wire",
+          "url": "https://www.cnbc.com/2026/09/08/qualcomm-amazon-data-center-infrastructure-deal.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-09T10:00:00+08:00"
+        }
+      ]
+    }
+  ]
+}
