@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-11T06:12:08+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-09",
+    "end": "2026-09-10"
+  },
+  "event_count": 3,
+  "digest": {
+    "themes_distribution": {
+      "power grid": 1,
+      "data center": 1,
+      "AI infrastructure": 1,
+      "rare earth": 2,
+      "permanent magnet": 2,
+      "critical minerals": 2,
+      "defense": 1,
+      "robotics": 1
+    },
+    "importance_distribution": {
+      "high": 1,
+      "relevant": 2
+    },
+    "top_tickers": ["USAR"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260909-001",
+      "slug": "doe-bulk-power-grid-china-equipment-ban",
+      "event_date": "2026-09-09",
+      "published_at": "2026-09-09",
+      "ingested_at": "2026-09-11T06:12:08+08:00",
+      "event_type": "trade_policy",
+      "event_type_secondary": [],
+      "themes": ["power grid", "data center", "AI infrastructure"],
+      "regions": ["US", "CN"],
+      "importance_score": 82,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "美國能源部發布聯邦公報通知，啟動落實電網設備「排除中國製」禁令的規則制定程序",
+      "title_original": "DOE Publishes Federal Register Notice to Implement Bulk-Power System Foreign Equipment Ban (EO 14420)",
+      "summary_zh": "美國能源部於9月9日在聯邦公報正式刊登資訊徵詢公告（RFI），啟動落實8月26日簽署之14420號行政命令的規則制定程序，將禁止來自24個「受關切外國」的散裝電力系統設備（含變壓器、換流器、開關設備與儲能系統）用於美國電網，中國為受影響最大之供應國；意見徵詢截止10月9日，正式規則預計12月24日前公布。",
+      "why_it_matters": "此舉正式啟動美國電網設備「去中國化」的規則制定時鐘，將迫使公用事業與資料中心開發商重新驗證變壓器、開關設備與儲能系統供應商，加劇原已吃緊（變壓器缺口約15%、變電站缺口約8%）的電網設備供給瓶頸；非中系供應商可望承接轉單機會，中國電網設備出口商在美市場份額面臨結構性壓縮，AI資料中心建置的「取電速度」瓶頸恐進一步拉長。",
+      "tickers": [],
+      "companies": [
+        {
+          "name": "U.S. Department of Energy",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "regulator"
+        }
+      ],
+      "supply_chain": {
+        "upstream": ["transformer core steel", "power semiconductor devices", "lithium battery cells"],
+        "component": "bulk power system equipment (transformers, inverters, switchgear, battery storage)",
+        "supplier": [],
+        "customer": ["U.S. utilities", "AI data center operators"],
+        "end_market": ["power grid", "data center", "AI infrastructure"]
+      },
+      "products": ["power transformer", "utility-scale inverter", "switchgear", "battery energy storage system"],
+      "materials": [],
+      "change": {
+        "type": "regulatory_localization_mandate",
+        "before": "美國電網可採購來自中國等受關切國家的變壓器、換流器、開關設備與儲能系統，無強制性排除機制",
+        "after": "啟動規則制定程序，未來電網設備採購須排除來自24個受關切外國的供應商，須完成廠商認證清單"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-12-24"
+      },
+      "search_keywords": [
+        "doe", "department of energy", "美國能源部", "bulk power system",
+        "grid equipment", "電網設備", "transformer", "變壓器", "inverter",
+        "switchgear", "battery energy storage", "bess", "executive order 14420",
+        "trade_policy", "power grid", "china", "中國", "data center",
+        "ai infrastructure", "federal register", "電網禁令", "排除中國", "去中國化"
+      ],
+      "sources": [
+        {
+          "publisher": "Federal Register (U.S. Government)",
+          "source_type": "primary",
+          "url": "https://www.federalregister.gov/documents/2026/09/09/2026-18370/securing-the-united-states-bulk-power-system",
+          "is_primary": true,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        },
+        {
+          "publisher": "pv magazine USA",
+          "source_type": "trade",
+          "url": "https://pv-magazine-usa.com/2026/08/27/executive-order-bans-foreign-produced-transformers-inverters-and-circuit-breakers-for-u-s-power-grid/",
+          "is_primary": false,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        },
+        {
+          "publisher": "Jones Day",
+          "source_type": "analyst",
+          "url": "https://www.jonesday.com/en/insights/2026/09/federal-actions-banning-foreign-grid-equipment-cause-uncertainty-for-energy-infrastructure-projects",
+          "is_primary": false,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260909-002",
+      "slug": "usa-rare-earth-blacksburg-ndfeb-magnet-plant",
+      "event_date": "2026-09-09",
+      "published_at": "2026-09-09",
+      "ingested_at": "2026-09-11T06:12:08+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["rare earth", "permanent magnet", "critical minerals", "defense", "robotics"],
+      "regions": ["US"],
+      "importance_score": 76,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+      "title_zh": "美國稀土公司於南卡州動土興建12億美元釹鐵硼磁鐵暨稀土金屬新廠",
+      "title_original": "USA Rare Earth Breaks Ground on $1.2B NdFeB Magnet and Rare-Earth Metal Facility in Blacksburg, South Carolina",
+      "summary_zh": "美國稀土公司（USA Rare Earth, NASDAQ: USAR）9日於南卡羅來納州布萊克斯堡舉行動土典禮，將投資約12億美元興建稀土金屬暨燒結釹鐵硼永磁體新廠，目標年產能燒結NdFeB磁鐵6,400公噸、稀土金屬／合金5,000公噸，預計創造約490個就業機會，2028年投產。",
+      "why_it_matters": "此新廠若如期於2028年投產，年產能可望大幅擴充美國本土NdFeB磁鐵供給（規模與現有Stillwater廠相當甚至更大），為國防、電動車與人形機器人應用提供非中國來源磁鐵選項，有助壓縮中國廠商對美系磁鐵買家的長期議價力；惟目前尚未見具名下游客戶簽署確定包銷合約，實際供應鏈效應仍待2028年投產後才會顯現。",
+      "tickers": ["USAR"],
+      "companies": [
+        {
+          "name": "USA Rare Earth, Inc.",
+          "ticker": "USAR",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        }
+      ],
+      "supply_chain": {
+        "upstream": ["NdPr oxide", "rare earth metal/alloy feedstock"],
+        "component": "NdFeB permanent magnet",
+        "supplier": ["USA Rare Earth, Inc."],
+        "customer": [],
+        "end_market": ["defense", "electric vehicles", "humanoid robotics", "industrial motors"]
+      },
+      "products": ["NdFeB permanent magnet", "rare earth metal/alloy"],
+      "materials": ["NdPr", "rare earth metal alloy"],
+      "change": {
+        "type": "new_facility_construction_start",
+        "before": "美國稀土公司磁鐵產能集中於奧克拉荷馬州Stillwater廠",
+        "after": "新增南卡羅來納州布萊克斯堡廠動土，目標年產能6,400公噸燒結NdFeB磁鐵、5,000公噸稀土金屬/合金，2028年投產"
+      },
+      "financial_data": {
+        "amount": 1200000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": [
+        "usa rare earth", "usar", "ndfeb", "permanent magnet", "永磁",
+        "稀土金屬", "rare earth metal", "blacksburg", "south carolina",
+        "capacity", "產能", "defense", "國防", "humanoid robotics",
+        "人形機器人", "critical minerals", "關鍵礦產", "去中國化"
+      ],
+      "sources": [
+        {
+          "publisher": "USA Rare Earth (GlobeNewswire press release)",
+          "source_type": "primary",
+          "url": "https://www.globenewswire.com/news-release/2026/09/09/3358813/0/en/usa-rare-earth-breaks-ground-on-advanced-rare-earth-metal-and-magnet-manufacturing-facility-in-blacksburg-south-carolina.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        },
+        {
+          "publisher": "StockTitan",
+          "source_type": "wire",
+          "url": "https://www.stocktitan.net/news/USAR/usa-rare-earth-breaks-ground-on-advanced-rare-earth-metal-70dr81mbduml.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260910-001",
+      "slug": "cyclic-materials-mesa-rare-earth-recycling-plant",
+      "event_date": "2026-09-10",
+      "published_at": "2026-09-10",
+      "ingested_at": "2026-09-11T06:12:08+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["rare earth", "permanent magnet", "critical minerals"],
+      "regions": ["US", "CA"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "Cyclic Materials於美國亞利桑那州梅薩開出首座商業規模稀土磁鐵回收廠",
+      "title_original": "Cyclic Materials Opens First US Commercial-Scale Rare-Earth Magnet Recycling Facility in Mesa, Arizona",
+      "summary_zh": "加拿大稀土回收新創Cyclic Materials於9月10日正式啟用其美國首座商業規模設施，可從報廢電動車馬達、風機發電機與電子廢棄物中回收稀土磁鐵精礦（Mag-Xtract）及銅、鋁、鋼，年處理量上看2.5萬公噸磁鐵廢料，投資逾3,000萬美元，本月稍晚將開始對美國客戶出貨。",
+      "why_it_matters": "此廠為美國首座商業規模稀土磁鐵回收設施，開創繞過礦石開採與中國精煉環節的「城市礦山」次級供應來源，有助磁鐵與馬達製造商分散原生稀土採購依賴；隨著本月稍晚正式出貨，將是實質供給面（而非僅宣示性）的稀土料源新增，長期可望削弱中國在再生磁鐵料源上的槓桿地位，惟目前尚未見具名下游採購客戶或長約揭露。",
+      "tickers": [],
+      "companies": [
+        {
+          "name": "Cyclic Materials Inc.",
+          "ticker": null,
+          "exchange": null,
+          "country": "CA",
+          "role": "supplier"
+        },
+        {
+          "name": "Electronic Recyclers International (ERI)",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "supplier"
+        }
+      ],
+      "supply_chain": {
+        "upstream": ["end-of-life EV motors", "wind turbine generators", "e-waste"],
+        "component": "recycled rare-earth magnet concentrate (Mag-Xtract)",
+        "supplier": ["Cyclic Materials Inc.", "Electronic Recyclers International"],
+        "customer": [],
+        "end_market": ["electric vehicles", "wind power", "permanent magnet manufacturing"]
+      },
+      "products": ["rare earth magnet concentrate", "recycled copper", "recycled aluminum", "recycled steel"],
+      "materials": ["NdFeB scrap", "rare earth magnet concentrate"],
+      "change": {
+        "type": "new_recycling_capacity_online",
+        "before": "美國尚無商業規模稀土磁鐵回收設施，磁鐵廢料多依賴出口或掩埋處理",
+        "after": "梅薩廠啟用，年處理量上看2.5萬公噸磁鐵廢料，本月稍晚開始對美國客戶出貨回收稀土磁鐵精礦"
+      },
+      "financial_data": {
+        "amount": 30000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-10"
+      },
+      "search_keywords": [
+        "cyclic materials", "rare earth recycling", "稀土回收", "mag-xtract",
+        "mesa arizona", "eri", "electronic recyclers international",
+        "permanent magnet", "永磁", "critical minerals", "關鍵礦產",
+        "urban mining", "城市礦山", "ndfeb scrap"
+      ],
+      "sources": [
+        {
+          "publisher": "Electrek",
+          "source_type": "trade",
+          "url": "https://electrek.co/2026/09/10/a-new-arizona-plant-is-going-after-the-rare-earth-supply-crunch/",
+          "is_primary": true,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        },
+        {
+          "publisher": "ManufacturingDive",
+          "source_type": "trade",
+          "url": "https://www.manufacturingdive.com/news/rare-earth-recycler-cyclic-materials-opens-first-us-facility-mesa-arizona/830028/",
+          "is_primary": false,
+          "accessed_at": "2026-09-11T06:05:00+08:00"
+        }
+      ]
+    }
+  ]
+}
