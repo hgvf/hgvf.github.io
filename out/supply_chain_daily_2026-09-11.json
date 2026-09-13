@@ -1,0 +1,246 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-14T06:10:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-10",
+    "end": "2026-09-11"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 2,
+      "HBM": 1,
+      "memory": 1,
+      "AI infrastructure": 2,
+      "data center": 2,
+      "industrial automation": 1
+    },
+    "importance_distribution": {
+      "high": 1,
+      "relevant": 1
+    },
+    "top_tickers": ["000660.KS", "005930.KS", "MU", "688256.SS", "6723.T"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260910-002",
+      "slug": "china-ai-chipmakers-hbm-shortage-price-hike",
+      "event_date": "2026-09-10",
+      "published_at": "2026-09-10",
+      "ingested_at": "2026-09-14T06:10:00+08:00",
+
+      "event_type": "raw_material_bom",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "HBM", "memory", "AI infrastructure", "data center"],
+      "regions": ["CN"],
+      "importance_score": 85,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "路透獨家：HBM缺貨衝擊，華為、寒武纪等中國AI晶片廠兩個月內大幅調漲報價20%~50%",
+      "title_original": "Exclusive-China's AI chipmakers raise prices as high-bandwidth memory shortage bites",
+      "summary_zh": "路透獨家報導，華為將旗艦Ascend 950DT加速卡報價調升至25萬人民幣以上（較兩個月前上漲20%至50%），950PR由約6萬漲至逾8萬人民幣（約30%），910C由約9萬漲至逾11萬人民幣（約22%）；寒武纪次世代690晶片報價亦較兩個月前調漲20%至30%，MetaX、燧原（Iluvatar CoreX）等業者也同步跟漲。漲價主因是全球HBM缺貨疊加美國自2024年12月起收緊對中國高階HBM出口管制，中國廠商被迫透過灰色市場採購HBM，成本較海外買家高出數倍。",
+      "why_it_matters": "HBM全球性缺貨透過灰色市場管道傳導至中國本土AI晶片生態系，使華為、寒武纪等「去Nvidia化」替代方案的整體擁有成本大幅墊高，削弱其對雲端業者（如字節跳動）的價格競爭力，也可能延緩北京推動國產晶片替代進口的政策進度；同時凸顯SK海力士、三星、美光等原廠在HBM議價權上的結構性上升——即便是遭出口管制排除在外的中國買家，也須承受數倍溢價，顯示HBM供給瓶頸已是牽動全球AI運算成本與地緣供應鏈分野的核心變數。",
+
+      "tickers": ["688256.SS", "000660.KS", "005930.KS", "MU"],
+      "companies": [
+        {
+          "name": "Huawei Technologies Co., Ltd.",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "affected_party"
+        },
+        {
+          "name": "Cambricon Technologies Corporation Limited",
+          "ticker": "688256.SS",
+          "exchange": "SSE STAR Market",
+          "country": "CN",
+          "role": "affected_party"
+        },
+        {
+          "name": "MetaX Integrated Circuits (Shanghai) Co., Ltd.",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "affected_party"
+        },
+        {
+          "name": "Iluvatar CoreX (燧原科技)",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "affected_party"
+        },
+        {
+          "name": "SK hynix Inc.",
+          "ticker": "000660.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "supplier"
+        },
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "supplier"
+        },
+        {
+          "name": "Micron Technology, Inc.",
+          "ticker": "MU",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["high-bandwidth memory (HBM)"],
+        "component": "HBM-equipped AI accelerator card",
+        "supplier": ["SK hynix Inc.", "Samsung Electronics Co., Ltd.", "Micron Technology, Inc."],
+        "customer": ["Huawei Technologies Co., Ltd.", "Cambricon Technologies Corporation Limited", "MetaX Integrated Circuits (Shanghai) Co., Ltd.", "Iluvatar CoreX"],
+        "end_market": ["AI infrastructure", "data center", "domestic Chinese AI compute"]
+      },
+
+      "products": ["Huawei Ascend 950DT", "Huawei Ascend 950PR", "Huawei Ascend 910C", "Cambricon 690"],
+      "materials": ["HBM"],
+
+      "change": {
+        "type": "grey_market_cost_passthrough",
+        "before": "兩個月前，Ascend 950PR報價約6萬人民幣、910C約9萬人民幣，寒武纪690尚未正式定價於基準水準",
+        "after": "Ascend 950DT站上25萬人民幣以上（+20%~50%）、950PR漲至逾8萬人民幣（+30%）、910C漲至逾11萬人民幣（+22%），寒武纪690報價+20%~30%，反映透過灰色市場採購HBM的成本已數倍於海外正常通路"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": "CNY",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-10"
+      },
+
+      "search_keywords": [
+        "huawei", "華為", "ascend 950dt", "ascend 950pr", "ascend 910c",
+        "cambricon", "寒武纪", "寒武紀", "690",
+        "metax", "沐曦", "iluvatar corex", "燧原科技",
+        "hbm", "high bandwidth memory", "高頻寬記憶體", "記憶體缺貨",
+        "sk hynix", "sk海力士", "samsung", "三星", "micron", "美光",
+        "ai chip", "ai晶片", "漲價", "price hike",
+        "grey market", "灰色市場", "export control", "出口管制",
+        "china ai", "中國ai", "nvidia", "bytedance", "字節跳動",
+        "000660.ks", "005930.ks", "mu", "688256.ss",
+        "raw material", "bom cost", "semiconductor"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Reuters (via Investing.com)",
+          "source_type": "wire",
+          "url": "https://www.investing.com/news/stock-market-news/exclusivechinas-ai-chipmakers-raise-prices-as-highbandwidth-memory-shortage-bites-4894950",
+          "is_primary": true,
+          "accessed_at": "2026-09-14T06:00:00+08:00"
+        },
+        {
+          "publisher": "Free Malaysia Today (Reuters wire)",
+          "source_type": "wire",
+          "url": "https://www.freemalaysiatoday.com/category/business/2026/09/10/china-s-ai-chipmakers-raise-prices-as-high-bandwidth-memory-shortage-bites",
+          "is_primary": false,
+          "accessed_at": "2026-09-14T06:00:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260911-001",
+      "slug": "renesas-second-2026-price-hike-power-semiconductors",
+      "event_date": "2026-09-11",
+      "published_at": "2026-09-11",
+      "ingested_at": "2026-09-14T06:10:00+08:00",
+
+      "event_type": "raw_material_bom",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "AI infrastructure", "data center", "industrial automation"],
+      "regions": ["JP"],
+      "importance_score": 72,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+
+      "title_zh": "瑞薩電子今年第二度調漲功率半導體報價，2027年起生效並點名產能轉向AI資料中心",
+      "title_original": "Renesas to Raise Prices Again From Jan. 2027, Citing Rising Material, Energy and Manufacturing Costs",
+      "summary_zh": "日本瑞薩電子（Renesas）於9月11日通知客戶將再度調整功率半導體（含功率開關、MOSFET等功率轉換與電路控制相關產品）報價，新價自2027年1月1日生效，為該公司今年繼3月調漲（7月1日生效）後第二次漲價，公司未揭露統一漲幅，將以品項別個別通知。分析師指出，全球供應商正將產能轉向附加價值更高的AI與AI資料中心（AIDC）應用，排擠傳統工業客戶的功率半導體供給。",
+      "why_it_matters": "瑞薩身為車用與工業功率半導體主要供應商，年內第二度調漲報價、且明確點名產能被重新配置至AI資料中心機架級電源供應應用，意味傳統工業與車用客戶將面臨功率半導體供給更趨緊縮、採購成本進一步墊高的結構性壓力；同業英飛凌（4月＋5%~15%）、華潤微與士蘭微（7月＋15%以上）已先行調漲，顯示AI資料中心建置熱潮正系統性地排擠工業自動化供應鏈的產能與價格籌碼。",
+
+      "tickers": ["6723.T"],
+      "companies": [
+        {
+          "name": "Renesas Electronics Corporation",
+          "ticker": "6723.T",
+          "exchange": "TSE",
+          "country": "JP",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["raw materials", "energy", "advanced packaging capacity"],
+        "component": "power semiconductor (power switch / MOSFET)",
+        "supplier": ["Renesas Electronics Corporation"],
+        "customer": ["industrial automation OEMs", "automotive OEMs", "AI data center power system integrators"],
+        "end_market": ["industrial automation", "automotive", "AI infrastructure", "data center"]
+      },
+
+      "products": ["power switches", "MOSFETs"],
+      "materials": [],
+
+      "change": {
+        "type": "list_price_increase",
+        "before": "現行報價為2026年3月公告、7月1日生效之調整後價格",
+        "after": "2027年1月1日起再度調漲，具體幅度按品項個別通知，原廠並將部分產能轉向AI資料中心應用"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2027-01-01"
+      },
+
+      "search_keywords": [
+        "renesas", "瑞薩", "瑞薩電子", "6723",
+        "power semiconductor", "功率半導體", "mosfet", "power switch",
+        "price increase", "漲價", "list price",
+        "ai data center", "aidc", "ai資料中心",
+        "industrial automation", "工業自動化", "automotive", "車用半導體",
+        "infineon", "英飛凌", "cr micro", "華潤微", "silan", "士蘭微",
+        "trendforce", "semiconductor", "data center"
+      ],
+
+      "sources": [
+        {
+          "publisher": "TrendForce",
+          "source_type": "trade",
+          "url": "https://www.trendforce.com/news/2026/09/11/news-renesas-to-raise-prices-again-from-jan-2027-citing-rising-material-energy-and-manufacturing-costs/",
+          "is_primary": true,
+          "accessed_at": "2026-09-14T06:05:00+08:00"
+        },
+        {
+          "publisher": "SemiMedia",
+          "source_type": "trade",
+          "url": "https://www.semimedia.cc/renesas-announces-second-2026-price-adjustment-new-pricing-takes-effect-january-1-2027/",
+          "is_primary": false,
+          "accessed_at": "2026-09-14T06:05:00+08:00"
+        }
+      ]
+    }
+  ]
+}
