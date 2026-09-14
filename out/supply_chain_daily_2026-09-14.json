@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-15T06:09:53+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-14",
+    "end": "2026-09-14"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 1,
+      "advanced packaging": 1,
+      "HBM": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "high": 1
+    },
+    "top_tickers": ["2330.TW", "TSM"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260914-001",
+      "slug": "tsmc-2nm-3nm-cowos-capacity-boost-2027-2028",
+      "event_date": "2026-09-14",
+      "published_at": "2026-09-14",
+      "ingested_at": "2026-09-15T06:09:53+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "advanced packaging", "HBM", "AI infrastructure"],
+      "regions": ["TW", "US", "JP"],
+      "importance_score": 85,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "台積電傳明年中前2奈米產能增22%、3奈米增16%，CoWoS先進封裝2028年底前產能倍增",
+      "title_original": "TSMC Reportedly Targets 22% 2nm, 16%+ 3nm Capacity Boost by Mid-2027; CoWoS to Double by 2028",
+      "summary_zh": "供應鏈消息指出，台積電2奈米月產能將由2026年底約9萬片，於2027年年中前提升至11萬片（+22%）；3奈米月產能同期由18萬片以上增至21萬片（+16%以上）。先進封裝CoWoS產能規劃由2026年底約13萬片（12吋約當晶圓）於2028年底倍增至26萬片，2026年起連續五年每年擴充，並於2028年推出可整合20層HBM堆疊的14倍光罩尺寸版本；擴產聚焦台灣（AP7）與美國亞利桑那廠區，2026年資本支出估600億至640億美元，其中7至8成投向先進製程與封裝。",
+      "why_it_matters": "CoWoS是NVIDIA、AMD等AI晶片將GPU與HBM整合封裝的最大產能瓶頸，此次規劃兩年內將CoWoS產能翻倍、2奈米與3奈米邏輯產能同步提升16%~22%，意味台積電作為全球先進製程暨先進封裝獨家供應商的地位進一步鞏固，NVIDIA、AMD及雲端業者可望於2027~2028年逐步緩解GPU缺貨與交期壓力；但在新產能開出前，現有CoWoS與2奈米產能仍全數被預訂、供給持續落後需求，台積電對客戶的報價與議價力預期維持強勢，同時也讓三星、英特爾晶圓代工在先進製程與先進封裝競賽中的追趕壓力進一步加大。",
+
+      "tickers": ["2330.TW", "TSM"],
+      "companies": [
+        {
+          "name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "ticker": "2330.TW",
+          "exchange": "TWSE",
+          "country": "TW",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["EUV lithography equipment", "wafer fab equipment", "advanced packaging equipment"],
+        "component": "2nm / 3nm logic wafer capacity; CoWoS advanced packaging capacity",
+        "supplier": ["Taiwan Semiconductor Manufacturing Company Limited"],
+        "customer": ["NVIDIA", "AMD", "hyperscaler AI accelerator customers"],
+        "end_market": ["AI infrastructure", "data center", "AI accelerators"]
+      },
+
+      "products": ["2nm logic", "3nm logic", "CoWoS advanced packaging"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "2026年底：2奈米月產能約9萬片、3奈米月產能18萬片以上、CoWoS產能約13萬片（12吋約當晶圓/月）",
+        "after": "2027年年中：2奈米月產能達11萬片（+22%）、3奈米月產能達21萬片（+16%以上）；2028年底：CoWoS產能倍增至26萬片/月，並推出可整合20層HBM堆疊的14倍光罩尺寸版本"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": "USD",
+        "capacity_change_pct": 100,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2028-12-31"
+      },
+
+      "search_keywords": [
+        "tsmc", "台積電", "2330", "2330.tw", "tsm",
+        "cowos", "advanced packaging", "先進封裝",
+        "2nm", "2奈米", "3nm", "3奈米",
+        "wafer capacity", "產能", "晶圓代工", "foundry",
+        "hbm", "hbm4", "ai infrastructure", "semiconductor", "半導體",
+        "nvidia", "amd", "gpu",
+        "arizona", "ap7", "kumamoto", "capex"
+      ],
+
+      "sources": [
+        {
+          "publisher": "TrendForce",
+          "source_type": "trade",
+          "url": "https://www.trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028/",
+          "is_primary": true,
+          "accessed_at": "2026-09-15T06:00:00+08:00"
+        },
+        {
+          "publisher": "Wccftech",
+          "source_type": "trade",
+          "url": "https://wccftech.com/report-tsmc-to-double-cowos-capacity-by-2028-as-ai-chip-shortage-spills-over-to-rivals/",
+          "is_primary": false,
+          "accessed_at": "2026-09-15T06:00:00+08:00"
+        }
+      ]
+    }
+  ]
+}
