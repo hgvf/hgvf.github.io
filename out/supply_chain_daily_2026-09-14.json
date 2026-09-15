@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-15T09:30:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-14",
+    "end": "2026-09-14"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "semiconductor": 1,
+      "advanced packaging": 1,
+      "data center": 1
+    },
+    "importance_distribution": {
+      "relevant": 1
+    },
+    "top_tickers": ["6762.T"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260914-001",
+      "slug": "tdk-thin-film-inductor-ai-xpu-vertical-power-capacity",
+      "event_date": "2026-09-14",
+      "published_at": "2026-09-14",
+      "ingested_at": "2026-09-15T09:30:00+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["AI infrastructure", "semiconductor", "advanced packaging", "data center"],
+      "regions": ["JP"],
+      "importance_score": 77,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+
+      "title_zh": "TDK砸日圓400億元擴產內嵌式薄膜電感器，搶進AI XPU垂直供電封裝商機",
+      "title_original": "TDK to Ramp Up Production of Electronic Components for AI Servers",
+      "summary_zh": "TDK將投資約400億日圓於兩座日本廠房擴充薄膜電感器產能：山梨縣甲府廠投入350億日圓，專攻嵌入AI XPU封裝基板、用於垂直供電（vertical power delivery）設計的薄膜電感；山形縣鶴岡東廠投入50億日圓，擴產光收發模組用電感。目標於2027財年前完成擴產，以因應AI伺服器對高功率密度供電元件的暴增需求。",
+      "why_it_matters": "隨NVIDIA等業者次世代AI XPU/GPU朝晶片封裝基板內建垂直供電架構演進以縮短電流路徑、降低阻抗，嵌入式薄膜電感正從邊緣被動元件轉變為封裝設計中不可或缺的關鍵材料節點；TDK提前建立專用產能，可望在Murata、Vishay、Coilcraft等競爭對手之前卡位這個新興瓶頸環節，強化其對AI伺服器機殼與先進封裝廠（如採用CoWoS/SoIC技術的封裝業者）的議價與供貨優先權，同時支撐TDK被動元件事業在AI相關營收上維持25%至30%的年複合成長目標。",
+
+      "tickers": ["6762.T"],
+      "companies": [
+        {
+          "name": "TDK Corporation",
+          "ticker": "6762.T",
+          "exchange": "TSE",
+          "country": "JP",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["soft-magnetic / ferrite materials", "thin-film deposition materials"],
+        "component": "embedded thin-film power inductor (vertical power delivery)",
+        "supplier": ["TDK Corporation"],
+        "customer": ["AI XPU/GPU packaging houses", "AI server OEMs"],
+        "end_market": ["AI infrastructure", "data center", "AI accelerators"]
+      },
+
+      "products": ["thin-film power inductor", "optical transceiver inductor"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "TDK薄膜電感器產能未針對AI XPU垂直供電封裝需求設置專用產線",
+        "after": "新增兩座專用產能：甲府廠(350億日圓)聚焦AI XPU內嵌式薄膜電感、鶴岡東廠(50億日圓)聚焦光收發模組電感，目標2027財年前完成擴產"
+      },
+
+      "financial_data": {
+        "amount": 40000000000,
+        "currency": "JPY",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "tdk", "tdk corporation", "薄膜電感器", "薄膜電感", "thin-film inductor",
+        "embedded inductor", "內嵌式電感",
+        "ai xpu", "xpu", "vertical power delivery", "垂直供電",
+        "ai server", "ai伺服器", "advanced packaging", "先進封裝",
+        "semiconductor", "半導體", "data center", "資料中心",
+        "kofu", "甲府", "tsuruoka", "鶴岡", "yamanashi", "山梨", "yamagata", "山形",
+        "optical transceiver", "光收發模組",
+        "6762", "6762.t", "nvidia", "gpu", "cowos"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Nikkei Asia",
+          "source_type": "wire",
+          "url": "https://asia.nikkei.com/business/technology/tdk-to-ramp-up-production-of-electronic-components-for-ai-servers",
+          "is_primary": true,
+          "accessed_at": "2026-09-15T09:00:00+08:00"
+        },
+        {
+          "publisher": "工商時報",
+          "source_type": "trade",
+          "url": "https://www.ctee.com.tw/news/20260914701174-430702",
+          "is_primary": false,
+          "accessed_at": "2026-09-15T09:05:00+08:00"
+        },
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com.tw/tech/dt/n/shwnws.asp?id=0000768378_EGU2JNPF80R57P7RXQRZF",
+          "is_primary": false,
+          "accessed_at": "2026-09-15T09:10:00+08:00"
+        }
+      ]
+    }
+  ]
+}
