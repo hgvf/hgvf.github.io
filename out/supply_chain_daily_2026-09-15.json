@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-16T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-14",
+    "end": "2026-09-15"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "critical minerals": 1,
+      "defense": 1,
+      "aerospace": 1
+    },
+    "importance_distribution": {
+      "high": 1
+    },
+    "top_tickers": ["ELMT"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260914-001",
+      "slug": "elmet-group-department-of-war-tungsten-investment",
+      "event_date": "2026-09-14",
+      "published_at": "2026-09-14",
+      "ingested_at": "2026-09-16T09:00:00+08:00",
+      "event_type": "strategic_investment",
+      "event_type_secondary": ["capacity", "supply_agreement"],
+      "themes": ["critical minerals", "defense", "aerospace"],
+      "regions": ["US", "AU", "ES"],
+      "importance_score": 84,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "美國陸戰部投資4.5億美元入股Elmet Group，強化美國鎢供應鏈並取得近20%股權",
+      "title_original": "Department of War Makes Landmark $450 Million Committed Investment in The Elmet Group to Secure America's Tungsten Supply Chain",
+      "summary_zh": "美國陸戰部（Department of War）透過「工業基礎分析與維持」（IBAS）計畫，對美國唯一垂直整合鎢鉬材料商Elmet Group（NASDAQ: ELMT）進行最高4.5億美元的可贖回特別股與認股權證投資（先撥款2億美元），換取最高19.9%普通股權益、一席董事及一席觀察員；資金將用於緬因、密西根、俄亥俄廠房現代化（逾1.65億美元）及內華達Blue Moon Springer鎢複合體擴產（約1.5億美元），另有資金用於全球礦源夥伴關係（含澳洲Mt. Carbine礦與西班牙Barruecopardo礦）。同日，國防後勤局（DLA）另與Elmet簽署最高20億美元、保證1.5億美元的不定量供應合約（IDIQ），用於充實國家戰略儲備。",
+      "why_it_matters": "此為美國政府首次以股權形式直接介入鎢供應鏈重組：陸戰部藉由持有Elmet近20%股權與董事席位，換取對F-35、Patriot、Javelin、THAAD、Trident II及維吉尼亞/哥倫比亞級潛艦等逾百項國防計畫關鍵材料的供應保障，同時降低對中國（掌控全球約85%鎢與40%鉬供應）之依賴；同日國防後勤局（DLA）再簽署最高20億美元、保證1.5億美元的國家戰略儲備供應合約，等於鎖定Elmet未來多年產能與現金流，強化美系鎢鉬加工能量對中國出口管制的緩衝力道，並為美國關鍵礦產政策（延續MP Materials模式）樹立第二個政府持股案例。",
+      "tickers": ["ELMT"],
+      "companies": [
+        {
+          "name": "The Elmet Group Co.",
+          "ticker": "ELMT",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "investee"
+        },
+        {
+          "name": "U.S. Department of War",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "investor"
+        },
+        {
+          "name": "Defense Logistics Agency",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "customer"
+        }
+      ],
+      "supply_chain": {
+        "upstream": ["tungsten ore", "molybdenum ore"],
+        "component": "tungsten and molybdenum materials and components",
+        "supplier": ["The Elmet Group Co."],
+        "customer": ["U.S. Department of War", "Defense Logistics Agency"],
+        "end_market": ["defense", "aerospace", "semiconductor", "industrial", "medical"]
+      },
+      "products": ["tungsten", "molybdenum", "tungsten heavy alloy"],
+      "materials": ["tungsten", "molybdenum"],
+      "change": {
+        "type": "government_equity_investment_and_capacity_expansion",
+        "before": "Elmet為獨立營運之美國鎢鉬材料供應商，與美國國防部僅為一般採購關係，鎢資源高度仰賴中國（約占全球供應85%）及國際礦源",
+        "after": "美國陸戰部取得Elmet最高19.9%特別股權與認股權證及董事席位，承諾4.5億美元投資資助美國三州廠房現代化與內華達鎢複合體擴產，另由DLA簽署最高20億美元國家戰略儲備採購合約"
+      },
+      "financial_data": {
+        "amount": 450000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-14"
+      },
+      "search_keywords": [
+        "elmet", "elmt", "the elmet group", "department of war", "dow", "pentagon",
+        "陸戰部", "國防部", "tungsten", "鎢", "molybdenum", "鉬",
+        "critical minerals", "critical mineral", "稀有金屬", "戰略礦產",
+        "f-35", "patriot", "javelin", "thaad", "trident",
+        "virginia-class submarine", "columbia-class submarine",
+        "defense logistics agency", "dla", "national defense stockpile", "國家戰略儲備",
+        "strategic investment", "industrial base analysis and sustainment", "ibas",
+        "china", "中國", "supply chain", "供應鏈", "defense", "國防", "aerospace"
+      ],
+      "sources": [
+        {
+          "publisher": "U.S. Department of War",
+          "source_type": "primary",
+          "url": "https://www.war.gov/News/Releases/Release/Article/4599882/department-of-war-announces-a-450-million-investment-in-the-elmet-group-to-secu/",
+          "is_primary": true,
+          "accessed_at": "2026-09-16T08:40:00+08:00"
+        },
+        {
+          "publisher": "The Elmet Group — GlobeNewswire",
+          "source_type": "primary",
+          "url": "https://www.globenewswire.com/news-release/2026/09/14/3360841/0/en/department-of-war-makes-landmark-450-million-committed-investment-in-the-elmet-group-to-secure-america-s-tungsten-supply-chain.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-16T08:42:00+08:00"
+        },
+        {
+          "publisher": "Investing News Network",
+          "source_type": "trade",
+          "url": "https://investingnews.com/pentagon-funds-elmet-ucore-processing/",
+          "is_primary": false,
+          "accessed_at": "2026-09-16T08:45:00+08:00"
+        }
+      ]
+    }
+  ]
+}
