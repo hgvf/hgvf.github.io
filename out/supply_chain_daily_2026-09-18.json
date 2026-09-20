@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-20T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-16",
+    "end": "2026-09-18"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 1,
+      "memory": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "high": 1
+    },
+    "top_tickers": [
+      "005930.KS",
+      "000660.KS"
+    ]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260916-001",
+      "slug": "chip-equipment-component-lead-times-samsung-skhynix-fab-risk",
+      "event_date": "2026-09-16",
+      "published_at": "2026-09-18",
+      "ingested_at": "2026-09-20T09:00:00+08:00",
+      "event_type": "supply_disruption",
+      "event_type_secondary": [
+        "capacity"
+      ],
+      "themes": [
+        "semiconductor",
+        "memory",
+        "AI infrastructure"
+      ],
+      "regions": [
+        "KR",
+        "JP"
+      ],
+      "importance_score": 86,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+      "title_zh": "南韓半導體設備關鍵零組件交期暴增至最長40個月，三星平澤、SK海力士龍仁廠擴產進度亮警訊",
+      "title_original": "Chip equipment makers face waits of up to 40 months for critical parts",
+      "summary_zh": "南韓《電子新聞》9/16引述業界人士報導，半導體設備廠取得關鍵零組件的交期普遍拉長逾一倍，其中一家沉積設備廠交期由4個月延至10個月，另一家雷射製程設備廠所需的日本製關鍵零組件交期更暴增至40個月且加價也無法插隊；業界示警此瓶頸可能拖累三星電子平澤與SK海力士龍仁（Yongin）叢集等全球晶圓廠投資進度。",
+      "why_it_matters": "AI晶片熱潮驅動全球晶圓廠同時擴產，訂單暴增已使設備零組件供應商（尤其日系關鍵零件商）產能跟不上，瓶頸正從晶片本身延伸到「造晶片的機器」這一層；若三星平澤、SK海力士龍仁的設備到位時間持續延後，將直接推遲HBM、DRAM與先進邏輯新產能開出時程，等於在現有記憶體/先進封裝缺貨循環之上再疊加一層供給遞延風險，可能使2026-2027年的晶片與記憶體漲價週期拉得更長，對下游AI伺服器、GPU廠的採購成本與交期規劃形成連鎖壓力。",
+      "tickers": [
+        "005930.KS",
+        "000660.KS"
+      ],
+      "companies": [
+        {
+          "name": "Samsung Electronics Co., Ltd.",
+          "ticker": "005930.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "affected_party"
+        },
+        {
+          "name": "SK hynix Inc.",
+          "ticker": "000660.KS",
+          "exchange": "KRX",
+          "country": "KR",
+          "role": "affected_party"
+        }
+      ],
+      "supply_chain": {
+        "upstream": [
+          "Japanese precision components (laser process equipment parts)",
+          "deposition equipment sub-components"
+        ],
+        "component": "semiconductor fab equipment critical components",
+        "supplier": [],
+        "customer": [
+          "Samsung Electronics Co., Ltd.",
+          "SK hynix Inc."
+        ],
+        "end_market": [
+          "HBM",
+          "DRAM",
+          "AI infrastructure"
+        ]
+      },
+      "products": [
+        "deposition equipment",
+        "laser process equipment"
+      ],
+      "materials": [],
+      "change": {
+        "type": "lead_time_extension",
+        "before": "沉積設備零組件交期約4個月；一般設備零組件交期屬正常水準",
+        "after": "沉積設備零組件交期延長至10個月；部分日本製雷射製程設備關鍵零組件交期暴增至最長40個月，加價亦無法縮短"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": [
+        "samsung", "三星電子", "sk hynix", "sk海力士", "005930.ks", "000660.ks",
+        "pyeongtaek", "平澤", "yongin", "龍仁",
+        "semiconductor equipment", "半導體設備", "lead time", "交期",
+        "supply disruption", "供給瓶頸", "capacity", "產能",
+        "hbm", "dram", "memory", "記憶體",
+        "ai infrastructure", "ai晶片", "japan components", "日本零組件",
+        "electronic news", "digitimes"
+      ],
+      "sources": [
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260918VL212/equipment-capacity-demand-supply-chain-chipmakers.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-20T08:40:00+08:00"
+        },
+        {
+          "publisher": "Futu News (citing South Korea Electronic News)",
+          "source_type": "trade",
+          "url": "https://news.futunn.com/en/post/79399752/severe-supply-shortages-lead-times-for-south-korean-semiconductor-components",
+          "is_primary": false,
+          "accessed_at": "2026-09-20T08:42:00+08:00"
+        },
+        {
+          "publisher": "BigGo Finance",
+          "source_type": "trade",
+          "url": "https://finance.biggo.com/news/1f60e97a-56ae-467e-9632-c4fec074fe2c",
+          "is_primary": false,
+          "accessed_at": "2026-09-20T08:43:00+08:00"
+        }
+      ]
+    }
+  ]
+}
