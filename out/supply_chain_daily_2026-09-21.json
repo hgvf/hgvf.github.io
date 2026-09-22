@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-22T09:00:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-21",
+    "end": "2026-09-21"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "semiconductor": 1,
+      "advanced packaging": 1
+    },
+    "importance_distribution": {
+      "high": 1
+    },
+    "top_tickers": ["2330.TW", "3711.TW", "6515.TW"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260921-001",
+      "slug": "tsmc-ase-baiyue-packaging-equipment-materials-base",
+      "event_date": "2026-09-21",
+      "published_at": "2026-09-21",
+      "ingested_at": "2026-09-22T09:00:00+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": ["supplier_change"],
+      "themes": ["semiconductor", "advanced packaging", "AI infrastructure"],
+      "regions": ["TW"],
+      "importance_score": 82,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "經濟部攜手台積電打造白埔產業園區，全國首座半導體先進封裝設備材料驗測基地動土",
+      "title_original": "MOEA, Kaohsiung City and TSMC Break Ground on Baiyue Industrial Park's Advanced-Packaging Equipment & Materials Verification Base",
+      "summary_zh": "經濟部、高雄市政府與台積電9月21日在白埔產業園區動土，總面積88.73公頃中規劃25公頃作為半導體先進封裝設備與材料驗測聚落。台積電將使用約3公頃土地、興建2棟建物，設置迷你潔淨室與技術驗證引擎；日月光（規劃兩座廠房）、穎崴等逾20家設備材料業者亦將進駐，目標把驗證回饋時間由週/月級縮短，效率提升約25%至50%。",
+      "why_it_matters": "過去先進封裝設備與材料須排隊進入台積電量產廠才能驗證，回饋週期以週或月計，實質限制了本土設備材料商切入供應鏈的速度，也讓後段設備長期仰賴海外大廠。白埔基地讓日月光、穎崴等業者可在量產線外完成軟硬體與製程整合驗證，加快取得台積電認證、提升議價與供貨優先權，同時降低台灣對海外先進封裝設備供應商的依賴；此舉也補上南部半導體S廊帶（南梓先進製程、仁武先進封裝、橋頭關鍵材料）的最後一塊拼圖，強化CoWoS等瓶頸節點供應鏈的垂直整合韌性。",
+      "tickers": ["2330.TW", "3711.TW", "6515.TW"],
+      "companies": [
+        {
+          "name": "Taiwan Semiconductor Manufacturing Company",
+          "ticker": "2330.TW",
+          "exchange": "TWSE",
+          "country": "TW",
+          "role": "customer"
+        },
+        {
+          "name": "ASE Technology Holding",
+          "ticker": "3711.TW",
+          "exchange": "TWSE",
+          "country": "TW",
+          "role": "supplier"
+        },
+        {
+          "name": "WinWay Technology",
+          "ticker": "6515.TW",
+          "exchange": "TWSE",
+          "country": "TW",
+          "role": "supplier"
+        },
+        {
+          "name": "Ministry of Economic Affairs (Taiwan)",
+          "ticker": null,
+          "exchange": null,
+          "country": "TW",
+          "role": "regulator"
+        },
+        {
+          "name": "Kaohsiung City Government",
+          "ticker": null,
+          "exchange": null,
+          "country": "TW",
+          "role": "regulator"
+        }
+      ],
+      "supply_chain": {
+        "upstream": ["advanced packaging equipment", "packaging materials (substrates, bonding/testing materials)"],
+        "component": "advanced-packaging equipment & materials verification/qualification infrastructure",
+        "supplier": ["ASE Technology Holding", "WinWay Technology"],
+        "customer": ["Taiwan Semiconductor Manufacturing Company"],
+        "end_market": ["AI infrastructure", "advanced packaging", "semiconductor"]
+      },
+      "products": ["advanced packaging equipment", "packaging materials"],
+      "materials": [],
+      "change": {
+        "type": "new_facility_supply_chain_localization",
+        "before": "先進封裝設備與材料驗證須排隊進入台積電量產廠，回饋週期以週、月計，本土設備材料商切入台積電供應鏈的速度受限",
+        "after": "白埔基地提供量產線外的迷你潔淨室、實驗室與技術驗證引擎，供應商可先完成軟硬體與製程整合驗證，目標提升驗證效率25%至50%；日月光、穎崴等逾20家設備材料業者規劃進駐"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-21"
+      },
+      "search_keywords": [
+        "tsmc", "台積電", "2330", "2330.tw",
+        "ase technology", "日月光", "3711", "3711.tw",
+        "winway", "winway technology", "穎崴", "6515", "6515.tw",
+        "baiyue", "白埔", "白埔產業園區", "baiyue industrial park",
+        "advanced packaging", "先進封裝", "semiconductor", "半導體",
+        "packaging equipment", "封裝設備", "materials", "材料",
+        "verification", "驗測", "驗證基地", "cowos",
+        "kaohsiung", "高雄", "moea", "經濟部",
+        "capacity", "supplier_change", "supply chain cluster", "供應鏈聚落",
+        "s corridor", "半導體s廊帶"
+      ],
+      "sources": [
+        {
+          "publisher": "經濟部 (Ministry of Economic Affairs, Taiwan)",
+          "source_type": "primary",
+          "url": "https://www.moea.gov.tw/MNS/populace/news/News.aspx?kind=1&menu_id=40&news_id=123849",
+          "is_primary": true,
+          "accessed_at": "2026-09-22T09:00:00+08:00"
+        },
+        {
+          "publisher": "中央社 (CNA)",
+          "source_type": "wire",
+          "url": "https://www.cna.com.tw/news/aloc/202609200099.aspx",
+          "is_primary": false,
+          "accessed_at": "2026-09-22T09:00:00+08:00"
+        },
+        {
+          "publisher": "經濟日報/聯合新聞網",
+          "source_type": "trade",
+          "url": "https://udn.com/news/story/7240/9768325",
+          "is_primary": false,
+          "accessed_at": "2026-09-22T09:00:00+08:00"
+        },
+        {
+          "publisher": "工商時報",
+          "source_type": "trade",
+          "url": "https://www.ctee.com.tw/news/20260921700052-439901",
+          "is_primary": false,
+          "accessed_at": "2026-09-22T09:00:00+08:00"
+        }
+      ]
+    }
+  ]
+}
