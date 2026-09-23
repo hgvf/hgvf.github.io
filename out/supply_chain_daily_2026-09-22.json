@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-24T06:17:22+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-22",
+    "end": "2026-09-22"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "power grid": 1,
+      "data center": 1,
+      "semiconductor": 1,
+      "advanced packaging": 1,
+      "memory": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "relevant": 2
+    },
+    "top_tickers": ["HPS-A.TO", "688525.SH"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260922-001",
+      "slug": "hammond-power-solutions-fort-worth-transformer-plant",
+      "event_date": "2026-09-22",
+      "published_at": "2026-09-22",
+      "ingested_at": "2026-09-24T06:17:22+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["power grid", "data center"],
+      "regions": ["US", "CA"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+
+      "title_zh": "Hammond Power Solutions斥資5,000萬加幣興建德州沃斯堡新廠，鎖定資料中心用大型變壓器年增2.5億加幣產能",
+      "title_original": "Hammond Power Solutions Increases North American Manufacturing Capacity With New Fort Worth, Texas Plant",
+      "summary_zh": "加拿大乾式變壓器龍頭Hammond Power Solutions宣布簽下德州沃斯堡新廠長期租約，初期投資約5,000萬加幣設備與試車，2027年第4季分階段量產後預計年增約2.5億加幣（滿載可達4億加幣）大型標準與客製化變壓器產能，鎖定資料中心、電氣化與電力基礎設施等美國核心終端市場。",
+      "why_it_matters": "美國大型電力變壓器目前交期普遍超過2年、市場缺口約15%，AI資料中心與電網升級需求持續推升缺口；Hammond此舉直接針對此結構性瓶頸新增產能並貼近美國客戶縮短交期，年增產能約當公司2025年營收（8.98億美元）的兩至三成，若如期於2027Q4起量產，可望緩解北美資料中心業者採購大型變壓器的交期風險與議價壓力，同時鞏固Hammond在北美乾式/大型變壓器市場對抗新進與海外供應商的產能領先地位。",
+
+      "tickers": ["HPS-A.TO"],
+      "companies": [
+        {
+          "name": "Hammond Power Solutions Inc.",
+          "ticker": "HPS-A.TO",
+          "exchange": "TSX",
+          "country": "CA",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["electrical steel", "copper/aluminum winding"],
+        "component": "large standard & custom-engineered power/distribution transformers",
+        "supplier": ["Hammond Power Solutions Inc."],
+        "customer": ["US data center operators", "electrification & power infrastructure projects", "oil & gas / mining end users"],
+        "end_market": ["data center", "power grid", "electrification"]
+      },
+
+      "products": ["power transformers", "distribution transformers"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "Hammond在美國的大型變壓器產能主要仰賴加拿大及2025年新啟用的墨西哥廠，德州當地尚無專屬生產基地，美國客戶交期較長",
+        "after": "新簽約德州沃斯堡廠2027Q4起分階段量產，初期年增約2.5億加幣產能（滿載擴建上限4億加幣），大幅縮短對美國資料中心等核心客戶的交付距離"
+      },
+
+      "financial_data": {
+        "amount": 50000000,
+        "currency": "CAD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2027-10-01"
+      },
+
+      "search_keywords": [
+        "hammond power solutions", "hammond", "hps.a", "hps-a.to",
+        "transformer", "變壓器", "power transformer", "distribution transformer",
+        "fort worth", "texas", "沃斯堡", "德州",
+        "data center", "資料中心", "data centre",
+        "power grid", "電網", "electrification", "電氣化",
+        "capacity expansion", "產能擴充", "manufacturing capacity",
+        "power infrastructure", "電力基礎設施",
+        "north america", "canada", "北美"
+      ],
+
+      "sources": [
+        {
+          "publisher": "GlobeNewswire (Hammond Power Solutions press release)",
+          "source_type": "primary",
+          "url": "https://www.globenewswire.com/news-release/2026/09/22/3366176/0/en/hammond-power-solutions-increases-north-american-manufacturing-capacity.html",
+          "is_primary": true,
+          "accessed_at": "2026-09-24T06:00:00+08:00"
+        },
+        {
+          "publisher": "BNN Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bnnbloomberg.ca/business/company-news/2026/09/22/hammond-power-solutions-expanding-in-texas-amid-demand-from-data-centre-projects/",
+          "is_primary": false,
+          "accessed_at": "2026-09-24T06:00:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260922-002",
+      "slug": "biwin-storage-phase3-wafer-level-packaging-dongguan",
+      "event_date": "2026-09-22",
+      "published_at": "2026-09-22",
+      "ingested_at": "2026-09-24T06:17:22+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "advanced packaging", "memory", "AI infrastructure"],
+      "regions": ["CN"],
+      "importance_score": 78,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+
+      "title_zh": "佰維存儲加碼45億元人民幣建晶圓級先進封測三期，2027年底月產能拚衝上逾萬片",
+      "title_original": "Biwin Storage Commits RMB 4.5B (US$672M) to Phase III Wafer-Level Advanced Packaging & Testing Project in Dongguan",
+      "summary_zh": "A股存儲龍頭佰維存儲（688525.SH）公告，控股子公司廣東芯成漢奇將與東莞松山湖高新區管委會簽約，投資約45億元人民幣（其中固定資產投資40億元）建設晶圓級先進封測製造項目三期，聚焦2.5D整合與計算-記憶體共封裝，目標2027年底月產能由現行約3,000片（一、二期）拉升至逾10,000片，投資金額已超過前兩期合計投資（30.9億元）。",
+      "why_it_matters": "SigmaIntell估計全球2.5D/3D先進封裝產能吃緊將持續到2027下半年，佰維此案將自家晶圓級先進封裝月產能提高逾兩倍，有助強化中國本土在計算-記憶體共封裝（compute-in-memory）與AI/高效能運算先進封裝上的自主供給能力，降低對台系（台積電、日月光等）CoWoS生態系的依賴；由於目前仍處客戶送樣、工藝驗證及小批量試產階段、尚未量產認證，實際能否轉化為訂單與營收仍待2027年底產能開出後客戶導入進度驗證。",
+
+      "tickers": ["688525.SH"],
+      "companies": [
+        {
+          "name": "Shenzhen Biwin Storage Technology Co., Ltd.",
+          "ticker": "688525.SH",
+          "exchange": "SSE",
+          "country": "CN",
+          "role": "supplier"
+        },
+        {
+          "name": "Guangdong Xincheng Hanqi (subsidiary)",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "supplier"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["silicon wafer", "TSV substrate", "advanced packaging materials"],
+        "component": "wafer-level 2.5D advanced packaging / compute-in-memory co-packaging",
+        "supplier": ["Shenzhen Biwin Storage Technology Co., Ltd."],
+        "customer": [],
+        "end_market": ["AI infrastructure", "data center", "high-performance computing", "memory / storage"]
+      },
+
+      "products": ["2.5D advanced packaging", "compute-in-memory modules"],
+      "materials": [],
+
+      "change": {
+        "type": "capacity_expansion",
+        "before": "晶圓級先進封測一、二期累計投資30.9億元，月產能約3,000片（2.5D），目前仍處客戶送樣、工藝驗證及小批量試產階段，尚未正式量產貢獻營收",
+        "after": "三期新增投資45億元（含固定資產40億元），不涉及新增用地，計畫2029年底前完成固定資產投資，目標2027年底月產能逾10,000片，較現行產能提升逾兩倍"
+      },
+
+      "financial_data": {
+        "amount": 4500000000,
+        "currency": "CNY",
+        "capacity_change_pct": 233,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2029-12-31"
+      },
+
+      "search_keywords": [
+        "biwin storage", "biwin", "佰维存储", "佰維存儲", "688525",
+        "wafer-level packaging", "晶圆级先进封测", "晶圓級先進封裝",
+        "2.5d packaging", "2.5d integration", "compute-in-memory", "計算存儲一體", "存算一體",
+        "dongguan", "东莞", "松山湖", "songshan lake",
+        "advanced packaging", "先進封裝", "semiconductor", "半導體",
+        "ai infrastructure", "memory", "storage", "記憶體",
+        "capacity expansion", "擴產", "產能"
+      ],
+
+      "sources": [
+        {
+          "publisher": "10jqka (同花順) — citing company SSE disclosure",
+          "source_type": "wire",
+          "url": "http://stock.10jqka.com.cn/20260922/c680182517.shtml",
+          "is_primary": true,
+          "accessed_at": "2026-09-24T06:10:00+08:00"
+        },
+        {
+          "publisher": "21jingji (21經濟網)",
+          "source_type": "wire",
+          "url": "https://www.21jingji.com/article/20260922/herald/156566286e4b9b5aa0980f8240ba3f5c.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-24T06:10:00+08:00"
+        },
+        {
+          "publisher": "DIGITIMES",
+          "source_type": "trade",
+          "url": "https://www.digitimes.com/news/a20260923VL211/packaging-capacity-investment-2026-testing.html",
+          "is_primary": false,
+          "accessed_at": "2026-09-24T06:10:00+08:00"
+        }
+      ]
+    }
+  ]
+}
