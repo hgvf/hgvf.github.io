@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-25T06:07:34+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-23",
+    "end": "2026-09-23"
+  },
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {
+      "rare earth": 2,
+      "critical minerals": 2,
+      "defense": 2,
+      "semiconductor": 1
+    },
+    "importance_distribution": {
+      "high": 2
+    },
+    "top_tickers": ["MP", "LYC.AX", "GLEN.L"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260923-001",
+      "slug": "us-china-trade-truce-rare-earth-tariff-cut",
+      "event_date": "2026-09-23",
+      "published_at": "2026-09-23",
+      "ingested_at": "2026-09-25T06:07:34+08:00",
+
+      "event_type": "trade_policy",
+      "event_type_secondary": [],
+      "themes": ["rare earth", "critical minerals", "semiconductor", "defense"],
+      "regions": ["US", "CN"],
+      "importance_score": 85,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+
+      "title_zh": "川習高峰會後美中貿易休戰延長至2027年1月，稀土出口管制暫停期同步展延、芬太尼關稅減半",
+      "title_original": "Trump, Xi Extend US-China Trade Truce to January 2027; Fentanyl Tariff Halved, Rare-Earth Export Controls Stay Paused",
+      "summary_zh": "川普與習近平於華府登場高峰會後，美中宣布將原訂2026年11月10日到期的貿易休戰延長兩個月至2027年1月10日。美方將對中國輸美商品課徵的芬太尼（IEEPA）關稅稅率由20%調降至10%；中國暫停的稀土、鎵、鍺、銻、石墨出口管制與對美一般許可同步展延至新休戰期限，美方對中資關聯船舶加徵港口費的301條款海運調查也持續暫緩。",
+      "why_it_matters": "稀土磁鐵、鎵、鍺、銻、石墨等關鍵材料的中國出口許可原訂11月10日恐重新收緊，此次展延兩個月讓半導體、電動車、機器人與國防供應鏈得以延後面對稀土斷鏈風險；MP Materials、Lynas等非中國稀土供應商短期內不會因供給驟緊而被迫加碼擴產或漲價。但美中仍把稀土出口管制的長期解方、對台軍售、半導體出口限制等核心爭端留待後續協商，供應鏈的結構性不確定性並未真正解除，只是把攤牌時點延後至下一輪高峰會。",
+
+      "tickers": ["MP", "LYC.AX"],
+      "companies": [
+        {
+          "name": "U.S. Department of the Treasury",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "regulator"
+        },
+        {
+          "name": "Ministry of Commerce of the People's Republic of China (MOFCOM)",
+          "ticker": null,
+          "exchange": null,
+          "country": "CN",
+          "role": "regulator"
+        },
+        {
+          "name": "MP Materials Corp",
+          "ticker": "MP",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "affected_party"
+        },
+        {
+          "name": "Lynas Rare Earths Ltd",
+          "ticker": "LYC.AX",
+          "exchange": "ASX",
+          "country": "AU",
+          "role": "affected_party"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["rare earth ore", "gallium", "germanium", "antimony", "graphite"],
+        "component": "rare earth magnets / critical mineral inputs",
+        "supplier": ["China export-licensing regime"],
+        "customer": ["US semiconductor, EV, robotics and defense manufacturers"],
+        "end_market": ["semiconductor", "electric vehicles", "robotics", "defense", "aerospace"]
+      },
+
+      "products": [],
+      "materials": ["rare earth", "gallium", "germanium", "antimony", "graphite"],
+
+      "change": {
+        "type": "trade_truce_extension",
+        "before": "美中貿易休戰原訂2026年11月10日到期，中國稀土／鎵／鍺／銻／石墨出口管制暫停與美方芬太尼關稅減讓屆時可能同時到期，管制恐重新收緊",
+        "after": "休戰延長至2027年1月10日，美方芬太尼（IEEPA）關稅稅率由20%降至10%，中方稀土等關鍵礦產出口管制暫停與一般許可同步展延，301條款對中資船舶港口費調查持續暫緩"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-23"
+      },
+
+      "search_keywords": [
+        "us-china trade truce", "trade truce", "贸易休战", "美中貿易",
+        "tariff", "關稅", "fentanyl tariff", "ieepa",
+        "rare earth", "稀土", "critical minerals", "關鍵礦產",
+        "gallium", "鎵", "germanium", "鍺", "antimony", "銻", "graphite", "石墨",
+        "export control", "出口管制", "china", "us", "trump", "xi",
+        "section 301", "trade policy", "mp materials", "lynas",
+        "semiconductor", "defense", "robotics"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Bloomberg",
+          "source_type": "wire",
+          "url": "https://www.bloomberg.com/news/articles/2026-09-24/trump-xi-buy-time-on-trade-with-neither-able-to-afford-a-fight",
+          "is_primary": true,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "Supply Chain Dive",
+          "source_type": "trade",
+          "url": "https://www.supplychaindive.com/news/us-china-to-extend-trade-war-truce-by-2-months/831251/",
+          "is_primary": false,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "Al Jazeera",
+          "source_type": "wire",
+          "url": "https://www.aljazeera.com/news/2026/9/23/trump-meets-chinas-xi-jinping-at-us-airport-on-arrival-for-three-day-trip",
+          "is_primary": false,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "Investing.com (Reuters-sourced)",
+          "source_type": "wire",
+          "url": "https://www.investing.com/news/economy-news/us-china-agree-to-extend-trade-truce-until-january-bessent-says-4914257",
+          "is_primary": false,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        }
+      ]
+    },
+    {
+      "event_id": "SC-20260923-002",
+      "slug": "glencore-mercuria-vaultco-critical-minerals-exim",
+      "event_date": "2026-09-23",
+      "published_at": "2026-09-23",
+      "ingested_at": "2026-09-25T06:07:34+08:00",
+
+      "event_type": "strategic_investment",
+      "event_type_secondary": [],
+      "themes": ["critical minerals", "rare earth", "defense"],
+      "regions": ["US"],
+      "importance_score": 88,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+
+      "title_zh": "Glencore與Mercuria各出資5億美元加入VaultCo，取得美國進出口銀行等額配比融資打造美國戰略關鍵礦產儲備",
+      "title_original": "Glencore and Mercuria Become First Participants in VaultCo, Commit $500M Each Matched by EXIM Bank Financing for US Critical Minerals Reserve",
+      "summary_zh": "大宗商品交易商Glencore與Mercuria宣布成為「Project Vault」美國戰略關鍵礦產儲備計畫旗下獨立治理實體VaultCo的首批商業參與者。兩家各自投入5億美元自有資金，並各自取得美國進出口銀行（EXIM）等額5億美元長期融資配比，合計為VaultCo注入約20億美元資金；EXIM已核准對整體計畫最高100億美元融資額度，Project Vault總體規模上看120億美元。兩家交易商將運用既有大宗商品貿易與物流網絡負責關鍵礦產採購與實體交付，EXIM僅以非控股觀察員身分進駐VaultCo董事會。",
+      "why_it_matters": "美國過去主要透過國防後勤局（DLA）的國防戰略儲備模式囤積關鍵礦產，此次改由EXIM出資撬動Glencore、Mercuria等全球大宗商品交易商的採購與物流網絡，等於新增一條政府融資、民間執行的關鍵礦產庫存與供應通路，可望降低美國下游半導體、國防與電動車供應鏈對中國作為全球最大關鍵礦產實體儲備者與價格制定者的依賴。對Glencore與Mercuria而言則取得政府背書的長期融資與囤貨收益來源；若未來更多交易商比照加入，可能進一步分散全球關鍵礦產貿易流的議價權，稀釋中國在礦產供應鏈上的槓桿地位。",
+
+      "tickers": ["GLEN.L"],
+      "companies": [
+        {
+          "name": "Glencore plc",
+          "ticker": "GLEN.L",
+          "exchange": "LSE",
+          "country": "CH",
+          "role": "investor"
+        },
+        {
+          "name": "Mercuria Energy Group Ltd",
+          "ticker": null,
+          "exchange": null,
+          "country": "CH",
+          "role": "investor"
+        },
+        {
+          "name": "Export-Import Bank of the United States (EXIM)",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "investor"
+        },
+        {
+          "name": "VaultCo",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "investee"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["critical mineral ore / concentrate"],
+        "component": "critical minerals physical stockpile & trading/logistics network",
+        "supplier": ["Glencore plc", "Mercuria Energy Group Ltd"],
+        "customer": ["VaultCo / US critical minerals strategic reserve", "US semiconductor, defense and EV manufacturers"],
+        "end_market": ["defense", "semiconductor", "electric vehicles", "critical minerals reserve"]
+      },
+
+      "products": [],
+      "materials": ["critical minerals", "rare earth elements"],
+
+      "change": {
+        "type": "strategic_investment_new_participants",
+        "before": "VaultCo／Project Vault尚無正式商業參與者，美國關鍵礦產儲備仍主要仰賴國防後勤局（DLA）既有戰略儲備模式",
+        "after": "Glencore與Mercuria成為VaultCo首批參與者，各投入5億美元並取得EXIM等額5億美元融資配比，合計約20億美元資金挹注，由民間交易商網絡執行採購與實體交割"
+      },
+
+      "financial_data": {
+        "amount": 2000000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-09-23"
+      },
+
+      "search_keywords": [
+        "glencore", "mercuria", "vaultco", "project vault",
+        "critical minerals", "關鍵礦產", "exim", "export-import bank",
+        "strategic reserve", "戰略儲備", "rare earth", "稀土",
+        "commodity trading", "大宗商品", "stockpile", "囤積",
+        "strategic investment", "defense", "國防", "glen.l"
+      ],
+
+      "sources": [
+        {
+          "publisher": "Glencore plc — Investor News",
+          "source_type": "primary",
+          "url": "https://www.glencore.com/media-and-insights/news/glencore-partners-with-us-exim-bank-to-build-strategic-minerals-reserve-fund",
+          "is_primary": true,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "Mercuria — Press Release",
+          "source_type": "primary",
+          "url": "https://mercuria.com/mercuria-commits-500-million-to-vaultco-u-s-critical-mineral-stockpile-in-partnership-with-the-u-s-export-import-bank/",
+          "is_primary": true,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "Mining.com",
+          "source_type": "trade",
+          "url": "https://www.mining.com/glencore-to-help-build-us-minerals-stockpile-with-500m-exim-financing/",
+          "is_primary": false,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        },
+        {
+          "publisher": "CSIS",
+          "source_type": "analyst",
+          "url": "https://www.csis.org/analysis/project-vault-moves-concept-execution",
+          "is_primary": false,
+          "accessed_at": "2026-09-25T06:00:00+08:00"
+        }
+      ]
+    }
+  ]
+}
