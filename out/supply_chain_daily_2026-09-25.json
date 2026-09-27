@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-09-28T06:15:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "claude-sonnet-5"
+  },
+  "event_window": {
+    "start": "2026-09-25",
+    "end": "2026-09-25"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "data center": 1,
+      "memory": 1
+    },
+    "importance_distribution": {
+      "relevant": 1
+    },
+    "top_tickers": [
+      "AKAM"
+    ]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260925-001",
+      "slug": "supply-agreement-akam-anthropic-compute-deal",
+      "event_date": "2026-09-25",
+      "published_at": "2026-09-25",
+      "ingested_at": "2026-09-28T06:15:00+08:00",
+      "event_type": "supply_agreement",
+      "event_type_secondary": [],
+      "themes": [
+        "AI infrastructure",
+        "data center",
+        "memory"
+      ],
+      "regions": [
+        "US"
+      ],
+      "importance_score": 76,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+      "title_zh": "Akamai 與 Anthropic 簽署最高約200億美元七年雲端運算供應協議，含記憶體元件預購承諾",
+      "title_original": "Anthropic to Pay Akamai $11.6 Billion Over Seven Years in Cloud Compute Deal",
+      "summary_zh": "Akamai 與 Anthropic 簽署為期七年、初始金額約116億美元（可選擇擴增至約200億美元）的雲端運算容量供應協議。Akamai 將投入約55億美元新建專屬運算產能、另提列約17億美元用於提前採購元件（含記憶體），並首次在雲端合約中授予客戶認股權證，Anthropic 可取得可轉換為最高約5%普通股（735萬股，履約價111.33美元）的非投票特別股。協議底層主服務協議於2026年9月18日簽署，於2026年9月25日透過美國證券交易委員會（SEC）Form 8-K正式揭露。",
+      "why_it_matters": "此協議使 Akamai 首度成為前緣 AI 實驗室的專屬運算基礎設施供應商，讓 Anthropic 得以在 AWS、Google Cloud 與 Microsoft Azure 之外新增一條運算來源，降低對三大雲端業者的單一依賴；對 Akamai 而言，此案開啟一條全新的 AI 基礎設施營收線（預估2027年營收1.5-3億美元，2028年底前上升至年化約17億美元），並罕見地將認股權證與雲端合約綑綁，顯示大型運算容量合約正逐漸演變為股權化的策略綁定關係。同時，Akamai 明確將部分17億美元的元件提前採購資金投向記憶體，在 DRAM 市場本已緊縮的情況下再添一筆新增需求，可能推升下游伺服器與 AI 加速卡廠商後續的記憶體採購成本與交期壓力。",
+      "tickers": [
+        "AKAM"
+      ],
+      "companies": [
+        {
+          "name": "Akamai Technologies, Inc.",
+          "ticker": "AKAM",
+          "exchange": "NASDAQ",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Anthropic",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "customer"
+        }
+      ],
+      "supply_chain": {
+        "upstream": [
+          "DRAM",
+          "server hardware components"
+        ],
+        "component": "dedicated cloud compute (CPU) capacity and advance-purchased memory components",
+        "supplier": [
+          "Akamai Technologies, Inc."
+        ],
+        "customer": [
+          "Anthropic"
+        ],
+        "end_market": [
+          "AI infrastructure",
+          "data center",
+          "frontier AI model training and inference"
+        ]
+      },
+      "products": [
+        "cloud compute capacity",
+        "CPU infrastructure"
+      ],
+      "materials": [
+        "DRAM"
+      ],
+      "change": {
+        "type": "new_strategic_supply_agreement",
+        "before": "Anthropic 的運算能力主要仰賴 AWS、Google Cloud 與 Microsoft Azure 等傳統雲端業者",
+        "after": "Anthropic 新增 Akamai 作為專屬運算容量供應商，七年合約金額最高可達約200億美元，並附帶記憶體元件提前採購與股權綁定條款"
+      },
+      "financial_data": {
+        "amount": 11600000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 7,
+        "effective_date": "2026-09-18"
+      },
+      "search_keywords": [
+        "akamai", "akam", "anthropic", "claude",
+        "cloud compute", "compute capacity", "supply agreement",
+        "dram", "memory", "記憶體", "ai infrastructure", "data center",
+        "資料中心", "人工智慧基礎設施", "雲端運算", "供應協議",
+        "warrant", "認股權證", "8-k", "sec filing",
+        "frontier ai", "cpu", "advance purchase"
+      ],
+      "sources": [
+        {
+          "publisher": "Akamai Technologies — SEC Form 8-K",
+          "source_type": "primary",
+          "url": "https://www.sec.gov/Archives/edgar/data/1086222/000119312526401048/d288154d8k.htm",
+          "is_primary": true,
+          "accessed_at": "2026-09-28T06:15:00+08:00"
+        },
+        {
+          "publisher": "TechCrunch",
+          "source_type": "wire",
+          "url": "https://techcrunch.com/2026/09/25/anthropic-to-pay-akamai-11-6-billion-over-seven-years-in-cloud-deal/",
+          "is_primary": false,
+          "accessed_at": "2026-09-28T06:15:00+08:00"
+        }
+      ]
+    }
+  ]
+}
