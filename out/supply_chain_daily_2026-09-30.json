@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-01T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-09-30", "end": "2026-09-30"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"memory": 1, "AI infrastructure": 1, "data center": 1, "HBM": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["MU", "005930.KS", "000660.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20260930-001",
+      "slug": "raw-material-bom-memory-4q26-contract-price-ai-server",
+      "event_date": "2026-09-30",
+      "published_at": "2026-09-30",
+      "ingested_at": "2026-10-01T08:00:00+08:00",
+      "event_type": "raw_material_bom",
+      "event_type_secondary": ["capacity"],
+      "themes": ["memory", "AI infrastructure", "data center", "HBM"],
+      "regions": ["KR", "US", "TW"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "TrendForce：4Q26 一般型 DRAM 合約價季增 10–15%、NAND 季增 15–20%，產能持續向 AI 伺服器傾斜",
+      "title_original": "AI Server Demand Sustains Memory Contract Price Increases in 4Q26, While Consumer-Side Pressure Persists",
+      "summary_zh": "TrendForce 預估 4Q26 一般型 DRAM 合約價季增 10–15%、NAND Flash 季增 15–20%，企業級 SSD 是唯一漲幅擴大的品類；原廠持續把先進製程產能轉向伺服器與 AI 應用，PC、手機與消費性產品的配置至 2027 年持續下降。",
+      "why_it_matters": "原廠把先進製程產能優先配置給 AI 伺服器，使一般型 DRAM 出現結構性短缺，直接墊高 PC、手機 OEM 的 BOM 成本並壓縮其毛利；受惠者為將產能轉向伺服器 DRAM、HBM 與企業級 SSD 的記憶體原廠（Samsung、SK hynix、Micron），受損者為對價格敏感的消費電子品牌。此為 TrendForce 預估（非原廠正式調價），屬 reported 證據，需以後續合約價實績驗證。",
+      "tickers": ["MU", "005930.KS", "000660.KS"],
+      "companies": [
+        {"name": "Micron Technology", "ticker": "MU", "exchange": "NASDAQ", "country": "US", "role": "supplier"},
+        {"name": "Samsung Electronics", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "SK hynix", "ticker": "000660.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "PC and smartphone OEMs", "ticker": null, "exchange": null, "country": null, "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["DRAM wafers", "NAND wafers"],
+        "component": "DRAM / NAND Flash / enterprise SSD",
+        "supplier": ["Samsung Electronics", "SK hynix", "Micron Technology"],
+        "customer": ["Cloud service providers", "PC OEMs", "Smartphone OEMs"],
+        "end_market": ["AI servers", "PC", "smartphone"]
+      },
+      "products": ["DRAM", "NAND Flash", "enterprise SSD", "server DRAM"],
+      "materials": [],
+      "change": {
+        "type": "contract_price_increase",
+        "before": "3Q26 合約價已創歷史新高，但漲幅趨緩",
+        "after": "4Q26 一般型 DRAM 預估季增 10–15%、NAND 季增 15–20%，產能持續向伺服器傾斜"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": 15,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-10-01"
+      },
+      "search_keywords": ["dram", "nand", "nand flash", "memory", "記憶體", "合約價", "contract price", "trendforce", "集邦", "enterprise ssd", "企業級 ssd", "server dram", "ai server", "ai 伺服器", "hbm", "samsung", "三星", "sk hynix", "000660", "000660.ks", "micron", "美光", "mu", "005930", "005930.ks", "raw_material_bom", "4q26", "bom", "ai infrastructure", "data center"],
+      "sources": [
+        {"publisher": "TrendForce", "source_type": "trade", "url": "https://www.trendforce.com/presscenter/news/20260930-13258.html", "is_primary": true, "accessed_at": "2026-10-01T07:55:00+08:00"},
+        {"publisher": "DIGITIMES", "source_type": "trade", "url": "https://digitimes.com/news/a20261001VL204/micron-2028-2027-dram-demand.html", "is_primary": false, "accessed_at": "2026-10-01T07:58:00+08:00"}
+      ]
+    }
+  ]
+}
