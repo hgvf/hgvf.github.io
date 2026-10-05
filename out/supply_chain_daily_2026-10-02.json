@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-05T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-02", "end": "2026-10-02"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"memory": 1, "humanoid robotics": 1, "semiconductor": 1, "AI infrastructure": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["TSLA", "005930.KS", "000660.KS", "MU", "TSM"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261002-001",
+      "slug": "raw-material-bom-tsla-mu-ai5-ai6-lpddr-cut",
+      "event_date": "2026-10-02",
+      "published_at": "2026-10-02",
+      "ingested_at": "2026-10-05T08:00:00+08:00",
+      "event_type": "raw_material_bom",
+      "event_type_secondary": ["supply_disruption"],
+      "themes": ["memory", "humanoid robotics", "semiconductor", "AI infrastructure"],
+      "regions": ["US", "KR", "TW"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "Tesla 因記憶體供給吃緊，將 AI5 的 LPDDR5 減半至 72GB、AI6 的 LPDDR6 減三分之一",
+      "title_original": "Tesla Halves AI5 AI Chip's LPDDR5 to 72GB, Cuts AI6 LPDDR6 by One-Third as Memory Supply Tightens",
+      "summary_zh": "Musk 表示 Tesla 將 AI5 的 LPDDR5 由 144GB 降至 72GB、AI6 的 LPDDR6 降約三分之一至 144GB，頻寬維持不變並以晶片內 SRAM 補償；Musk 稱這是確保 Optimus 量產所需記憶體供給並壓低成本的唯一方式。AI5 預計 2027 年全面供貨，由 Samsung Taylor 廠與 TSMC 雙源生產。",
+      "why_it_matters": "具名 OEM 主動重設計 BOM：單顆 AI5 的 LPDDR 用量減半，Tesla 對 Samsung / SK hynix / Micron 的 LPDDR5/6 單位需求下修，但同時顯示 DRAM 產能優先配置 HBM 與伺服器後，高階 LPDDR 對人形機器人與車用客戶已成為瓶頸；此為推論性影響，實際下修幅度取決於 AI5/AI6 出貨量。受益者為 Optimus 量產可行性與 Tesla 單機成本；受壓者為以車用/機器人 LPDDR 作為成長故事的記憶體供應商。",
+      "tickers": ["TSLA", "005930.KS", "000660.KS", "MU", "TSM"],
+      "companies": [
+        {"name": "Tesla, Inc.", "ticker": "TSLA", "exchange": "NASDAQ", "country": "US", "role": "customer"},
+        {"name": "Samsung Electronics", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "SK hynix", "ticker": "000660.KS", "exchange": "KRX", "country": "KR", "role": "affected_party"},
+        {"name": "Micron Technology", "ticker": "MU", "exchange": "NASDAQ", "country": "US", "role": "affected_party"},
+        {"name": "Taiwan Semiconductor Manufacturing Company", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "supplier"}
+      ],
+      "supply_chain": {
+        "upstream": ["LPDDR5", "LPDDR6"],
+        "component": "AI5 / AI6 inference SoC memory subsystem",
+        "supplier": ["Samsung Electronics", "TSMC"],
+        "customer": ["Tesla, Inc."],
+        "end_market": ["humanoid robotics", "FSD", "Cybercab"]
+      },
+      "products": ["Tesla AI5", "Tesla AI6", "LPDDR5", "LPDDR6"],
+      "materials": ["DRAM"],
+      "change": {
+        "type": "bom_redesign",
+        "before": "AI5 規劃 144GB LPDDR5；AI6 規劃約 216GB LPDDR6",
+        "after": "AI5 降為 72GB LPDDR5；AI6 降為 144GB LPDDR6，頻寬不變、以 on-chip SRAM 補償"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": "USD",
+        "capacity_change_pct": -50,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": ["tesla", "tsla", "ai5", "ai6", "lpddr5", "lpddr6", "dram", "memory", "記憶體", "optimus", "humanoid", "人形機器人", "robotics", "samsung", "三星", "005930", "005930.ks", "sk hynix", "000660", "000660.ks", "micron", "mu", "tsmc", "tsm", "taylor", "bom", "raw_material_bom", "semiconductor", "ai infrastructure", "musk"],
+      "sources": [
+        {"publisher": "TrendForce", "source_type": "trade", "url": "https://trendforce.com/news/2026/10/02/news-tesla-halves-ai5-ai-chips-lpddr5-to-72gb-cuts-ai6-lpddr6-by-one-third-as-memory-supply-tightens", "is_primary": true, "accessed_at": "2026-10-05T07:55:00+08:00"}
+      ]
+    }
+  ]
+}
