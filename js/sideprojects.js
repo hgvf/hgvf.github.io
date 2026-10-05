@@ -15,8 +15,7 @@ export const PROJECTS = [
   {
     name: 'NIBBLE',
     url: 'https://nibble-beryl.vercel.app/',
-    tagline: '⚾ Pitch Sequence Lab — 配球策略遊戲',
-    description: '以 MLB／CPBL／NPB 逐球資料打造的配球策略遊戲：下一球該投什麼、歷史資料決定結果，並結合 Statcast 擊球數據與 3D 投打動畫。全部在瀏覽器端運算，無需 server。',
+    tagline: 'NIBBLE - 配球策略遊戲',
     features: [
       '四種模式：策略模擬、投手對決、打者猜球、實戰比對',
       '情境感知機率：球數、壘上跑者、出局、比數與投打左右',

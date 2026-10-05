@@ -833,7 +833,6 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
    number of projects (1 → single centred card, 2 → two columns, 3+ → fill). */
 .nav-folder-header.active { background: var(--accent-light); color: var(--accent); }
 
-.sp-intro { color: var(--text-secondary); font-size: 0.92rem; margin: -0.75rem 0 1.5rem; }
 .sp-grid { display: grid; gap: 1.25rem; align-items: stretch; }
 .sp-grid[data-count="1"] { grid-template-columns: minmax(0, 420px); }
 .sp-grid[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 420px)); }
