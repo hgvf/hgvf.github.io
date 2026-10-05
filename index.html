@@ -42,6 +42,20 @@
         Experience
       </a>
 
+      <!-- Side Project folder — header opens the intro page; children link out (js/sideprojects.js) -->
+      <div class="nav-folder" data-folder="side-project">
+        <button type="button" class="nav-folder-header" data-page="side-project">
+          <span class="folder-chevron">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
+          </span>
+          <span class="nav-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          <span class="folder-name">Side Project</span>
+        </button>
+        <div class="nav-folder-children" id="sideProjectNav"></div>
+      </div>
+
       <!-- Stock folder -->
       <div class="nav-folder" data-folder="stock">
         <button type="button" class="nav-folder-header">
@@ -265,6 +279,15 @@
         <h3 class="timeline-heading" id="expEduHeading">Education</h3>
         <div class="timeline" id="experienceEducation"></div>
       </div>
+    </section>
+
+    <!-- SIDE PROJECT PAGE (Personal) — cards rendered by js/sideprojects.js -->
+    <section id="page-side-project" class="page">
+      <div class="page-header">
+        <h2 class="page-title">Side Projects</h2>
+      </div>
+      <p class="sp-intro">工作之餘動手做的網站與專案，點擊卡片下方連結即可前往。</p>
+      <div class="sp-grid" id="sideProjectGrid"></div>
     </section>
 
   </main>

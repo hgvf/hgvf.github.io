@@ -18,6 +18,7 @@ import {
   openEditPubs, submitPubs, addBlankPubRow,
 } from './admin.js';
 import { initExperience } from './experience.js';
+import { renderSideProjectNav, renderSideProjectPage } from './sideprojects.js';
 
 /* ── App state ─────────────────────────────────────────────── */
 let _isAdmin          = false;
@@ -56,8 +57,14 @@ function showPage(pageId) {
   const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
   if (page)    page.classList.add('active');
   if (navItem) navItem.classList.add('active');
+  // Folder headers that double as a page link (e.g. Side Project) highlight too.
+  document.querySelectorAll('.nav-folder-header[data-page]').forEach(h =>
+    h.classList.toggle('active', h.dataset.page === pageId));
   if (pageId === 'watchlist') loadWatchlist();
 }
+
+renderSideProjectNav(document.getElementById('sideProjectNav'));
+renderSideProjectPage(document.getElementById('sideProjectGrid'));
 
 document.querySelectorAll('[data-page]').forEach(item => {
   item.addEventListener('click', e => {
@@ -74,7 +81,10 @@ document.getElementById('menuToggle')?.addEventListener('click', () => {
 // used by the Reports pages' sidebar links back into the SPA.
 function showPageFromHash() {
   const id = location.hash.replace('#', '');
-  if (id && document.getElementById(`page-${id}`)) showPage(id);
+  if (!(id && document.getElementById(`page-${id}`))) return;
+  showPage(id);
+  document.querySelector(`.nav-folder-header[data-page="${id}"]`)
+    ?.closest('.nav-folder')?.classList.add('open');
 }
 showPageFromHash();
 window.addEventListener('hashchange', showPageFromHash);
