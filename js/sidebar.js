@@ -2,6 +2,7 @@
 // folder toggles, the mobile menu button, active highlighting, and auth.
 
 import { onAuth, signInGoogle, signOutUser } from "./reports.js";
+import { renderSideProjectNav } from "./sideprojects.js";
 
 export async function mountSidebar(activeReport) {
   const host = document.getElementById("siteSidebar");
@@ -18,8 +19,14 @@ export async function mountSidebar(activeReport) {
     activeLink?.closest(".nav-folder")?.classList.add("open");
   }
 
+  renderSideProjectNav(host.querySelector("#sideProjectNav"));
+
+  // Headers with data-href (Side Project) open their intro page in the SPA.
   host.querySelectorAll(".nav-folder-header").forEach(btn =>
-    btn.addEventListener("click", () => btn.closest(".nav-folder")?.classList.toggle("open")));
+    btn.addEventListener("click", () => {
+      if (btn.dataset.href) { location.href = btn.dataset.href; return; }
+      btn.closest(".nav-folder")?.classList.toggle("open");
+    }));
 
   document.getElementById("menuToggle")?.addEventListener("click", () =>
     document.getElementById("sidebar")?.classList.toggle("open"));

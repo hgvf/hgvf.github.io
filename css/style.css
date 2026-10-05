@@ -827,3 +827,59 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
   .page-title { font-size: 1.2rem; }
   .wl-card, .notes-card { padding: 0.9rem; }
 }
+
+/* ── Side Project page ─────────────────────────────────────────────
+   Plan-card style tiles; .sp-grid[data-count] adapts the layout to the
+   number of projects (1 → single centred card, 2 → two columns, 3+ → fill). */
+.nav-folder-header.active { background: var(--accent-light); color: var(--accent); }
+
+.sp-intro { color: var(--text-secondary); font-size: 0.92rem; margin: -0.75rem 0 1.5rem; }
+.sp-grid { display: grid; gap: 1.25rem; align-items: stretch; }
+.sp-grid[data-count="1"] { grid-template-columns: minmax(0, 420px); }
+.sp-grid[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 420px)); }
+.sp-grid[data-count="3"] { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.sp-empty { color: var(--text-muted); }
+
+.sp-card {
+  display: flex; flex-direction: column;
+  padding: 1.6rem 1.6rem 1.4rem;
+  background: var(--glass-bg-solid);
+  border: 1px solid rgba(139, 94, 60, 0.16);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.sp-card:hover { box-shadow: var(--glass-shadow-hover); transform: translateY(-2px); }
+.sp-card-featured {
+  border-color: rgba(139, 94, 60, 0.45);
+  background: linear-gradient(180deg, rgba(139, 94, 60, 0.07), transparent 45%), var(--glass-bg-solid);
+}
+.sp-name { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.02em; color: var(--text-primary); }
+.sp-tagline { font-size: 1.6rem; font-weight: 500; line-height: 1.3; margin-top: 1.1rem; color: var(--text-primary); }
+.sp-desc { font-size: 0.9rem; line-height: 1.7; color: var(--text-muted); margin-top: 0.6rem; }
+
+.sp-features { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 1.4rem; }
+.sp-features li { display: flex; align-items: flex-start; gap: 0.7rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+.sp-check { display: flex; flex-shrink: 0; margin-top: 0.1rem; color: var(--accent); }
+
+.sp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem; }
+.sp-tag {
+  font-size: 0.72rem; padding: 0.2rem 0.6rem; border-radius: 999px;
+  background: var(--accent-light); color: var(--accent);
+}
+
+/* Link pinned to the bottom so buttons line up across cards of different height. */
+.sp-link {
+  margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+  padding: 0.75rem 1rem; border-radius: 999px;
+  background: var(--accent); color: var(--text-on-accent);
+  font-size: 0.88rem; font-weight: 600;
+  transition: background var(--transition);
+}
+.sp-card > :nth-last-child(2) { margin-bottom: 1.6rem; }
+.sp-link:hover { background: var(--accent-hover); }
+
+@media (max-width: 720px) {
+  .sp-grid[data-count] { grid-template-columns: 1fr; }
+  .sp-tagline { font-size: 1.35rem; }
+}
