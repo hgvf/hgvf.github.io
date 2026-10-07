@@ -39,12 +39,19 @@ jobs:
 
       # ------------------------------------------------------------
       # 3. 建立 Notion JSON fetch helper
+      #
+      #    空頁 / 找不到日期頁 / 內容不是合法 JSON ──→ 視為「當日無資料」：
+      #    印出 WARNING、不寫出檔案、以 exit 0 結束，不讓整份 workflow 報錯。
+      #    只有真正的失敗（Notion API 連線錯誤等）才會 exit 1 讓該步驟失敗。
+      #    下游的 Validate / Publish 以「輸出檔是否存在且非空」判斷要不要跑，
+      #    因此某一邊（軍武或產業）空資訊時，另一邊仍會照常發布。
       # ------------------------------------------------------------
       - name: Create Notion fetch helper
         run: |
           cat > /tmp/fetch_notion_json.py <<'PY'
           import argparse
           import json
+          import os
           import re
           import sys
           import requests
@@ -61,9 +68,26 @@ jobs:
               }
 
 
+          def skip(message, output):
+              """
+              Benign 'no data today' outcome. Print a warning, make sure no
+              stale output file is left behind, and exit 0 so the overall
+              workflow does NOT fail just because one page is empty.
+              """
+              print(f"WARNING: {message}")
+              try:
+                  if output and os.path.exists(output):
+                      os.remove(output)
+              except OSError:
+                  pass
+              print("No output written; downstream publish will be skipped.")
+              sys.exit(0)
+
+
           def get_all_children(block_id, token):
               """
               Retrieve all child blocks with pagination.
+              A Notion API / network error is a genuine failure (exit 1).
               """
               results = []
               cursor = None
@@ -101,7 +125,7 @@ jobs:
           def find_latest_date_page(parent_page_id, token):
               """
               Find child_page whose title is YYYY-MM-DD.
-              Return latest date + page id.
+              Return (latest_date, page_id), or (None, None) if there is none.
               """
               children = get_all_children(parent_page_id, token)
 
@@ -123,11 +147,7 @@ jobs:
                       )
 
               if not candidates:
-                  print(
-                      "ERROR: no YYYY-MM-DD child page found "
-                      f"under Notion parent {parent_page_id}"
-                  )
-                  sys.exit(1)
+                  return None, None
 
               candidates.sort(
                   key=lambda x: x[0],
@@ -213,10 +233,31 @@ jobs:
               ap.add_argument("--output", required=True)
               args = ap.parse_args()
 
+              # Never let a previous run's file be mistaken for this run's data.
+              try:
+                  if os.path.exists(args.output):
+                      os.remove(args.output)
+              except OSError:
+                  pass
+
+              if not args.page_id:
+                  skip(
+                      "no Notion page id provided "
+                      "(repository variable unset); skipping",
+                      args.output,
+                  )
+
               date, child_page_id = find_latest_date_page(
                   args.page_id,
                   args.token,
               )
+
+              if not child_page_id:
+                  skip(
+                      "no YYYY-MM-DD child page found under Notion parent "
+                      f"{args.page_id}; nothing to sync",
+                      args.output,
+                  )
 
               print(
                   f"Latest Notion page: {date} "
@@ -244,21 +285,23 @@ jobs:
               )
 
               if not raw:
-                  print(
-                      f"ERROR: Notion page {date} contains no text"
+                  skip(
+                      f"Notion page {date} contains no text "
+                      "(treated as a no-data day)",
+                      args.output,
                   )
-                  sys.exit(1)
 
               try:
                   payload = json.loads(raw)
               except json.JSONDecodeError as e:
-                  print(
-                      f"ERROR: invalid JSON in Notion page {date}"
-                  )
-                  print(str(e))
+                  print(f"Invalid JSON in Notion page {date}: {e}")
                   print("--- First 1000 chars ---")
                   print(raw[:1000])
-                  sys.exit(1)
+                  skip(
+                      f"Notion page {date} is not valid JSON; skipping so the "
+                      "rest of the sync can continue",
+                      args.output,
+                  )
 
               with open(
                   args.output,
@@ -292,37 +335,40 @@ jobs:
             --page-id "$MILITARY_NOTION_PAGE_ID" \
             --output /tmp/military_news.json
 
-      - name: Validate Military JSON
+      - name: Validate & Publish Military News to Firestore
         run: |
-          python -m json.tool \
-            /tmp/military_news.json \
-            > /dev/null
-
-      - name: Publish Military News to Firestore
-        run: |
-          python scripts/publish.py \
-            --type military \
-            --file /tmp/military_news.json
+          if [ -s /tmp/military_news.json ]; then
+            python -m json.tool /tmp/military_news.json > /dev/null
+            python scripts/publish.py \
+              --type military \
+              --file /tmp/military_news.json
+          else
+            echo "No Military data (empty / missing page) — skipping publish."
+          fi
 
       # ============================================================
       # INDUSTRY NEWS
+      #
+      # 以 `if: ${{ !cancelled() }}` 讓產業消息不受軍武步驟是否失敗影響：
+      # 即使軍武那邊發生真正的錯誤，產業消息仍會照常嘗試同步。
       # ============================================================
 
       - name: Fetch latest Industry News from Notion
+        if: ${{ !cancelled() }}
         run: |
           python /tmp/fetch_notion_json.py \
             --token "$NOTION_API_KEY" \
             --page-id "$INDUSTRY_NOTION_PAGE_ID" \
             --output /tmp/industry_news.json
 
-      - name: Validate Industry JSON
+      - name: Validate & Publish Industry News to Firestore
+        if: ${{ !cancelled() }}
         run: |
-          python -m json.tool \
-            /tmp/industry_news.json \
-            > /dev/null
-
-      - name: Publish Industry News to Firestore
-        run: |
-          python scripts/publish.py \
-            --type industry \
-            --file /tmp/industry_news.json
+          if [ -s /tmp/industry_news.json ]; then
+            python -m json.tool /tmp/industry_news.json > /dev/null
+            python scripts/publish.py \
+              --type industry \
+              --file /tmp/industry_news.json
+          else
+            echo "No Industry data (empty / missing page) — skipping publish."
+          fi
