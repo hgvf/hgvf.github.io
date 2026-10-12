@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-08", "end": "2026-10-09"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"advanced packaging": 1, "AI infrastructure": 1, "semiconductor": 1},
+    "importance_distribution": {"high": 1},
+    "top_tickers": ["GFS", "TSM", "2330.TW"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261008-001",
+      "slug": "supply-agreement-gfs-tsm-cowos-silicon-interposer",
+      "event_date": "2026-10-08",
+      "published_at": "2026-10-08",
+      "ingested_at": "2026-10-12T08:00:00+08:00",
+      "event_type": "supply_agreement",
+      "event_type_secondary": ["capacity", "supplier_change"],
+      "themes": ["advanced packaging", "AI infrastructure", "semiconductor"],
+      "regions": ["US", "TW"],
+      "importance_score": 82,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "GlobalFoundries 與台積電簽訂約 20 億美元協議，於美國 Malta 廠生產 CoWoS 矽中介層",
+      "title_original": "GlobalFoundries to make key AI chip component for TSMC in $2 billion deal",
+      "summary_zh": "GlobalFoundries 宣布與台積電簽訂初始期限五年、約 20 億美元的製造協議，在紐約州 Malta 晶圓廠生產 CoWoS 先進封裝所需的矽中介層（silicon interposer），並含未來擴產框架；量產預計 2028 年上半年開始爬坡，GF 稱將成為美國首個矽中介層來源。",
+      "why_it_matters": "中介層是 CoWoS 產能的瓶頸環節之一，此協議讓台積電首次在台灣以外取得美系中介層供應來源，降低封裝供應鏈的地理集中風險並替 NVIDIA 等 AI 加速器客戶多一條擴產路徑；GlobalFoundries 取得約 20 億美元的 TSMC 長約，成為先進封裝供應鏈新受益者，而既有的台灣中介層與封裝產能（含 OSAT）在美國在地化需求上議價地位相對受限。但量產要到 2028H1，短期（2026–2027）CoWoS 供給不受影響，且公告未揭露客戶端與產能數字。",
+      "tickers": ["GFS", "TSM", "2330.TW"],
+      "companies": [
+        {"name": "GlobalFoundries Inc.", "ticker": "GFS", "exchange": "NASDAQ", "country": "US", "role": "new_supplier"},
+        {"name": "Taiwan Semiconductor Manufacturing Company", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "customer"},
+        {"name": "Taiwan Semiconductor Manufacturing Company", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "customer"}
+      ],
+      "supply_chain": {
+        "upstream": ["silicon wafers", "deep trench capacitor process"],
+        "component": "silicon interposer (CoWoS)",
+        "supplier": ["GlobalFoundries Inc."],
+        "customer": ["Taiwan Semiconductor Manufacturing Company"],
+        "end_market": ["AI accelerators", "data center"]
+      },
+      "products": ["silicon interposer", "CoWoS"],
+      "materials": ["silicon"],
+      "change": {
+        "type": "long_term_supply_agreement",
+        "before": "CoWoS 矽中介層主要由台積電自有與台灣供應鏈產出，美國境內無矽中介層來源",
+        "after": "GF 於美國 Malta 廠為台積電生產矽中介層，五年期約 20 億美元，2028H1 量產爬坡"
+      },
+      "financial_data": {
+        "amount": 2000000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 5,
+        "effective_date": null
+      },
+      "search_keywords": ["globalfoundries", "gf", "gfs", "tsmc", "tsm", "2330", "2330.tw", "taiwan semiconductor", "台積電", "格羅方德", "cowos", "interposer", "silicon interposer", "中介層", "advanced packaging", "先進封裝", "supply agreement", "malta", "ai infrastructure", "semiconductor", "nvidia"],
+      "sources": [
+        {"publisher": "GlobalFoundries press release (via HPCwire)", "source_type": "primary", "url": "https://hpcwire.com/off-the-wire/globalfoundries-and-tsmc-sign-us-manufacturing-deal-for-ai-packaging", "is_primary": true, "accessed_at": "2026-10-12T08:00:00+08:00"},
+        {"publisher": "DatacenterDynamics", "source_type": "trade", "url": "https://datacenterdynamics.com/en/news/globalfoundries-signs-2bn-five-year-deal-with-tsmc-for-production-of-advanced-packaging-components", "is_primary": false, "accessed_at": "2026-10-12T08:00:00+08:00"},
+        {"publisher": "The Star (Reuters)", "source_type": "wire", "url": "https://www.thestar.com.my/tech/tech-news/2026/10/08/globalfoundries-to-make-key-ai-chip-component-for-tsmc", "is_primary": false, "accessed_at": "2026-10-12T08:00:00+08:00"}
+      ]
+    }
+  ]
+}
