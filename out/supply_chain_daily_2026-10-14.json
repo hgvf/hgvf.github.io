@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-15T06:20:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-14", "end": "2026-10-14"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"memory": 1, "HBM": 1, "AI infrastructure": 1, "data center": 1},
+    "importance_distribution": {"critical": 0, "high": 0, "relevant": 1},
+    "top_tickers": ["MU", "005930.KS", "000660.KS", "TSLA"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261014-001",
+      "slug": "supply-agreement-mu-memory-long-term-agreements",
+      "event_date": "2026-10-14",
+      "published_at": "2026-10-14",
+      "ingested_at": "2026-10-15T06:20:00+08:00",
+      "event_type": "supply_agreement",
+      "event_type_secondary": [],
+      "themes": ["memory", "HBM", "AI infrastructure", "data center"],
+      "regions": ["US", "KR"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "記憶體長約潮擴大：Micron LTA 增至 26 份、總值 $320 億美元，Samsung 2027 年產出近 80% 已簽約",
+      "title_original": "Memory makers lock in long-term agreements: Micron LTAs reach 26 worth $32B; Samsung ~80% of 2027 output committed",
+      "summary_zh": "據 Reuters/FUTUBULL 引述，Micron 截至 9 月已簽 26 份長期供應協議（6 月為 16 份），總值由 $220 億升至 $320 億美元，多數由現金保證金支撐；JPMorgan 估計可涵蓋其 FY2027 逾 75% 產出。韓媒報導 Samsung 2027 年記憶體（含 HBM）產出近 80% 已由長約鎖定，SK hynix 亦稱與逾 10 家客戶簽訂約 5 年長約。",
+      "why_it_matters": "記憶體由 spot/季度議價轉向以預付保證金支撐的多年期長約，使 Micron、Samsung、SK hynix 取得未來 4–8 季的營收與定價能見度，並實質降低其對 DRAM 週期反轉的暴險；未簽約的中小型 OEM（手機、筆電、一般伺服器）將面對剩餘可分配產能縮減，只能承受更高 spot 價，進一步推升 BOM 成本。此為彙整性報導（部分長約資訊來自 7 月財報會議），確切簽約日不一，屬 reported 證據。",
+      "tickers": ["MU", "005930.KS", "000660.KS", "TSLA"],
+      "companies": [
+        {"name": "Micron Technology", "ticker": "MU", "exchange": "NASDAQ", "country": "US", "role": "supplier"},
+        {"name": "Samsung Electronics", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "SK hynix", "ticker": "000660.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "Tesla, Inc.", "ticker": "TSLA", "exchange": "NASDAQ", "country": "US", "role": "customer"}
+      ],
+      "supply_chain": {
+        "upstream": [],
+        "component": "DRAM / HBM",
+        "supplier": ["Micron Technology", "Samsung Electronics", "SK hynix"],
+        "customer": ["Hyperscalers / data center customers", "Tesla, Inc."],
+        "end_market": ["AI servers", "data center", "consumer electronics"]
+      },
+      "products": ["DRAM", "HBM", "LPDDR5"],
+      "materials": [],
+      "change": {
+        "type": "long_term_supply_agreement",
+        "before": "Micron 6 月有 16 份 LTA、總值約 $220 億美元；記憶體供給多以短約與 spot 為主",
+        "after": "9 月 Micron 達 26 份 LTA、$320 億美元；Samsung 2027 年產出近 80% 已鎖定"
+      },
+      "financial_data": {
+        "amount": 32000000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": ["micron", "mu", "samsung", "005930", "005930.ks", "sk hynix", "000660", "000660.ks", "tesla", "tsla", "memory", "dram", "hbm", "lpddr5", "long-term agreement", "lta", "supply agreement", "ai infrastructure", "data center", "記憶體", "長約", "美光", "三星", "海力士"],
+      "sources": [
+        {"publisher": "TrendForce News (citing Reuters, FUTUBULL, Hankyung, ZDNet, The Elec)", "source_type": "trade", "url": "https://www.trendforce.com/news/2026/10/14/news-musk-weighs-in-on-memory-again-praises-microns-future-pricing-warns-extortionate-practices-wont-be-forgotten/", "is_primary": true, "accessed_at": "2026-10-15T06:15:00+08:00"}
+      ]
+    }
+  ]
+}
