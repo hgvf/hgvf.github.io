@@ -28,7 +28,7 @@ export const PROJECTS = [
   },
   {
     name: 'fish-craft',
-    url: 'https://fish-craft.vercel.app/',
+    url: 'https://fish-craft-i2sfzu3ye-nibble-ad0b.vercel.app/',
     tagline: 'fish-craft - 像素風上班掛機遊戲',
     description: '你是一個魚族王朝：在家園礁繁殖、照顧、裝備你的族群，出征七片海域，讓魚王一代代傳承下去。',
     features: [
