@@ -26,6 +26,19 @@ export const PROJECTS = [
     tags: ['Next.js', 'DuckDB-WASM', 'Web Worker', 'Monte Carlo', 'Python Pipeline'],
     featured: true,
   },
+  {
+    name: 'fish-craft',
+    url: 'https://fish-craft.vercel.app/',
+    tagline: 'fish-craft - 像素風上班掛機遊戲',
+    description: '你是一個魚族王朝：在家園礁繁殖、照顧、裝備你的族群，出征七片海域，讓魚王一代代傳承下去。',
+    features: [
+      '家園礁：繁殖、照顧與裝備你的魚族',
+      '出征七片海域',
+      '魚王世代傳承',
+      '帳號與雲端存檔（選用）',
+    ],
+    tags: ['Vite', 'TypeScript', 'Canvas 2D', 'Vercel', 'Supabase'],
+  },
 ];
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
