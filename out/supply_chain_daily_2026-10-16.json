@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-18T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-16", "end": "2026-10-16"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"semiconductor": 1, "AI infrastructure": 1, "memory": 1},
+    "importance_distribution": {"critical": 0, "high": 0, "relevant": 1},
+    "top_tickers": []
+  },
+  "events": [
+    {
+      "event_id": "SC-20261016-001",
+      "slug": "trade-policy-china-draft-export-control-catalog-ai-chips-solar",
+      "event_date": "2026-10-16",
+      "published_at": "2026-10-16",
+      "ingested_at": "2026-10-18T08:00:00+08:00",
+      "event_type": "trade_policy",
+      "event_type_secondary": [],
+      "themes": ["semiconductor", "AI infrastructure", "memory"],
+      "regions": ["CN", "US", "TW"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "中國商務部與科技部公布技術出口管制目錄修訂草案，擬限制 AI、晶片設計與多晶矽等 40 項技術出口",
+      "title_original": "China proposes export restrictions on 40 technologies spanning AI, chips and solar",
+      "summary_zh": "中國商務部與科技部聯合公布「禁止／限制出口技術目錄」修訂草案，涵蓋 23 項 AI 技術（含參數量 2 兆以上大型模型）、部分 AI 處理器與記憶體晶片設計技術、12 項太陽能技術（含多晶矽製造）及 5 項生物醫藥技術。目前為草案，生效日與意見徵詢期尚未揭露。",
+      "why_it_matters": "若草案定案，中國晶片設計與記憶體設計技術的對外授權、技術轉移與海外合資將受許可制約束，影響中國 IP 與設計服務輸出（及與其合作的海外 fabless 與設備商）；多晶矽製程技術納管則使中國以外新建太陽能多晶矽產能難以取得中國製程技術，鞏固中國在太陽能上游的結構性優勢。此舉亦被解讀為對美、台同步收緊 AI 晶片出口的對等回應，但條文細節、門檻與生效時程未定，實際衝擊需待正式版本。",
+      "tickers": [],
+      "companies": [
+        {"name": "Ministry of Commerce of China (MOFCOM)", "ticker": null, "exchange": null, "country": "CN", "role": "regulator"},
+        {"name": "Ministry of Science and Technology of China", "ticker": null, "exchange": null, "country": "CN", "role": "regulator"}
+      ],
+      "supply_chain": {
+        "upstream": ["polysilicon manufacturing technology"],
+        "component": "AI chip / memory chip design technology; large AI models",
+        "supplier": [],
+        "customer": [],
+        "end_market": ["AI infrastructure", "solar"]
+      },
+      "products": ["AI processor design", "memory chip design", "polysilicon"],
+      "materials": ["polysilicon"],
+      "change": {
+        "type": "export_control_draft",
+        "before": "上述 40 項技術未全面納入中國禁止／限制出口技術目錄",
+        "after": "草案擬將 AI、晶片設計、多晶矽等 40 項技術納入禁止或限制出口"
+      },
+      "financial_data": {
+        "amount": null, "currency": null, "capacity_change_pct": null, "price_change_pct": null,
+        "revenue_exposure_pct": null, "contract_duration_years": null, "effective_date": null
+      },
+      "search_keywords": [
+        "china", "中國", "export control", "出口管制", "mofcom", "商務部", "most", "trade policy",
+        "ai", "chip design", "晶片設計", "memory", "記憶體", "polysilicon", "多晶矽", "solar", "太陽能",
+        "semiconductor", "半導體", "ai infrastructure", "large model", "大型模型"
+      ],
+      "sources": [
+        {"publisher": "Fortune", "source_type": "wire", "url": "https://fortune.com/2026/10/16/china-restrictions-ai-chips-solar-power-exports-security/", "is_primary": true, "accessed_at": "2026-10-18T07:55:00+08:00"},
+        {"publisher": "Bloomberg", "source_type": "wire", "url": "https://bloomberg.com/news/articles/2026-10-16/china-proposes-export-controls-on-ai-models-chips-and-agents", "is_primary": false, "accessed_at": "2026-10-18T07:56:00+08:00"}
+      ]
+    }
+  ]
+}
