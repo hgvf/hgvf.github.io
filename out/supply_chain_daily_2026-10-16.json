@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-19T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-15", "end": "2026-10-16"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"HBM": 1, "memory": 1, "advanced packaging": 1, "AI infrastructure": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["MU", "NVDA"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261015-001",
+      "slug": "capacity-mu-micron-aatt2-hbm-packaging-taichung",
+      "event_date": "2026-10-15",
+      "published_at": "2026-10-15",
+      "ingested_at": "2026-10-19T08:00:00+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": ["supply_agreement"],
+      "themes": ["HBM", "memory", "advanced packaging", "AI infrastructure"],
+      "regions": ["US", "TW"],
+      "importance_score": 72,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "Micron 台中第二座 HBM 封測廠 AATT2 啟用，2027 年規劃產能已全數售罄",
+      "title_original": "Micron opens second Taiwan HBM packaging and test fab; entire planned 2027 capacity sold out",
+      "summary_zh": "Micron 於 10 月 15 日在台中啟用先進封測廠 AATT2（約一年內完成改建），專責 HBM 封裝與測試；總裁暨營運長 Manish Bhatia 表示 2027 年規劃產能已全數被客戶訂走，且大部分 2027 HBM 位元供給已以高於 2026 的價格簽約。同時台灣工會有罷工授權投票與 10/19 集會，構成交付風險。",
+      "why_it_matters": "HBM 後段封測是 AI 加速器（如 NVIDIA Vera Rubin）供給的瓶頸節點之一；AATT2 讓 Micron 的 HBM4 出貨不再受限於單一封測廠，並以 2027 全數預售鎖定較高 ASP，對 SK hynix 與 Samsung 的 HBM 份額與議價力形成壓力，也意味 2027 年 HBM 現貨供給極為緊俏、下游 GPU 廠商的出貨取決於記憶體配額。反向風險是台灣兩個工會（合計約佔 Micron 台灣員工 80% 以上）要求 15% 營業利潤分紅，若罷工成真，將直接衝擊 HBM 封測產出。各來源對 Micron HBM 晶圓月產能數字不一，故未量化產能變化百分比。",
+      "tickers": ["MU", "NVDA", "000660.KS", "005930.KS"],
+      "companies": [
+        {"name": "Micron Technology, Inc.", "ticker": "MU", "exchange": "NASDAQ", "country": "US", "role": "supplier"},
+        {"name": "NVIDIA Corporation", "ticker": "NVDA", "exchange": "NASDAQ", "country": "US", "role": "customer"},
+        {"name": "SK hynix Inc.", "ticker": "000660.KS", "exchange": "KRX", "country": "KR", "role": "affected_party"},
+        {"name": "Samsung Electronics Co., Ltd.", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["HBM DRAM die", "TSV"],
+        "component": "HBM4 packaging and test",
+        "supplier": ["Micron Technology, Inc."],
+        "customer": ["NVIDIA Corporation", "AMD"],
+        "end_market": ["AI accelerators", "data center"]
+      },
+      "products": ["HBM4", "HBM packaging and test"],
+      "materials": [],
+      "change": {
+        "type": "capacity_expansion",
+        "before": "Micron 台灣 HBM 封測集中於 AATT1，產能為 2027 供給的限制點",
+        "after": "AATT2 啟用，2027 年規劃產能已全數售罄；大部分 2027 HBM 位元已簽約且價格高於 2026"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-10-15"
+      },
+      "search_keywords": [
+        "micron", "mu", "美光", "hbm", "hbm4", "高頻寬記憶體", "aatt2", "taichung", "台中",
+        "advanced packaging", "先進封裝", "封測", "memory", "記憶體", "capacity", "產能",
+        "sold out", "nvidia", "nvda", "vera rubin", "sk hynix", "samsung", "strike", "罷工",
+        "ai infrastructure"
+      ],
+      "sources": [
+        {"publisher": "Reuters (via Internazionale)", "source_type": "wire", "url": "https://www.internazionale.it/ultime-notizie-reuters/2026/10/15/taiwan-president-calls-for-micron-workers-to-negotiate-sincerely-ahead-of-possible-strike", "is_primary": true, "accessed_at": "2026-10-19T07:55:00+08:00"},
+        {"publisher": "Focus Taiwan (CNA)", "source_type": "wire", "url": "https://focustaiwan.tw/politics/202610150012", "is_primary": false, "accessed_at": "2026-10-19T07:56:00+08:00"},
+        {"publisher": "Tech Times", "source_type": "trade", "url": "https://www.techtimes.com/articles/329105/20261016/micron-opens-hbm-plant-2027-output-fully-contracted-strike-vote-looms.htm", "is_primary": false, "accessed_at": "2026-10-19T07:57:00+08:00"}
+      ]
+    }
+  ]
+}
