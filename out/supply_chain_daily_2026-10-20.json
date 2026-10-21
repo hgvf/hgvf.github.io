@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T22:10:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-20", "end": "2026-10-20"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"advanced packaging": 1, "PCB": 1, "CCL": 1, "AI infrastructure": 1, "semiconductor": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["3037.TW", "INTC"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261020-001",
+      "slug": "supply-disruption-3037tw-ic-substrate-ccl-abf-shortage",
+      "event_date": "2026-10-20",
+      "published_at": "2026-10-20",
+      "ingested_at": "2026-10-21T22:10:00+08:00",
+      "event_type": "supply_disruption",
+      "event_type_secondary": [],
+      "themes": ["advanced packaging", "PCB", "CCL", "AI infrastructure", "semiconductor"],
+      "regions": ["TW", "US"],
+      "importance_score": 72,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "欣興董事長警示 IC 載板設備交期達 30 個月，2027 年關鍵材料恐短缺 20%",
+      "title_original": "Unimicron Warns of IC Substrate Crunch: Up to 30-Month Equipment Lead Times, 20% Material Gap in 2027",
+      "summary_zh": "欣興電子董事長簡永昌於 TPCA Show 表示，載板關鍵設備交期最長已達約 30 個月，逾 80% 設備交期拉長、逾 20% 設備延遲超過原定交期一倍；低 CTE 玻纖布、CCL 與 ABF 供應吃緊，2027 年關鍵材料恐出現約 20% 供給缺口。其預估 2024–2028 年 CoWoS 產能成長 6.8 倍，但 IC 載板產能僅約 2 倍。",
+      "why_it_matters": "載板產能成長（約 2 倍）遠落後 CoWoS（6.8 倍）與 hyperscaler capex（6.3 倍），且設備交期長達 30 個月使新產能無法在 2027 年前實質到位，載板／ABF／低 CTE 玻纖布成為 AI 加速器出貨的次級瓶頸。具備既有載板產能與材料鎖料能力的廠商（欣興、Ibiden、Samsung Electro-Mechanics、Ajinomoto 等）議價力與稼動率上升，而載板需求端的 NVIDIA、AMD 與 ASIC 客戶面臨交期與成本壓力；Intel EMIB 良率僅約 45%（目標 4Q26 50%、1Q27 60%）亦限制替代封裝路線的緩解效果。此為廠商公開談話之 reported 證據，缺口數字為管理層估計而非合約或官方統計。",
+      "tickers": ["3037.TW", "INTC", "NVDA", "2330.TW"],
+      "companies": [
+        {"name": "Unimicron Technology Corp", "ticker": "3037.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"},
+        {"name": "Intel Corporation", "ticker": "INTC", "exchange": "NASDAQ", "country": "US", "role": "affected_party"},
+        {"name": "NVIDIA Corporation", "ticker": "NVDA", "exchange": "NASDAQ", "country": "US", "role": "affected_party"},
+        {"name": "Taiwan Semiconductor Manufacturing Company", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["low-CTE glass fiber cloth", "copper-clad laminate", "ABF film", "substrate manufacturing equipment"],
+        "component": "IC substrate (ABF)",
+        "supplier": ["Unimicron Technology Corp"],
+        "customer": ["NVIDIA", "AMD", "hyperscaler ASIC designers"],
+        "end_market": ["AI accelerators", "advanced packaging (CoWoS, EMIB)"]
+      },
+      "products": ["IC substrate", "ABF substrate", "CCL", "CoWoS"],
+      "materials": ["low-CTE glass fiber cloth", "CCL", "ABF"],
+      "change": {
+        "type": "lead_time_extension_and_material_shortfall",
+        "before": "2025–2026 已有 DRAM 與載板短缺，但設備交期與材料缺口未見量化警示",
+        "after": "關鍵設備交期最長約 30 個月，2027 年關鍵材料預期約 20% 供給缺口，載板產能 2028 年僅約 2 倍對比 CoWoS 6.8 倍"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": ["unimicron", "欣興", "3037", "3037.tw", "ic substrate", "載板", "abf", "ccl", "銅箔基板", "glass fiber cloth", "玻纖布", "low-cte", "cowos", "advanced packaging", "先進封裝", "pcb", "supply disruption", "lead time", "交期", "intel", "emib", "nvidia", "tpca", "tsmc", "台積電", "ai infrastructure", "shortage", "短缺"],
+      "sources": [
+        {"publisher": "TrendForce News (citing Wealth Magazine, Economic Daily News, MoneyDJ, CNA)", "source_type": "trade", "url": "https://www.trendforce.com/news/2026/10/20/news-unimicron-warns-of-ic-substrate-crunch-up-to-30-month-equipment-lead-times-20-material-gap-in-2027/", "is_primary": true, "accessed_at": "2026-10-21T22:08:00+08:00"}
+      ]
+    }
+  ]
+}
