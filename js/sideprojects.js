@@ -10,8 +10,8 @@
      features    — short bullet points (optional)
      tags        — small chips under the features (optional)
      featured    — true → accent border, like a highlighted plan card
-     internal    — true → a page of this site (relative url): card only, opens in the
-                   same tab, and is left out of the sidebar folder (it has its own nav link) */
+     internal    — true → a page of this site (url relative to the site root): opens in
+                   the same tab, no external-link icon */
 
 export const PROJECTS = [
   {
@@ -63,12 +63,18 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
 const hostOf = url => { try { return new URL(url).host; } catch { return url; } };
 
 const ICON_EXTERNAL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+const ICON_MAP = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>';
 const ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>';
 
-/** Fill a sidebar folder's children with one external link per project. */
-export function renderSideProjectNav(container) {
+/** Fill a sidebar folder's children with one link per project. `base` prefixes internal
+    (site-relative) urls — "../" on the report pages one folder down. */
+export function renderSideProjectNav(container, base = '') {
   if (!container) return;
-  container.innerHTML = PROJECTS.filter(p => !p.internal).map(p => `
+  container.innerHTML = PROJECTS.map(p => p.internal ? `
+    <a class="nav-item" href="${esc(base + p.url)}">
+      <span class="nav-icon">${ICON_MAP}</span>
+      ${esc(p.name)}
+    </a>` : `
     <a class="nav-item" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.url)}">
       <span class="nav-icon">${ICON_EXTERNAL}</span>
       ${esc(p.name)}

@@ -18,7 +18,7 @@ python3 scripts/atlas.py export > b.json    # everything as one bundle
 
 ## In this repo (hgvf.github.io)
 
-- `<ATLAS_DIR>` = `war-atlas/` → served at `https://hgvf.github.io/war-atlas/` (deep link `…/war-atlas/#<id>`). Linked from the site sidebar (戰役地圖集, top level) and a card on the Side Projects page (`js/sideprojects.js`, `internal: true` so it stays out of the Side Project nav folder).
+- `<ATLAS_DIR>` = `war-atlas/` → served at `https://hgvf.github.io/war-atlas/` (deep link `…/war-atlas/#<id>`). Listed under Side Project only — a card on the Side Projects page and a link in the sidebar's Side Project folder (`js/sideprojects.js`, `internal: true`). No top-level nav link.
 - Two ways a record reaches the site; both end up in `war-atlas/data/battles/`:
   1. **Git (this skill's default):** write `data/battles/<id>.json` (+ `data/wars.json` for a new war), run `python3 war-atlas/scripts/atlas.py build`, commit `war-atlas/data/` and `war-atlas/index.html`, push.
   2. **新增 button on the page:** paste the JSON (single battle, array, or bundle with `wars` when it introduces a new war). The page validates with the same rules as `atlas.py validate`, then a whitelisted Google account writes it to Firestore — `war_atlas_battles/{id}` (`json` = the record as a string, since Firestore can't hold nested arrays) and `war_atlas_wars/{id}`. All devices see it immediately. `.github/workflows/sync_war_atlas.yml` (daily 00:30 UTC, or run manually) pulls them into `war-atlas/data/` via `scripts/war_atlas_pull.py`, rebuilds and commits.
