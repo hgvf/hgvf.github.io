@@ -19,7 +19,7 @@ export async function mountSidebar(activeReport) {
     activeLink?.closest(".nav-folder")?.classList.add("open");
   }
 
-  renderSideProjectNav(host.querySelector("#sideProjectNav"));
+  renderSideProjectNav(host.querySelector("#sideProjectNav"), "../");
 
   // Headers with data-href (Side Project) open their intro page in the SPA.
   host.querySelectorAll(".nav-folder-header").forEach(btn =>

@@ -271,7 +271,7 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 
 ## 10. War Atlas（戰役地圖集，`war-atlas/`）
 
-獨立的全螢幕地圖子網站（Leaflet），網址 `/war-atlas/`，導覽列「戰役地圖集」與 Side Projects 頁的卡片連過去（卡片定義在 `js/sideprojects.js`，`internal: true`）。新增戰役的流程與資料格式見 `skills/war-atlas/SKILL.md`。
+獨立的全螢幕地圖子網站（Leaflet），網址 `/war-atlas/`，Side Projects 頁的卡片與側邊欄 Side Project 資料夾連過去（定義在 `js/sideprojects.js`，`internal: true`）。新增戰役的流程與資料格式見 `skills/war-atlas/SKILL.md`。
 
 | 資料來源 | 說明 |
 |---|---|
