@@ -1,0 +1,107 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-10-21",
+ "battles": [
+  {
+   "id": "crimean-war-1853",
+   "file": "battles/crimean-war-1853.json",
+   "kind": "war",
+   "title": "克里米亞戰爭",
+   "title_en": "Crimean War",
+   "wars": [
+    "crimean-war"
+   ],
+   "date": {
+    "start": "1853-10-16",
+    "end": "1856-03-30",
+    "label": "1853 年 10 月 – 1856 年 3 月（主戰場 1854–1855）",
+    "duration_days": 896
+   },
+   "lat": 44.62,
+   "lng": 33.55,
+   "zoom": 6,
+   "summary": "俄國以保護聖地東正教徒為名逼迫鄂圖曼帝國，實為趁鄂圖曼衰落南下奪取海峽與巴爾幹；英法為維持勢力均衡參戰。主要戰事集中在俄國黑海艦隊基地塞瓦斯托波爾，經 349 天圍城後陷落。這場戰爭第一次大規模使用線膛步槍、蒸汽鐵甲艦、電報、鐵路與戰地記者，傷亡多數死於疾病。",
+   "result": "聯軍勝利，簽訂《巴黎條約》",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "聯軍（鄂圖曼、法、英、薩丁尼亞）",
+     "color": "#3a6ea5"
+    },
+    {
+     "id": "russia",
+     "name": "俄羅斯帝國",
+     "color": "#5d6b2f"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-shanghai-1937",
+   "file": "battles/battle-of-shanghai-1937.json",
+   "kind": "campaign",
+   "title": "淞滬會戰",
+   "title_en": "Battle of Shanghai",
+   "wars": [
+    "wwii",
+    "second-sino-japanese-war"
+   ],
+   "date": {
+    "start": "1937-08-13",
+    "end": "1937-11-26",
+    "label": "1937 年 8 月 13 日 – 11 月 26 日",
+    "duration_days": 106
+   },
+   "lat": 31.2323,
+   "lng": 121.469,
+   "zoom": 9,
+   "summary": "中日全面戰爭爆發後第一場大規模會戰，雙方投入約百萬兵力，在上海市區、長江口沿岸村鎮與河浜間進行了三個多月的城市戰與塹壕戰。日軍以艦砲與空優逐步推進，11 月初在杭州灣金山衛登陸包抄，國軍被迫全線撤退，戰事延續為南京保衛戰。",
+   "result": "日軍勝利",
+   "sides": [
+    {
+     "id": "china",
+     "name": "中華民國",
+     "color": "#3f6e8c"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-okinawa-1945",
+   "file": "battles/battle-of-okinawa-1945.json",
+   "kind": "battle",
+   "title": "沖繩島戰役",
+   "title_en": "Battle of Okinawa",
+   "wars": [
+    "wwii",
+    "pacific-war"
+   ],
+   "date": {
+    "start": "1945-04-01",
+    "end": "1945-06-22",
+    "label": "1945 年 4 月 1 日 – 6 月 22 日（慶良間 3/26 起）",
+    "duration_days": 82
+   },
+   "lat": 26.33,
+   "lng": 127.8,
+   "zoom": 9,
+   "summary": "太平洋戰爭規模最大的兩棲登陸與最後一場大型戰役。美軍第十軍團幾乎無抵抗地登上嘉手納海灘，隨後在首里防線前與日軍第32軍展開長達兩個月的洞窟與高地爭奪；海上則承受日軍史上規模最大的神風特攻，大和號也在出擊途中被擊沉。沖繩平民死亡估計 4.2 萬至 15 萬人。",
+   "result": "盟軍勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "盟軍（美國、大英國協）",
+     "color": "#3a6ea5"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  }
+ ]
+}

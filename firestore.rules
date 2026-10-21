@@ -127,6 +127,19 @@ service cloud.firestore {
       allow write: if isWhitelisted();
     }
 
+    // ── War Atlas (war-atlas/) ─────────────────────────────────
+    // 戰役地圖集 — records added with the page's 新增戰役 button (one doc per
+    // battle, full record as a JSON string; war categories in war_atlas_wars).
+    // Copied into war-atlas/data/ daily by .github/workflows/sync_war_atlas.yml.
+    match /war_atlas_battles/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+    match /war_atlas_wars/{id} {
+      allow read: if true;
+      allow write: if isWhitelisted();
+    }
+
     // Editable site content (home 頁 About Me / Interests 等)。公開讀，白名單寫。
     match /site_content/{id} {
       allow read: if true;
