@@ -9,7 +9,9 @@
      description — one or two sentences under the headline
      features    — short bullet points (optional)
      tags        — small chips under the features (optional)
-     featured    — true → accent border, like a highlighted plan card */
+     featured    — true → accent border, like a highlighted plan card
+     internal    — true → a page of this site (relative url): card only, opens in the
+                   same tab, and is left out of the sidebar folder (it has its own nav link) */
 
 export const PROJECTS = [
   {
@@ -29,7 +31,7 @@ export const PROJECTS = [
   {
     name: 'fish-craft',
     url: 'https://fish-craft.vercel.app',
-    tagline: 'fish-craft - 像素風上班掛機遊戲',
+    tagline: 'fishcraft - 魚世無爭',
     description: '你是一個魚族王朝：在家園礁繁殖、照顧、裝備你的族群，出征七片海域，讓魚王一代代傳承下去。',
     features: [
       '家園礁：繁殖、照顧與裝備你的魚族',
@@ -38,6 +40,20 @@ export const PROJECTS = [
       '帳號與雲端存檔（選用）',
     ],
     tags: ['Vite', 'TypeScript', 'Canvas 2D', 'Vercel', 'Supabase'],
+  },
+  {
+    name: 'War Atlas',
+    url: 'war-atlas/index.html',
+    internal: true,
+    tagline: '戰役地圖集',
+    description: '互動式戰役地圖：依戰爭篩選，查看參戰方、戰鬥序列、兵力、武器型號對比與傷亡，並以時間軸播放各階段推進。',
+    features: [
+      '戰役檔案：參戰方、指揮官、番號、兵力與傷亡',
+      '武器型號與規格並排比較',
+      '分階段動畫：進攻路線、戰線與事件',
+      '貼上 skill 產生的 JSON 即可登錄新戰役',
+    ],
+    tags: ['Leaflet', 'Firestore', 'GitHub Pages', 'LLM Skill'],
   },
 ];
 
@@ -52,7 +68,7 @@ const ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
 /** Fill a sidebar folder's children with one external link per project. */
 export function renderSideProjectNav(container) {
   if (!container) return;
-  container.innerHTML = PROJECTS.map(p => `
+  container.innerHTML = PROJECTS.filter(p => !p.internal).map(p => `
     <a class="nav-item" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.url)}">
       <span class="nav-icon">${ICON_EXTERNAL}</span>
       ${esc(p.name)}
@@ -76,8 +92,10 @@ export function renderSideProjectPage(container) {
         `<li><span class="sp-check">${ICON_CHECK}</span>${esc(f)}</li>`).join('')}</ul>` : ''}
       ${p.tags?.length ? `<div class="sp-tags">${p.tags.map(t =>
         `<span class="sp-tag">${esc(t)}</span>`).join('')}</div>` : ''}
-      <a class="sp-link" href="${esc(p.url)}" target="_blank" rel="noopener">
+      ${p.internal
+        ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟 ${esc(p.tagline || p.name)}</span></a>`
+        : `<a class="sp-link" href="${esc(p.url)}" target="_blank" rel="noopener">
         ${ICON_EXTERNAL}<span>前往 ${esc(hostOf(p.url))}</span>
-      </a>
+      </a>`}
     </article>`).join('');
 }

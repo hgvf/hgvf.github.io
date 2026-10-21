@@ -8,3 +8,4 @@ __pycache__/
 .dev.vars
 mil/worker/.dev.vars
 .wrangler/
+war-atlas/artifact.html

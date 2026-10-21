@@ -266,3 +266,17 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 `scripts/serviceAccount.json` 是 Firebase 最高權限金鑰，請確認：
 - 加入 `.gitignore`（`scripts/serviceAccount.json`）
 - **不要 commit 到 GitHub**，否則任何人都能讀寫整個資料庫
+
+---
+
+## 10. War Atlas（戰役地圖集，`war-atlas/`）
+
+獨立的全螢幕地圖子網站（Leaflet），網址 `/war-atlas/`，導覽列「戰役地圖集」與 Side Projects 頁的卡片連過去（卡片定義在 `js/sideprojects.js`，`internal: true`）。新增戰役的流程與資料格式見 `skills/war-atlas/SKILL.md`。
+
+| 資料來源 | 說明 |
+|---|---|
+| `war-atlas/data/battles/*.json` | 正本（GitHub）。skill 直接 commit 到這裡，之後跑 `python3 war-atlas/scripts/atlas.py build` 產生 `data/index.json` 與 `index.html` |
+| Firestore `war_atlas_battles` / `war_atlas_wars` | 頁面上「＋ 新增」貼 JSON 登錄（白名單帳號），所有裝置立即可見 |
+| `.github/workflows/sync_war_atlas.yml` | 每日 00:30 UTC 把 Firestore 的戰役拉回 `war-atlas/data/`、build、commit（可手動觸發） |
+
+⚠️ 新增了 `war_atlas_*` 兩個 collection 的 rules，需重新部署 `firebase deploy --only firestore:rules`。

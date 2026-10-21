@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "wars": [
+    {
+      "id": "wwii",
+      "name": "第二次世界大戰",
+      "short": "二戰",
+      "name_en": "World War II",
+      "period": "1939–1945",
+      "color": "#b5452f",
+      "note": "亞洲戰場常以 1937 年中日全面戰爭為起點"
+    },
+    {
+      "id": "second-sino-japanese-war",
+      "name": "中日戰爭（抗日戰爭）",
+      "short": "抗戰",
+      "name_en": "Second Sino-Japanese War",
+      "period": "1937–1945",
+      "color": "#3f6e8c",
+      "parent": "wwii"
+    },
+    {
+      "id": "pacific-war",
+      "name": "太平洋戰爭",
+      "short": "太平洋",
+      "name_en": "Pacific War",
+      "period": "1941–1945",
+      "color": "#2f7d78",
+      "parent": "wwii"
+    },
+    {
+      "id": "crimean-war",
+      "name": "克里米亞戰爭",
+      "short": "克里米亞",
+      "name_en": "Crimean War",
+      "period": "1853–1856",
+      "color": "#8a6a2f"
+    }
+  ]
+}
