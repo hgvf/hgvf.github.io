@@ -224,7 +224,6 @@ img { display: block; max-width: 100%; }
 
 /* ── Publications (home) ─────────────────────────────────── */
 .home-publications { grid-column: 1 / -1; padding: 1.5rem 1.75rem; }
-.home-sites { grid-column: 1 / -1; margin-top: 0.5rem; }
 .publication-list { padding-left: 1.5rem; }
 .publication-list > li { margin-bottom: 0.95rem; padding-left: 0.3rem; }
 .publication-list > li:last-child { margin-bottom: 0; }
@@ -822,7 +821,7 @@ table.wl-table td.chg-neutral  { color: var(--neutral); }
   .sidebar-toggle { display: flex; }
   .main-content { margin-left: 0; padding: 1.25rem 1rem; padding-top: 3.5rem; max-width: 100vw; }
   .home-grid { grid-template-columns: 1fr; }
-  .home-about, .home-publications, .home-sites { grid-column: 1; }
+  .home-about, .home-publications { grid-column: 1; }
 }
 @media (max-width: 560px) {
   .page-title { font-size: 1.2rem; }
