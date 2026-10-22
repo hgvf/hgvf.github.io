@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-22T09:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-21", "end": "2026-10-21"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"AI infrastructure": 1, "advanced packaging": 1, "semiconductor": 1, "CPO": 1, "optical communication": 1, "data center": 1},
+    "importance_distribution": {"critical": 1},
+    "top_tickers": ["NVDA", "AMKR", "3037.TW", "8046.TW", "4062.T", "2449.TW", "009150.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261021-001",
+      "slug": "capacity-nvda-amkr-substrate-test-cpo-reservations",
+      "event_date": "2026-10-21",
+      "published_at": "2026-10-21",
+      "ingested_at": "2026-10-22T09:00:00+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": ["supply_agreement", "supplier_change"],
+      "themes": ["AI infrastructure", "advanced packaging", "semiconductor", "CPO", "optical communication", "data center"],
+      "regions": ["US", "TW", "JP", "KR", "SG"],
+      "importance_score": 92,
+      "importance_tier": "critical",
+      "evidence_level": "confirmed",
+      "title_zh": "NVIDIA 與六大供應鏈夥伴簽訂產能預訂：載板 2.5 倍、測試翻倍、CPO 光引擎 15 倍",
+      "title_original": "NVIDIA and Supply Chain Partners Expand Capacity to Accelerate AI Infrastructure Buildout",
+      "summary_zh": "NVIDIA 於 GTC Berlin 宣布與 Amkor、IBIDEN、King Yuan Electronics (KYEC)、Samsung Electro-Mechanics、SPIL、Unimicron 簽訂產能預訂/擴產安排：載板產能三年內擴大 2.5 倍，測試產能 2026→2027 翻倍；Amkor 中介層晶圓產能 2028 年底前增加逾 300%；KYEC 取得 11 億美元預付款於美國建測試廠（2027 年 4 月量產）；IBIDEN 大野廠擴至 3 倍並取得數十億美元預付款；SPIL 於 2027 年中將 CPO 光引擎產能擴大 15 倍。",
+      "why_it_matters": "NVIDIA 以預付款鎖定載板、先進封裝、測試與 CPO 光引擎等 CoWoS 以外的瓶頸節點，等於以資金換取優先供給權：IBIDEN、Unimicron、Samsung Electro-Mechanics 取得確定性訂單並首度加入或擴大在 NVIDIA 載板供應鏈（Samsung Electro-Mechanics 為新進者，鬆動既有載板供應商的集中度），Amkor 韓國中介層擴產 >300% 則使其成為 TSMC CoWoS 之外的實質第二來源；KYEC 在美國的測試產能受惠於地緣在地化。受損方為未獲預訂的載板/測試二線廠與其他 AI 晶片客戶（AMD、ASIC 客戶），其載板與測試的取得成本與交期可能上升。SPIL 15 倍光引擎產能則是 CPO 量產時程的重要訊號。",
+      "tickers": ["NVDA", "AMKR", "4062.T", "3037.TW", "8046.TW", "2449.TW", "009150.KS", "2325.TW"],
+      "companies": [
+        {"name": "NVIDIA Corporation", "ticker": "NVDA", "exchange": "NASDAQ", "country": "US", "role": "customer"},
+        {"name": "Amkor Technology", "ticker": "AMKR", "exchange": "NASDAQ", "country": "US", "role": "supplier"},
+        {"name": "IBIDEN Co., Ltd.", "ticker": "4062.T", "exchange": "TSE", "country": "JP", "role": "supplier"},
+        {"name": "King Yuan Electronics (KYEC)", "ticker": "2449.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"},
+        {"name": "Samsung Electro-Mechanics", "ticker": "009150.KS", "exchange": "KRX", "country": "KR", "role": "new_supplier"},
+        {"name": "Siliconware Precision Industries (SPIL)", "ticker": "2325.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"},
+        {"name": "Unimicron Technology Corp", "ticker": "3037.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"},
+        {"name": "ASE Technology Holding", "ticker": "3711.TW", "exchange": "TWSE", "country": "TW", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["ABF/高階 IC 載板材料", "測試設備"],
+        "component": "IC substrate / interposer / test / CPO optical engine",
+        "supplier": ["Amkor", "IBIDEN", "KYEC", "Samsung Electro-Mechanics", "SPIL", "Unimicron"],
+        "customer": ["NVIDIA"],
+        "end_market": ["AI data center", "co-packaged optics switches"]
+      },
+      "products": ["IC substrate", "interposer", "semiconductor testing", "CPO optical engine"],
+      "materials": [],
+      "change": {
+        "type": "capacity_reservation",
+        "before": "NVIDIA 先進封裝以 CoWoS 為主要瓶頸，載板、測試與光引擎產能缺乏預訂式保障",
+        "after": "NVIDIA 以預付款預訂載板（3 年 2.5 倍）、測試（2027 翻倍）、中介層（Amkor 2028 底 >300%）與 CPO 光引擎（SPIL 2027 中 15 倍）產能"
+      },
+      "financial_data": {
+        "amount": 1100000000,
+        "currency": "USD",
+        "capacity_change_pct": 150,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2027-04-01"
+      },
+      "search_keywords": ["nvidia", "nvda", "輝達", "amkor", "amkr", "安靠", "ibiden", "4062", "ibiden 揖斐電", "kyec", "king yuan", "京元電", "2449", "samsung electro-mechanics", "三星電機", "009150", "spil", "矽品", "2325", "unimicron", "欣興", "3037", "substrate", "載板", "capacity reservation", "產能預訂", "cpo", "co-packaged optics", "光引擎", "advanced packaging", "先進封裝", "interposer", "ai infrastructure", "capacity", "gtc berlin"],
+      "sources": [
+        {"publisher": "NVIDIA Newsroom", "source_type": "primary", "url": "https://nvidianews.nvidia.com/news/nvidia-and-supply-chain-partners-expand-capacity-to-accelerate-ai-infrastructure-buildout", "is_primary": true, "accessed_at": "2026-10-22T08:50:00+08:00"},
+        {"publisher": "Manila Times / GlobeNewswire", "source_type": "wire", "url": "https://www.manilatimes.net/2026/10/21/tmt-newswire/globenewswire/nvidia-and-supply-chain-partners-expand-capacity-to-accelerate-ai-infrastructure-buildout/2450602/amp", "is_primary": false, "accessed_at": "2026-10-22T08:52:00+08:00"}
+      ]
+    }
+  ]
+}
