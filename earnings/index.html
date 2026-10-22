@@ -115,6 +115,7 @@
     let editing = false;               // whether the detail panel is in edit mode
     function detail(c) {
       currentCall = c;
+      syncCompareTo(c);
       if (editing && lastAdmin) return detailEdit(c);
       const s = sent(overall(c));
       const hls = (c.highlights || []).map((h, i) =>
@@ -236,6 +237,18 @@
       renderCompare();
     }
     cmpSel.addEventListener("change", () => { cmpTicker = cmpSel.value; renderCompare(); });
+    // Picking a call above jumps the comparison to that company. Only a newly
+    // selected call does this, so re-renders of the same card (auth changes,
+    // edit mode) keep whatever company the user picked in the dropdown.
+    let cmpSyncedId = null;
+    function syncCompareTo(c) {
+      if (!c || !c.ticker || c.id === cmpSyncedId) return;
+      cmpSyncedId = c.id;
+      if (cmpTicker === c.ticker) return;
+      cmpTicker = c.ticker;
+      if ([...cmpSel.options].some(o => o.value === c.ticker)) cmpSel.value = c.ticker;
+      renderCompare();
+    }
 
     let view;
     mountReportView({
