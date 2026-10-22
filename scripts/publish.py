@@ -222,9 +222,15 @@ def news_docs(items, now_iso):
         }
 
 
+def norm_ticker(t):
+    """Uppercase, and turn a dashed Taiwan listing ("6770-TW") into the Yahoo
+    dot form ("6770.TW") that prices / aliases are keyed by."""
+    return re.sub(r"^([0-9A-Z]+)-(TWO|TW)$", r"\1.\2", str(t or "").strip().upper())
+
+
 def earnings_docs(calls, now_iso):
     for c in calls:
-        ticker, year, quarter = c.get("ticker"), c.get("year"), c.get("quarter")
+        ticker, year, quarter = norm_ticker(c.get("ticker")), c.get("year"), c.get("quarter")
         if not ticker or not year or not quarter:
             print(f"  skip (missing ticker/year/quarter): {c!r}")
             continue

@@ -68,8 +68,8 @@
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
     import { mountReportView } from "../js/reportview.js";
-    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, updateEarningsCall, loadPricesMap, loadOverridesMap, setTickerAdmin, tickerTrendCard } from "../js/reports.js";
-    import { factId, isFactTracked, hasFactsForTicker, toggleFactBookmark, onFactsChange } from "../js/facts.js";
+    import { sent, esc, fmtDate, chartUrl, onAuth, parseCalls, saveEarnings, updateEarningsCall, renameEarningsTicker, normTicker, loadPricesMap, loadOverridesMap, setTickerAdmin, tickerTrendCard } from "../js/reports.js";
+    import { factId, isFactTracked, hasFactsForTicker, toggleFactBookmark, onFactsChange, renameFactsTicker } from "../js/facts.js";
 
     mountSidebar("earnings");
     // Warm the prices snapshot + name overrides so the per-call trend table is ready on click.
@@ -168,6 +168,7 @@
     function detailEdit(c) {
       const hlRows = (c.highlights || []).map(editHlRow).join("");
       const watchRows = (c.watch || []).filter(w => w).map(editWatchRow).join("");
+      const sameTicker = cmpAll.filter(x => x.ticker === c.ticker).length;
       return `<article class="rv-detail ec-editing">
         <div class="ec-head">
           <span class="ec-ticker">${esc(c.ticker)}</span>
@@ -175,6 +176,14 @@
           <span class="ec-editing-tag">編輯中</span>
           <span class="ec-qtr">${esc(c.year)} ${esc(c.quarter)}${c.date ? " · " + esc(fmtDate(c.date)) : ""}</span>
         </div>
+        <label class="ec-ed-label">代號 / 公司名稱</label>
+        <div class="ec-ed-idrow">
+          <input class="ec-ed-input ec-ed-ticker" data-ec-ticker type="text" value="${esc(c.ticker)}" placeholder="如 2330.TW" spellcheck="false" autocapitalize="characters" />
+          <input class="ec-ed-input" data-ec-company type="text" value="${esc(c.company || "")}" placeholder="公司名稱" />
+        </div>
+        <p class="ec-ed-hint">台股請用 .TW / .TWO（如 6770.TW），才能串接股價、K線與事實追蹤。</p>
+        ${sameTicker > 1 ? `<label class="ec-ed-check"><input type="checkbox" data-ec-tkall checked /> 代號變更時，一併修正 ${esc(c.ticker)} 的全部 ${sameTicker} 場會議</label>` : ""}
+
         <label class="ec-ed-label">摘要</label>
         <textarea class="ec-ed-summary" data-ec-summary rows="2" placeholder="一句話總結本次財報電話會議…">${esc(c.summary || "")}</textarea>
 
@@ -350,9 +359,26 @@
         })).filter(h => h.text.trim());
         const watch = [...reportRoot.querySelectorAll("[data-ec-watchtext]")]
           .map(i => i.value).filter(w => w.trim());
+        const c = currentCall;
+        const ticker = normTicker(reportRoot.querySelector("[data-ec-ticker]").value);
+        const company = reportRoot.querySelector("[data-ec-company]").value.trim();
+        const allBox = reportRoot.querySelector("[data-ec-tkall]");
+        const renameAll = !!(allBox && allBox.checked);
+        if (!ticker) { status.className = "rp-status err"; status.textContent = "代號不可為空。"; return; }
         status.className = "rp-status"; status.textContent = "儲存中…";
         try {
-          await updateEarningsCall(currentCall.id, { summary, highlights, watch });
+          await updateEarningsCall(c.id, { ticker, company, summary, highlights, watch });
+          if (ticker !== c.ticker) {
+            // Fix the other quarters too, then move bookmarked facts so they
+            // stay linked to the corrected card.
+            if (renameAll) await renameEarningsTicker(c.ticker, ticker, company);
+            const qtr = `${c.year} ${c.quarter}`;
+            renameFactsTicker(c.ticker, ticker, {
+              company,
+              filter: renameAll ? null : f => !!f.source && f.source.quarter === qtr,
+            });
+          }
+          cmpSyncedId = null;              // let the comparison follow the new ticker
           editing = false;
           if (view) await view.reload();   // reload refreshes the timeline + detail from Firebase
         } catch (err) {

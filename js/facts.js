@@ -249,6 +249,24 @@ export function toggleFactBookmark(seed) {
   return true;
 }
 
+// Move tracked facts from one ticker to another (e.g. after an earnings call's
+// ticker is corrected). `filter(fact)` narrows which facts move. A fact whose id
+// changes with the ticker is re-saved under the new id and the old doc removed,
+// so its bookmark star still lights up on the corrected card.
+export function renameFactsTicker(oldTicker, newTicker, { company, filter } = {}) {
+  const from = String(oldTicker || "").trim(), to = String(newTicker || "").trim();
+  if (!from || !to || from === to) return 0;
+  const moving = _cache.filter(f => f.ticker === from && (!filter || filter(f)));
+  for (const f of moving) {
+    const id = f.source && f.source.origin === "intel" ? f.id : factId(to, f.kind, f.title);
+    const next = { ...f, id, ticker: to };
+    if (company) next.company = company;
+    if (id !== f.id) removeFact(f.id);
+    saveFact(next);
+  }
+  return moving.length;
+}
+
 export function onFactsChange(cb) {
   const h = e => cb(e.detail ? e.detail.items : getFacts());
   window.addEventListener(EVT, h);
