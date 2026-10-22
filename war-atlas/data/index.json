@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-21",
+ "generated_at": "2026-10-22",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -36,6 +36,45 @@
    ]
   },
   {
+   "id": "battle-of-the-somme-1916",
+   "file": "battles/battle-of-the-somme-1916.json",
+   "kind": "campaign",
+   "title": "索姆河戰役",
+   "title_en": "Battle of the Somme",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1916-07-01",
+    "end": "1916-11-18",
+    "label": "1916 年 7 月 1 日 – 11 月 18 日（砲擊自 6 月 24 日起）",
+    "duration_days": 141
+   },
+   "lat": 50.01,
+   "lng": 2.78,
+   "zoom": 10,
+   "summary": "一戰西線規模最大的戰役之一：英國遠征軍與法國第六軍團在索姆河兩岸對德軍陣地發動 141 天的攻勢，原意是減輕凡爾登壓力並消耗德軍。7 月 1 日英軍單日傷亡 57,470 人（陣亡 19,240），為英軍史上最慘痛的一天；9 月 15 日戰車首度投入實戰。超過 300 萬人參戰，",
+   "result": "戰果未定（英法有限推進）",
+   "sides": [
+    {
+     "id": "britain",
+     "name": "大英帝國",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "france",
+     "name": "法蘭西第三共和國",
+     "color": "#6a8fd6"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
    "id": "battle-of-shanghai-1937",
    "file": "battles/battle-of-shanghai-1937.json",
    "kind": "campaign",
@@ -61,6 +100,108 @@
      "id": "china",
      "name": "中華民國",
      "color": "#3f6e8c"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "battles-of-khalkhin-gol-1939",
+   "file": "battles/battles-of-khalkhin-gol-1939.json",
+   "kind": "campaign",
+   "title": "諾門罕戰役",
+   "title_en": "Battles of Khalkhin Gol (Nomonhan Incident)",
+   "wars": [
+    "wwii",
+    "soviet-japanese-border-conflicts"
+   ],
+   "date": {
+    "start": "1939-05-11",
+    "end": "1939-09-16",
+    "label": "1939 年 5 月 11 日 – 9 月 16 日",
+    "duration_days": 129
+   },
+   "lat": 47.75,
+   "lng": 118.62,
+   "zoom": 10,
+   "summary": "1939 年 5 月起，日本關東軍與蘇聯紅軍分別代表滿洲國與蒙古人民共和國，在哈拉哈河一帶爭奪邊界，雙方未宣戰。日軍 7 月初的渡河攻勢與戰車夜襲都被蘇軍裝甲部隊擊退，戰事陷入僵持。8 月 20 日朱可夫以步兵牽制正面、裝甲部隊南北兩翼迂迴，於諾門罕合圍並殲滅日軍第23師團主力。",
+   "result": "蘇蒙聯軍勝利",
+   "sides": [
+    {
+     "id": "soviet",
+     "name": "蘇聯與蒙古人民共和國",
+     "color": "#5d6b2f"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國與滿洲國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "formosa-air-battle-1944",
+   "file": "battles/formosa-air-battle-1944.json",
+   "kind": "battle",
+   "title": "台灣空戰",
+   "title_en": "Formosa Air Battle",
+   "wars": [
+    "wwii",
+    "pacific-war"
+   ],
+   "date": {
+    "start": "1944-10-12",
+    "end": "1944-10-16",
+    "label": "1944 年 10 月 12 日 – 16 日",
+    "duration_days": 5
+   },
+   "lat": 23.3,
+   "lng": 121.6,
+   "zoom": 6,
+   "summary": "1944 年 10 月，美國第三艦隊第 38 特遣艦隊為掩護雷伊泰登陸，連續數日以上千架艦載機空襲台灣與澎湖的日軍機場、港口，第 20 航空軍的 B-29 也自成都出擊轟炸岡山。日本陸海軍白天攔截、黃昏與夜間以 T 攻擊部隊等陸基航空隊反擊美軍艦隊，僅重創坎培拉號與休士頓號兩艘巡",
+   "result": "美軍決定性勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    },
+    {
+     "id": "usa",
+     "name": "美利堅合眾國",
+     "color": "#3a6ea5"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-leyte-gulf-1944",
+   "file": "battles/battle-of-leyte-gulf-1944.json",
+   "kind": "campaign",
+   "title": "雷伊泰灣海戰",
+   "title_en": "Battle of Leyte Gulf",
+   "wars": [
+    "wwii",
+    "pacific-war"
+   ],
+   "date": {
+    "start": "1944-10-23",
+    "end": "1944-10-26",
+    "label": "1944 年 10 月 23–26 日",
+    "duration_days": 4
+   },
+   "lat": 13,
+   "lng": 124,
+   "zoom": 6,
+   "summary": "1944 年 10 月美軍登陸菲律賓雷伊泰島後，日本海軍發動捷一號作戰：小澤艦隊以航艦當誘餌北引海爾賽第三艦隊，栗田、西村、志摩三支水面艦隊從西側兩路夾擊雷伊泰灣。戰役由錫布延海、蘇里高海峽、薩馬島、恩加諾角四場主要海戰構成，參戰人員超過 20 萬人，常被視為史上最大海戰。海爾賽",
+   "result": "盟軍決定性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "美國（盟軍）",
+     "color": "#3a6ea5"
     },
     {
      "id": "japan",
