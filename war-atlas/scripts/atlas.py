@@ -25,9 +25,9 @@ WEAPON_CATS = {"smallarm", "artillery", "aa", "tank", "vehicle", "aircraft", "sh
 BRANCHES = {"army", "marine", "navy", "air", "other"}
 SOURCE_TYPES = {"wiki", "book", "paper", "web", "primary", "video", "other"}
 CONF = {"high", "medium", "low", "approx", "contested"}
-DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$")  # time only with a full date
+DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?\Z", re.ASCII)  # time only with a full date
 OUTCOMES = {"success", "stopped", "repulsed"}
-ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*\Z")
 
 
 def load_wars():
@@ -145,15 +145,16 @@ def validate(b, wars, fname=""):
             for k in ("start", "end"):
                 if m.get(k) and not DATE_RE.match(str(m[k])):
                     errs.append(f"{wm}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
-            if m.get("start") and m.get("end") and str(m["end"]) < str(m["start"]):
+            st, en = str(m.get("start") or ""), str(m.get("end") or "")
+            if st and en and len(st) == len(en) and en < st:   # same precision only: a date-only end means end of that day
                 warns.append(f"{wm}.end is before start")
-            if m.get("start") and str(m["start"]) < str(p.get("start", ""))[:len(str(m["start"]))]:
-                warns.append(f"{wm}.start is before the phase start")
-            if "strength" in m and not (isinstance(m["strength"], (int, float)) and m["strength"] > 0):
+            if "strength" in m and not (isinstance(m["strength"], (int, float)) and not isinstance(m["strength"], bool) and m["strength"] > 0):
                 errs.append(f"{wm}.strength must be a positive number (troops, ships or aircraft in the move)")
-            if m.get("outcome") and m["outcome"] not in OUTCOMES:
+            if m.get("outcome") and not (isinstance(m["outcome"], str) and m["outcome"] in OUTCOMES):
                 errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
-            if m.get("unit") and m["unit"] not in unit_names.get(m.get("side"), set()):
+            if m.get("unit") and not isinstance(m["unit"], str):
+                errs.append(f"{wm}.unit must be a string")
+            elif m.get("unit") and m["unit"] not in unit_names.get(m.get("side"), set()):
                 warns.append(f"{wm}.unit '{m['unit']}' is not in {m.get('side')}.units[].name")
         for j, z in enumerate(p.get("zones", [])):
             wz = f"{w}.zones[{j}]"
@@ -163,8 +164,15 @@ def validate(b, wars, fname=""):
                 errs.append(f"{wz} needs polygon or line")
             if "key" in z and not (isinstance(z["key"], str) and ID_RE.match(z["key"])):
                 errs.append(f"{wz}.key must be a kebab-case string (same key = same zone across phases)")
-        for j, k in enumerate(p.get("view_keys", [])):
+        vk = p.get("view_keys", [])
+        if not isinstance(vk, list):
+            errs.append(f"{w}.view_keys must be a list")
+            vk = []
+        for j, k in enumerate(vk):
             wk = f"{w}.view_keys[{j}]"
+            if not isinstance(k, dict):
+                errs.append(f"{wk} must be an object {{at, lat, lng, zoom}}")
+                continue
             if not DATE_RE.match(str(k.get("at", ""))):
                 errs.append(f"{wk}.at must be YYYY[-MM[-DD[THH:MM]]]")
             check_latlng(errs, wk, k.get("lat"), k.get("lng"))
@@ -310,10 +318,11 @@ def cmd_backfill(files):
             for m in p.get("moves", []):
                 if not m.get("unit") and m.get("label") in names.get(m.get("side"), ()):
                     m["unit"] = m["label"]; n_unit += 1
-        used = set()
         phases = b.get("phases", [])
+        used = {z["key"] for p in phases for z in p.get("zones", []) if z.get("key")}
         for i in range(1, len(phases)):
             prev, cur = phases[i - 1].get("zones", []), phases[i].get("zones", [])
+            claimed = {o["key"] for o in cur if o.get("key")}
             for z in cur:
                 if z.get("key"):
                     continue
@@ -323,7 +332,7 @@ def cmd_backfill(files):
                 hit = next((o for o in same if o.get("label") and o.get("label") == z.get("label")), None)
                 if not hit and len(same) == 1 and len(peers) == 1:
                     hit = same[0]
-                if not hit:
+                if not hit or (hit.get("key") and hit["key"] in claimed):
                     continue
                 if not hit.get("key"):
                     base = f"{hit.get('side')}-{hit.get('kind') or 'zone'}"
@@ -331,7 +340,7 @@ def cmd_backfill(files):
                     while k in used:
                         k, n = f"{base}-{n}", n + 1
                     hit["key"] = k; used.add(k); n_key += 1
-                z["key"] = hit["key"]; n_key += 1
+                z["key"] = hit["key"]; claimed.add(z["key"]); n_key += 1
         f.write_text(json.dumps(b, ensure_ascii=False, indent=2) + "\n", "utf-8")
         print(f"{f.name}: +{n_unit} moves.unit, +{n_key} zones.key")
     return 0

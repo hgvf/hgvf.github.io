@@ -744,9 +744,9 @@ function unitOf(b, mv){
   return [mv.unit, mv.label].find(n => n && names.has(n)) || null;
 }
 function showUnit(side, name){
-  document.body.classList.remove("sheet-mini");
   const el = [...document.querySelectorAll(".unit[data-side]")].find(u => u.dataset.side === side && u.dataset.unit === name);
   if (!el) return;
+  if (document.body.classList.contains("sheet-mini")) { document.body.classList.remove("sheet-mini"); setTimeout(() => showUnit(side, name), 340); return; }
   el.scrollIntoView({ block:"center", behavior:"smooth" });
   el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
 }
@@ -791,7 +791,7 @@ function phasePlan(b, pi){
     return { mv, f0, f1:f0 + drawF };
   });
   const cams = (p.view_keys||[]).map(k => ({ ...k, f:frac(k.at) })).filter(k => k.f != null && k.f > 0 && k.f < 1).sort((a, b) => a.f - b.f);
-  return { t0, t1, dur, timed, events:evs, moves, cams };
+  return { t0, t1, dur, timed, endTimed:hasTime(p.end || p.start), events:evs, moves, cams };
 }
 
 /* geometry: smoothed path in layer pixels at the current zoom */
@@ -1007,7 +1007,7 @@ function render(force){
     if (el < plan.dur) flyVis([k.lat, k.lng], k.zoom || map.getZoom(), 1.1);
   }
   // clock readout
-  const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - 1), bs = tParse(cur.date.start);
+  const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - (plan.endTimed ? 0 : 1)), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
   $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
@@ -1384,6 +1384,7 @@ function validateRecord(b, warIds){
     ["id","title","start","summary","view"].forEach(k => { if (p[k] == null) errs.push(`${w} 缺少 ${k}`); });
     ll(`${w}.view`, p.view?.lat, p.view?.lng);
     ["start","end"].forEach(k => { if (p[k] && !V.date.test(String(p[k]))) errs.push(`${w}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
+    if ("view_keys" in p && !Array.isArray(p.view_keys)) errs.push(`${w}.view_keys 需為陣列`);
     (Array.isArray(p.view_keys) ? p.view_keys : []).forEach((k, j) => {
       const wk = `${w}.view_keys[${j}]`;
       if (!V.date.test(String(k?.at ?? ""))) errs.push(`${wk}.at 需為 YYYY[-MM[-DD[THH:MM]]]`);
@@ -1405,10 +1406,11 @@ function validateRecord(b, warIds){
       if (pts.length < 2) errs.push(`${wm}.path 至少 2 點`);
       pts.forEach(pt => ll(wm, pt?.[0], pt?.[1]));
       ["start","end"].forEach(k => { if (m[k] && !V.date.test(String(m[k]))) errs.push(`${wm}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
-      if (m.start && m.end && String(m.end) < String(m.start)) warns.push(`${wm}.end 早於 start`);
+      if (m.start && m.end && String(m.start).length === String(m.end).length && String(m.end) < String(m.start)) warns.push(`${wm}.end 早於 start`);
       if ("strength" in m && !(typeof m.strength === "number" && m.strength > 0)) errs.push(`${wm}.strength 需為正數（該路兵力、艦數或機數）`);
       if (m.outcome && !V.outcomes.includes(m.outcome)) errs.push(`${wm}.outcome 不在 ${V.outcomes.join("/")}`);
-      if (m.unit && !unitNames[m.side]?.has(m.unit)) warns.push(`${wm}.unit「${m.unit}」不在 ${m.side} 的 units 名稱內`);
+      if (m.unit && typeof m.unit !== "string") errs.push(`${wm}.unit 需為字串`);
+      else if (m.unit && !unitNames[m.side]?.has(m.unit)) warns.push(`${wm}.unit「${m.unit}」不在 ${m.side} 的 units 名稱內`);
     });
     (p.zones||[]).forEach((z, j) => {
       const wz = `${w}.zones[${j}]`;
