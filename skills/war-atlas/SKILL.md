@@ -121,6 +121,18 @@ Ask the fetch prompt for exactly what the schema needs: dates, belligerents, com
 - Moves are schematic arrows, not exact routes; say so in `provenance.notes`.
 - Check sanity: lat −90…90, lng −180…180, `[lat, lng]` order (not GeoJSON's `[lng, lat]`).
 
+### Animation data (second pass over the same sources)
+
+After the record is written, read the fetched sources once more only for what drives the animation, and fill the optional fields of §4 where — and only where — a source states it:
+
+1. **Clock**: hour stamps for naval/air actions, landings, night attacks (`THH:MM`, local time of the area; "約 10:30" → `T10:30`). Leave date-only events date-only and keep events in narrative order.
+2. **Moves**: for each arrow, the sourced date it began/ended (`start`/`end`), the force in it (`strength`), how it ended (`outcome`: stopped/repulsed when the source says it was halted or thrown back), and the exact `units[].name` (`unit`).
+3. **Fronts**: give the same `key` to a front/zone that continues into the next phase; a different entity gets its own key (otherwise the page would morph one into the other).
+4. **Tracks**: 3–10 formations the narrative follows, stitched from your own events, move paths and unit notes (no new coordinates, no invented dates; where a unit note has no exact date use the event or phase date and say so in `provenance.notes`). End with `destroyed`/`withdrawn` only when the source says so.
+5. Day/night shading appears by itself for phases with hour stamps; nothing to add.
+
+Then run `python3 scripts/atlas.py backfill <file>` (adds inferable keys and unit links) and `validate`.
+
 ### Granularity
 
 - A battle the user names → one record (`battle`/`siege`/`operation`).
@@ -268,6 +280,8 @@ Recommended side colors (keep consistent across the atlas): China/ROC `#3f6e8c`,
 | `tracks` | record (top level) | units followed across phases, see below |
 
 In a phase that has hour stamps, a date-only event plays right after the event listed before it, so keep events in narrative order.
+
+Phases with hour stamps also get day/night shading (solar terminator at the clock time, local time taken as mean solar time) and a 白晝／晨昏／夜間 tag on the ticker. The timeline's ⦿ button records the whole playback to a WebM video (tab capture; desktop Chrome/Edge/Firefox on the website, not inside an Artifact preview).
 
 **`tracks`** (optional, top level): a unit token that stays on the map across phases, moved by the battle clock, with a dotted trail behind it. Use it for the 3–10 formations the story follows (the ones whose `note` says where they went and what happened to them), built from the record's own dated events, moves and unit notes — never invent a route.
 

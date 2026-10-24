@@ -293,6 +293,11 @@ path.zone-in{animation:fadein .8s ease both}
 body.has-side .tl{right:calc(min(var(--side-w),100vw) + 12px)}
 .tl .play{width:40px;height:40px;border-radius:50%;border:0;background:var(--accent);color:var(--paper);cursor:pointer;display:grid;place-items:center}
 .tl .play svg{width:18px;height:18px}
+.tl-btns{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tl .rec{width:26px;height:20px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink-2);cursor:pointer;display:grid;place-items:center;padding:0}
+.tl .rec svg{width:13px;height:13px}
+body.recording .tl .rec{background:var(--bad);border-color:var(--bad);color:#fff;animation:recblink 1.2s ease-in-out infinite}
+@keyframes recblink{50%{opacity:.55}}
 .tl-main{min-width:0;display:grid;gap:6px}
 .tl-cap{display:flex;gap:10px;align-items:baseline;min-width:0}
 .tl-cap b{font-family:var(--f-display);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -384,7 +389,7 @@ body.has-battle .legend{display:none}
 </aside>
 
 <div class="tl" id="tl" hidden>
-  <button class="play" id="play" aria-label="播放"></button>
+  <div class="tl-btns"><button class="play" id="play" aria-label="播放"></button><button class="rec" id="rec" title="錄成影片（WebM）" aria-label="錄成影片"></button></div>
   <div class="tl-main">
     <div class="tl-cap"><b id="tlTitle"></b><span id="tlDate"></span></div>
     <div class="tl-ev" id="tlEv" aria-live="polite"></div>
@@ -442,6 +447,7 @@ const ICON = {
   pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>',
   json: P('<path d="M8 4c-2 0-2 1.5-2 3s0 3-2 5c2 2 2 3.5 2 5s0 3 2 3M16 4c2 0 2 1.5 2 3s0 3 2 5c-2 2-2 3.5-2 5s0 3-2 3"/>'),
   chev: P('<path d="M6 9l6 6 6-6"/>'),
+  rec: P('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/>'),
   focus: P('<circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>')
 };
 const KIND = {battle:"單一戰役",campaign:"會戰／戰役群",siege:"圍城戰",operation:"軍事行動",war:"戰爭總覽",incident:"事件"};
@@ -647,7 +653,7 @@ async function select(id, opts={}){
   if (opts.phase != null) setTimeout(() => goPhase(opts.phase), 1200);
 }
 function closeSide(){
-  stop(); S.sel = null; cur = null;
+  stopRecording(); stop(); S.sel = null; cur = null;
   try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
   $("#side").classList.remove("open"); document.body.classList.remove("has-battle","has-side","sheet-mini");
   clearPhase(); battleLayer.clearLayers(); $("#tl").hidden = true;
@@ -891,7 +897,40 @@ const A = { pi:-1, plan:null, el:0, last:0, paused:false, raf:0, moves:[], zones
 function clearPhase(){
   A.pi = -1; A.plan = null; if (A.raf) cancelAnimationFrame(A.raf); A.raf = 0;
   phaseLayer.clearLayers(); A.moves = []; A.zones = []; A.ghosts = [];
-  renderTracks(null);
+  renderTracks(null); renderNight(null);
+}
+
+/* day / night: the solar terminator at the clock time, shown only for phases with hour stamps.
+   Dates are local time of the battle area, taken as local mean solar time (UTC + lng/15 h). */
+map.createPane("night").style.zIndex = 390;
+const RAD = Math.PI / 180;
+const nightLayer = L.polygon([[0, 0]], { pane:"night", stroke:false, fillColor:"#071420", fillOpacity:.45, interactive:false });
+function subsolar(utc){
+  const d = utc / DAY - 10957.5;                           // days from J2000.0
+  const g = (357.529 + .98560028 * d) * RAD, q = 280.459 + .98564736 * d;
+  const lam = (q + 1.915 * Math.sin(g) + .02 * Math.sin(2 * g)) * RAD, eps = (23.439 - .00000036 * d) * RAD;
+  const dec = Math.asin(Math.sin(eps) * Math.sin(lam)), ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam)) / RAD;
+  const gmst = ((18.697374558 + 24.06570982441908 * d) % 24 + 24) % 24;
+  return { lat:dec / RAD, lng:((ra - gmst * 15) % 360 + 540) % 360 - 180 };
+}
+function sunAlt(sun, lat, lng){
+  return Math.asin(Math.sin(lat * RAD) * Math.sin(sun.lat * RAD) + Math.cos(lat * RAD) * Math.cos(sun.lat * RAD) * Math.cos((lng - sun.lng) * RAD)) / RAD;
+}
+let nightAt = null;
+function renderNight(T, timed){
+  const show = T != null && timed && !RM;
+  if (!show) { if (map.hasLayer(nightLayer)) map.removeLayer(nightLayer); nightAt = null; return ""; }
+  const loc = cur.location, sun = subsolar(T - loc.lng / 15 * 3600e3);
+  if (nightAt == null || Math.abs(T - nightAt) > 5 * 60e3){
+    nightAt = T;
+    const tanD = Math.tan((Math.abs(sun.lat) < .1 ? .1 : sun.lat) * RAD), ring = [];
+    for (let x = -540; x <= 540; x += 3) ring.push([clamp(Math.atan(-Math.cos((x - sun.lng) * RAD) / tanD) / RAD, -85, 85), x]);
+    const pole = sun.lat > 0 ? -85 : 85;
+    nightLayer.setLatLngs([...ring, [pole, 540], [pole, -540]]);
+    if (!map.hasLayer(nightLayer)) nightLayer.addTo(map);
+  }
+  const alt = sunAlt(sun, loc.lat, loc.lng);
+  return alt > -.833 ? "白晝" : alt > -6 ? "晨昏" : "夜間";
 }
 
 /* unit tracks: tokens that persist across phases, placed by the battle clock (absolute date), with a trail */
@@ -1071,7 +1110,8 @@ function render(force){
   const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - (plan.endTimed ? 0 : 1)), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
   renderTracks(t);
-  $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "");
+  const light = renderNight(t, plan.timed);
+  $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "") + (light ? ` · ${light}` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
 }
 function frame(now){
@@ -1081,7 +1121,7 @@ function frame(now){
   A.last = now;
   render(false);
   if (S.playing && A.el >= A.plan.dur + HOLD) {
-    if (A.pi >= cur.phases.length - 1) { stop(); return; }
+    if (A.pi >= cur.phases.length - 1) { stop(); if (REC.rec) setTimeout(stopRecording, 1200); return; }
     goPhase(A.pi + 1); return;
   }
   if (!A.paused && (A.el < A.plan.dur + 1600 || S.playing)) A.raf = requestAnimationFrame(frame);
@@ -1114,6 +1154,35 @@ function play(){
 function stop(){ S.playing = false; A.paused = A.pi >= 0 && A.plan && A.el < A.plan.dur; setPlayIcon(); }
 function setPlayIcon(){ $("#play").innerHTML = S.playing ? ICON.pause : ICON.play; $("#play").setAttribute("aria-label", S.playing ? "暫停" : "播放各階段"); }
 $("#play").addEventListener("click", () => S.playing ? stop() : play());
+$("#rec").innerHTML = ICON.rec;
+const REC = { rec:null };
+async function startRecording(){
+  if (!cur) return;
+  if (!navigator.mediaDevices?.getDisplayMedia || !window.MediaRecorder) { toast("這個瀏覽器（或預覽環境）不支援錄影，請在電腦版 Chrome／Edge／Firefox 開啟網站"); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getDisplayMedia({ video:{ frameRate:30 }, audio:false, preferCurrentTab:true, selfBrowserSurface:"include" }); }
+  catch(e){ toast("已取消錄影"); return; }
+  const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(t => MediaRecorder.isTypeSupported(t)) || "";
+  const rec = new MediaRecorder(stream, mime ? { mimeType:mime, videoBitsPerSecond:6e6 } : {}), chunks = [], id = cur.id;
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    REC.rec = null; document.body.classList.remove("recording"); $("#rec").setAttribute("aria-label", "錄成影片");
+    if (chunks.length) saveBlob(`${id}.webm`, new Blob(chunks, { type:"video/webm" }));
+  };
+  stream.getVideoTracks()[0].addEventListener("ended", stopRecording);
+  REC.rec = rec; document.body.classList.add("recording"); $("#rec").setAttribute("aria-label", "停止錄影");
+  rec.start(1000);
+  stop(); S.phase = -1; clearPhase();
+  toast("錄影中：自動播放全部階段，播完自動存檔", 2400);
+  setTimeout(() => { if (REC.rec) play(); }, 900);
+}
+function stopRecording(){ if (REC.rec && REC.rec.state !== "inactive") REC.rec.stop(); }
+function saveBlob(name, blob){
+  try { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("影片已下載：" + name); }
+  catch(e){ toast("此環境不允許下載影片"); }
+}
+$("#rec").addEventListener("click", () => REC.rec ? stopRecording() : startRecording());
 function buildTimeline(b){
   const tl = $("#tl"); tl.hidden = !(b.phases||[]).length;
   $("#segs").innerHTML = (b.phases||[]).map((p, i) => `<button class="seg" data-p="${i}" title="${esc(p.title)}（${esc(dateRange(p.start,p.end))}）" aria-label="第 ${i+1} 階段：${esc(p.title)}"><span class="prog"></span>${i+1}</button>`).join("");
