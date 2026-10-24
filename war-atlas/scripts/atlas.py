@@ -6,6 +6,7 @@ Usage:
   python3 scripts/atlas.py build                 # validate all, then write data/index.json
   python3 scripts/atlas.py export > bundle.json  # one-file bundle (wars + all battles), same format the site imports
   python3 scripts/atlas.py import bundle.json    # split a site export (bundle / single battle / array) into data/
+  python3 scripts/atlas.py backfill [file ...]   # make implicit animation links explicit (zones.key, moves.unit)
 
 Standard library only.
 """
@@ -24,7 +25,8 @@ WEAPON_CATS = {"smallarm", "artillery", "aa", "tank", "vehicle", "aircraft", "sh
 BRANCHES = {"army", "marine", "navy", "air", "other"}
 SOURCE_TYPES = {"wiki", "book", "paper", "web", "primary", "video", "other"}
 CONF = {"high", "medium", "low", "approx", "contested"}
-DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2})?)?$")
+DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$")  # time only with a full date
+OUTCOMES = {"success", "stopped", "repulsed"}
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
 
@@ -60,12 +62,12 @@ def validate(b, wars, fname=""):
     d = b["date"]
     for k in ("start", "end"):
         if k in d and d[k] and not DATE_RE.match(str(d[k])):
-            errs.append(f"date.{k} must be YYYY[-MM[-DD]]")
+            errs.append(f"date.{k} must be YYYY[-MM[-DD[THH:MM]]]")
     if not d.get("start"):
         errs.append("date.start required")
     loc = b["location"]
     check_latlng(errs, "location", loc.get("lat"), loc.get("lng"))
-    side_ids = set()
+    side_ids, unit_names = set(), {}
     if not (1 <= len(b["sides"]) <= 6):
         errs.append("sides: need 1–6 sides")
     for i, s in enumerate(b["sides"]):
@@ -74,6 +76,7 @@ def validate(b, wars, fname=""):
             if k not in s:
                 errs.append(f"{w}: missing {k}")
         side_ids.add(s.get("id"))
+        unit_names[s.get("id")] = {u.get("name") if isinstance(u, dict) else u for u in s.get("units", [])}
         if s.get("color") and not re.match(r"^#[0-9a-fA-F]{6}$", s["color"]):
             errs.append(f"{w}.color must be #rrggbb")
         for j, wp in enumerate(s.get("weapons", [])):
@@ -116,6 +119,9 @@ def validate(b, wars, fname=""):
                 errs.append(f"{w}: missing {k}")
         v = p.get("view", {})
         check_latlng(errs, f"{w}.view", v.get("lat"), v.get("lng"))
+        for k in ("start", "end"):
+            if p.get(k) and not DATE_RE.match(str(p[k])):
+                errs.append(f"{w}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
         for j, e in enumerate(p.get("events", [])):
             we = f"{w}.events[{j}]"
             check_latlng(errs, we, e.get("lat"), e.get("lng"))
@@ -124,7 +130,7 @@ def validate(b, wars, fname=""):
             if e.get("side") and e["side"] not in side_ids:
                 errs.append(f"{we}.side '{e['side']}' is not a side id")
             if e.get("date") and not DATE_RE.match(str(e["date"])):
-                errs.append(f"{we}.date must be YYYY[-MM[-DD]]")
+                errs.append(f"{we}.date must be YYYY[-MM[-DD[THH:MM]]]")
         for j, m in enumerate(p.get("moves", [])):
             wm = f"{w}.moves[{j}]"
             if m.get("kind") not in MOVE_KINDS:
@@ -136,12 +142,34 @@ def validate(b, wars, fname=""):
                 errs.append(f"{wm}.path needs ≥2 points")
             for pt in pts:
                 check_latlng(errs, wm, *(pt + [None, None])[:2])
+            for k in ("start", "end"):
+                if m.get(k) and not DATE_RE.match(str(m[k])):
+                    errs.append(f"{wm}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
+            if m.get("start") and m.get("end") and str(m["end"]) < str(m["start"]):
+                warns.append(f"{wm}.end is before start")
+            if m.get("start") and str(m["start"]) < str(p.get("start", ""))[:len(str(m["start"]))]:
+                warns.append(f"{wm}.start is before the phase start")
+            if "strength" in m and not (isinstance(m["strength"], (int, float)) and m["strength"] > 0):
+                errs.append(f"{wm}.strength must be a positive number (troops, ships or aircraft in the move)")
+            if m.get("outcome") and m["outcome"] not in OUTCOMES:
+                errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
+            if m.get("unit") and m["unit"] not in unit_names.get(m.get("side"), set()):
+                warns.append(f"{wm}.unit '{m['unit']}' is not in {m.get('side')}.units[].name")
         for j, z in enumerate(p.get("zones", [])):
             wz = f"{w}.zones[{j}]"
             if z.get("side") not in side_ids:
                 errs.append(f"{wz}.side is not a side id")
             if "polygon" not in z and "line" not in z:
                 errs.append(f"{wz} needs polygon or line")
+            if "key" in z and not (isinstance(z["key"], str) and ID_RE.match(z["key"])):
+                errs.append(f"{wz}.key must be a kebab-case string (same key = same zone across phases)")
+        for j, k in enumerate(p.get("view_keys", [])):
+            wk = f"{w}.view_keys[{j}]"
+            if not DATE_RE.match(str(k.get("at", ""))):
+                errs.append(f"{wk}.at must be YYYY[-MM[-DD[THH:MM]]]")
+            check_latlng(errs, wk, k.get("lat"), k.get("lng"))
+            if k.get("zoom") is not None and not (isinstance(k["zoom"], (int, float)) and 2 <= k["zoom"] <= 18):
+                errs.append(f"{wk}.zoom must be 2–18")
     if not b["sources"]:
         errs.append("sources: at least one required")
     for i, s in enumerate(b["sources"]):
@@ -265,6 +293,50 @@ def cmd_import(path):
     return cmd_build()
 
 
+def zone_shape(z):
+    return "polygon" if "polygon" in z else "line"
+
+
+def cmd_backfill(files):
+    """Write the links the page otherwise infers at runtime into the records, so they survive edits:
+    zones.key chains a zone that continues into the next phase (the page morphs it), and moves.unit
+    names the units[] entry an arrow belongs to (clicking the arrow opens it). Timing (moves.start)
+    is left alone: it must come from sources, the page already paces undated moves by their events."""
+    for f in map(pathlib.Path, files):
+        b = json.loads(f.read_text("utf-8"))
+        names = {s.get("id"): {u.get("name") if isinstance(u, dict) else u for u in s.get("units", [])} for s in b.get("sides", [])}
+        n_unit = n_key = 0
+        for p in b.get("phases", []):
+            for m in p.get("moves", []):
+                if not m.get("unit") and m.get("label") in names.get(m.get("side"), ()):
+                    m["unit"] = m["label"]; n_unit += 1
+        used = set()
+        phases = b.get("phases", [])
+        for i in range(1, len(phases)):
+            prev, cur = phases[i - 1].get("zones", []), phases[i].get("zones", [])
+            for z in cur:
+                if z.get("key"):
+                    continue
+                sig = lambda o: (o.get("side"), o.get("kind"), zone_shape(o))
+                same = [o for o in prev if sig(o) == sig(z)]
+                peers = [o for o in cur if sig(o) == sig(z)]
+                hit = next((o for o in same if o.get("label") and o.get("label") == z.get("label")), None)
+                if not hit and len(same) == 1 and len(peers) == 1:
+                    hit = same[0]
+                if not hit:
+                    continue
+                if not hit.get("key"):
+                    base = f"{hit.get('side')}-{hit.get('kind') or 'zone'}"
+                    k, n = base, 2
+                    while k in used:
+                        k, n = f"{base}-{n}", n + 1
+                    hit["key"] = k; used.add(k); n_key += 1
+                z["key"] = hit["key"]; n_key += 1
+        f.write_text(json.dumps(b, ensure_ascii=False, indent=2) + "\n", "utf-8")
+        print(f"{f.name}: +{n_unit} moves.unit, +{n_key} zones.key")
+    return 0
+
+
 if __name__ == "__main__":
     a = sys.argv[1:] or ["build"]
     if a[0] == "validate":
@@ -273,6 +345,8 @@ if __name__ == "__main__":
         sys.exit(cmd_build())
     if a[0] == "import" and len(a) > 1:
         sys.exit(cmd_import(a[1]))
+    if a[0] == "backfill":
+        sys.exit(cmd_backfill(a[1:] or all_files()))
     if a[0] == "export":
         sys.exit(cmd_export())
     print(__doc__)

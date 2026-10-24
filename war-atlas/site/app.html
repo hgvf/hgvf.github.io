@@ -97,6 +97,10 @@ button,input,textarea,select{font:inherit;color:inherit}
 .tok{width:26px;height:18px;display:grid;place-items:center;background:var(--paper);color:var(--c);border:1.5px solid var(--c);border-radius:3px;box-shadow:0 1px 5px rgba(0,0,0,.35)}
 .tok svg{width:20px;height:13px}
 .tok.round{border-radius:9px}
+.xmark{width:20px;height:20px;border-radius:50%;background:var(--paper);color:var(--bad);border:2px solid var(--bad);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.3);animation:pop .4s cubic-bezier(.3,1.6,.5,1) both}
+.xmark svg{width:12px;height:12px;stroke-width:3}
+.unit.flash{animation:uflash 1.8s ease-out}
+@keyframes uflash{0%,30%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
 .tok.round svg{width:14px;height:14px}
 .mv-label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:4px;background:var(--paper);color:var(--c);border:1px solid var(--c);white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 path.zone-in{animation:fadein .8s ease both}
@@ -673,7 +677,7 @@ function drawBattle(b){
   }
   (b.phases||[]).forEach((p, pi) => (p.events||[]).forEach((e, ei) => {
     const m = L.marker([e.lat, e.lng], { icon:evIcon(b, e, ""), title:e.title, riseOnHover:true });
-    m.bindTooltip(`<b>${esc(e.title)}</b><br><span style="font-family:var(--f-mono);font-size:11px">${esc(e.date||"")} · ${esc(EVT[e.type]||"")}</span>`, { direction:"top", offset:[0,-14] });
+    m.bindTooltip(`<b>${esc(e.title)}</b><br><span style="font-family:var(--f-mono);font-size:11px">${esc(String(e.date||"").replace("T"," "))} · ${esc(EVT[e.type]||"")}</span>`, { direction:"top", offset:[0,-14] });
     m.on("click", () => { stop(); goPhase(pi, { instant:true }); focusEvent(pi, ei); });
     m._meta = { pi, ei, e }; m._st = "";
     evMarkers.push(m); battleLayer.addLayer(m);
@@ -698,17 +702,19 @@ function focusEvent(pi, ei){
    zooming never restarts the animation. */
 const DAY = 864e5, HOLD = 1400, LEAD = 700;
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const DATE_P = /^(-?\d{1,4})(?:-(\d{2})(?:-(\d{2}))?)?$/;
+const DATE_P = /^(-?\d{1,4})(?:-(\d{2})(?:-(\d{2})(?:T(\d{2}):(\d{2}))?)?)?$/;
+// "end" rounds a date up to the end of its precision (a day, month or year); a timed date is an instant
 function tParse(s, end){
   const m = DATE_P.exec(String(s ?? "")); if (!m) return null;
   const t = new Date(0);
-  t.setUTCFullYear(+m[1], m[2] ? +m[2] - 1 : 0, m[3] ? +m[3] : 1); t.setUTCHours(0, 0, 0, 0);
-  if (end){ if (m[3]) t.setUTCDate(t.getUTCDate() + 1); else if (m[2]) t.setUTCMonth(t.getUTCMonth() + 1); else t.setUTCFullYear(t.getUTCFullYear() + 1); }
+  t.setUTCFullYear(+m[1], m[2] ? +m[2] - 1 : 0, m[3] ? +m[3] : 1); t.setUTCHours(m[4] ? +m[4] : 0, m[5] ? +m[5] : 0, 0, 0);
+  if (end && !m[4]){ if (m[3]) t.setUTCDate(t.getUTCDate() + 1); else if (m[2]) t.setUTCMonth(t.getUTCMonth() + 1); else t.setUTCFullYear(t.getUTCFullYear() + 1); }
   return t.getTime();
 }
-function fmtT(ms){
+const hasTime = s => /T\d{2}:\d{2}$/.test(String(s ?? ""));
+function fmtT(ms, withTime){
   const d = new Date(ms), p = n => String(n).padStart(2, "0");
-  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`;
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}` + (withTime ? ` ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}` : "");
 }
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -721,6 +727,20 @@ const MOVE_STYLE = {
   air:      { w:3.5, fill:.9,  name:"空中行動" },
   retreat:  { w:6,   fill:.32, name:"撤退", dash:"5 4" }
 };
+const OUTCOME = { success:"達成目標", stopped:"受阻停頓", repulsed:"遭擊退" };
+// arrow width grows with the force moving (log scale, 20,000 ≈ the kind's base width)
+const moveWidth = (mv, st) => st.w * (mv.strength > 0 ? clamp(1 + .35 * Math.log10(mv.strength / 2e4), .6, 1.7) : 1);
+function unitOf(b, mv){
+  const s = b.sides.find(x => x.id === mv.side), names = new Set((s?.units||[]).map(u => typeof u === "string" ? u : u.name));
+  return [mv.unit, mv.label].find(n => n && names.has(n)) || null;
+}
+function showUnit(side, name){
+  document.body.classList.remove("sheet-mini");
+  const el = [...document.querySelectorAll(".unit[data-side]")].find(u => u.dataset.side === side && u.dataset.unit === name);
+  if (!el) return;
+  el.scrollIntoView({ block:"center", behavior:"smooth" });
+  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+}
 const TOKEN = '<svg viewBox="0 0 22 14" aria-hidden="true"><rect x="1" y="1" width="20" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1 1l20 12M21 1L1 13" stroke="currentColor" stroke-width="1.4"/></svg>';
 function tokenIcon(kind, c){
   const inner = kind === "naval" ? ICON.naval : kind === "air" ? ICON.air : TOKEN;
@@ -732,7 +752,8 @@ function phasePlan(b, pi){
   const p = b.phases[pi];
   const t0 = tParse(p.start) ?? tParse(b.date.start) ?? 0;
   let t1 = tParse(p.end || p.start, true);
-  if (t1 == null || t1 <= t0) t1 = t0 + DAY;
+  const timed = [p.start, p.end, ...(p.events||[]).map(e => e.date), ...(p.moves||[]).flatMap(m => [m.start, m.end])].some(hasTime);
+  if (t1 == null || t1 <= t0) t1 = t0 + (hasTime(p.end || p.start) ? 3600e3 : DAY);
   const days = (t1 - t0) / DAY;
   const dur = Math.round(clamp(3500 + 2000 * Math.log2(days + 1), 5000, 12000));
   const frac = s => { const t = tParse(s); return t == null ? null : (t - t0) / (t1 - t0); };
@@ -751,11 +772,17 @@ function phasePlan(b, pi){
   const drawF = clamp(2000 / dur, .16, .3);
   const moves = (p.moves||[]).map((mv, i, all) => {
     const k = used[mv.side] = (used[mv.side] ?? -1) + 1;
+    const own = frac(mv.start);
+    if (own != null) {   // explicit timing: start (and optional end) on the phase clock
+      const f0 = clamp(own, 0, 1 - .08), e = mv.end ? (tParse(mv.end, true) - t0) / (t1 - t0) : f0 + drawF;
+      return { mv, f0, f1:clamp(e, f0 + .08, 1) };
+    }
     const ef = (bySide[mv.side] || [])[k];
     const f0 = clamp(ef != null ? ef - .06 : .04 + i * (.7 / Math.max(1, all.length)), 0, 1 - drawF);
     return { mv, f0, f1:f0 + drawF };
   });
-  return { t0, t1, dur, events:evs, moves };
+  const cams = (p.view_keys||[]).map(k => ({ ...k, f:frac(k.at) })).filter(k => k.f != null && k.f > 0 && k.f < 1).sort((a, b) => a.f - b.f);
+  return { t0, t1, dur, timed, events:evs, moves, cams };
 }
 
 /* geometry: smoothed path in layer pixels at the current zoom */
@@ -784,8 +811,8 @@ function geom(pts){
   };
   return { len:cum[cum.length - 1], at };
 }
-/* tapered arrow (wide tail, pointed head) drawn up to `frac` of the path */
-function arrowPx(g, frac, w0){
+/* tapered arrow (wide tail, pointed head; a flat bar when the move was stopped) drawn up to `frac` of the path */
+function arrowPx(g, frac, w0, blunt){
   if (g.len < 2 || frac <= 0) return null;
   let w = w0, hw = Math.max(w * 2.3, 13), hl = hw * .95;
   const k = Math.min(1, g.len / (hl * 2.6)); w *= k; hw *= k; hl *= k;
@@ -797,7 +824,14 @@ function arrowPx(g, frac, w0){
     Ls.push([q.x - q.ty * h, q.y + q.tx * h]); Rs.push([q.x + q.ty * h, q.y - q.tx * h]);
   }
   const base = g.at(body), tip = g.at(l), hh = Math.min(hw, hw * (l / hl)) / 2;
-  const ring = [...Ls, [base.x - base.ty * hh, base.y + base.tx * hh], [tip.x, tip.y], [base.x + base.ty * hh, base.y - base.tx * hh], ...Rs.reverse()];
+  const off = (q, h) => [q.x - q.ty * h, q.y + q.tx * h];
+  if (blunt && frac >= 1) {   // body runs to the end, capped by a crossbar
+    const bar = Math.max(2.5, w * .4), q0 = g.at(Math.max(0, l - bar)), wb = width(Math.max(0, l - bar)) / 2;
+    Ls.length = Rs.length = 0;
+    for (let i = 0; i <= n; i++){ const s = Math.max(0, l - bar) * i / n, q = g.at(s), h = width(s) / 2; Ls.push(off(q, h)); Rs.push(off(q, -h)); }
+    return { ring:[...Ls, off(q0, wb), off(q0, hw * .5), off(tip, hw * .5), off(tip, -hw * .5), off(q0, -hw * .5), off(q0, -wb), ...Rs.reverse()], tip };
+  }
+  const ring = [...Ls, off(base, hh), [tip.x, tip.y], off(base, -hh), ...Rs.reverse()];
   return { ring, tip };
 }
 const toLL = ring => { const z = map.getZoom(); return ring.map(([x, y]) => map.unproject(L.point(x, y), z)); };
@@ -875,13 +909,18 @@ function buildPhase(pi){
   A.plan.moves.forEach(({ mv, f0, f1 }) => {
     if (!mv.path || mv.path.length < 2) return;
     const c = sideColor(b, mv.side), st = MOVE_STYLE[mv.kind] || MOVE_STYLE.attack;
+    const w = moveWidth(mv, st), blunt = mv.outcome === "stopped" || mv.outcome === "repulsed";
     const layer = L.polygon([[0, 0]], { color:css("--paper"), weight:1.2, opacity:.9, fillColor:c, fillOpacity:st.fill, lineJoin:"round" });
     if (st.dash) layer.setStyle({ color:c, dashArray:st.dash, weight:1.6 });
-    layer.bindTooltip(`<b>${esc(mv.label || st.name)}</b> <span style="color:var(--ink-3)">${esc(st.name)}</span>`, { sticky:true });
+    const unit = unitOf(b, mv);
+    layer.bindTooltip(`<b>${esc(mv.label || st.name)}</b> <span style="color:var(--ink-3)">${esc(st.name)}${mv.strength ? ` · 約 ${fmt(mv.strength)}` : ""}${blunt ? ` · ${OUTCOME[mv.outcome]}` : ""}</span>${unit ? `<br><span style="font-size:11px;color:var(--ink-3)">點選看部隊資料</span>` : ""}`, { sticky:true });
+    if (unit) layer.on("click", () => showUnit(mv.side, unit));
+    const mark = blunt ? L.marker(mv.path[mv.path.length - 1], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:[20,20], iconAnchor:[10,10],
+      html:`<div class="xmark" title="${esc(OUTCOME[mv.outcome])}">${ICON.close}</div>` }) }) : null;
     const token = L.marker(mv.path[0], { icon:tokenIcon(mv.kind, c), interactive:false, keyboard:false });
     const label = mv.label ? L.marker(mv.path[0], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:null, iconAnchor:[0,0],
       html:`<span class="mv-label" style="--c:${esc(c)}">${esc(mv.label)}</span>` }) }) : null;
-    A.moves.push({ mv, st, c, f0, f1, layer, token, label, p:-1, shown:false, tokOn:false, lblOn:false });
+    A.moves.push({ mv, st, w, blunt, c, f0, f1, layer, token, label, mark, p:-1, shown:false, tokOn:false, lblOn:false, markOn:false });
   });
   A.z = null;
 }
@@ -901,7 +940,7 @@ function keepInView(ll){
 }
 function narrate(e){
   const c = e.side ? sideColor(cur, e.side) : css("--ink-2");
-  $("#tlEv").innerHTML = `<i style="--c:${esc(c)}">${ICON[e.type]||ICON.other}</i><span>${esc(e.date||"")}</span><b>${esc(e.title)}</b>`;
+  $("#tlEv").innerHTML = `<i style="--c:${esc(c)}">${ICON[e.type]||ICON.other}</i><span>${esc(String(e.date||"").replace("T"," "))}</span><b>${esc(e.title)}</b>`;
 }
 function render(force){
   if (A.pi < 0 || !cur) return;
@@ -919,7 +958,7 @@ function render(force){
   }
   // ghosts: geometry only depends on zoom
   if (zoomed || force) for (const gh of A.ghosts){
-    const a = arrowPx(geom(pathPx(gh.mv.path)), 1, gh.st.w);
+    const a = arrowPx(geom(pathPx(gh.mv.path)), 1, moveWidth(gh.mv, gh.st), gh.mv.outcome === "stopped" || gh.mv.outcome === "repulsed");
     if (a) gh.layer.setLatLngs(toLL(a.ring));
   }
   // zones
@@ -939,10 +978,11 @@ function render(force){
     if (p <= 0) { if (m.shown) { phaseLayer.removeLayer(m.layer); m.shown = false; } }
     else {
       if (zoomed || force || !m.g) m.g = geom(pathPx(m.mv.path));
-      const a = arrowPx(m.g, p, m.st.w);
+      const a = arrowPx(m.g, p, m.w, m.blunt);
       if (a) { m.layer.setLatLngs(toLL(a.ring)); if (!m.shown) { phaseLayer.addLayer(m.layer); m.shown = true; } }
       if (a && p < 1) m.token.setLatLng(map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom()));
     }
+    if (m.mark) { const on = p >= 1; if (on !== m.markOn) { on ? phaseLayer.addLayer(m.mark) : phaseLayer.removeLayer(m.mark); m.markOn = on; } }
     const tokOn = p > 0 && p < 1;
     if (tokOn !== m.tokOn) { tokOn ? phaseLayer.addLayer(m.token) : phaseLayer.removeLayer(m.token); m.tokOn = tokOn; }
     if (m.label){
@@ -951,10 +991,16 @@ function render(force){
       if (lblOn !== m.lblOn) { lblOn ? phaseLayer.addLayer(m.label) : phaseLayer.removeLayer(m.label); m.lblOn = lblOn; }
     }
   }
+  // camera keyframes inside the phase
+  for (const k of plan.cams){
+    if (k.done || el < k.f * plan.dur) continue;
+    k.done = true;
+    if (el < plan.dur) flyVis([k.lat, k.lng], k.zoom || map.getZoom(), 1.1);
+  }
   // clock readout
   const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - 1), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
-  $("#tlDate").textContent = fmtT(t) + (day != null && day > 0 ? ` · 第 ${day} 天` : "");
+  $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
 }
 function frame(now){
@@ -1009,7 +1055,7 @@ $("#segs").addEventListener("click", ev => { const s = ev.target.closest(".seg")
 
 /* ---------------- sidebar ---------------- */
 function dateRange(a, b){
-  const f = d => { if (!d) return ""; const [y,m,dd] = String(d).split("-"); return y + (m ? "." + m : "") + (dd ? "." + dd : ""); };
+  const f = d => { if (!d) return ""; const [day, time] = String(d).split("T"), [y,m,dd] = day.split("-"); return y + (m ? "." + m : "") + (dd ? "." + dd : "") + (time ? " " + time : ""); };
   return b && b !== a ? `${f(a)} – ${f(b)}` : f(a);
 }
 function sideHead(b){
@@ -1062,7 +1108,7 @@ function sideBody(b){
   </div></section>`);
   out.push(`<section class="sec"><h3>經過<small>${(b.phases||[]).length} PHASES</small></h3><div class="phases">${(b.phases||[]).map((p, i) => `
     <div class="ph" data-p="${i}"><button data-p="${i}" aria-label="第 ${i+1} 階段：${esc(p.title)}"><span class="num">${i+1}</span><span class="pt">${esc(p.title)}</span><span class="pd">${esc(dateRange(p.start, p.end))}</span></button>
-    <div class="pb"><p style="margin:0">${esc(p.summary)}</p>${(p.events||[]).length ? `<ul class="evl">${p.events.map((e, ei) => `<li data-ev="${i}-${ei}" tabindex="0"><span class="ei" style="--c:${esc(e.side ? sideColor(b, e.side) : "var(--ink-3)")}">${ICON[e.type]||ICON.other}</span><div><b>${esc(e.title)}</b><span class="d">${esc(e.date||"")}</span><p>${esc(e.text||"")}</p></div></li>`).join("")}</ul>` : ""}</div></div>`).join("")}</div></section>`);
+    <div class="pb"><p style="margin:0">${esc(p.summary)}</p>${(p.events||[]).length ? `<ul class="evl">${p.events.map((e, ei) => `<li data-ev="${i}-${ei}" tabindex="0"><span class="ei" style="--c:${esc(e.side ? sideColor(b, e.side) : "var(--ink-3)")}">${ICON[e.type]||ICON.other}</span><div><b>${esc(e.title)}</b><span class="d">${esc(String(e.date||"").replace("T"," "))}</span><p>${esc(e.text||"")}</p></div></li>`).join("")}</ul>` : ""}</div></div>`).join("")}</div></section>`);
   out.push(weaponsSection(b));
   if (b.significance?.length) out.push(`<section class="sec"><h3>影響與意義<small>LEGACY</small></h3><ul class="sig">${b.significance.map(x => `<li>${esc(x)}</li>`).join("")}</ul></section>`);
   if (b.facts?.length) out.push(`<section class="sec"><h3>小知識</h3><div class="facts">${b.facts.map(f => `<div class="fact"><b>${esc(f.label)}</b><span>${esc(f.text)}</span></div>`).join("")}</div></section>`);
@@ -1079,7 +1125,7 @@ function unitsSection(b){
     return `<div class="oob-col" style="--c:${esc(s.color)}">
       <div class="oob-head"><i></i>${esc(s.name)}</div>
       ${(s.commanders||[]).length ? `<ul class="cmdr">${s.commanders.map(c => `<li><b>${esc(c.name)}</b>${c.fate ? `<span class="fate">${esc(c.fate)}</span>` : ""}<span>${esc(c.role||"")}</span></li>`).join("")}</ul>` : ""}
-      <div class="oob-list">${units.map(u => `<div class="unit">
+      <div class="oob-list">${units.map(u => `<div class="unit" data-side="${esc(s.id)}" data-unit="${esc(u.name)}">
         <div class="u-top"><span class="u-ic" title="${esc(BRANCH[u.branch]||"")}">${ICON[BRANCH_ICON[u.branch]||"troops"]}</span>${u.echelon ? `<span class="u-ech">${esc(u.echelon)}</span>` : ""}</div>
         <div class="u-name">${esc(u.name)}</div>
         ${u.commander ? `<div class="u-cmd">指揮 ${esc(u.commander)}</div>` : ""}
@@ -1271,7 +1317,8 @@ const V = {
   branches:["army","marine","navy","air","other"],
   sources:["wiki","book","paper","web","primary","video","other"],
   conf:["high","medium","low","approx","contested"],
-  date:/^-?\d{1,4}(-\d{2}(-\d{2})?)?$/, id:/^[a-z0-9][a-z0-9-]*$/, color:/^#[0-9a-fA-F]{6}$/
+  outcomes:["success","stopped","repulsed"],
+  date:/^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$/, id:/^[a-z0-9][a-z0-9-]*$/, color:/^#[0-9a-fA-F]{6}$/
 };
 const isObj = o => o && typeof o === "object" && !Array.isArray(o);
 function validateRecord(b, warIds){
@@ -1290,11 +1337,12 @@ function validateRecord(b, warIds){
   else b.wars.forEach(w => { if (!warIds.has(w)) errs.push(`未知的戰爭 id「${w}」— 請在 JSON 附上 wars 定義（bundle 格式）`); });
   const d = b.date || {};
   if (!d.start) errs.push("date.start 必填");
-  ["start","end"].forEach(k => { if (d[k] && !V.date.test(String(d[k]))) errs.push(`date.${k} 需為 YYYY[-MM[-DD]]`); });
+  ["start","end"].forEach(k => { if (d[k] && !V.date.test(String(d[k]))) errs.push(`date.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
   ll("location", b.location?.lat, b.location?.lng);
   const sides = Array.isArray(b.sides) ? b.sides : [];
   if (sides.length < 1 || sides.length > 6) errs.push("sides 需 1–6 方");
   const sideIds = new Set(sides.map(s => s?.id));
+  const unitNames = Object.fromEntries(sides.map(s => [s?.id, new Set((s?.units||[]).map(u => typeof u === "string" ? u : u?.name))]));
   sides.forEach((s, i) => {
     const w = `sides[${i}]`;
     ["id","name","color","commanders","strength","casualties","weapons"].forEach(k => { if (s[k] == null) errs.push(`${w} 缺少 ${k}`); });
@@ -1326,12 +1374,19 @@ function validateRecord(b, warIds){
     const w = `phases[${i}]`;
     ["id","title","start","summary","view"].forEach(k => { if (p[k] == null) errs.push(`${w} 缺少 ${k}`); });
     ll(`${w}.view`, p.view?.lat, p.view?.lng);
+    ["start","end"].forEach(k => { if (p[k] && !V.date.test(String(p[k]))) errs.push(`${w}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
+    (Array.isArray(p.view_keys) ? p.view_keys : []).forEach((k, j) => {
+      const wk = `${w}.view_keys[${j}]`;
+      if (!V.date.test(String(k?.at ?? ""))) errs.push(`${wk}.at 需為 YYYY[-MM[-DD[THH:MM]]]`);
+      ll(wk, k?.lat, k?.lng);
+      if (k?.zoom != null && !(typeof k.zoom === "number" && k.zoom >= 2 && k.zoom <= 18)) errs.push(`${wk}.zoom 需為 2–18`);
+    });
     (p.events||[]).forEach((e, j) => {
       const we = `${w}.events[${j}]`;
       ll(we, e.lat, e.lng);
       if (!V.events.includes(e.type)) errs.push(`${we}.type「${e.type}」不在允許值內`);
       if (e.side && !sideIds.has(e.side)) errs.push(`${we}.side「${e.side}」不是 side id`);
-      if (e.date && !V.date.test(String(e.date))) errs.push(`${we}.date 需為 YYYY[-MM[-DD]]`);
+      if (e.date && !V.date.test(String(e.date))) errs.push(`${we}.date 需為 YYYY[-MM[-DD[THH:MM]]]`);
     });
     (p.moves||[]).forEach((m, j) => {
       const wm = `${w}.moves[${j}]`;
@@ -1340,11 +1395,17 @@ function validateRecord(b, warIds){
       const pts = Array.isArray(m.path) ? m.path : [];
       if (pts.length < 2) errs.push(`${wm}.path 至少 2 點`);
       pts.forEach(pt => ll(wm, pt?.[0], pt?.[1]));
+      ["start","end"].forEach(k => { if (m[k] && !V.date.test(String(m[k]))) errs.push(`${wm}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
+      if (m.start && m.end && String(m.end) < String(m.start)) warns.push(`${wm}.end 早於 start`);
+      if ("strength" in m && !(typeof m.strength === "number" && m.strength > 0)) errs.push(`${wm}.strength 需為正數（該路兵力、艦數或機數）`);
+      if (m.outcome && !V.outcomes.includes(m.outcome)) errs.push(`${wm}.outcome 不在 ${V.outcomes.join("/")}`);
+      if (m.unit && !unitNames[m.side]?.has(m.unit)) warns.push(`${wm}.unit「${m.unit}」不在 ${m.side} 的 units 名稱內`);
     });
     (p.zones||[]).forEach((z, j) => {
       const wz = `${w}.zones[${j}]`;
       if (!sideIds.has(z.side)) errs.push(`${wz}.side 不是 side id`);
       if (!z.polygon && !z.line) errs.push(`${wz} 需要 polygon 或 line`);
+      if ("key" in z && !(typeof z.key === "string" && V.id.test(z.key))) errs.push(`${wz}.key 需為 kebab-case 字串（同 key＝跨階段同一區域）`);
     });
   });
   if (!Array.isArray(b.sources) || !b.sources.length) errs.push("sources 至少一筆");
