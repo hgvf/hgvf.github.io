@@ -6,6 +6,7 @@ Usage:
   python3 scripts/atlas.py build                 # validate all, then write data/index.json
   python3 scripts/atlas.py export > bundle.json  # one-file bundle (wars + all battles), same format the site imports
   python3 scripts/atlas.py import bundle.json    # split a site export (bundle / single battle / array) into data/
+  python3 scripts/atlas.py backfill [file ...]   # make implicit animation links explicit (zones.key, moves.unit)
 
 Standard library only.
 """
@@ -24,8 +25,10 @@ WEAPON_CATS = {"smallarm", "artillery", "aa", "tank", "vehicle", "aircraft", "sh
 BRANCHES = {"army", "marine", "navy", "air", "other"}
 SOURCE_TYPES = {"wiki", "book", "paper", "web", "primary", "video", "other"}
 CONF = {"high", "medium", "low", "approx", "contested"}
-DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2})?)?$")
-ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?\Z", re.ASCII)  # time only with a full date
+OUTCOMES = {"success", "stopped", "repulsed"}
+TRACK_STATUS = {"active", "destroyed", "withdrawn"}
+ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*\Z")
 
 
 def load_wars():
@@ -33,7 +36,7 @@ def load_wars():
 
 
 def check_latlng(errs, where, lat, lng):
-    if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)):
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (lat, lng)):
         errs.append(f"{where}: lat/lng must be numbers")
     elif not (-90 <= lat <= 90 and -180 <= lng <= 180):
         errs.append(f"{where}: lat/lng out of range ({lat},{lng})")
@@ -60,12 +63,12 @@ def validate(b, wars, fname=""):
     d = b["date"]
     for k in ("start", "end"):
         if k in d and d[k] and not DATE_RE.match(str(d[k])):
-            errs.append(f"date.{k} must be YYYY[-MM[-DD]]")
+            errs.append(f"date.{k} must be YYYY[-MM[-DD[THH:MM]]]")
     if not d.get("start"):
         errs.append("date.start required")
     loc = b["location"]
     check_latlng(errs, "location", loc.get("lat"), loc.get("lng"))
-    side_ids = set()
+    side_ids, unit_names = set(), {}
     if not (1 <= len(b["sides"]) <= 6):
         errs.append("sides: need 1–6 sides")
     for i, s in enumerate(b["sides"]):
@@ -74,6 +77,7 @@ def validate(b, wars, fname=""):
             if k not in s:
                 errs.append(f"{w}: missing {k}")
         side_ids.add(s.get("id"))
+        unit_names[s.get("id")] = {u.get("name") if isinstance(u, dict) else u for u in s.get("units", [])}
         if s.get("color") and not re.match(r"^#[0-9a-fA-F]{6}$", s["color"]):
             errs.append(f"{w}.color must be #rrggbb")
         for j, wp in enumerate(s.get("weapons", [])):
@@ -116,6 +120,9 @@ def validate(b, wars, fname=""):
                 errs.append(f"{w}: missing {k}")
         v = p.get("view", {})
         check_latlng(errs, f"{w}.view", v.get("lat"), v.get("lng"))
+        for k in ("start", "end"):
+            if p.get(k) and not DATE_RE.match(str(p[k])):
+                errs.append(f"{w}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
         for j, e in enumerate(p.get("events", [])):
             we = f"{w}.events[{j}]"
             check_latlng(errs, we, e.get("lat"), e.get("lng"))
@@ -124,24 +131,89 @@ def validate(b, wars, fname=""):
             if e.get("side") and e["side"] not in side_ids:
                 errs.append(f"{we}.side '{e['side']}' is not a side id")
             if e.get("date") and not DATE_RE.match(str(e["date"])):
-                errs.append(f"{we}.date must be YYYY[-MM[-DD]]")
+                errs.append(f"{we}.date must be YYYY[-MM[-DD[THH:MM]]]")
         for j, m in enumerate(p.get("moves", [])):
             wm = f"{w}.moves[{j}]"
             if m.get("kind") not in MOVE_KINDS:
                 errs.append(f"{wm}.kind not in {sorted(MOVE_KINDS)}")
-            if m.get("side") not in side_ids:
+            if not isinstance(m.get("side"), str) or m.get("side") not in side_ids:
                 errs.append(f"{wm}.side '{m.get('side')}' is not a side id")
             pts = m.get("path", [])
             if len(pts) < 2:
                 errs.append(f"{wm}.path needs ≥2 points")
             for pt in pts:
                 check_latlng(errs, wm, *(pt + [None, None])[:2])
+            for k in ("start", "end"):
+                if m.get(k) and not DATE_RE.match(str(m[k])):
+                    errs.append(f"{wm}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
+            st, en = str(m.get("start") or ""), str(m.get("end") or "")
+            if st and en and len(st) == len(en) and en < st:   # same precision only: a date-only end means end of that day
+                warns.append(f"{wm}.end is before start")
+            if "strength" in m and not (isinstance(m["strength"], (int, float)) and not isinstance(m["strength"], bool) and m["strength"] > 0):
+                errs.append(f"{wm}.strength must be a positive number (troops, ships or aircraft in the move)")
+            if m.get("outcome") and not (isinstance(m["outcome"], str) and m["outcome"] in OUTCOMES):
+                errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
+            if m.get("unit") and not isinstance(m["unit"], str):
+                errs.append(f"{wm}.unit must be a string")
+            elif m.get("unit") and isinstance(m.get("side"), str) and m["unit"] not in unit_names.get(m.get("side"), set()):
+                warns.append(f"{wm}.unit '{m['unit']}' is not in {m.get('side')}.units[].name")
         for j, z in enumerate(p.get("zones", [])):
             wz = f"{w}.zones[{j}]"
             if z.get("side") not in side_ids:
                 errs.append(f"{wz}.side is not a side id")
             if "polygon" not in z and "line" not in z:
                 errs.append(f"{wz} needs polygon or line")
+            if "key" in z and not (isinstance(z["key"], str) and ID_RE.match(z["key"])):
+                errs.append(f"{wz}.key must be a kebab-case string (same key = same zone across phases)")
+        vk = p.get("view_keys", [])
+        if not isinstance(vk, list):
+            errs.append(f"{w}.view_keys must be a list")
+            vk = []
+        for j, k in enumerate(vk):
+            wk = f"{w}.view_keys[{j}]"
+            if not isinstance(k, dict):
+                errs.append(f"{wk} must be an object {{at, lat, lng, zoom}}")
+                continue
+            if not DATE_RE.match(str(k.get("at", ""))):
+                errs.append(f"{wk}.at must be YYYY[-MM[-DD[THH:MM]]]")
+            check_latlng(errs, wk, k.get("lat"), k.get("lng"))
+            if k.get("zoom") is not None and not (isinstance(k["zoom"], (int, float)) and 2 <= k["zoom"] <= 18):
+                errs.append(f"{wk}.zoom must be 2–18")
+    tracks = b.get("tracks", [])
+    if not isinstance(tracks, list):
+        errs.append("tracks must be a list")
+        tracks = []
+    for i, t in enumerate(tracks):
+        wt = f"tracks[{i}]"
+        if not isinstance(t, dict):
+            errs.append(f"{wt} must be an object {{unit, side, points}}")
+            continue
+        if not isinstance(t.get("unit"), str) or not t.get("unit"):
+            errs.append(f"{wt}.unit required (unit name)")
+        elif isinstance(t.get("side"), str) and t["unit"] not in unit_names.get(t.get("side"), set()):
+            warns.append(f"{wt}.unit '{t['unit']}' is not in {t.get('side')}.units[].name")
+        if not isinstance(t.get("side"), str) or t.get("side") not in side_ids:
+            errs.append(f"{wt}.side '{t.get('side')}' is not a side id")
+        pts = t.get("points") if isinstance(t.get("points"), list) else []
+        if len(pts) < 2:
+            errs.append(f"{wt}.points needs ≥2 points")
+        prev = None
+        for j, p in enumerate(pts):
+            wp = f"{wt}.points[{j}]"
+            if not isinstance(p, dict):
+                errs.append(f"{wp} must be an object {{date, lat, lng, status, note}}")
+                continue
+            check_latlng(errs, wp, p.get("lat"), p.get("lng"))
+            if p.get("date") is not None and not DATE_RE.match(str(p["date"])):
+                errs.append(f"{wp}.date must be YYYY[-MM[-DD[THH:MM]]]")
+            if p.get("status") is not None and not (isinstance(p["status"], str) and p["status"] in TRACK_STATUS):
+                errs.append(f"{wp}.status not in {sorted(TRACK_STATUS)}")
+            if j in (0, len(pts) - 1) and not p.get("date"):
+                errs.append(f"{wp}: first and last points need a date")
+            if p.get("date") and prev and len(str(p["date"])) == len(prev) and str(p["date"]) < prev:
+                errs.append(f"{wp}.date is before the previous point")
+            if p.get("date"):
+                prev = str(p["date"])
     if not b["sources"]:
         errs.append("sources: at least one required")
     for i, s in enumerate(b["sources"]):
@@ -265,6 +337,51 @@ def cmd_import(path):
     return cmd_build()
 
 
+def zone_shape(z):
+    return "polygon" if "polygon" in z else "line"
+
+
+def cmd_backfill(files):
+    """Write the links the page otherwise infers at runtime into the records, so they survive edits:
+    zones.key chains a zone that continues into the next phase (the page morphs it), and moves.unit
+    names the units[] entry an arrow belongs to (clicking the arrow opens it). Timing (moves.start)
+    is left alone: it must come from sources, the page already paces undated moves by their events."""
+    for f in map(pathlib.Path, files):
+        b = json.loads(f.read_text("utf-8"))
+        names = {s.get("id"): {u.get("name") if isinstance(u, dict) else u for u in s.get("units", [])} for s in b.get("sides", [])}
+        n_unit = n_key = 0
+        for p in b.get("phases", []):
+            for m in p.get("moves", []):
+                if not m.get("unit") and m.get("label") in names.get(m.get("side"), ()):
+                    m["unit"] = m["label"]; n_unit += 1
+        phases = b.get("phases", [])
+        used = {z["key"] for p in phases for z in p.get("zones", []) if z.get("key")}
+        for i in range(1, len(phases)):
+            prev, cur = phases[i - 1].get("zones", []), phases[i].get("zones", [])
+            claimed = {o["key"] for o in cur if o.get("key")}
+            for z in cur:
+                if z.get("key"):
+                    continue
+                sig = lambda o: (o.get("side"), o.get("kind"), zone_shape(o))
+                same = [o for o in prev if sig(o) == sig(z)]
+                peers = [o for o in cur if sig(o) == sig(z)]
+                hit = next((o for o in same if o.get("label") and o.get("label") == z.get("label")), None)
+                if not hit and len(same) == 1 and len(peers) == 1:
+                    hit = same[0]
+                if not hit or (hit.get("key") and hit["key"] in claimed):
+                    continue
+                if not hit.get("key"):
+                    base = f"{hit.get('side')}-{hit.get('kind') or 'zone'}"
+                    k, n = base, 2
+                    while k in used:
+                        k, n = f"{base}-{n}", n + 1
+                    hit["key"] = k; used.add(k); n_key += 1
+                z["key"] = hit["key"]; claimed.add(z["key"]); n_key += 1
+        f.write_text(json.dumps(b, ensure_ascii=False, indent=2) + "\n", "utf-8")
+        print(f"{f.name}: +{n_unit} moves.unit, +{n_key} zones.key")
+    return 0
+
+
 if __name__ == "__main__":
     a = sys.argv[1:] or ["build"]
     if a[0] == "validate":
@@ -273,6 +390,8 @@ if __name__ == "__main__":
         sys.exit(cmd_build())
     if a[0] == "import" and len(a) > 1:
         sys.exit(cmd_import(a[1]))
+    if a[0] == "backfill":
+        sys.exit(cmd_backfill(a[1:] or all_files()))
     if a[0] == "export":
         sys.exit(cmd_export())
     print(__doc__)
