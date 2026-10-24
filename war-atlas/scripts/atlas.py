@@ -27,6 +27,7 @@ SOURCE_TYPES = {"wiki", "book", "paper", "web", "primary", "video", "other"}
 CONF = {"high", "medium", "low", "approx", "contested"}
 DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?\Z", re.ASCII)  # time only with a full date
 OUTCOMES = {"success", "stopped", "repulsed"}
+TRACK_STATUS = {"active", "destroyed", "withdrawn"}
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*\Z")
 
 
@@ -178,6 +179,41 @@ def validate(b, wars, fname=""):
             check_latlng(errs, wk, k.get("lat"), k.get("lng"))
             if k.get("zoom") is not None and not (isinstance(k["zoom"], (int, float)) and 2 <= k["zoom"] <= 18):
                 errs.append(f"{wk}.zoom must be 2–18")
+    tracks = b.get("tracks", [])
+    if not isinstance(tracks, list):
+        errs.append("tracks must be a list")
+        tracks = []
+    for i, t in enumerate(tracks):
+        wt = f"tracks[{i}]"
+        if not isinstance(t, dict):
+            errs.append(f"{wt} must be an object {{unit, side, points}}")
+            continue
+        if not isinstance(t.get("unit"), str) or not t.get("unit"):
+            errs.append(f"{wt}.unit required (unit name)")
+        elif t["unit"] not in unit_names.get(t.get("side"), set()):
+            warns.append(f"{wt}.unit '{t['unit']}' is not in {t.get('side')}.units[].name")
+        if t.get("side") not in side_ids:
+            errs.append(f"{wt}.side '{t.get('side')}' is not a side id")
+        pts = t.get("points") if isinstance(t.get("points"), list) else []
+        if len(pts) < 2:
+            errs.append(f"{wt}.points needs ≥2 points")
+        prev = None
+        for j, p in enumerate(pts):
+            wp = f"{wt}.points[{j}]"
+            if not isinstance(p, dict):
+                errs.append(f"{wp} must be an object {{date, lat, lng, status, note}}")
+                continue
+            check_latlng(errs, wp, p.get("lat"), p.get("lng"))
+            if p.get("date") is not None and not DATE_RE.match(str(p["date"])):
+                errs.append(f"{wp}.date must be YYYY[-MM[-DD[THH:MM]]]")
+            if p.get("status") is not None and not (isinstance(p["status"], str) and p["status"] in TRACK_STATUS):
+                errs.append(f"{wp}.status not in {sorted(TRACK_STATUS)}")
+            if j in (0, len(pts) - 1) and not p.get("date"):
+                errs.append(f"{wp}: first and last points need a date")
+            if p.get("date") and prev and len(str(p["date"])) == len(prev) and str(p["date"]) < prev:
+                errs.append(f"{wp}.date is before the previous point")
+            if p.get("date"):
+                prev = str(p["date"])
     if not b["sources"]:
         errs.append("sources: at least one required")
     for i, s in enumerate(b["sources"]):

@@ -265,6 +265,23 @@ Recommended side colors (keep consistent across the atlas): China/ROC `#3f6e8c`,
 | `unit` | move | exact `units[].name` of that side; clicking the arrow scrolls to the unit (the page also matches `label`) |
 | `key` | zone | kebab-case id shared by the same zone/front across phases, so it morphs instead of reappearing (`python3 scripts/atlas.py backfill` adds keys and `unit` links it can infer) |
 | `view_keys` | phase | `[{"at":"1939-08-24","lat":…,"lng":…,"zoom":11}]` extra camera stops inside the phase |
+| `tracks` | record (top level) | units followed across phases, see below |
+
+In a phase that has hour stamps, a date-only event plays right after the event listed before it, so keep events in narrative order.
+
+**`tracks`** (optional, top level): a unit token that stays on the map across phases, moved by the battle clock, with a dotted trail behind it. Use it for the 3–10 formations the story follows (the ones whose `note` says where they went and what happened to them), built from the record's own dated events, moves and unit notes — never invent a route.
+
+```json
+"tracks": [
+  {"unit":"安岡支隊（第1戰車團）","side":"japan","points":[
+    {"date":"1939-07-02","lat":47.8,"lng":118.74,"note":"夜襲東岸蘇軍"},
+    {"lat":47.78,"lng":118.68},
+    {"date":"1939-07-09","lat":47.77,"lng":118.66,"status":"withdrawn","note":"被擊退後解散"}]}
+]
+```
+- `unit` = exact `units[].name` of `side` (the token links to it; a move with the same unit/label hands its riding token over to the track).
+- `points`: ≥2, first and last dated, dates non-decreasing; undated middle points are spread evenly in time. `status`: `active` (default), `destroyed`, `withdrawn` — from that point on. A track that ends `active` disappears a day after its last point; one that ends destroyed/withdrawn stays as a faded marker.
+- Say in `provenance.notes` that tracks are stitched from the record's events and moves and are schematic.
 
 ```json
 {"side":"ussr","kind":"attack","label":"南翼集團","unit":"第57特別軍","strength":20000,

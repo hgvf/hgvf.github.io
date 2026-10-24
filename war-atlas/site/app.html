@@ -97,6 +97,17 @@ button,input,textarea,select{font:inherit;color:inherit}
 .tok{width:26px;height:18px;display:grid;place-items:center;background:var(--paper);color:var(--c);border:1.5px solid var(--c);border-radius:3px;box-shadow:0 1px 5px rgba(0,0,0,.35)}
 .tok svg{width:20px;height:13px}
 .tok.round{border-radius:9px}
+.trk{position:relative;width:26px;height:18px}
+.trk .tok{background:var(--c);color:#fff;border-color:var(--paper)}
+.trk span{position:absolute;left:50%;top:19px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--paper) 85%,transparent);padding:0 3px;border-radius:3px}
+.lowzoom .trk span{display:none}
+.trk.withdrawn{opacity:.55}
+.trk.past{opacity:.3}
+.trk.past span{display:none}
+.trk.withdrawn .tok{background:var(--paper);color:var(--c);border:1.5px dashed var(--c)}
+.trk.destroyed .tok{background:var(--ink-3);color:var(--paper)}
+.trk.destroyed::after{content:"";position:absolute;inset:-4px;background:linear-gradient(45deg,transparent 45%,var(--bad) 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,var(--bad) 45% 55%,transparent 55%)}
+.trk.destroyed span{color:var(--ink-3);text-decoration:line-through}
 .xmark{width:20px;height:20px;border-radius:50%;background:var(--paper);color:var(--bad);border:2px solid var(--bad);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.3);animation:pop .4s cubic-bezier(.3,1.6,.5,1) both}
 .xmark svg{width:12px;height:12px;stroke-width:3}
 .unit.flash{animation:uflash 1.8s ease-out}
@@ -669,6 +680,7 @@ function setEvState(m, st){
 }
 function drawBattle(b){
   clearPhase(); battleLayer.clearLayers(); evMarkers = [];
+  buildTracks(b);
   for (const p of b.places || []){
     const m = L.circleMarker([p.lat, p.lng], { radius:4, color:css("--ink"), weight:1.5, fillColor:css("--paper"), fillOpacity:1 });
     m.bindTooltip(esc(p.name), { permanent:true, direction:"right", className:"place-label", offset:[6,0] });
@@ -758,8 +770,12 @@ function phasePlan(b, pi){
   const dur = Math.round(clamp(3500 + 2000 * Math.log2(days + 1), 5000, 12000));
   const frac = s => { const t = tParse(s); return t == null ? null : (t - t0) / (t1 - t0); };
   // events: by date, undated ones spread evenly, then spaced so same-day events still play one by one
-  const evs = (p.events||[]).map((e, ei) => ({ ei, e, f:frac(e.date) }));
-  evs.forEach((x, i) => { if (x.f == null) x.f = (i + .5) / evs.length; x.f = clamp(x.f, .04, .9); });
+  // in a phase with hour stamps, a date-only event goes after the event listed before it (same day or later)
+  const evs = (p.events||[]).map((e, ei) => ({ ei, e, day:frac(e.date), f:timed && !hasTime(e.date) ? null : frac(e.date) }));
+  evs.forEach((x, i) => {
+    if (x.f == null) x.f = timed && x.day != null ? Math.max(x.day, i ? evs[i - 1].f + .01 : 0) : (i + .5) / evs.length;
+    x.f = clamp(x.f, .04, .9);
+  });
   const order = evs.slice().sort((a, b) => a.f - b.f || a.ei - b.ei);
   const gap = Math.min(.08, .86 / Math.max(1, order.length));
   order.forEach((x, i) => { if (i && x.f < order[i - 1].f + gap) x.f = order[i - 1].f + gap; });
@@ -875,6 +891,57 @@ const A = { pi:-1, plan:null, el:0, last:0, paused:false, raf:0, moves:[], zones
 function clearPhase(){
   A.pi = -1; A.plan = null; if (A.raf) cancelAnimationFrame(A.raf); A.raf = 0;
   phaseLayer.clearLayers(); A.moves = []; A.zones = []; A.ghosts = [];
+  renderTracks(null);
+}
+
+/* unit tracks: tokens that persist across phases, placed by the battle clock (absolute date), with a trail */
+const trackLayer = L.layerGroup().addTo(map);
+const TRACK_STATUS = { active:"作戰中", destroyed:"被殲滅", withdrawn:"撤出／解散" };
+let tracks = [];
+function buildTracks(b){
+  trackLayer.clearLayers(); tracks = [];
+  for (const tr of b.tracks || []){
+    const pts = (tr.points||[]).filter(p => typeof p?.lat === "number" && typeof p?.lng === "number").map(p => ({ ...p, t:tParse(p.date) }));
+    // undated points are spread evenly in time between their dated neighbours
+    for (let i = 0; i < pts.length; i++){
+      if (pts[i].t != null) continue;
+      let z = i + 1; while (z < pts.length && pts[z].t == null) z++;
+      if (!i || pts[i - 1].t == null || z >= pts.length) continue;
+      pts[i].t = pts[i - 1].t + (pts[z].t - pts[i - 1].t) / (z - i + 1);
+    }
+    const P = pts.filter(p => p.t != null).sort((a, b) => a.t - b.t);
+    if (!P.length) continue;
+    const c = sideColor(b, tr.side), unit = unitOf(b, { side:tr.side, unit:tr.unit });
+    const marker = L.marker([P[0].lat, P[0].lng], { keyboard:false, zIndexOffset:300 });
+    const trail = L.polyline([[P[0].lat, P[0].lng]], { color:c, weight:2, opacity:.55, dashArray:"2 5", lineCap:"round", interactive:false });
+    if (unit) marker.on("click", () => showUnit(tr.side, unit));
+    tracks.push({ tr, P, c, marker, trail, st:null, on:false, unit });
+  }
+}
+function renderTracks(T){
+  for (const k of tracks){
+    const P = k.P, last = P[P.length - 1];
+    let on = T != null && T >= P[0].t, pos = null, i = 0, st = "active", note = "";
+    if (on){
+      while (i < P.length - 1 && P[i + 1].t <= T) i++;
+      for (let j = 0; j <= i; j++){ if (P[j].status) st = P[j].status; if (P[j].note) note = P[j].note; }
+      if (i < P.length - 1){ const a = P[i], b = P[i + 1], u = (T - a.t) / ((b.t - a.t) || 1); pos = [a.lat + (b.lat - a.lat) * u, a.lng + (b.lng - a.lng) * u]; }
+      else { pos = [last.lat, last.lng]; if (st === "active" && T > last.t + DAY) on = false; }   // track ended without a fate: drop it a day later
+      if (st !== "active" && T > last.t + 3 * DAY) st += " past";                                  // an old fate stays as a faint marker
+    }
+    if (on !== k.on){ on ? (trackLayer.addLayer(k.trail), trackLayer.addLayer(k.marker)) : (trackLayer.removeLayer(k.trail), trackLayer.removeLayer(k.marker)); k.on = on; }
+    if (!on) continue;
+    k.marker.setLatLng(pos);
+    k.trail.setLatLngs([...P.slice(0, i + 1).map(p => [p.lat, p.lng]), pos]);
+    const key = st + "|" + note;
+    if (key !== k.st){
+      k.st = key;
+      const name = k.tr.unit.replace(/（.*?）|\(.*?\)/g, "");
+      k.marker.setIcon(L.divIcon({ className:"", iconSize:[26,18], iconAnchor:[13,9],
+        html:`<div class="trk ${esc(st)}" style="--c:${esc(k.c)}"><div class="tok">${TOKEN}</div><span>${esc(name)}</span></div>` }));
+      k.marker.unbindTooltip().bindTooltip(`<b>${esc(k.tr.unit)}</b> <span style="color:var(--ink-3)">${esc(TRACK_STATUS[st] || st)}</span>${note ? `<br><span style="font-size:12px">${esc(note)}</span>` : ""}${k.unit ? `<br><span style="font-size:11px;color:var(--ink-3)">點選看部隊資料</span>` : ""}`, { direction:"top", offset:[0,-10] });
+    }
+  }
 }
 function buildPhase(pi){
   clearPhase();
@@ -917,8 +984,9 @@ function buildPhase(pi){
     if (unit) layer.on("click", () => showUnit(mv.side, unit));
     const mark = blunt ? L.marker(mv.path[mv.path.length - 1], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:[20,20], iconAnchor:[10,10],
       html:`<div class="xmark" title="${esc(OUTCOME[mv.outcome])}">${ICON.close}</div>` }) }) : null;
-    const token = L.marker(mv.path[0], { icon:tokenIcon(mv.kind, c), interactive:false, keyboard:false });
-    const label = mv.label ? L.marker(mv.path[0], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:null, iconAnchor:[0,0],
+    const tracked = tracks.some(k => k.tr.side === mv.side && (k.tr.unit === mv.unit || k.tr.unit === mv.label));
+    const token = tracked ? null : L.marker(mv.path[0], { icon:tokenIcon(mv.kind, c), interactive:false, keyboard:false });
+    const label = mv.label && !tracked ? L.marker(mv.path[0], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:null, iconAnchor:[0,0],
       html:`<span class="mv-label" style="--c:${esc(c)}">${esc(mv.label)}</span>` }) }) : null;
     A.moves.push({ mv, st, w, blunt, c, f0, f1, layer, token, label, mark, p:-1, shown:false, tokOn:false, lblOn:false, markOn:false });
   });
@@ -980,11 +1048,11 @@ function render(force){
       if (zoomed || force || !m.g) m.g = geom(pathPx(m.mv.path));
       const a = arrowPx(m.g, p, m.w, m.blunt);
       if (a) { m.layer.setLatLngs(toLL(a.ring)); if (!m.shown) { phaseLayer.addLayer(m.layer); m.shown = true; } }
-      if (a && p < 1) m.token.setLatLng(map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom()));
+      if (a && p < 1 && m.token) m.token.setLatLng(map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom()));
     }
     if (m.mark) { const on = p >= 1; if (on !== m.markOn) { on ? phaseLayer.addLayer(m.mark) : phaseLayer.removeLayer(m.mark); m.markOn = on; } }
     const tokOn = p > 0 && p < 1;
-    if (tokOn !== m.tokOn) { tokOn ? phaseLayer.addLayer(m.token) : phaseLayer.removeLayer(m.token); m.tokOn = tokOn; }
+    if (m.token && tokOn !== m.tokOn) { tokOn ? phaseLayer.addLayer(m.token) : phaseLayer.removeLayer(m.token); m.tokOn = tokOn; }
     if (m.label){
       const lblOn = p >= .6;
       if (lblOn && (zoomed || force || !m.lblOn)) { const q = m.g.at(m.g.len * .45); m.label.setLatLng(map.unproject(L.point(q.x, q.y), map.getZoom())); }
@@ -1000,6 +1068,7 @@ function render(force){
   // clock readout
   const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - (plan.endTimed ? 0 : 1)), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
+  renderTracks(t);
   $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
 }
@@ -1317,7 +1386,7 @@ const V = {
   branches:["army","marine","navy","air","other"],
   sources:["wiki","book","paper","web","primary","video","other"],
   conf:["high","medium","low","approx","contested"],
-  outcomes:["success","stopped","repulsed"],
+  outcomes:["success","stopped","repulsed"], track:["active","destroyed","withdrawn"],
   date:/^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$/, id:/^[a-z0-9][a-z0-9-]*$/, color:/^#[0-9a-fA-F]{6}$/
 };
 const isObj = o => o && typeof o === "object" && !Array.isArray(o);
@@ -1408,6 +1477,27 @@ function validateRecord(b, warIds){
       if (!sideIds.has(z.side)) errs.push(`${wz}.side 不是 side id`);
       if (!z.polygon && !z.line) errs.push(`${wz} 需要 polygon 或 line`);
       if ("key" in z && !(typeof z.key === "string" && V.id.test(z.key))) errs.push(`${wz}.key 需為 kebab-case 字串（同 key＝跨階段同一區域）`);
+    });
+  });
+  if ("tracks" in b && !Array.isArray(b.tracks)) errs.push("tracks 需為陣列");
+  (Array.isArray(b.tracks) ? b.tracks : []).forEach((t, i) => {
+    const wt = `tracks[${i}]`;
+    if (!isObj(t)) { errs.push(`${wt} 需為物件 {unit, side, points}`); return; }
+    if (typeof t.unit !== "string" || !t.unit) errs.push(`${wt}.unit 必填（部隊名）`);
+    else if (!unitNames[t.side]?.has(t.unit)) warns.push(`${wt}.unit「${t.unit}」不在 ${t.side} 的 units 名稱內`);
+    if (!sideIds.has(t.side)) errs.push(`${wt}.side「${t.side}」不是 side id`);
+    const pts = Array.isArray(t.points) ? t.points : [];
+    if (pts.length < 2) errs.push(`${wt}.points 至少 2 點`);
+    let prev = null;
+    pts.forEach((p, j) => {
+      const wp = `${wt}.points[${j}]`;
+      if (!isObj(p)) { errs.push(`${wp} 需為物件 {date, lat, lng, status, note}`); return; }
+      ll(wp, p.lat, p.lng);
+      if (p.date != null && !V.date.test(String(p.date))) errs.push(`${wp}.date 需為 YYYY[-MM[-DD[THH:MM]]]`);
+      if (p.status != null && !V.track.includes(p.status)) errs.push(`${wp}.status 不在 ${V.track.join("/")}`);
+      if ((j === 0 || j === pts.length - 1) && !p.date) errs.push(`${wp} 首尾兩點需有 date`);
+      if (p.date && prev && String(p.date).length === prev.length && String(p.date) < prev) errs.push(`${wp}.date 早於前一點`);
+      if (p.date) prev = String(p.date);
     });
   });
   if (!Array.isArray(b.sources) || !b.sources.length) errs.push("sources 至少一筆");
