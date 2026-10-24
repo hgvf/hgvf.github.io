@@ -645,7 +645,7 @@ $("#btnBase").addEventListener("click", () => setBase(baseIdx + 1));
 /* ---------------- battle selection ---------------- */
 let cur = null;
 async function select(id, opts={}){
-  stop();
+  stopRecording(); stop();
   let b;
   try { b = await getBattle(id); } catch(e){ toast("找不到這筆戰役資料"); return; }
   cur = b; S.sel = id; S.phase = -1;
@@ -932,9 +932,9 @@ function renderNight(T, timed){
   const loc = cur.location, sun = subsolar(T - loc.lng / 15 * 3600e3);
   if (nightAt == null || Math.abs(T - nightAt) > 5 * 60e3){
     nightAt = T;
-    const tanD = Math.tan((Math.abs(sun.lat) < .1 ? .1 : sun.lat) * RAD), ring = [];
+    const dec = Math.abs(sun.lat) < .1 ? (sun.lat < 0 ? -.1 : .1) : sun.lat, tanD = Math.tan(dec * RAD), ring = [];   // keep the sign at equinox
     for (let x = -540; x <= 540; x += 3) ring.push([clamp(Math.atan(-Math.cos((x - sun.lng) * RAD) / tanD) / RAD, -85, 85), x]);
-    const pole = sun.lat > 0 ? -85 : 85;
+    const pole = dec > 0 ? -85 : 85;
     nightLayer.setLatLngs([...ring, [pole, 540], [pole, -540]]);
     if (!map.hasLayer(nightLayer)) nightLayer.addTo(map);
   }
@@ -1164,24 +1164,30 @@ function stop(){ S.playing = false; A.paused = A.pi >= 0 && A.plan && A.el < A.p
 function setPlayIcon(){ $("#play").innerHTML = S.playing ? ICON.pause : ICON.play; $("#play").setAttribute("aria-label", S.playing ? "暫停" : "播放各階段"); }
 $("#play").addEventListener("click", () => S.playing ? stop() : play());
 $("#rec").innerHTML = ICON.rec;
-const REC = { rec:null };
+const REC = { rec:null, starting:false };
 async function startRecording(){
-  if (!cur) return;
+  if (!cur || REC.starting) return;
   if (!navigator.mediaDevices?.getDisplayMedia || !window.MediaRecorder) { toast("這個瀏覽器（或預覽環境）不支援錄影，請在電腦版 Chrome／Edge／Firefox 開啟網站"); return; }
-  let stream;
+  let stream; const id = cur.id;
+  REC.starting = true;
   try { stream = await navigator.mediaDevices.getDisplayMedia({ video:{ frameRate:30 }, audio:false, preferCurrentTab:true, selfBrowserSurface:"include" }); }
   catch(e){ toast("已取消錄影"); return; }
+  finally { REC.starting = false; }
+  const drop = () => stream.getTracks().forEach(t => t.stop());
+  if (!cur || cur.id !== id) { drop(); return; }   // the battle was closed or switched while the picker was open
   const mime = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"].find(t => MediaRecorder.isTypeSupported(t)) || "";
-  const rec = new MediaRecorder(stream, mime ? { mimeType:mime, videoBitsPerSecond:6e6 } : {}), chunks = [], id = cur.id;
+  let rec; const chunks = [];
+  try { rec = new MediaRecorder(stream, mime ? { mimeType:mime, videoBitsPerSecond:6e6 } : {}); }
+  catch(e){ drop(); toast("無法開始錄影"); return; }
   rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
   rec.onstop = () => {
     stream.getTracks().forEach(t => t.stop());
     REC.rec = null; document.body.classList.remove("recording"); $("#rec").setAttribute("aria-label", "錄成影片");
     if (chunks.length) saveBlob(`${id}.webm`, new Blob(chunks, { type:"video/webm" }));
   };
-  stream.getVideoTracks()[0].addEventListener("ended", stopRecording);
+  stream.getVideoTracks()[0].addEventListener("ended", () => { stop(); stopRecording(); });
   REC.rec = rec; document.body.classList.add("recording"); $("#rec").setAttribute("aria-label", "停止錄影");
-  rec.start(1000);
+  try { rec.start(1000); } catch(e){ REC.rec = null; document.body.classList.remove("recording"); drop(); toast("無法開始錄影"); return; }
   stop(); S.phase = -1; clearPhase();
   toast("錄影中：自動播放全部階段，播完自動存檔", 2400);
   setTimeout(() => { if (REC.rec) play(); }, 900);

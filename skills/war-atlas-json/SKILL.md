@@ -1,7 +1,9 @@
 ---
 name: "war-atlas"
-description: "Research a battle or war for Kuan-Wei's own battle-map site and output exactly one importable JSON file. Use instead of war-atlas whenever a battle name or source link is given."
+description: "Research a battle or war for the user's own battle-map site and output exactly one importable JSON file. Use instead of war-atlas whenever a battle name or source link is given."
 ---
+
+<!-- Copy of the claude.ai "war-atlas" (one JSON) skill, updated for the animation fields. Upload this file to replace the synced skill. -->
 
 # War Atlas → one JSON
 
@@ -170,7 +172,8 @@ def check(b):
     if b["kind"] not in E["kind"]: errs.append("bad kind")
     for w in b["wars"]:
         if w not in WARS: errs.append(f"unknown war '{w}' — pass it with --wars")
-    if not DATE.match(str(b["date"].get("start", ""))): errs.append("date.start must be YYYY[-MM[-DD]]")
+    if not DATE.match(str(b["date"].get("start", ""))): errs.append("date.start must be YYYY[-MM[-DD[THH:MM]]]")
+    if b["date"].get("end") and not DATE.match(str(b["date"]["end"])): errs.append("date.end must be YYYY[-MM[-DD[THH:MM]]]")
     ll(errs, "location", [b["location"].get("lat"), b["location"].get("lng")])
     sids = {s.get("id") for s in b["sides"]}
     units = {s.get("id"): {u.get("name") if isinstance(u, dict) else u for u in s.get("units", [])} for s in b["sides"]}
@@ -202,6 +205,8 @@ def check(b):
         w = f"phases[{i}]"
         for k in ("id","title","start","summary","view"):
             if k not in p: errs.append(f"{w}: missing {k}")
+        for k in ("start", "end"):
+            if p.get(k) and not DATE.match(str(p[k])): errs.append(f"{w}.{k} must be YYYY[-MM[-DD[THH:MM]]]")
         ll(errs, f"{w}.view", [p.get("view", {}).get("lat"), p.get("view", {}).get("lng")])
         for j, e in enumerate(p.get("events", [])):
             ll(errs, f"{w}.events[{j}]", [e.get("lat"), e.get("lng")])
