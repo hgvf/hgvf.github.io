@@ -36,7 +36,7 @@ def load_wars():
 
 
 def check_latlng(errs, where, lat, lng):
-    if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)):
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (lat, lng)):
         errs.append(f"{where}: lat/lng must be numbers")
     elif not (-90 <= lat <= 90 and -180 <= lng <= 180):
         errs.append(f"{where}: lat/lng out of range ({lat},{lng})")
@@ -136,7 +136,7 @@ def validate(b, wars, fname=""):
             wm = f"{w}.moves[{j}]"
             if m.get("kind") not in MOVE_KINDS:
                 errs.append(f"{wm}.kind not in {sorted(MOVE_KINDS)}")
-            if m.get("side") not in side_ids:
+            if not isinstance(m.get("side"), str) or m.get("side") not in side_ids:
                 errs.append(f"{wm}.side '{m.get('side')}' is not a side id")
             pts = m.get("path", [])
             if len(pts) < 2:
@@ -155,7 +155,7 @@ def validate(b, wars, fname=""):
                 errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
             if m.get("unit") and not isinstance(m["unit"], str):
                 errs.append(f"{wm}.unit must be a string")
-            elif m.get("unit") and m["unit"] not in unit_names.get(m.get("side"), set()):
+            elif m.get("unit") and isinstance(m.get("side"), str) and m["unit"] not in unit_names.get(m.get("side"), set()):
                 warns.append(f"{wm}.unit '{m['unit']}' is not in {m.get('side')}.units[].name")
         for j, z in enumerate(p.get("zones", [])):
             wz = f"{w}.zones[{j}]"
@@ -190,9 +190,9 @@ def validate(b, wars, fname=""):
             continue
         if not isinstance(t.get("unit"), str) or not t.get("unit"):
             errs.append(f"{wt}.unit required (unit name)")
-        elif t["unit"] not in unit_names.get(t.get("side"), set()):
+        elif isinstance(t.get("side"), str) and t["unit"] not in unit_names.get(t.get("side"), set()):
             warns.append(f"{wt}.unit '{t['unit']}' is not in {t.get('side')}.units[].name")
-        if t.get("side") not in side_ids:
+        if not isinstance(t.get("side"), str) or t.get("side") not in side_ids:
             errs.append(f"{wt}.side '{t.get('side')}' is not a side id")
         pts = t.get("points") if isinstance(t.get("points"), list) else []
         if len(pts) < 2:

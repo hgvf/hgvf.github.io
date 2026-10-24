@@ -898,6 +898,7 @@ function clearPhase(){
 const trackLayer = L.layerGroup().addTo(map);
 const TRACK_STATUS = { active:"作戰中", destroyed:"被殲滅", withdrawn:"撤出／解散" };
 let tracks = [];
+const baseName = n => String(n).replace(/（.*?）|\(.*?\)/g, "").trim();
 function buildTracks(b){
   trackLayer.clearLayers(); tracks = [];
   for (const tr of b.tracks || []){
@@ -927,18 +928,18 @@ function renderTracks(T){
       for (let j = 0; j <= i; j++){ if (P[j].status) st = P[j].status; if (P[j].note) note = P[j].note; }
       if (i < P.length - 1){ const a = P[i], b = P[i + 1], u = (T - a.t) / ((b.t - a.t) || 1); pos = [a.lat + (b.lat - a.lat) * u, a.lng + (b.lng - a.lng) * u]; }
       else { pos = [last.lat, last.lng]; if (st === "active" && T > last.t + DAY) on = false; }   // track ended without a fate: drop it a day later
-      if (st !== "active" && T > last.t + 3 * DAY) st += " past";                                  // an old fate stays as a faint marker
     }
+    const past = on && st !== "active" && T > last.t + 3 * DAY;   // an old fate stays as a faint marker
     if (on !== k.on){ on ? (trackLayer.addLayer(k.trail), trackLayer.addLayer(k.marker)) : (trackLayer.removeLayer(k.trail), trackLayer.removeLayer(k.marker)); k.on = on; }
     if (!on) continue;
     k.marker.setLatLng(pos);
     k.trail.setLatLngs([...P.slice(0, i + 1).map(p => [p.lat, p.lng]), pos]);
-    const key = st + "|" + note;
+    const key = st + "|" + past + "|" + note;
     if (key !== k.st){
       k.st = key;
-      const name = k.tr.unit.replace(/（.*?）|\(.*?\)/g, "");
+      const name = baseName(k.tr.unit);
       k.marker.setIcon(L.divIcon({ className:"", iconSize:[26,18], iconAnchor:[13,9],
-        html:`<div class="trk ${esc(st)}" style="--c:${esc(k.c)}"><div class="tok">${TOKEN}</div><span>${esc(name)}</span></div>` }));
+        html:`<div class="trk ${esc(st)}${past ? " past" : ""}" style="--c:${esc(k.c)}"><div class="tok">${TOKEN}</div><span>${esc(name)}</span></div>` }));
       k.marker.unbindTooltip().bindTooltip(`<b>${esc(k.tr.unit)}</b> <span style="color:var(--ink-3)">${esc(TRACK_STATUS[st] || st)}</span>${note ? `<br><span style="font-size:12px">${esc(note)}</span>` : ""}${k.unit ? `<br><span style="font-size:11px;color:var(--ink-3)">點選看部隊資料</span>` : ""}`, { direction:"top", offset:[0,-10] });
     }
   }
@@ -984,7 +985,8 @@ function buildPhase(pi){
     if (unit) layer.on("click", () => showUnit(mv.side, unit));
     const mark = blunt ? L.marker(mv.path[mv.path.length - 1], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:[20,20], iconAnchor:[10,10],
       html:`<div class="xmark" title="${esc(OUTCOME[mv.outcome])}">${ICON.close}</div>` }) }) : null;
-    const tracked = tracks.some(k => k.tr.side === mv.side && (k.tr.unit === mv.unit || k.tr.unit === mv.label));
+    const tracked = tracks.some(k => k.tr.side === mv.side && [mv.unit, mv.label].some(n => n && baseName(n) === baseName(k.tr.unit))
+      && k.P[0].t < A.plan.t1 && k.P[k.P.length - 1].t + DAY > A.plan.t0);
     const token = tracked ? null : L.marker(mv.path[0], { icon:tokenIcon(mv.kind, c), interactive:false, keyboard:false });
     const label = mv.label && !tracked ? L.marker(mv.path[0], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:null, iconAnchor:[0,0],
       html:`<span class="mv-label" style="--c:${esc(c)}">${esc(mv.label)}</span>` }) }) : null;
