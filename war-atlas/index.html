@@ -449,7 +449,7 @@ const SRC = {wiki:"wiki",book:"書",paper:"論文",web:"網頁",primary:"一手"
 // repoIndex = data/index.json (GitHub), remote = full records from the site's database (Firestore,
 // attached by site/remote.js when the page runs on the website), local = this browser only.
 // Precedence on the same id: local > remote > repo.
-const S = { wars:{}, warOrder:[], index:[], repoIndex:[], full:{}, remote:{}, local:{}, filter:new Set(), q:"", sel:null, phase:-1, playing:false, timer:null, loaded:false };
+const S = { wars:{}, warOrder:[], index:[], repoIndex:[], full:{}, remote:{}, local:{}, filter:new Set(), q:"", sel:null, phase:-1, playing:false, loaded:false };
 
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function lsSet(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ return false; } }
@@ -691,6 +691,7 @@ function drawBattle(b){
 function focusEvent(pi, ei){
   const m = evMarkers.find(x => x._meta.pi === pi && x._meta.ei === ei); if (!m) return;
   const e = m._meta.e;
+  evMarkers.forEach(x => { if (x !== m && x._st === "focus") { x._st = "reset"; setEvState(x, x._meta.pi === A.pi ? "" : "faded"); } });
   m._st = "focus";
   m.setIcon(L.divIcon({ className:"", iconSize:[28,28], iconAnchor:[14,14], html:`<div class="ev-wrap"><div class="burst" style="--c:${esc(e.side?sideColor(cur,e.side):css("--accent"))}"></div><div class="ev focus" style="--c:${esc(e.side?sideColor(cur,e.side):css("--ink-2"))}">${ICON[e.type]||ICON.other}</div></div>` }));
   flyVis([e.lat, e.lng], Math.max(map.getZoom(), (cur.phases[pi].view||{}).zoom || 10), .8);
@@ -877,7 +878,7 @@ function buildPhase(pi){
          L.polyline(to, { color:c, weight:1.5, opacity:.8, className:cls, interactive:false })];
     if (z.label) layers[0].bindTooltip(esc(z.label), { sticky:true });
     layers.forEach(l => phaseLayer.addLayer(l));
-    A.zones.push({ layers, ra, rb, done:!ra });
+    A.zones.push({ layers, ra, rb, to, done:!ra });
   }
   // moves: tapered arrow + token riding the tip + label once it lands
   A.plan.moves.forEach(({ mv, f0, f1 }) => {
@@ -936,7 +937,7 @@ function render(force){
     if (z.done && !force) continue;
     if (!z.ra) { z.done = true; continue; }
     const pts = z.ra.map((a, i) => [a[0] + (z.rb[i][0] - a[0]) * zf, a[1] + (z.rb[i][1] - a[1]) * zf]);
-    z.layers.forEach(l => l.setLatLngs(pts));
+    z.layers.forEach(l => l.setLatLngs(zf >= 1 ? z.to : pts));
     if (zf >= 1) z.done = true;
   }
   // moves
@@ -1150,7 +1151,7 @@ function renderSide(b){
   $("#sideBody").innerHTML = sideBody(b);
   $("#sideBody").scrollTop = 0;
   $("#btnClose").onclick = closeSide;
-  $("#btnFocus").onclick = () => { stop(); S.phase = -1; clearPhase(); evMarkers.forEach(m => setEvState(m, "")); $("#tlEv").innerHTML = ""; document.querySelectorAll(".ph").forEach(e => e.classList.remove("active")); document.querySelectorAll(".seg").forEach(e => { e.classList.remove("on","done"); e.querySelector(".prog").style.width = "0"; }); flyVis([b.location.lat, b.location.lng], b.location.zoom||8, .9); };
+  $("#btnFocus").onclick = () => { stop(); S.phase = -1; clearPhase(); evMarkers.forEach(m => setEvState(m, "")); $("#tlEv").innerHTML = ""; $("#tlTitle").textContent = "按播放，依序重現戰局"; $("#tlDate").textContent = `${(b.phases||[]).length} 個階段`; document.querySelectorAll(".ph").forEach(e => e.classList.remove("active")); document.querySelectorAll(".seg").forEach(e => { e.classList.remove("on","done"); e.querySelector(".prog").style.width = "0"; }); flyVis([b.location.lat, b.location.lng], b.location.zoom||8, .9); };
   $("#btnJson").onclick = () => openJson(b);
 }
 $("#sideBody").addEventListener("click", ev => {
@@ -1168,10 +1169,11 @@ addEventListener("keydown", ev => {
   if (ev.target.matches("input,textarea")) return;
   if (ev.key === "Escape") { if (!$("#modal").hidden) closeModal(); else if (cur) closeSide(); }
   if (!cur) return;
-  if (ev.key === "ArrowRight") { stop(); goPhase(Math.min(S.phase + 1, cur.phases.length - 1)); }
-  if (ev.key === "ArrowLeft") { stop(); goPhase(Math.max(S.phase - 1, 0)); }
+  // capture phase + stopPropagation: Leaflet's keyboard panning would otherwise swallow the arrows while the map has focus
+  if (ev.key === "ArrowRight") { ev.stopPropagation(); ev.preventDefault(); stop(); goPhase(Math.min(S.phase + 1, cur.phases.length - 1)); }
+  if (ev.key === "ArrowLeft") { ev.stopPropagation(); ev.preventDefault(); stop(); goPhase(Math.max(S.phase - 1, 0)); }
   if (ev.key === " ") { ev.preventDefault(); S.playing ? stop() : play(); }
-});
+}, true);
 
 /* ---------------- import / export ---------------- */
 function closeModal(){ $("#modal").hidden = true; $("#modal").innerHTML = ""; }
