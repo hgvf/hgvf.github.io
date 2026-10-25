@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-25T22:30:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-10-23", "end": "2026-10-23"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"permanent magnet": 1, "rare earth": 1, "critical minerals": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["GM", "UUUU", "EFR.TO"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261023-001",
+      "slug": "supplier-change-gm-uuuu-evac-ndfeb-magnet-termination",
+      "event_date": "2026-10-23",
+      "published_at": "2026-10-23",
+      "ingested_at": "2026-10-25T22:30:00+08:00",
+      "event_type": "supplier_change",
+      "event_type_secondary": ["supply_agreement"],
+      "themes": ["permanent magnet", "rare earth", "critical minerals"],
+      "regions": ["US", "DE"],
+      "importance_score": 73,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "GM 證實終止與 e-VAC 的美國 NdFeB 磁鐵長約，雙方進入仲裁，Energy Fuels 併購 VAC 價格條款隨之調整",
+      "title_original": "Exclusive: GM cancels deal with new US rare-earth magnet plant, documents say",
+      "summary_zh": "GM 的 SEC 文件與知情人士證實，GM 為 Energy Fuels 揭露中「已於 7 月 1 日終止供應協議」的客戶，對象是 VAC 美國子公司 e-VAC Magnetics（南卡羅來納州新廠，年產能近 2,000 噸，原規劃約 90% 產出供 GM）。VAC 已提起仲裁求償；Energy Fuels 於 10 月 13 日修訂 19 億美元併購協議，購買價格可依仲裁結果調整。註：終止生效日為 7/1，本事件日期為客戶身分公開證實日。",
+      "why_it_matters": "e-VAC 約 90% 的預定產出原本鎖定 GM，長約終止使這座美國少數新增的非中國 NdFeB 磁鐵廠失去錨定客戶，Energy Fuels 評估該爭議是 e-VAC 未來營收的「重大組成」，併購價格因此與仲裁結果連動；對 GM 而言是縮減 EV 牽引馬達本土磁鐵採購承諾（呼應 1 月 60 億美元 EV 減損）。短期受益者是不受長約約束的磁鐵買家（可爭取 e-VAC 釋出產能），MP Materials 等美國磁鐵供應商的本土客戶議價與去中國化敘事則受到需求面不確定性牽制。",
+      "tickers": ["GM", "UUUU", "EFR.TO"],
+      "companies": [
+        {"name": "General Motors Company", "ticker": "GM", "exchange": "NYSE", "country": "US", "role": "customer"},
+        {"name": "Vacuumschmelze GmbH (VAC) / e-VAC Magnetics", "ticker": null, "exchange": null, "country": "DE", "role": "supplier"},
+        {"name": "Energy Fuels Inc.", "ticker": "UUUU", "exchange": "NYSE American", "country": "US", "role": "investor"}
+      ],
+      "supply_chain": {
+        "upstream": ["NdPr oxide"],
+        "component": "NdFeB permanent magnet (EV traction motor)",
+        "supplier": ["e-VAC Magnetics"],
+        "customer": ["General Motors Company"],
+        "end_market": ["EV traction motors"]
+      },
+      "products": ["NdFeB permanent magnet"],
+      "materials": ["NdPr"],
+      "change": {
+        "type": "supply_agreement_termination",
+        "before": "GM 與 VAC 2023 年簽訂至少 10 年的策略採購協議，e-VAC 南卡廠約 90% 產出規劃供 GM",
+        "after": "GM 已於 2026-07-01 終止協議，VAC 提起仲裁求償；e-VAC 失去主要錨定客戶，Energy Fuels 併購價格依仲裁結果調整"
+      },
+      "financial_data": {
+        "amount": 1900000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": 90,
+        "contract_duration_years": 10,
+        "effective_date": "2026-07-01"
+      },
+      "search_keywords": ["gm", "general motors", "通用汽車", "uuuu", "energy fuels", "efr", "vac", "vacuumschmelze", "e-vac", "e-vac magnetics", "ndfeb", "permanent magnet", "永磁", "釹鐵硼", "rare earth", "稀土", "arbitration", "仲裁", "supplier change", "supply agreement", "ev traction motor", "critical minerals"],
+      "sources": [
+        {"publisher": "Energy Fuels — Form 8-K (VAC merger amendment)", "source_type": "primary", "url": "https://www.sec.gov/Archives/edgar/data/0001385849/000106299326005306/form8k.htm", "is_primary": true, "accessed_at": "2026-10-25T22:20:00+08:00"},
+        {"publisher": "Reuters (via Seeking Alpha/TradingView)", "source_type": "wire", "url": "https://www.tradingview.com/news/seekingalpha:a1c0c6375094b:0-gm-locked-in-arbitration-with-vac-after-ending-rare-earth-magnet-supply-deal/", "is_primary": false, "accessed_at": "2026-10-25T22:21:00+08:00"},
+        {"publisher": "CBT News", "source_type": "trade", "url": "https://cbtnews.com/gm-cancels-magnet-supply", "is_primary": false, "accessed_at": "2026-10-25T22:22:00+08:00"}
+      ]
+    }
+  ]
+}
