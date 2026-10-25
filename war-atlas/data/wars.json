@@ -60,6 +60,30 @@
       "id": "wwi",
       "color": "#6d4c7d",
       "period": "1914–1918"
+    },
+    {
+      "color": "#7a4a8c",
+      "short": "國共內戰",
+      "name": "第二次國共內戰",
+      "name_en": "Chinese Civil War (1945–1949)",
+      "period": "1945–1949",
+      "id": "chinese-civil-war"
+    },
+    {
+      "color": "#a07a2c",
+      "short": "甲午戰爭",
+      "name": "甲午戰爭（第一次中日戰爭）",
+      "name_en": "First Sino-Japanese War",
+      "period": "1894–1895",
+      "id": "first-sino-japanese-war"
+    },
+    {
+      "color": "#6b4f8a",
+      "short": "日俄戰爭",
+      "name": "日俄戰爭",
+      "name_en": "Russo-Japanese War",
+      "period": "1904–1905",
+      "id": "russo-japanese-war"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-22",
+ "generated_at": "2026-10-25",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -27,6 +27,72 @@
      "id": "allies",
      "name": "聯軍（鄂圖曼、法、英、薩丁尼亞）",
      "color": "#3a6ea5"
+    },
+    {
+     "id": "russia",
+     "name": "俄羅斯帝國",
+     "color": "#5d6b2f"
+    }
+   ]
+  },
+  {
+   "id": "first-sino-japanese-war-1894",
+   "file": "battles/first-sino-japanese-war-1894.json",
+   "kind": "war",
+   "title": "甲午戰爭",
+   "title_en": "First Sino-Japanese War",
+   "wars": [
+    "first-sino-japanese-war"
+   ],
+   "date": {
+    "start": "1894-07-25",
+    "end": "1895-04-17",
+    "label": "1894 年 7 月 25 日 – 1895 年 4 月 17 日",
+    "duration_days": 267
+   },
+   "lat": 37.5,
+   "lng": 123.5,
+   "zoom": 5,
+   "summary": "1894 年朝鮮東學黨起事，清、日相繼出兵，7 月 25 日日艦在豐島海面突襲清軍運兵船，戰爭爆發。日軍先在成歡、平壤擊潰清軍，9 月 17 日在黃海大東溝海戰擊敗北洋艦隊，取得制海權；隨後渡過鴨綠江、攻陷旅順並屠殺城中軍民，1895 年初從山東榮成登陸攻陷威海衛，北洋艦隊覆滅、",
+   "result": "日本勝利",
+   "sides": [
+    {
+     "id": "qing",
+     "name": "大清帝國",
+     "color": "#a07a2c"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "russo-japanese-war-1904",
+   "file": "battles/russo-japanese-war-1904.json",
+   "kind": "war",
+   "title": "日俄戰爭",
+   "title_en": "Russo-Japanese War",
+   "wars": [
+    "russo-japanese-war"
+   ],
+   "date": {
+    "start": "1904-02-08",
+    "end": "1905-09-05",
+    "label": "1904 年 2 月 8 日 – 1905 年 9 月 5 日",
+    "duration_days": 576
+   },
+   "lat": 39.5,
+   "lng": 125,
+   "zoom": 5,
+   "summary": "日本與俄國為爭奪朝鮮與滿洲的支配權，於 1904 年 2 月 8 日以夜襲旅順港開戰。日軍在鴨綠江、南山、遼陽、沙河等地逐步北推，乃木希典第3軍付出巨大代價攻陷旅順要塞；1905 年 3 月約 50 萬人參戰的奉天會戰俄軍敗退，5 月東鄉平八郎在對馬海峽殲滅遠航而來的俄國第二太平",
+   "result": "日本勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
     },
     {
      "id": "russia",
@@ -241,6 +307,39 @@
      "id": "japan",
      "name": "大日本帝國",
      "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "huaihai-campaign-1948",
+   "file": "battles/huaihai-campaign-1948.json",
+   "kind": "campaign",
+   "title": "徐蚌會戰（淮海戰役）",
+   "title_en": "Huaihai Campaign",
+   "wars": [
+    "chinese-civil-war"
+   ],
+   "date": {
+    "start": "1948-11-06",
+    "end": "1949-01-10",
+    "label": "1948 年 11 月 6 日 – 1949 年 1 月 10 日",
+    "duration_days": 66
+   },
+   "lat": 33.8,
+   "lng": 117.1,
+   "zoom": 8,
+   "summary": "濟南失守後，中共華東野戰軍與中原野戰軍集中約 60 萬兵力，於 1948 年 11 月 6 日在徐州至淮河之間發起攻勢。戰役分三階段：先在碾莊圍殲黃百韜第七兵團，再在雙堆集圍殲由豫南東援的黃維第十二兵團，最後將撤離徐州的杜聿明集團圍困於陳官莊，1949 年 1 月 10 日全殲。",
+   "result": "中共決定性勝利",
+   "sides": [
+    {
+     "id": "roc",
+     "name": "中華民國國軍",
+     "color": "#3f6e8c"
+    },
+    {
+     "id": "ccp",
+     "name": "中國共產黨人民解放軍",
+     "color": "#a8322d"
     }
    ]
   }
