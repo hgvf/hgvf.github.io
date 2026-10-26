@@ -46,10 +46,10 @@
     },
     {
       "name_en": "Western Front (WWI)",
-      "name": "一戰西線",
+      "name": "西方戰線（一戰）",
       "short": "西線",
       "id": "western-front-wwi",
-      "color": "#7a7f3a",
+      "color": "#5f7a52",
       "parent": "wwi",
       "period": "1914–1918"
     },
@@ -58,7 +58,7 @@
       "name": "第一次世界大戰",
       "short": "一戰",
       "id": "wwi",
-      "color": "#6d4c7d",
+      "color": "#7a6a3a",
       "period": "1914–1918"
     },
     {

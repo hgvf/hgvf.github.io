@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-25",
+ "generated_at": "2026-10-26",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -102,6 +102,40 @@
    ]
   },
   {
+   "id": "first-battle-of-the-marne-1914",
+   "file": "battles/first-battle-of-the-marne-1914.json",
+   "kind": "battle",
+   "title": "第一次馬恩河戰役",
+   "title_en": "First Battle of the Marne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1914-09-05",
+    "end": "1914-09-12",
+    "label": "1914 年 9 月 5 日 – 12 日",
+    "duration_days": 8
+   },
+   "lat": 48.95,
+   "lng": 3.5,
+   "zoom": 8,
+   "summary": "1914 年 8 月，德軍依施里芬計畫經比利時大迂迴，英法聯軍在邊境戰役失利後一路「大撤退」至巴黎附近。德國第1集團軍克魯克轉向東南，暴露右翼並與第2集團軍之間拉開約 50 公里的缺口。9 月 5 日起，法國第6集團軍從巴黎出擊烏爾克河，巴黎約 600 輛計程車連夜運兵支援；第5",
+   "result": "協約國戰略性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "法國、英國",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
    "id": "battle-of-the-somme-1916",
    "file": "battles/battle-of-the-somme-1916.json",
    "kind": "campaign",
@@ -132,6 +166,40 @@
      "id": "france",
      "name": "法蘭西第三共和國",
      "color": "#6a8fd6"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "second-battle-of-the-marne-1918",
+   "file": "battles/second-battle-of-the-marne-1918.json",
+   "kind": "battle",
+   "title": "第二次馬恩河戰役",
+   "title_en": "Second Battle of the Marne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1918-07-15",
+    "end": "1918-08-06",
+    "label": "1918 年 7 月 15 日 – 8 月 6 日",
+    "duration_days": 23
+   },
+   "lat": 49.15,
+   "lng": 3.65,
+   "zoom": 9,
+   "summary": "1918 年春季德軍連續發動攻勢後，在蘭斯兩側與馬恩河形成大突出部。7 月 15 日魯登道夫發動「馬恩河-蘭斯」攻勢，作為後續在法蘭德斯攻擊英軍的牽制；蘭斯以東古羅的第4集團軍以縱深彈性防禦擋住攻勢，蘭斯以西德軍雖在多爾芒附近渡過馬恩河，17 日即停滯。18 日福煦發動反攻，芒然",
+   "result": "協約國決定性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "協約國（法國、美國、英國、義大利）",
+     "color": "#2c4f9e"
     },
     {
      "id": "germany",
