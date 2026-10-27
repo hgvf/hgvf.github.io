@@ -72,14 +72,45 @@ button,input,textarea,select{font:inherit;color:inherit}
 .chip .dot{width:9px;height:9px;border-radius:50%;background:var(--c,var(--ink-3))}
 .chip .n{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
 .chip[aria-pressed="true"]{color:var(--ink);border-color:var(--c,var(--ink));box-shadow:inset 0 0 0 1px var(--c,var(--ink)),0 2px 8px rgba(0,0,0,.08)}
-.list{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);max-height:min(46vh,420px);overflow:auto;width:min(360px,calc(100vw - 24px))}
-.list-head{display:flex;gap:8px;padding:8px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:1}
-.list-head input{flex:1;min-width:0;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--paper-2);padding:0 10px}
-.item{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;width:100%;text-align:left;background:none;border-left:0;border-right:0;border-top:0}
+.list{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);max-height:min(calc(100vh - 150px),680px);overflow:auto;width:min(360px,calc(100vw - 24px))}
+.list-head{display:grid;gap:6px;padding:8px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:2}
+.list-head input{width:100%;min-width:0;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--paper-2);padding:0 10px}
+.gsel{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;border-radius:8px;background:var(--paper-2);border:1px solid var(--line)}
+.gsel button{height:26px;border:0;border-radius:6px;background:none;cursor:pointer;font-size:12.5px;color:var(--ink-3)}
+.gsel button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.grp-h{display:flex;align-items:stretch;border-bottom:1px solid var(--line);background:var(--paper)}
+.grp.lv0 > .grp-h{position:sticky;top:var(--lh,82px);z-index:1}
+.grp-t{all:unset;box-sizing:border-box;flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:8px 6px 8px 10px;cursor:pointer}
+.grp-t:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.grp-t .chev{display:grid;flex:none;width:14px;color:var(--ink-3);transition:transform .15s}
+.grp-t .chev svg{width:14px;height:14px}
+.grp-t[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.grp-t .bar{width:4px;align-self:stretch;min-height:18px;border-radius:2px;background:var(--c);flex:none}
+.grp-t b{font-family:var(--f-display);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp.lv1 .grp-t b,.grp.lv2 .grp-t b{font-family:var(--f-body);font-size:13px}
+.grp-t .per{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.grp-t .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3);background:var(--paper-2);border-radius:999px;padding:0 7px}
+.grp-o{flex:none;align-self:center;height:24px;margin-left:2px;padding:0 8px;border-radius:6px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink-2);font-size:11.5px;cursor:pointer}
+.grp-o:hover,.grp-o[aria-current="true"]{border-color:var(--c,var(--ink-3));color:var(--ink)}
+.grp-f{flex:none;width:34px;border:0;background:none;color:var(--ink-3);cursor:pointer;display:grid;place-items:center}
+.grp-f svg{width:15px;height:15px}
+.grp-f:hover{color:var(--ink)}
+.grp-f[aria-pressed="true"]{color:var(--c,var(--accent))}
+.grp.lv1 > .grp-h{padding-left:18px;background:color-mix(in srgb,var(--paper-2) 50%,var(--paper))}
+.grp.lv2 > .grp-h{padding-left:34px}
+.grp.lv1 .item{padding-left:30px}
+.grp.lv2 .item{padding-left:46px}
+.grp .item{padding-left:14px}
+.item .k{font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.chips .fl-k{font-size:12px;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:0 10px;display:inline-flex;align-items:center;height:30px;flex:none}
+.chip .x{display:grid;color:var(--ink-3)}
+.chip .x svg{width:12px;height:12px}
+.chip.clear{color:var(--ink-3)}
+.item{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:1px 10px;padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;width:100%;text-align:left;background:none;border-left:0;border-right:0;border-top:0}
 .item:hover,.item[aria-current="true"]{background:var(--paper-2)}
-.item .yr{grid-row:span 2;font-family:var(--f-mono);font-size:12px;color:var(--ink-3);padding-top:2px}
+.item .yr{font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
 .item .t{font-weight:700}
-.item .m{font-size:12px;color:var(--ink-3);display:flex;gap:6px;flex-wrap:wrap}
+.item .m{grid-column:2/4;font-size:12px;color:var(--ink-3);display:flex;gap:6px;flex-wrap:wrap}
 .item .m i{font-style:normal;color:var(--c)}
 .empty{padding:16px;color:var(--ink-3)}
 
@@ -382,9 +413,10 @@ body.has-battle .legend{display:none}
     <button class="iconbtn" id="btnBase" title="切換底圖" aria-label="切換底圖"></button>
     <button class="iconbtn" id="btnData" title="匯入／匯出" aria-label="匯入或匯出資料"></button>
   </div>
-  <div class="chips" id="chips" role="toolbar" aria-label="依戰爭篩選"></div>
+  <div class="chips" id="chips" role="toolbar" aria-label="目前的地圖篩選" hidden></div>
   <div class="list" id="list">
-    <div class="list-head"><input id="q" type="search" placeholder="搜尋戰役、地名、指揮官…" aria-label="搜尋"></div>
+    <div class="list-head"><input id="q" type="search" placeholder="搜尋戰役、戰爭、參戰方…" aria-label="搜尋">
+      <div class="gsel" id="gsel" role="group" aria-label="分類方式"><button data-group="war">依戰爭</button><button data-group="era">依年代</button><button data-group="kind">依類型</button></div></div>
     <div id="items"></div>
   </div>
 </div>
@@ -586,35 +618,104 @@ async function getBattle(id){
 
 /* ---------------- filter + list ---------------- */
 const warColor = id => (S.wars[id]||{}).color || "#7a8785";
-function primaryWar(e){ // most specific war: one with a parent if present
-  const ws = e.wars || []; return ws.find(w => S.wars[w]?.parent) || ws[0];
+/* ---------------- battle index: grouped by war tree, era or kind ----------------
+   A record is listed once, under its most specific war (a theatre beats its parent; of two unrelated
+   wars the one listed last, which by convention is the specific one). The 篩選 button on a war shows
+   only that war and its theatres on the map; the bar under the brand shows the active filter. */
+const LIST_KEY = "war-atlas:list";
+const LP = (() => { try { return JSON.parse(lsGet(LIST_KEY)) || {}; } catch(e){ return {}; } })();
+S.group = ["war", "era", "kind"].includes(LP.group) ? LP.group : "war";
+S.closed = new Set(Array.isArray(LP.closed) ? LP.closed : []);
+const saveListPrefs = () => lsSet(LIST_KEY, JSON.stringify({ group:S.group, closed:[...S.closed] }));
+const yearOf = v => { const m = String(v ?? "").match(/-?\d{1,4}/); return m ? +m[0] : NaN; };
+function ancestors(w){
+  const out = [], seen = new Set([w]);
+  for (let p = S.wars[w]?.parent; p && S.wars[p] && !seen.has(p); p = S.wars[p].parent) { out.push(p); seen.add(p); }
+  return out;
 }
+function primaryWar(e){
+  const ws = (e.wars||[]).filter(w => S.wars[w]);
+  const leaf = ws.filter(w => !ws.some(o => o !== w && ancestors(o).includes(w)));
+  return leaf.find(w => S.wars[w].parent) || leaf[leaf.length - 1] || (e.wars||[])[0];
+}
+const inFilter = e => !S.filter.size || (e.wars||[]).some(w => S.filter.has(w) || ancestors(w).some(a => S.filter.has(a)));
 function visible(e){
-  if (S.filter.size && !e.wars.some(w => S.filter.has(w))) return false;
-  if (S.q){ const hay = (e.title+e.title_en+e.summary+(e.sides||[]).map(s=>s.name).join("")+(e.date.label||"")).toLowerCase(); if (!hay.includes(S.q)) return false; }
+  if (!inFilter(e)) return false;
+  if (S.q){ const hay = (e.title+e.title_en+e.summary+(e.sides||[]).map(s=>s.name).join("")+(e.date.label||"")+(e.wars||[]).map(w => (S.wars[w]?.name||"")+(S.wars[w]?.short||"")).join("")).toLowerCase(); if (!hay.includes(S.q)) return false; }
   return true;
 }
-function renderChips(){
-  const counts = {}; S.index.forEach(e => e.wars.forEach(w => counts[w] = (counts[w]||0) + 1));
-  const all = `<button class="chip" data-war="" aria-pressed="${S.filter.size===0}"><span class="dot" style="--c:var(--ink)"></span>全部<span class="n">${S.index.length}</span></button>`;
-  $("#chips").innerHTML = all + S.warOrder.filter(w => counts[w]).map(w => { const x=S.wars[w];
-    return `<button class="chip" data-war="${esc(w)}" style="--c:${esc(x.color)}" aria-pressed="${S.filter.has(w)}" title="${esc(x.name_en||"")} ${esc(x.period||"")}"><span class="dot"></span>${esc(x.short||x.name)}<span class="n">${counts[w]}</span></button>`; }).join("");
+function warStart(w){
+  const y = yearOf(S.wars[w]?.period);
+  return Number.isNaN(y) ? Math.min(...S.index.filter(e => e.wars.includes(w)).map(e => yearOf(e.date.start)).filter(x => !Number.isNaN(x)), 9999) : y;
+}
+const byDate = (a, b) => String(a.date.start||"").localeCompare(String(b.date.start||""));
+function renderChips(){   // active-filter bar (the war tree in the list is where filters are picked)
+  const el = $("#chips"), ws = [...S.filter].filter(w => S.wars[w]);
+  el.hidden = !ws.length;
+  el.innerHTML = ws.length ? `<span class="fl-k">地圖只顯示</span>${ws.map(w => `<button class="chip" data-war="${esc(w)}" style="--c:${esc(warColor(w))}" aria-pressed="true" title="取消篩選"><span class="dot"></span>${esc(S.wars[w].name)}<span class="x">${ICON.close}</span></button>`).join("")}<button class="chip clear" data-war="">顯示全部</button>` : "";
 }
 $("#chips").addEventListener("click", ev => {
   const b = ev.target.closest(".chip"); if (!b) return;
-  const w = b.dataset.war;
-  if (!w) S.filter.clear(); else S.filter.has(w) ? S.filter.delete(w) : S.filter.add(w);
+  if (b.dataset.war) S.filter.delete(b.dataset.war); else S.filter.clear();
   renderAll(true);
 });
+function itemHTML(e, hide){
+  const yr = String(e.date.start||"").slice(0,4).replace(/^-/, "前");
+  const tags = (e.wars||[]).filter(w => !hide.has(w));
+  const extra = tags.map(w => `<i style="--c:${esc(warColor(w))}">● ${esc(S.wars[w]?.short||w)}</i>`).join("") + (e.local ? "<span>本機匯入</span>" : "");
+  return `<button class="item" data-id="${esc(e.id)}" aria-current="${S.sel===e.id}"><span class="yr">${esc(yr)}</span><span class="t">${esc(e.title)}</span><span class="k">${esc(KIND[e.kind]||"")}</span>${extra ? `<span class="m">${extra}</span>` : ""}</button>`;
+}
+function groupHTML(key, o, body){
+  const empty = o.empty, open = !empty && (!S.closed.has(key) || !!S.q);
+  const ov = o.overview ? `<button class="grp-o" data-id="${esc(o.overview.id)}" aria-current="${S.sel===o.overview.id}" title="開啟「${esc(o.overview.title)}」總覽">總覽</button>` : "";
+  return `<div class="grp lv${o.lvl||0}"${o.color ? ` style="--c:${esc(o.color)}"` : ""}>
+    <div class="grp-h"><button class="grp-t" ${empty ? `data-id="${esc(o.overview.id)}"` : `data-tog="${esc(key)}" aria-expanded="${open}"`}><span class="chev">${empty ? "" : ICON.chev}</span>${o.color ? '<i class="bar"></i>' : ""}<b>${esc(o.title)}</b>${o.sub ? `<span class="per">${esc(o.sub)}</span>` : ""}<span class="n">${o.n}</span></button>${ov}${o.war ? `<button class="grp-f" data-only="${esc(o.war)}" aria-pressed="${S.filter.has(o.war)}" title="${S.filter.has(o.war) ? "取消篩選" : "地圖只顯示這場戰爭"}" aria-label="篩選 ${esc(o.title)}">${ICON.focus}</button>` : ""}</div>
+    ${open ? `<div class="grp-b">${body()}</div>` : ""}</div>`;
+}
+function warTree(vis){
+  const by = {}, kids = {};
+  vis.forEach(e => (by[S.wars[primaryWar(e)] ? primaryWar(e) : "_"] ||= []).push(e));
+  S.warOrder.forEach(w => { const p = S.wars[w].parent; if (p && S.wars[p]) (kids[p] ||= []).push(w); });
+  const ord = ws => ws.slice().sort((a, b) => warStart(a) - warStart(b) || (S.wars[a].name||a).localeCompare(S.wars[b].name||b));
+  const cnt = w => (by[w]||[]).length + (kids[w]||[]).reduce((n, k) => n + cnt(k), 0);
+  const node = (w, lvl) => {
+    const n = cnt(w); if (!n) return "";
+    const x = S.wars[w], hide = new Set([w, ...ancestors(w)]), mine = (by[w]||[]).sort(byDate);
+    // a whole-war overview record becomes the header's 總覽 button instead of a row repeating the war's name
+    const overview = mine.find(e => e.kind === "war"), rest = mine.filter(e => e !== overview), sub = ord(kids[w]||[]).filter(k => cnt(k));
+    return groupHTML("war:" + w, { lvl, color:x.color, title:x.name || x.short || w, sub:x.period, n, war:w, overview, empty:!!overview && !rest.length && !sub.length },
+      () => sub.map(k => node(k, lvl + 1)).join("") + rest.map(e => itemHTML(e, hide)).join(""));
+  };
+  const roots = ord(S.warOrder.filter(w => !S.wars[w].parent || !S.wars[S.wars[w].parent]));
+  return roots.map(w => node(w, 0)).join("") + (by._ ? groupHTML("war:_", { title:"未分類", n:by._.length }, () => by._.sort(byDate).map(e => itemHTML(e, new Set())).join("")) : "");
+}
+function flatGroups(vis, keyOf, labelOf, order){
+  const g = {};
+  vis.forEach(e => (g[keyOf(e)] ||= []).push(e));
+  return Object.keys(g).sort(order).map(k => groupHTML(S.group + ":" + k, { title:labelOf(k), n:g[k].length }, () => g[k].sort(byDate).map(e => itemHTML(e, new Set())).join(""))).join("");
+}
+const KIND_ORDER = ["war", "campaign", "battle", "siege", "operation", "incident"];
 function renderList(){
   const vis = S.index.filter(visible);
-  $("#items").innerHTML = vis.length ? vis.map(e => {
-    const yr = String(e.date.start||"").slice(0,4);
-    return `<button class="item" data-id="${esc(e.id)}" aria-current="${S.sel===e.id}"><span class="yr">${esc(yr)}</span><span class="t">${esc(e.title)}</span><span class="m">${e.wars.map(w=>`<i style="--c:${esc(warColor(w))}">● ${esc(S.wars[w]?.short||w)}</i>`).join("")}<span>${esc(KIND[e.kind]||"")}</span>${e.local?'<span>· 本機</span>':""}</span></button>`;
-  }).join("") : `<div class="empty">沒有符合條件的戰役。用右上角的匯入功能加入新資料。</div>`;
+  document.querySelectorAll(".gsel button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.group === S.group)));
+  let html;
+  if (!vis.length) html = `<div class="empty">${S.index.length ? "沒有符合條件的戰役。" : "還沒有戰役。"}用右上角的匯入功能加入新資料。</div>`;
+  else if (S.group === "era") html = flatGroups(vis, e => { const y = yearOf(e.date.start); return Number.isNaN(y) ? "?" : String(Math.floor(y / 10) * 10); },
+    k => k === "?" ? "年代不詳" : `${k} 年代`, (a, b) => (a === "?") - (b === "?") || +a - +b);
+  else if (S.group === "kind") html = flatGroups(vis, e => KIND[e.kind] ? e.kind : "other", k => KIND[k] || "其他", (a, b) => KIND_ORDER.indexOf(a) - KIND_ORDER.indexOf(b));
+  else html = warTree(vis);
+  $("#items").innerHTML = html;
+  const lh = document.querySelector(".list-head")?.offsetHeight; if (lh) $("#list").style.setProperty("--lh", lh + "px");
   $("#stat").textContent = `${vis.length} / ${S.index.length} 筆 · ${Object.keys(S.wars).length} 場戰爭`;
 }
-$("#items").addEventListener("click", ev => { const b = ev.target.closest(".item"); if (b) select(b.dataset.id); });
+$("#items").addEventListener("click", ev => {
+  const t = ev.target.closest("[data-tog]");
+  if (t) { const k = t.dataset.tog; S.closed.has(k) ? S.closed.delete(k) : S.closed.add(k); saveListPrefs(); renderList(); return; }
+  const f = ev.target.closest("[data-only]");
+  if (f) { const w = f.dataset.only; const only = S.filter.size === 1 && S.filter.has(w); S.filter.clear(); if (!only) S.filter.add(w); renderAll(true); return; }
+  const b = ev.target.closest(".item,[data-id]"); if (b) select(b.dataset.id);
+});
+$("#gsel").addEventListener("click", ev => { const b = ev.target.closest("[data-group]"); if (!b) return; S.group = b.dataset.group; saveListPrefs(); renderList(); });
 $("#q").addEventListener("input", ev => { S.q = ev.target.value.trim().toLowerCase(); renderAll(false); });
 
 function renderOverview(fit){
