@@ -28,14 +28,17 @@
 
   <script type="module">
     import { mountSidebar } from "../js/sidebar.js";
-    import { mountHighlight } from "../js/highlight.js";
+    import { mountHighlight, migrateLegacyAliases } from "../js/highlight.js";
     import { detail as scDetail } from "../js/scdetail.js";
     import { detail as industryDetail } from "../js/industrydetail.js";
     import { loadPricesMap, loadOverridesMap, setTickerAdmin, onAuth } from "../js/reports.js";
 
     mountSidebar("highlights");
     loadPricesMap(); loadOverridesMap();  // warm prices + name overrides for the trend table
-    onAuth(({ isAdmin }) => setTickerAdmin(isAdmin));  // enable inline name-fix for admins
+    onAuth(({ isAdmin }) => {
+      setTickerAdmin(isAdmin);               // enable inline name-fix for admins
+      if (isAdmin) loadOverridesMap().then(migrateLegacyAliases);  // move old per-browser ticker fixes to Firestore
+    });
 
     // Dispatch to the right card renderer based on where the item was collected.
     function renderDetail(item) {

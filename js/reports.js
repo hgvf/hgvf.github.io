@@ -5,7 +5,7 @@ import { firebaseConfig } from "./config.js";
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, getDocs, getDoc, query, orderBy, doc, setDoc, deleteDoc,
+  collection, getDocs, getDoc, query, orderBy, where, doc, setDoc, deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
@@ -50,6 +50,12 @@ export function signOutUser() { return signOut(auth()); }
 
 // ─── Writes (whitelisted users only; enforced by Firestore rules) ──────
 function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60); }
+// Canonical ticker form: trimmed + uppercased, and a Taiwan listing written with
+// a dash ("6770-TW", "6488-TWO") turned into the Yahoo dot form ("6770.TW") that
+// the prices / aliases / facts collections are keyed by.
+export function normTicker(t) {
+  return String(t || "").trim().toUpperCase().replace(/^([0-9A-Z]+)-(TWO|TW)$/, "$1.$2");
+}
 function normSent(v) { v = (v || "neutral").toLowerCase(); return ["bullish", "bearish", "neutral"].includes(v) ? v : "neutral"; }
 
 // Accepts {calls:[...]}, a bare array, or a single call object.
@@ -80,7 +86,7 @@ export async function saveEarnings(calls) {
       ? c.watch.filter(w => w != null && String(w).trim()).map(w => String(w))
       : (c.watch ? [String(c.watch)] : []);
     await setDoc(doc(db(), "earnings_calls", id), {
-      ticker: String(c.ticker),
+      ticker: normTicker(c.ticker),
       company: c.company || c.ticker,
       year: parseInt(c.year, 10),
       quarter: String(c.quarter),
@@ -98,11 +104,17 @@ export async function saveEarnings(calls) {
 // Patch a single earnings call in place (whitelisted users only; enforced by
 // Firestore rules). Used by the inline card editor to add / remove / re-classify
 // highlight nodes and future-watch points without re-pasting the whole JSON.
-// `patch` may carry summary (string), highlights ([{text,sentiment}]) and/or
-// watch ([string]); only the provided keys are written.
+// `patch` may carry ticker, company, summary (string), highlights
+// ([{text,sentiment}]) and/or watch ([string]); only the provided keys are
+// written. The doc id is left as is — a ticker fix edits the field in place.
 export async function updateEarningsCall(id, patch = {}) {
   if (!id) throw new Error("缺少會議 id");
   const out = { updated_at: new Date().toISOString() };
+  if ("ticker" in patch) {
+    out.ticker = normTicker(patch.ticker);
+    if (!out.ticker) throw new Error("代號不可為空");
+  }
+  if ("company" in patch) out.company = String(patch.company || "").trim() || out.ticker || "";
   if ("summary" in patch) out.summary = String(patch.summary || "");
   if ("highlights" in patch) {
     out.highlights = (patch.highlights || [])
@@ -115,6 +127,21 @@ export async function updateEarningsCall(id, patch = {}) {
       .map(w => String(w).trim());
   }
   await setDoc(doc(db(), "earnings_calls", id), out, { merge: true });
+}
+
+// Re-point every earnings call stored under `oldTicker` to `newTicker`
+// (whitelisted users only). Optionally sets the company name on them too.
+// Returns the number of calls changed.
+export async function renameEarningsTicker(oldTicker, newTicker, company) {
+  const from = String(oldTicker || "").trim();
+  const to = normTicker(newTicker);
+  if (!from || !to || from === to) return 0;
+  const snap = await getDocs(query(collection(db(), "earnings_calls"), where("ticker", "==", from)));
+  const now = new Date().toISOString();
+  const out = { ticker: to, updated_at: now };
+  if (company) out.company = String(company).trim();
+  await Promise.all(snap.docs.map(d => setDoc(d.ref, out, { merge: true })));
+  return snap.size;
 }
 
 // ─── Annual reports ────────────────────────────────────────────────────

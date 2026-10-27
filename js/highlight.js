@@ -4,11 +4,11 @@
 // "update price" button that (re)fetches the series from the price worker.
 
 import { WORKER_URL } from "./config.js";
-import { esc, fmtDate, chartUrl } from "./reports.js";
+import { esc, fmtDate, chartUrl, resolveSymbol, saveTickerAlias, loadOverridesMap, onTickerDataChange } from "./reports.js";
 import { getCollected, removeCollected, onCollectChange, getTrendTickers, setTrendTickers } from "./collect.js";
 
 const PRICE_KEY = "sc_price_series_v1";
-const ALIAS_KEY = "sc_ticker_alias_v1";   // { originalSymbol: correctedSymbol }
+const ALIAS_KEY = "sc_ticker_alias_v1";   // legacy per-browser aliases (now in Firestore)
 const NS = "http://www.w3.org/2000/svg";
 const RANGES = [
   { v: "1mo", label: "1 個月" },
@@ -36,22 +36,41 @@ function writePriceCache(obj) {
 }
 
 // Ticker corrections keyed by the symbol as stored on the news item. A wrong
-// ticker (e.g. AXT → AXTI) is fixed here without touching the source data, and
-// the fix applies everywhere that symbol appears across collected news.
-function readAlias() {
+// ticker (e.g. AXT → AXTI) is fixed without touching the source data. Stored in
+// the shared Firestore `ticker_aliases` collection (see reports.js), so the fix
+// is the same on every browser, device and account and applies on every page.
+// Older fixes were kept per browser in localStorage; they still resolve here
+// and are pushed up to Firestore once an admin is signed in.
+function readLegacyAlias() {
   try { return JSON.parse(localStorage.getItem(ALIAS_KEY) || "{}") || {}; }
   catch { return {}; }
 }
-function writeAlias(obj) {
-  try { localStorage.setItem(ALIAS_KEY, JSON.stringify(obj)); } catch { /* quota */ }
+function writeLegacyAlias(obj) {
+  try {
+    if (Object.keys(obj).length) localStorage.setItem(ALIAS_KEY, JSON.stringify(obj));
+    else localStorage.removeItem(ALIAS_KEY);
+  } catch { /* quota / private mode */ }
 }
-function aliasSym(orig) { const m = readAlias(); return (m[orig] || orig); }
-function setAlias(orig, corrected) {
-  const m = readAlias();
-  const val = String(corrected || "").trim().toUpperCase();
-  if (!val || val === orig) delete m[orig];   // no-op / reset clears the override
-  else m[orig] = val;
-  writeAlias(m);
+function aliasSym(orig) {
+  const s = String(orig || "").trim();
+  const r = resolveSymbol(s);
+  return r !== s ? r : (readLegacyAlias()[s] || s);
+}
+async function setAlias(orig, corrected) {
+  await saveTickerAlias(orig, corrected);
+  const m = readLegacyAlias();
+  if (orig in m) { delete m[orig]; writeLegacyAlias(m); }
+}
+// Push any browser-only aliases up to Firestore (whitelisted admin only).
+export async function migrateLegacyAliases() {
+  const m = readLegacyAlias();
+  for (const [orig, val] of Object.entries(m)) {
+    try {
+      if (resolveSymbol(orig) === orig) await saveTickerAlias(orig, val);
+      delete m[orig];
+    } catch { break; /* not permitted — keep them local */ }
+  }
+  writeLegacyAlias(m);
 }
 
 // Per-item override of which tickers get a trend chart on the right. Affects
@@ -379,7 +398,14 @@ export function mountHighlight(opts) {
     input.focus(); input.select();
     const commit = async () => {
       const val = input.value.trim().toUpperCase();
-      setAlias(orig, val);
+      setStatus("儲存中…");
+      try {
+        await setAlias(orig, val);
+      } catch (err) {
+        setStatus("儲存失敗：" + (err && err.code === "permission-denied" ? "需以白名單管理員登入。" : (err && err.message) || err), "err");
+        return;
+      }
+      setStatus(`已儲存 ${orig} → ${aliasSym(orig)}`, "ok");
       const eff = aliasSym(orig);
       renderBody();                                  // reflect the corrected symbol
       if (eff && !(readPriceCache()[eff]?.range === range)) {
@@ -426,7 +452,9 @@ export function mountHighlight(opts) {
   function refresh() { rebuildSourceSelect(); rebuildSelect(); renderBody(); }
 
   onCollectChange(() => { refresh(); });
+  onTickerDataChange(() => renderBody());
   refresh();
+  loadOverridesMap().then(() => renderBody());   // aliases arrive async
 
   // Programmatically focus a freshly-collected item (reset the source filter
   // so it is visible regardless of which source it came from).
