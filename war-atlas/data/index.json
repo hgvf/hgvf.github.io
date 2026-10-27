@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-21",
+ "generated_at": "2026-10-26",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -36,6 +36,179 @@
    ]
   },
   {
+   "id": "first-sino-japanese-war-1894",
+   "file": "battles/first-sino-japanese-war-1894.json",
+   "kind": "war",
+   "title": "甲午戰爭",
+   "title_en": "First Sino-Japanese War",
+   "wars": [
+    "first-sino-japanese-war"
+   ],
+   "date": {
+    "start": "1894-07-25",
+    "end": "1895-04-17",
+    "label": "1894 年 7 月 25 日 – 1895 年 4 月 17 日",
+    "duration_days": 267
+   },
+   "lat": 37.5,
+   "lng": 123.5,
+   "zoom": 5,
+   "summary": "1894 年朝鮮東學黨起事，清、日相繼出兵，7 月 25 日日艦在豐島海面突襲清軍運兵船，戰爭爆發。日軍先在成歡、平壤擊潰清軍，9 月 17 日在黃海大東溝海戰擊敗北洋艦隊，取得制海權；隨後渡過鴨綠江、攻陷旅順並屠殺城中軍民，1895 年初從山東榮成登陸攻陷威海衛，北洋艦隊覆滅、",
+   "result": "日本勝利",
+   "sides": [
+    {
+     "id": "qing",
+     "name": "大清帝國",
+     "color": "#a07a2c"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "russo-japanese-war-1904",
+   "file": "battles/russo-japanese-war-1904.json",
+   "kind": "war",
+   "title": "日俄戰爭",
+   "title_en": "Russo-Japanese War",
+   "wars": [
+    "russo-japanese-war"
+   ],
+   "date": {
+    "start": "1904-02-08",
+    "end": "1905-09-05",
+    "label": "1904 年 2 月 8 日 – 1905 年 9 月 5 日",
+    "duration_days": 576
+   },
+   "lat": 39.5,
+   "lng": 125,
+   "zoom": 5,
+   "summary": "日本與俄國為爭奪朝鮮與滿洲的支配權，於 1904 年 2 月 8 日以夜襲旅順港開戰。日軍在鴨綠江、南山、遼陽、沙河等地逐步北推，乃木希典第3軍付出巨大代價攻陷旅順要塞；1905 年 3 月約 50 萬人參戰的奉天會戰俄軍敗退，5 月東鄉平八郎在對馬海峽殲滅遠航而來的俄國第二太平",
+   "result": "日本勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    },
+    {
+     "id": "russia",
+     "name": "俄羅斯帝國",
+     "color": "#5d6b2f"
+    }
+   ]
+  },
+  {
+   "id": "first-battle-of-the-marne-1914",
+   "file": "battles/first-battle-of-the-marne-1914.json",
+   "kind": "battle",
+   "title": "第一次馬恩河戰役",
+   "title_en": "First Battle of the Marne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1914-09-05",
+    "end": "1914-09-12",
+    "label": "1914 年 9 月 5 日 – 12 日",
+    "duration_days": 8
+   },
+   "lat": 48.95,
+   "lng": 3.5,
+   "zoom": 8,
+   "summary": "1914 年 8 月，德軍依施里芬計畫經比利時大迂迴，英法聯軍在邊境戰役失利後一路「大撤退」至巴黎附近。德國第1集團軍克魯克轉向東南，暴露右翼並與第2集團軍之間拉開約 50 公里的缺口。9 月 5 日起，法國第6集團軍從巴黎出擊烏爾克河，巴黎約 600 輛計程車連夜運兵支援；第5",
+   "result": "協約國戰略性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "法國、英國",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-the-somme-1916",
+   "file": "battles/battle-of-the-somme-1916.json",
+   "kind": "campaign",
+   "title": "索姆河戰役",
+   "title_en": "Battle of the Somme",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1916-07-01",
+    "end": "1916-11-18",
+    "label": "1916 年 7 月 1 日 – 11 月 18 日（砲擊自 6 月 24 日起）",
+    "duration_days": 141
+   },
+   "lat": 50.01,
+   "lng": 2.78,
+   "zoom": 10,
+   "summary": "一戰西線規模最大的戰役之一：英國遠征軍與法國第六軍團在索姆河兩岸對德軍陣地發動 141 天的攻勢，原意是減輕凡爾登壓力並消耗德軍。7 月 1 日英軍單日傷亡 57,470 人（陣亡 19,240），為英軍史上最慘痛的一天；9 月 15 日戰車首度投入實戰。超過 300 萬人參戰，",
+   "result": "戰果未定（英法有限推進）",
+   "sides": [
+    {
+     "id": "britain",
+     "name": "大英帝國",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "france",
+     "name": "法蘭西第三共和國",
+     "color": "#6a8fd6"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "second-battle-of-the-marne-1918",
+   "file": "battles/second-battle-of-the-marne-1918.json",
+   "kind": "battle",
+   "title": "第二次馬恩河戰役",
+   "title_en": "Second Battle of the Marne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1918-07-15",
+    "end": "1918-08-06",
+    "label": "1918 年 7 月 15 日 – 8 月 6 日",
+    "duration_days": 23
+   },
+   "lat": 49.15,
+   "lng": 3.65,
+   "zoom": 9,
+   "summary": "1918 年春季德軍連續發動攻勢後，在蘭斯兩側與馬恩河形成大突出部。7 月 15 日魯登道夫發動「馬恩河-蘭斯」攻勢，作為後續在法蘭德斯攻擊英軍的牽制；蘭斯以東古羅的第4集團軍以縱深彈性防禦擋住攻勢，蘭斯以西德軍雖在多爾芒附近渡過馬恩河，17 日即停滯。18 日福煦發動反攻，芒然",
+   "result": "協約國決定性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "協約國（法國、美國、英國、義大利）",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
    "id": "battle-of-shanghai-1937",
    "file": "battles/battle-of-shanghai-1937.json",
    "kind": "campaign",
@@ -61,6 +234,108 @@
      "id": "china",
      "name": "中華民國",
      "color": "#3f6e8c"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "battles-of-khalkhin-gol-1939",
+   "file": "battles/battles-of-khalkhin-gol-1939.json",
+   "kind": "campaign",
+   "title": "諾門罕戰役",
+   "title_en": "Battles of Khalkhin Gol (Nomonhan Incident)",
+   "wars": [
+    "wwii",
+    "soviet-japanese-border-conflicts"
+   ],
+   "date": {
+    "start": "1939-05-11",
+    "end": "1939-09-16",
+    "label": "1939 年 5 月 11 日 – 9 月 16 日",
+    "duration_days": 129
+   },
+   "lat": 47.75,
+   "lng": 118.62,
+   "zoom": 10,
+   "summary": "1939 年 5 月起，日本關東軍與蘇聯紅軍分別代表滿洲國與蒙古人民共和國，在哈拉哈河一帶爭奪邊界，雙方未宣戰。日軍 7 月初的渡河攻勢與戰車夜襲都被蘇軍裝甲部隊擊退，戰事陷入僵持。8 月 20 日朱可夫以步兵牽制正面、裝甲部隊南北兩翼迂迴，於諾門罕合圍並殲滅日軍第23師團主力。",
+   "result": "蘇蒙聯軍勝利",
+   "sides": [
+    {
+     "id": "soviet",
+     "name": "蘇聯與蒙古人民共和國",
+     "color": "#5d6b2f"
+    },
+    {
+     "id": "japan",
+     "name": "大日本帝國與滿洲國",
+     "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "formosa-air-battle-1944",
+   "file": "battles/formosa-air-battle-1944.json",
+   "kind": "battle",
+   "title": "台灣空戰",
+   "title_en": "Formosa Air Battle",
+   "wars": [
+    "wwii",
+    "pacific-war"
+   ],
+   "date": {
+    "start": "1944-10-12",
+    "end": "1944-10-16",
+    "label": "1944 年 10 月 12 日 – 16 日",
+    "duration_days": 5
+   },
+   "lat": 23.3,
+   "lng": 121.6,
+   "zoom": 6,
+   "summary": "1944 年 10 月，美國第三艦隊第 38 特遣艦隊為掩護雷伊泰登陸，連續數日以上千架艦載機空襲台灣與澎湖的日軍機場、港口，第 20 航空軍的 B-29 也自成都出擊轟炸岡山。日本陸海軍白天攔截、黃昏與夜間以 T 攻擊部隊等陸基航空隊反擊美軍艦隊，僅重創坎培拉號與休士頓號兩艘巡",
+   "result": "美軍決定性勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    },
+    {
+     "id": "usa",
+     "name": "美利堅合眾國",
+     "color": "#3a6ea5"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-leyte-gulf-1944",
+   "file": "battles/battle-of-leyte-gulf-1944.json",
+   "kind": "campaign",
+   "title": "雷伊泰灣海戰",
+   "title_en": "Battle of Leyte Gulf",
+   "wars": [
+    "wwii",
+    "pacific-war"
+   ],
+   "date": {
+    "start": "1944-10-23",
+    "end": "1944-10-26",
+    "label": "1944 年 10 月 23–26 日",
+    "duration_days": 4
+   },
+   "lat": 13,
+   "lng": 124,
+   "zoom": 6,
+   "summary": "1944 年 10 月美軍登陸菲律賓雷伊泰島後，日本海軍發動捷一號作戰：小澤艦隊以航艦當誘餌北引海爾賽第三艦隊，栗田、西村、志摩三支水面艦隊從西側兩路夾擊雷伊泰灣。戰役由錫布延海、蘇里高海峽、薩馬島、恩加諾角四場主要海戰構成，參戰人員超過 20 萬人，常被視為史上最大海戰。海爾賽",
+   "result": "盟軍決定性勝利",
+   "sides": [
+    {
+     "id": "allies",
+     "name": "美國（盟軍）",
+     "color": "#3a6ea5"
     },
     {
      "id": "japan",
@@ -100,6 +375,39 @@
      "id": "japan",
      "name": "大日本帝國",
      "color": "#b5452f"
+    }
+   ]
+  },
+  {
+   "id": "huaihai-campaign-1948",
+   "file": "battles/huaihai-campaign-1948.json",
+   "kind": "campaign",
+   "title": "徐蚌會戰（淮海戰役）",
+   "title_en": "Huaihai Campaign",
+   "wars": [
+    "chinese-civil-war"
+   ],
+   "date": {
+    "start": "1948-11-06",
+    "end": "1949-01-10",
+    "label": "1948 年 11 月 6 日 – 1949 年 1 月 10 日",
+    "duration_days": 66
+   },
+   "lat": 33.8,
+   "lng": 117.1,
+   "zoom": 8,
+   "summary": "濟南失守後，中共華東野戰軍與中原野戰軍集中約 60 萬兵力，於 1948 年 11 月 6 日在徐州至淮河之間發起攻勢。戰役分三階段：先在碾莊圍殲黃百韜第七兵團，再在雙堆集圍殲由豫南東援的黃維第十二兵團，最後將撤離徐州的杜聿明集團圍困於陳官莊，1949 年 1 月 10 日全殲。",
+   "result": "中共決定性勝利",
+   "sides": [
+    {
+     "id": "roc",
+     "name": "中華民國國軍",
+     "color": "#3f6e8c"
+    },
+    {
+     "id": "ccp",
+     "name": "中國共產黨人民解放軍",
+     "color": "#a8322d"
     }
    ]
   }
