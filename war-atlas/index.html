@@ -1349,7 +1349,9 @@ function goPhase(pi, o={}){
   S.phase = pi;
   const p = cur.phases[pi];
   const v = p.view || cur.location;
-  if (!S.follow) flyVis([v.lat, v.lng], v.zoom || cur.location.zoom || 8, 1);
+  const followHere = S.follow && cur.phases[pi].moves?.some(m => m.side === S.follow.side && [m.unit, m.label].some(n => n && baseName(n) === S.follow.name))
+    || S.follow && tracks.some(k => k.tr.side === S.follow.side && baseName(k.tr.unit) === S.follow.name);
+  if (!followHere) flyVis([v.lat, v.lng], v.zoom || cur.location.zoom || 8, 1);
   evMarkers.forEach(m => { if (m._st === "focus") m._st = "reset"; });
   buildPhase(pi);
   A.el = (o.instant || RM) ? A.plan.dur + 2000 : -LEAD; A.paused = false;
@@ -1617,7 +1619,7 @@ async function demPixels(url, signal){
   const bmp = await createImageBitmap(await r.blob());
   const c = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(bmp.width, bmp.height) : Object.assign(document.createElement("canvas"), { width:bmp.width, height:bmp.height });
   const g = c.getContext("2d", { willReadFrequently:true });
-  g.drawImage(bmp, 0, 0);
+  g.drawImage(bmp, 0, 0); bmp.close?.();
   return { c, g, im:g.getImageData(0, 0, c.width, c.height) };
 }
 async function pngOf(c){ const blob = c.convertToBlob ? await c.convertToBlob({ type:"image/png" }) : await new Promise(ok => c.toBlob(ok, "image/png")); return { data:await blob.arrayBuffer() }; }
@@ -1669,6 +1671,10 @@ function paint3d(){
   const t = tintColors();
   if (JSON.stringify(t) !== JSON.stringify(V3.tint)) { V3.tint = t; V3.tintV = (V3.tintV || 0) + 1; ml.getSource("tint")?.setTiles([TINT_URL + "?v=" + V3.tintV]); }
   ml.setPaintProperty("borders", "line-color", css("--border"));
+  const dark = isDark();
+  ml.setPaintProperty("shade", "hillshade-shadow-color", dark ? "rgba(0,0,0,.8)" : "rgba(60,72,62,.75)");
+  ml.setPaintProperty("shade", "hillshade-highlight-color", dark ? "rgba(70,86,78,.35)" : "rgba(255,255,255,.35)");
+  ml.setPaintProperty("shade", "hillshade-accent-color", dark ? "#0b1210" : "#6f7d70");
 }
 /* what the camera should leave free: dossier on the right, bottom sheet / timeline at the bottom */
 function pad3d(){
@@ -1678,7 +1684,6 @@ function pad3d(){
   return { top:mobile ? 70 : 20, bottom:Math.min(H * .6, Math.max(sheet, tl)), left:0, right:side };
 }
 function fly3d(ll, z, dur){
-  if (S.follow) return;
   V3.ml.flyTo({ center:[ll[1], ll[0]], zoom:z - .8, pitch:Math.max(45, V3.ml.getPitch()), bearing:V3.ml.getBearing(), duration:RM ? 0 : dur * 1000, padding:pad3d(), essential:true });
 }
 function syncLeaflet(){
@@ -1689,8 +1694,9 @@ function syncLeaflet(){
   $("#map3d").classList.toggle("lowzoom", map.getZoom() < 7);
 }
 async function enter3d(){
-  if (V3.on || !cur) return;
-  try { await loadML(); } catch(e){ toast(e.message); return; }
+  if (V3.on || !cur || V3.entering) return;
+  V3.entering = true;
+  try { await loadML(); } catch(e){ toast(e.message); return; } finally { V3.entering = false; }
   if (!cur) return;
   const c = map.getCenter();
   if (!V3.ml){
@@ -1711,7 +1717,8 @@ async function enter3d(){
     };
     V3.ml.on("styledata", init); V3.ml.on("load", init); V3.ml.on("idle", init); setTimeout(init, 0);
     V3.ml.on("move", () => { if (V3.on) syncLeaflet(); });
-    V3.ml.on("dragstart", () => { if (S.follow) setFollow(""); });
+    // any gesture on the 3D map hands the camera back to the reader (follow3d's jumpTo would otherwise swallow it)
+    ["pointerdown", "wheel", "touchstart"].forEach(t => V3.ml.getCanvasContainer().addEventListener(t, () => { if (S.follow) setFollow(""); }, { passive:true }));
     V3.ml.on("error", e => console.warn("3d", e?.error || e));
     addModels();
   } else V3.ml.jumpTo({ center:[c.lng, c.lat], zoom:map.getZoom() - 1.3 });
@@ -1741,7 +1748,9 @@ function mirror(){
   let k = 0;
   const path = l => {
     const o = l.options, ll = l.getLatLngs(); if (!ll.length) return;
-    const poly = l instanceof L.Polygon, pts = (poly ? ringOf(ll) : (Array.isArray(ll[0]) ? ll.flat() : ll)).map(p => [p.lng, p.lat]);
+    const poly = l instanceof L.Polygon;
+    if (!poly && Array.isArray(ll[0])) { ll.forEach(part => path({ options:o, getLatLngs:() => part })); return; }
+    const pts = (poly ? ringOf(ll) : ll).map(p => [p.lng, p.lat]);
     if (pts.length < 2) return;
     k++;
     if (poly && o.fill !== false && pts.length > 2) feats.push({ type:"Feature", properties:{ k, fc:o.fillColor || o.color, fo:o.fillOpacity ?? .2 }, geometry:{ type:"Polygon", coordinates:[[...pts, pts[0]]] } });
@@ -1759,7 +1768,7 @@ function mirror(){
     }
     if (m.html !== html) { m.el.innerHTML = html; m.html = html; }
     if (m.size !== String(size)) { m.size = String(size); m.el.style.width = size ? size[0] + "px" : ""; m.el.style.height = size ? size[1] + "px" : ""; m.mk.setOffset([-(anchor?.[0] || 0), -(anchor?.[1] || 0)]); }
-    m.el.title = title || ""; m.el.style.zIndex = String(z || 0); m.el.style.cursor = l.listens("click") ? "pointer" : "default";
+    m.el.title = title || ""; m.el.style.zIndex = String(z || 0); const live = l.listens("click"); m.el.style.cursor = live ? "pointer" : "default"; m.el.style.pointerEvents = live ? "auto" : "none";
     const p = l.getLatLng(); m.mk.setLngLat([p.lng, p.lat]);
   };
   const tipText = l => { const t = l.getTooltip?.(); if (!t) return ""; const c = t.getContent(); return String(typeof c === "function" ? "" : c).replace(/<br\s*\/?>/g, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"); };
@@ -1947,6 +1956,8 @@ function setFollow(v){
   if (S.follow && A.pi >= 0) render(true);
 }
 $("#follow").addEventListener("change", ev => setFollow(ev.target.value));
+map.on("dragstart", () => { if (S.follow && !V3.on) setFollow(""); });   // dragging or wheel-zooming the 2D map ends following
+map.getContainer().addEventListener("wheel", () => { if (S.follow && !V3.on) setFollow(""); }, { passive:true });
 function followPos(){
   const f = S.follow; if (!f || A.pi < 0) return null;
   const k = tracks.find(k => k.on && k.tr.side === f.side && baseName(k.tr.unit) === f.name);
