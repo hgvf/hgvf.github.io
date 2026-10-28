@@ -2461,7 +2461,7 @@
       "credit": "Collection DocAnciens／docpix.fr",
       "license": {
         "code": "pd",
-        "name": "公有領域（PD-France、1931 年前出版）",
+        "name": "公有領域（PD-France；美國 PD-US）",
         "url": "https://commons.wikimedia.org/wiki/Template:PD-France"
       },
       "event": "芒然反攻杜奧蒙堡"
@@ -2477,7 +2477,7 @@
       "credit": "Agence Rol／法國國家圖書館 Gallica",
       "license": {
         "code": "pd",
-        "name": "公有領域（PD-France）",
+        "name": "公有領域（PD-France；美國 PD-US-expired）",
         "url": "https://commons.wikimedia.org/wiki/Template:PD-France"
       },
       "date": "1916-07"

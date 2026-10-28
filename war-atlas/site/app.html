@@ -417,14 +417,14 @@ body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(va
 .media-box img,.media-box video{display:block;max-width:100%;max-height:68vh;margin:0 auto;border-radius:6px;background:#000}
 .media-dlg .d{font-family:var(--f-mono);font-size:12px}
 #fx{position:fixed;inset:0;z-index:2;pointer-events:none;transition:opacity .8s}
-#fx.fx-rain{background:repeating-linear-gradient(104deg,transparent 0 11px,rgba(170,190,205,.32) 11px 12px);background-size:140px 140px;animation:fxrain .45s linear infinite}
-#fx.fx-storm{background:repeating-linear-gradient(104deg,transparent 0 8px,rgba(170,190,205,.38) 8px 9px),linear-gradient(rgba(20,28,36,.28),rgba(20,28,36,.28));background-size:110px 110px,auto;animation:fxrain .35s linear infinite}
+#fx .fx-rain{position:absolute;inset:0;background:repeating-linear-gradient(104deg,transparent 0 11px,rgba(170,190,205,.32) 11px 12px);background-size:140px 140px;animation:fxrain .45s linear infinite}
+#fx .fx-storm{position:absolute;inset:0;background:repeating-linear-gradient(104deg,transparent 0 8px,rgba(170,190,205,.38) 8px 9px),linear-gradient(rgba(20,28,36,.28),rgba(20,28,36,.28));background-size:110px 110px,auto;animation:fxrain .35s linear infinite}
 @keyframes fxrain{to{background-position:-34px 140px,0 0}}
-#fx.fx-snow{background:radial-gradient(circle,rgba(255,255,255,.9) 0 1.6px,transparent 2.2px) 0 0/46px 46px,radial-gradient(circle,rgba(255,255,255,.7) 0 1.1px,transparent 1.6px) 20px 13px/31px 31px;animation:fxsnow 6s linear infinite}
+#fx .fx-snow{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.9) 0 1.6px,transparent 2.2px) 0 0/46px 46px,radial-gradient(circle,rgba(255,255,255,.7) 0 1.1px,transparent 1.6px) 20px 13px/31px 31px;animation:fxsnow 6s linear infinite}
 @keyframes fxsnow{to{background-position:30px 460px,-10px 310px}}
-#fx.fx-fog{background:radial-gradient(ellipse at 20% 40%,rgba(232,234,230,.55),transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(232,234,230,.5),transparent 55%),rgba(232,234,230,.18);animation:fxdrift 18s ease-in-out infinite alternate}
-#fx.fx-smoke{background:radial-gradient(ellipse at 35% 45%,rgba(60,58,54,.35),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(70,66,60,.3),transparent 45%),rgba(60,58,54,.08);animation:fxdrift 14s ease-in-out infinite alternate}
-#fx.fx-dust{background:radial-gradient(ellipse at 40% 60%,rgba(190,160,110,.3),transparent 55%),rgba(190,160,110,.12);animation:fxdrift 16s ease-in-out infinite alternate}
+#fx .fx-fog{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,rgba(232,234,230,.55),transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(232,234,230,.5),transparent 55%),rgba(232,234,230,.18);animation:fxdrift 18s ease-in-out infinite alternate}
+#fx .fx-smoke{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 45%,rgba(60,58,54,.35),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(70,66,60,.3),transparent 45%),rgba(60,58,54,.08);animation:fxdrift 14s ease-in-out infinite alternate}
+#fx .fx-dust{position:absolute;inset:0;background:radial-gradient(ellipse at 40% 60%,rgba(190,160,110,.3),transparent 55%),rgba(190,160,110,.12);animation:fxdrift 16s ease-in-out infinite alternate}
 @keyframes fxdrift{to{background-position:60px -20px,-50px 30px,0 0}}
 .tl-ev{display:flex;gap:7px;align-items:center;min-width:0;height:18px;font-size:12px;color:var(--ink-2)}
 .tl-ev:empty{display:none}
@@ -1577,7 +1577,7 @@ function buildImmersion(pi, instant){
   if (over > 0) A.cards.forEach((c, i) => { c.f = Math.max(.02, c.f - over * (i + 1) / A.cards.length); });
   A.decs = decisions.map(d => ({ d, f:itemFrac(A.plan, b, pi, d, true), done:!!instant }));
   const c = b.phases[pi].conditions, fx = [].concat(c?.fx || []).filter(x => FX.includes(x));
-  $("#fx").className = fx.map(x => "fx-" + x).join(" "); $("#fx").hidden = !fx.length || RM;
+  $("#fx").innerHTML = fx.map(x => `<i class="fx-${x}"></i>`).join(""); $("#fx").hidden = !fx.length || RM;   // one layer per effect, so they stack
   const cond = c ? COND.filter(([k]) => c[k]).map(([k, n]) => `<span><b>${n}</b>${esc(c[k])}</span>`).join("") : "";
   $("#tlCond").innerHTML = cond; $("#tlCond").hidden = !cond;
 }
@@ -1589,7 +1589,7 @@ function tickImmersion(el, dur){
     if (DEC.on && !REC.rec && el < dur && $("#modal").hidden) openDecision(x.d, true);
   }
 }
-function clearImmersion(){ A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").className = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
+function clearImmersion(){ A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").innerHTML = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
 
 /* ---------------- 3D view ----------------
    MapLibre GL over open terrain (AWS Terrain Tiles, seafloor flattened to sea level) and the Natural Earth
