@@ -78,6 +78,15 @@ def main():
             continue
         f = DATA / "battles" / f"{d.id}.json"
         existed = f.exists()
+        # a repo copy with a newer `revision` (edited in git after the last 新增) is kept; the page shows it too
+        if existed:
+            try:
+                mine = json.loads(f.read_text("utf-8")).get("revision", "")
+            except ValueError:
+                mine = ""
+            if str(mine) > str(b.get("revision", "")):
+                print(f"= {f.name}: repo copy is newer ({mine}), kept")
+                continue
         if write_if_changed(f, b):
             changed += 1
             print(("~ " if existed else "+ ") + f.name)

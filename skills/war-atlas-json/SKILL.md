@@ -1,9 +1,9 @@
 ---
 name: "war-atlas"
-description: "Research a battle or war for the user's own battle-map site and output exactly one importable JSON file. Use instead of war-atlas whenever a battle name or source link is given."
+description: "Research a battle or war for the user's own battle-map site (戰役地圖集) and output exactly one importable JSON file — facts, order of battle, weapons, phased map animation, plus immersion material (openly licensed period photos, public-domain first-hand words, commander decisions, weather and ground, unit tracks). Use whenever a battle or war name or a source link is given for the map."
 ---
 
-<!-- Copy of the claude.ai "war-atlas" (one JSON) skill, updated for the animation fields. Upload this file to replace the synced skill. -->
+<!-- The claude.ai "war-atlas" (one JSON) skill. Upload this file to replace the synced skill. -->
 
 # War Atlas → one JSON
 
@@ -12,10 +12,32 @@ The user runs their own battle-map site. The ONLY deliverable is one importable 
 ## Steps
 
 1. **Research.** Fetch every source the user gave, then cross-check with at least one more (other-language Wikipedia, or a non-wiki source: official history, paper, museum). `zh.wikipedia.org/zh-tw/…` often fails in WebFetch: WebSearch the battle name and fetch the en/zh URLs from the results. Ask fetches for: dates, belligerents, commanders, units (番號), strength (troops/aircraft/tanks/ships/artillery), casualties per side with each source's figure, equipment with model designations, phases with dates and named places, civilian toll, outcome, consequences. Keep numbers exact.
-2. **War ids.** Reuse ids already on the site: `wwii`, `second-sino-japanese-war`, `pacific-war`, `crimean-war` (defined under Wars), plus `wwi` and `western-front-wwi` and any id the user names — for those, write the war object into `new_wars.json` with the exact id. For a new war or theatre, define a full war object (see Wars). A theatre lists its broad war as `parent`, and a record lists both ids.
-3. **Write the record** to a scratch file `<id>.json` following the Schema below.
-4. **Validate and bundle** with the Validator script. Fix every ERROR and rerun until it prints `ok`.
-5. **Deliver** only the bundle file from `dist/` with SendUserFile (display: attach).
+2. **Immersion pass (always, after the facts).** Go back over the sources and search specifically for what lets a reader feel the battle. Aim per record for (targets, not quotas — report any shortfall): 3–8 `media`, 2–5 `voices`, 1–3 `decisions`, `conditions` on every phase where a source states weather / light / sea / ground, 3–8 `tracks`, and hour stamps for naval and air actions. Fewer is fine — never pad. Follow **Finding immersion material** below; every rejected item stays out, and the report says what was skipped and why.
+3. **War ids.** Reuse the ids listed under Wars (all wars already on the site). For a war or theatre not listed there, define a full war object (see Wars) in `new_wars.json`. A theatre lists its broad war as `parent`, and a record lists both ids.
+4. **Write the record** to a scratch file `<id>.json` following the Schema below. Do not add `revision`: the site stamps it when the JSON is pasted into 新增, and the newest copy of an id replaces older ones (re-pasting a record with the same `id` updates it).
+5. **Validate and bundle** with the Validator script. Fix every ERROR and rerun until it prints `ok`.
+6. **Deliver** only the bundle file from `dist/` as an attached file (on claude.ai: the file-sending tool with display "attach"); the user pastes it into the site's 新增 dialog.
+
+## Finding immersion material
+
+**Licence rule (no exceptions).** Only material that needs no permission: `license.code` = `pd`, `cc0`, `cc-by` or `cc-by-sa`. If you cannot confirm the licence from a page you actually fetched, leave the item out.
+
+**Media (period photos, paintings, film).**
+1. Collect candidates: the `File:` names shown in the battle's Wikipedia articles (en and the belligerents' languages), the Commons category page `https://commons.wikimedia.org/wiki/Category:<Battle_name>` and its sub-categories, and searches such as `<battle> <year> site:commons.wikimedia.org`. Prefer photos taken in the battle and dated; avoid post-war memorials and modern photos unless nothing else exists.
+2. WebFetch each candidate's Commons **file page** and read its *Licensing* section. Accept: `PD-USGov…` (US federal / military works), `PD-old-…`/`PD-Art` together with a US tag (`PD-US`, `PD-US-expired`, `PD-1996`), a source-country PD tag (`PD-France`, `PD-1996`…) together with a US tag, `Cc-by-…`, `Cc-by-sa-…` (e.g. German Federal Archives `Cc-by-sa-3.0-de`), `Cc-zero`. Reject: "non-free", fair use, NC/ND, a PD tag with the "you must also include a United States public domain tag" warning and no US tag, deletion warnings, unknown source.
+3. Fill: `url` = the original file link from that page (`https://upload.wikimedia.org/wikipedia/commons/<a>/<ab>/<File>`); `thumb` = `https://upload.wikimedia.org/wikipedia/commons/thumb/<a>/<ab>/<File>/500px-<File>` (only standard widths such as 330, 500, 960 work; the site falls back to `url`); `page` = the file page; `credit` = author / archive and its photo number as the page gives them; `license` = `{code, name in zh-TW, url of the licence or template page}`; `title` and `caption` in zh-TW from the page's description, with the date; tie it to `phase` and to the `event` it shows (or `date`). `sensitive: true` for bodies, executions, atrocities.
+
+**Voices (first-hand words).** `source` = the page where you actually read the text (a Wikipedia article quoting a signal is fine); fetch it again before writing the item and copy the wording exactly from it. Quote only public-domain primary text that you saw verbatim there: US federal documents, signals and radio messages (US government works); official communiqués, orders of the day and announcements of a government or army published before 1946; texts first published before 1931; writings of authors who died more than 70 years ago. Never quote memoirs, diaries, interviews or letters of people who died less than 70 years ago, never a paraphrase, never a wording that differs between sources (use only the part they agree on). A non-US text must also be public domain in the US: published before 1931, or (published 1931–1945) already public domain in its own country on 1 January 1996 — official government texts (e.g. Japanese Imperial HQ or German army communiqués) qualify. Put the original in `original` (+ `lang`), your zh-TW translation in `quote`, `"translated":"本站"`, and say in `license.name` why it is public domain.
+
+**Decisions.** 1–3 real turning points where a source describes what the commander knew and what he weighed (pursue or guard, hold or withdraw, attack on or break off). `situation` and `intel` contain only what he knew then; `options` = the real choice plus the alternatives a source names or the obvious opposite; `chosen` = index of the real one; `outcome` and `hindsight` from sources; put it on the clock just before the event that reveals the answer (`at`, or `event`).
+
+**When an item appears.** Each voice / media / decision belongs to one `phase` (its id). It appears at `at` (decisions) or `date`; without one, at its `event` — which must be the exact `title` of an event in that phase (a voice or image just after it, a decision just before it); with neither, at the phase start. A `date`/`at` must fall inside that phase's start–end. Prefer the event link when a source gives no time.
+
+**Conditions.** Weather, temperature, wind, sea, visibility, ground and light only where a source states them for that phase (fog that delayed an attack, snow, thaw and mud, rain squalls used for cover, night and flares). Add `fx` only for what the source states: rain, snow, fog, smoke, dust, storm.
+
+**Tracks and timing.** Hour stamps (`THH:MM`) on events whose text or source gives the hour; if sources disagree on the hour, leave the date without an hour and mention the spread in the event text. Tracks for the formations the story follows, built only from your own move paths, event positions and unit notes; set `model` (tank, infantry, cavalry, artillery, vehicle, ship, carrier, aircraft) when the type is clear.
+
+Name in `provenance.notes` where the immersion material came from, which licences apply, and which tracks or dates are schematic.
 
 Several battles in one message → still one file: pass every record to the validator; they all go into the same bundle's `battles` list.
 
@@ -119,24 +141,43 @@ Phase:
 
 `tracks`: 3–10 formations the story follows, stitched only from the record's own events, move paths and unit notes (no new coordinates or dates); first and last points dated, undated middle points are interpolated; end `destroyed`/`withdrawn` only when sourced; say in `provenance.notes` that tracks are schematic and which dates are phase dates.
 
+**Immersion fields (optional).** Only material whose licence needs no permission: `license.code` ∈ `pd`, `cc0`, `cc-by`, `cc-by-sa`, checked on the file's own page (Commons file page, archive record), which goes in `page`. Skip all-rights-reserved, NC/ND, fair-use, unclear or country-dependent public-domain items. Quotes only from public-domain texts, never invented; your Chinese translation goes in `quote`, the original in `original`, `"translated":"本站"`.
+
+| field | shape |
+|---|---|
+| `voices` | `[{"phase","date"?,"event"?,"side"?,"who","role"?,"quote","original"?,"lang"?,"translated"?,"source":{"title","url"},"license":{"code","name","url"},"sensitive"?}]` |
+| `media` | `[{"phase","date"?,"event"?,"type":"image|video","title","caption","url":"https://upload.wikimedia.org/…","thumb"?,"page":"https://commons.wikimedia.org/wiki/File:…","credit","license":{"code","name","url"},"sensitive"?}]` |
+| `decisions` | `[{"phase","at","side","commander","title","situation","intel"?:[…],"options":[{"label","detail"?}…≥2],"chosen":<index>,"outcome","hindsight"?,"sources":[{"title","url"}]}]` — 1–3 real turning points; `situation`/`intel` only what he knew then |
+| `phases[].conditions` | `{"weather"?,"temp"?,"wind"?,"sea"?,"visibility"?,"ground"?,"light"?,"note"?,"fx"?:["rain|snow|fog|smoke|dust|storm"],"sources":[…]}` — only sourced facts |
+| `model` | on a move or track: tank, infantry, cavalry, artillery, vehicle, ship, carrier, aircraft (3D view; inferred when absent) |
+
+`sensitive: true` blurs atrocity / casualty images and quotes until clicked.
+
 ## Wars
 
 ```json
 {"id":"pacific-war","name":"太平洋戰爭","short":"太平洋","name_en":"Pacific War","period":"1941–1945","color":"#2f7d78","parent":"wwii"}
 ```
 
-Known definitions (reuse verbatim when referenced):
+Wars already on the site (reuse the id; the definitions are built into the validator, so no `--wars` file is needed for them):
 
 ```json
 [
  {"id":"wwii","name":"第二次世界大戰","short":"二戰","name_en":"World War II","period":"1939–1945","color":"#b5452f"},
  {"id":"second-sino-japanese-war","name":"中日戰爭（抗日戰爭）","short":"抗戰","name_en":"Second Sino-Japanese War","period":"1937–1945","color":"#3f6e8c","parent":"wwii"},
  {"id":"pacific-war","name":"太平洋戰爭","short":"太平洋","name_en":"Pacific War","period":"1941–1945","color":"#2f7d78","parent":"wwii"},
- {"id":"crimean-war","name":"克里米亞戰爭","short":"克里米亞","name_en":"Crimean War","period":"1853–1856","color":"#8a6a2f"}
+ {"id":"crimean-war","name":"克里米亞戰爭","short":"克里米亞","name_en":"Crimean War","period":"1853–1856","color":"#8a6a2f"},
+ {"id":"soviet-japanese-border-conflicts","name":"日蘇邊境衝突","short":"日蘇邊境","name_en":"Soviet–Japanese border conflicts","period":"1932–1939","color":"#6b4f8a"},
+ {"id":"western-front-wwi","name":"第一次世界大戰西方戰線","short":"西線","name_en":"Western Front (World War I)","period":"1914–1918","color":"#7a4f6d","parent":"wwi"},
+ {"id":"wwi","name":"第一次世界大戰","short":"一戰","name_en":"World War I","period":"1914–1918","color":"#6b5b3e"},
+ {"id":"chinese-civil-war","name":"第二次國共內戰","short":"國共內戰","name_en":"Chinese Civil War (1945–1949)","period":"1945–1949","color":"#7a4a8c"},
+ {"id":"first-sino-japanese-war","name":"甲午戰爭（第一次中日戰爭）","short":"甲午戰爭","name_en":"First Sino-Japanese War","period":"1894–1895","color":"#a07a2c"},
+ {"id":"russo-japanese-war","name":"日俄戰爭","short":"日俄戰爭","name_en":"Russo-Japanese War","period":"1904–1905","color":"#6b4f8a"},
+ {"id":"japanese-invasion-of-manchuria","name":"九一八事變（日本侵佔東北）","short":"九一八","name_en":"Japanese invasion of Manchuria","period":"1931–1933","color":"#8c3f5a"}
 ]
 ```
 
-A new war: `short` ≤4 字 (the filter-chip label), a color distinct from the ones above. Put new war objects in a JSON list file for the validator.
+A new war: `short` ≤4 字 (the filter-chip label), a color distinct from the ones above. Put only NEW war objects in a file holding a bare JSON array (`[{…}, …]`, not the site's `{"wars":[…]}`) and pass it with `--wars`.
 
 ## Validator
 
@@ -151,7 +192,14 @@ WARS = {w["id"]: w for w in [
  {"id":"wwii","name":"第二次世界大戰","short":"二戰","name_en":"World War II","period":"1939–1945","color":"#b5452f"},
  {"id":"second-sino-japanese-war","name":"中日戰爭（抗日戰爭）","short":"抗戰","name_en":"Second Sino-Japanese War","period":"1937–1945","color":"#3f6e8c","parent":"wwii"},
  {"id":"pacific-war","name":"太平洋戰爭","short":"太平洋","name_en":"Pacific War","period":"1941–1945","color":"#2f7d78","parent":"wwii"},
- {"id":"crimean-war","name":"克里米亞戰爭","short":"克里米亞","name_en":"Crimean War","period":"1853–1856","color":"#8a6a2f"}]}
+ {"id":"crimean-war","name":"克里米亞戰爭","short":"克里米亞","name_en":"Crimean War","period":"1853–1856","color":"#8a6a2f"},
+ {"id":"soviet-japanese-border-conflicts","name":"日蘇邊境衝突","short":"日蘇邊境","name_en":"Soviet–Japanese border conflicts","period":"1932–1939","color":"#6b4f8a"},
+ {"id":"western-front-wwi","name":"第一次世界大戰西方戰線","short":"西線","name_en":"Western Front (World War I)","period":"1914–1918","color":"#7a4f6d","parent":"wwi"},
+ {"id":"wwi","name":"第一次世界大戰","short":"一戰","name_en":"World War I","period":"1914–1918","color":"#6b5b3e"},
+ {"id":"chinese-civil-war","name":"第二次國共內戰","short":"國共內戰","name_en":"Chinese Civil War (1945–1949)","period":"1945–1949","color":"#7a4a8c"},
+ {"id":"first-sino-japanese-war","name":"甲午戰爭（第一次中日戰爭）","short":"甲午戰爭","name_en":"First Sino-Japanese War","period":"1894–1895","color":"#a07a2c"},
+ {"id":"russo-japanese-war","name":"日俄戰爭","short":"日俄戰爭","name_en":"Russo-Japanese War","period":"1904–1905","color":"#6b4f8a"},
+ {"id":"japanese-invasion-of-manchuria","name":"九一八事變（日本侵佔東北）","short":"九一八","name_en":"Japanese invasion of Manchuria","period":"1931–1933","color":"#8c3f5a"}]}
 for w in (json.load(open(opt("--wars"))) if opt("--wars") else []): WARS[w["id"]] = w
 E = dict(kind={"battle","campaign","siege","operation","war","incident"},
  ev={"assault","defense","landing","naval","air","bombing","siege","retreat","breakthrough","atrocity","treaty","hq","other"},
@@ -241,6 +289,62 @@ def check(b):
             if p.get("date") and not DATE.match(str(p["date"])): errs.append(f"{w}.points[{j}].date invalid")
             if p.get("status") and p["status"] not in E["trk"]: errs.append(f"{w}.points[{j}].status not in {sorted(E['trk'])}")
             if j in (0, len(pts) - 1) and not p.get("date"): errs.append(f"{w}.points[{j}]: first and last points need a date")
+    S = lambda x: isinstance(x, str) and x != ""
+    lic_ok = lambda l: isinstance(l, dict) and l.get("code") in ("pd", "cc0", "cc-by", "cc-by-sa") and (not l.get("url") or https(l["url"]))
+    https = lambda u: isinstance(u, str) and re.match(r"^https://[^\s\"'<>]+$", u) is not None
+    pids = {p.get("id") for p in b["phases"]}
+    src_ok = lambda xs: isinstance(xs, list) and xs and all(isinstance(s, dict) and S(s.get("title")) and (not s.get("url") or https(s["url"])) for s in xs)
+    phase_of = {p.get("id"): p for p in b["phases"]}
+    def when(w, it):
+        if not isinstance(it.get("phase"), str) or it["phase"] not in pids: errs.append(f"{w}.phase not a phase id"); return
+        p = phase_of[it["phase"]]
+        if it.get("event") is not None and it["event"] not in {e.get("title") for e in p.get("events", [])}: errs.append(f"{w}.event must be the exact title of an event in phase {it['phase']}")
+        for k in ("date", "at"):
+            v = str(it.get(k) or "")
+            if v and DATE.match(v) and (v[:10] < str(p.get("start", ""))[:10] or (p.get("end") and v[:10] > str(p["end"])[:10])): warns.append(f"{w}.{k} {v} lies outside phase {it['phase']} ({p.get('start')}–{p.get('end')})")
+        for k in ("date", "at"):
+            if it.get(k) is not None and not DATE.match(str(it[k])): errs.append(f"{w}.{k} invalid")
+        if it.get("side") is not None and (not isinstance(it["side"], str) or it["side"] not in sids): errs.append(f"{w}.side not a side id")
+    for key in ("voices", "media", "decisions"):
+        if not isinstance(b.get(key, []), list): errs.append(f"{key} must be a list"); b = {**b, key: []}
+    for i, v in enumerate(b.get("voices", [])):
+        if not isinstance(v, dict): errs.append(f"voices[{i}] must be an object"); continue
+        when(f"voices[{i}]", v)
+        src = v.get("source") if isinstance(v.get("source"), dict) else {}
+        if v.get("translated") and (not S(v.get("original")) or not S(v.get("lang"))): errs.append(f"voices[{i}] translated by us: original and lang required")
+        if not S((v.get("license") or {}).get("name") if isinstance(v.get("license"), dict) else None): errs.append(f"voices[{i}].license.name required (why it is public domain / which licence)")
+        if not S(v.get("quote")) or not S(v.get("who")) or not S(src.get("title")) or (src.get("url") and not https(src["url"])): errs.append(f"voices[{i}] needs quote, who, source.title (https url)")
+        if not lic_ok(v.get("license")): errs.append(f"voices[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
+    for i, m in enumerate(b.get("media", [])):
+        if not isinstance(m, dict): errs.append(f"media[{i}] must be an object"); continue
+        when(f"media[{i}]", m)
+        if not S((m.get("license") or {}).get("name") if isinstance(m.get("license"), dict) else None): errs.append(f"media[{i}].license.name required")
+        if isinstance(m.get("page"), str) and "wikimedia.org" in m.get("url", "") and "/wiki/File:" not in m["page"]: errs.append(f"media[{i}].page must be the Commons File: page")
+        if m.get("type") not in ("image", "video") or not https(m.get("url")) or not https(m.get("page")) or not S(m.get("credit")) or (m.get("thumb") is not None and not https(m["thumb"])): errs.append(f"media[{i}] needs type, https url / page / thumb, credit")
+        if not lic_ok(m.get("license")): errs.append(f"media[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
+    for i, d in enumerate(b.get("decisions", [])):
+        if not isinstance(d, dict): errs.append(f"decisions[{i}] must be an object"); continue
+        when(f"decisions[{i}]", d)
+        o = d.get("options") if isinstance(d.get("options"), list) else []
+        c = d.get("chosen")
+        if not all(S(d.get(k)) for k in ("commander", "title", "situation", "outcome")): errs.append(f"decisions[{i}] needs commander, title, situation, outcome")
+        if len(o) < 2 or not all(isinstance(x, dict) and S(x.get("label")) for x in o): errs.append(f"decisions[{i}].options needs ≥2 with a label")
+        if isinstance(c, bool) or not isinstance(c, (int, float)) or c != int(c) or not 0 <= c < len(o): errs.append(f"decisions[{i}].chosen must be an option index")
+        if not src_ok(d.get("sources")): errs.append(f"decisions[{i}].sources need titles (https urls)")
+    for i, p in enumerate(b["phases"]):
+        c = p.get("conditions")
+        if c is None: continue
+        if not isinstance(c, dict): errs.append(f"phases[{i}].conditions must be an object"); continue
+        if not src_ok(c.get("sources")): errs.append(f"phases[{i}].conditions.sources required (titles, https urls)")
+        fx = c.get("fx") or []
+        for x in (fx if isinstance(fx, list) else [fx]):
+            if x not in ("rain", "snow", "fog", "smoke", "dust", "storm"): errs.append(f"phases[{i}].conditions.fx '{x}' invalid")
+    MODELS = ("tank", "infantry", "cavalry", "artillery", "vehicle", "ship", "carrier", "aircraft")
+    for i, p in enumerate(b["phases"]):
+        for j, m in enumerate(p.get("moves", [])):
+            if m.get("model") is not None and m["model"] not in MODELS: errs.append(f"phases[{i}].moves[{j}].model invalid")
+    for i, t in enumerate(b.get("tracks", [])):
+        if t.get("model") is not None and t["model"] not in MODELS: errs.append(f"tracks[{i}].model invalid")
     if not b["sources"]: errs.append("sources: at least one")
     for i, s in enumerate(b["sources"]):
         if s.get("type") not in E["src"] or not s.get("title"): errs.append(f"sources[{i}] needs title and valid type")
@@ -287,9 +391,10 @@ It carries its own war definitions, so the site imports it as is (its import box
 
 ## Report back
 
-Two or three short lines in 繁體中文: what the file covers (records, phases, sides), and what is uncertain (contested casualties, approximate coordinates, sources that failed, facts or specs added from general knowledge). No JSON in chat, no build or deploy steps.
+Three or four short lines in 繁體中文: what the file covers (records, phases, sides); the immersion material found (how many photos, voices, decisions, phases with conditions, tracks) and anything left out because its licence could not be confirmed; and what is uncertain (contested casualties, approximate coordinates, sources that failed, facts or specs added from general knowledge). Remind the user to paste the file into the site's 新增 dialog (same id = update). No JSON in chat, no build or deploy steps.
 
 ## Rules
 
 - Never invent sources or URLs; schematic arrows are not exact routes.
 - One request → one delivered file, however many records it holds.
+- Immersion material only with a confirmed open licence or public-domain status; when in doubt, leave it out.

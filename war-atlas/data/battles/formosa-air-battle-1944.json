@@ -670,7 +670,8 @@
               23.6,
               122.8
             ]
-          ]
+          ],
+          "unit": "第38特遣艦隊"
         }
       ]
     },
@@ -750,7 +751,8 @@
               25.07,
               121.55
             ]
-          ]
+          ],
+          "unit": "第38.2特遣支隊"
         },
         {
           "side": "usa",
@@ -769,7 +771,8 @@
               24.15,
               120.68
             ]
-          ]
+          ],
+          "unit": "第38.3特遣支隊"
         },
         {
           "side": "usa",
@@ -788,7 +791,8 @@
               22.62,
               120.3
             ]
-          ]
+          ],
+          "unit": "第38.1特遣支隊"
         },
         {
           "side": "japan",
@@ -807,9 +811,23 @@
               23.9,
               123.3
             ]
-          ]
+          ],
+          "unit": "T 攻擊部隊"
         }
-      ]
+      ],
+      "conditions": {
+        "light": "夜間攻擊時日機投下照明彈",
+        "note": "T 攻擊部隊首度大規模以雷達輔助夜間雷擊；美艦施放煙幕並急轉迴避，讓來襲機保持在艦尾。",
+        "fx": [
+          "smoke"
+        ],
+        "sources": [
+          {
+            "title": "Formosa Air Battle（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Formosa_Air_Battle"
+          }
+        ]
+      }
     },
     {
       "id": "p3",
@@ -878,7 +896,8 @@
               23.57,
               119.58
             ]
-          ]
+          ],
+          "unit": "第38特遣艦隊"
         },
         {
           "side": "japan",
@@ -897,9 +916,20 @@
               22.9,
               123.1
             ]
-          ]
+          ],
+          "unit": "T 攻擊部隊"
         }
-      ]
+      ],
+      "conditions": {
+        "weather": "比前一天更差，雲層密布",
+        "note": "陰天讓美機難以判定轟炸戰果。",
+        "sources": [
+          {
+            "title": "Formosa Air Battle（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Formosa_Air_Battle"
+          }
+        ]
+      }
     },
     {
       "id": "p4",
@@ -968,7 +998,8 @@
               22.79,
               120.3
             ]
-          ]
+          ],
+          "unit": "第20航空軍第20轟炸機司令部"
         },
         {
           "side": "usa",
@@ -987,7 +1018,8 @@
               21.5,
               125
             ]
-          ]
+          ],
+          "unit": "第30.3特遣支隊（殘破第一分隊）"
         },
         {
           "side": "japan",
@@ -1006,9 +1038,23 @@
               22.2,
               123.3
             ]
-          ]
+          ],
+          "unit": "第二航空艦隊"
         }
-      ]
+      ],
+      "conditions": {
+        "weather": "傍晚有雨飑",
+        "note": "約 17:00 日機低空突襲第 38.3 支隊，美艦靠急轉迴避與雨飑躲過重大損害。",
+        "fx": [
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Formosa Air Battle（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Formosa_Air_Battle"
+          }
+        ]
+      }
     },
     {
       "id": "p5",
@@ -1095,7 +1141,8 @@
               10,
               139.7
             ]
-          ]
+          ],
+          "unit": "第30.3特遣支隊（殘破第一分隊）"
         },
         {
           "side": "japan",
@@ -1118,7 +1165,8 @@
               27,
               127
             ]
-          ]
+          ],
+          "unit": "第二遊擊部隊"
         },
         {
           "side": "usa",
@@ -1137,7 +1185,8 @@
               14.55,
               121.02
             ]
-          ]
+          ],
+          "unit": "第13艦載機大隊（CAG-13）"
         }
       ]
     },
@@ -1431,13 +1480,249 @@
   ],
   "provenance": {
     "extracted_by": "Claude",
-    "extracted_at": "2026-10-22",
+    "extracted_at": "2026-10-28",
     "confidence": {
       "coordinates": "approx",
       "strength": "medium",
       "casualties": "contested",
       "weapons": "medium"
     },
-    "notes": "使用者提供的中文維基連結無法抓取，以英文維基、historyofwar.org、vocus 及多個搜尋摘要交叉比對。所有武器規格（速度、武裝、航程、排水量等）、妙高級重巡（那智、足柄）作為志摩艦隊主力、九六式 25 mm 機砲、鹿屋為九州出擊基地、豐田副武滯留新竹、陸軍據誤報改在雷伊泰決戰等屬一般知識補充。日軍指揮官中文全名（福留繁等）依常見譯名。美軍各艦隊在海上的位置與受創地點均為示意推估，非精確座標；所有移動箭頭為示意，不代表實際航線。美軍人員總傷亡與台灣平民傷亡均缺可靠數字。"
-  }
+    "notes": "使用者提供的中文維基連結無法抓取，以英文維基、historyofwar.org、vocus 及多個搜尋摘要交叉比對。所有武器規格（速度、武裝、航程、排水量等）、妙高級重巡（那智、足柄）作為志摩艦隊主力、九六式 25 mm 機砲、鹿屋為九州出擊基地、豐田副武滯留新竹、陸軍據誤報改在雷伊泰決戰等屬一般知識補充。日軍指揮官中文全名（福留繁等）依常見譯名。美軍各艦隊在海上的位置與受創地點均為示意推估，非精確座標；所有移動箭頭為示意，不代表實際航線。美軍人員總傷亡與台灣平民傷亡均缺可靠數字。 沉浸內容：日方引文為大本營 1944 年官方發表原文（經日文維基百科轉錄），中文為本站翻譯；照片皆在 Wikimedia Commons 檔案頁確認為美國海軍公有領域。部隊軌跡由本紀錄的箭頭座標與事件位置串接，殘破第一分隊 10 月 18 日位置以其撤往烏利西航線的示意點代替。"
+  },
+  "voices": [
+    {
+      "phase": "p5",
+      "date": "1944-10-15T15:00",
+      "side": "japan",
+      "who": "大本營（日本）",
+      "role": "官方戰果發表，10 月 15 日 15:00",
+      "quote": "台灣東方海面之敵機動部隊自昨 14 日起向東方敗走中，我部隊對此敵反覆猛攻，正擴大戰果。至目前已判明之戰果（含已發表者）：轟擊沉航空母艦 7 艘、驅逐艦 1 艘。",
+      "original": "台湾東方海面の敵機動部隊は昨14日来東方に向け敗走中にして、我が部隊は此の敵に対し反覆猛攻を加へ戦果拡充中なり。現在までに判明せる戦果（既発表のものを含む）左の如し　轟撃沈 航空母艦7隻 駆逐艦1隻",
+      "lang": "ja",
+      "translated": "本站",
+      "source": {
+        "title": "台湾沖航空戦（日文維基百科，「大本営発表での戦果」一節）",
+        "url": "https://ja.wikipedia.org/wiki/%E5%8F%B0%E6%B9%BE%E6%B2%96%E8%88%AA%E7%A9%BA%E6%88%A6"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（1944 年日本大本營官方公告；團體名義著作保護期已屆滿）"
+      }
+    },
+    {
+      "phase": "p6",
+      "date": "1944-10-19T18:00",
+      "side": "japan",
+      "who": "大本營（日本）",
+      "role": "官方戰果綜合發表，10 月 19 日 18:00",
+      "quote": "我部隊自 10 月 12 日以來連日連夜猛攻台灣及呂宋東方海面之敵機動部隊，殲滅其過半兵力並使之潰走。戰果綜合：轟擊沉航空母艦 11 艘、戰艦 2 艘、巡洋艦 3 艘……我方損失：飛機未返航 312 架。",
+      "original": "我部隊は10月12日以降連日連夜台湾及「ルソン」東方海面の敵機動部隊を猛攻し其の過半の兵力を壊滅して之を潰走せしめたり　轟撃沈 航空母艦11隻 戦艦2隻 巡洋艦3隻……我方の損害 飛行機未帰還312機",
+      "lang": "ja",
+      "translated": "本站",
+      "source": {
+        "title": "台湾沖航空戦（日文維基百科，「大本営発表での戦果」一節）",
+        "url": "https://ja.wikipedia.org/wiki/%E5%8F%B0%E6%B9%BE%E6%B2%96%E8%88%AA%E7%A9%BA%E6%88%A6"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（1944 年日本大本營官方公告；團體名義著作保護期已屆滿）"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p2",
+      "type": "image",
+      "title": "列星頓號放飛 F6F 地獄貓",
+      "caption": "第 16 戰鬥機中隊的 F6F 自列星頓號起飛，前往空襲台灣（約 10 月 12 日）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/USS_Lexington_%28CV-16%29_launching_a_Grumman_F6F_Hellcat%2C_circa_12_October_1944_%2880-G-285037%29.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/USS_Lexington_%28CV-16%29_launching_a_Grumman_F6F_Hellcat%2C_circa_12_October_1944_%2880-G-285037%29.jpg/500px-USS_Lexington_%28CV-16%29_launching_a_Grumman_F6F_Hellcat%2C_circa_12_October_1944_%2880-G-285037%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:USS_Lexington_%28CV-16%29_launching_a_Grumman_F6F_Hellcat%2C_circa_12_October_1944_%2880-G-285037%29.jpg",
+      "credit": "U.S. Navy 80-G-285037",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "中部掃蕩"
+    },
+    {
+      "phase": "p4",
+      "type": "image",
+      "title": "天山艦攻掠過艾塞克斯號",
+      "caption": "日本海軍中島 B6N「天山」投雷後掠過航艦艾塞克斯號右舷後方；機前可見防空砲彈濺起的水花（10 月 14 日，第 38.3 支隊）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/B6N_torpedo_bomber_attacking_TG_38.3_during_the_Formosa_Air_Battle%2C_October_1944.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/B6N_torpedo_bomber_attacking_TG_38.3_during_the_Formosa_Air_Battle%2C_October_1944.jpg/500px-B6N_torpedo_bomber_attacking_TG_38.3_during_the_Formosa_Air_Battle%2C_October_1944.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:B6N_torpedo_bomber_attacking_TG_38.3_during_the_Formosa_Air_Battle%2C_October_1944.jpg",
+      "credit": "U.S. Navy／Naval History and Heritage Command",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "date": "1944-10-14"
+    },
+    {
+      "phase": "p5",
+      "type": "image",
+      "title": "休士頓號第二次中雷",
+      "caption": "被拖曳中的輕巡洋艦休士頓號右舷後方再被日機魚雷命中，水柱底部燃燒著外洩燃油。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Torpedo_hits_USS_Houston_%28CL-81%29%2C_during_the_afternoon_of_16_October_1944_%28NH_98826%29.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Torpedo_hits_USS_Houston_%28CL-81%29%2C_during_the_afternoon_of_16_October_1944_%28NH_98826%29.jpg/500px-Torpedo_hits_USS_Houston_%28CL-81%29%2C_during_the_afternoon_of_16_October_1944_%28NH_98826%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Torpedo_hits_USS_Houston_%28CL-81%29%2C_during_the_afternoon_of_16_October_1944_%28NH_98826%29.jpg",
+      "credit": "U.S. Navy NH 98826",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "休士頓號第二次中雷"
+    },
+    {
+      "phase": "p6",
+      "type": "image",
+      "title": "坎培拉號與休士頓號被拖往烏利西",
+      "caption": "兩艘中雷的巡洋艦在拖船牽引下駛向烏利西環礁（10 月 18 日）——「殘破第一分隊」平安脫離。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/USS_Canberra_%28CA-70%29_and_USS_Houston_%28CL-81%29_under_tow_on_18_October_1944%2C_after_receiving_torpedo_hits_%28NH_98343%29.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/USS_Canberra_%28CA-70%29_and_USS_Houston_%28CL-81%29_under_tow_on_18_October_1944%2C_after_receiving_torpedo_hits_%28NH_98343%29.jpg/500px-USS_Canberra_%28CA-70%29_and_USS_Houston_%28CL-81%29_under_tow_on_18_October_1944%2C_after_receiving_torpedo_hits_%28NH_98343%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:USS_Canberra_%28CA-70%29_and_USS_Houston_%28CL-81%29_under_tow_on_18_October_1944%2C_after_receiving_torpedo_hits_%28NH_98343%29.jpg",
+      "credit": "U.S. Navy NH 98343",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "date": "1944-10-18"
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p5",
+      "date": "1944-10-15",
+      "side": "usa",
+      "commander": "海爾賽",
+      "title": "自沉兩艘中雷巡洋艦，還是拖回並拿來當誘餌？",
+      "situation": "坎培拉號（13 日）與休士頓號（14 日）先後中雷失去動力，只能以數節速度被拖曳，距台灣與日本基地航空隊不遠。日機每晚來襲。",
+      "intel": [
+        "兩艦都還浮著，但機艙進水",
+        "日方大本營發表宣稱擊沉多艘美國航艦、敵艦隊「敗走」",
+        "需要分出整個支隊護航"
+      ],
+      "options": [
+        {
+          "label": "自沉兩艦",
+          "detail": "撤出艦員，避免為兩艘殘艦冒更多風險"
+        },
+        {
+          "label": "拖回烏利西，並當作誘餌",
+          "detail": "編成『殘破第一分隊』緩慢撤離，以明碼電訊引誘日本艦隊出擊"
+        }
+      ],
+      "chosen": 1,
+      "outcome": "幕僚說服海爾賽化危為機：殘艦與護航艦被非正式稱為「誘餌分隊」，以公開頻道發送求救電訊。日本確有巡洋艦部隊南下，但偵察機看清美軍實力後未發生水面交戰。休士頓號 16 日再中一雷仍未沉沒，兩艦都被拖抵烏利西。",
+      "hindsight": "日方因飛行員誇大戰果而相信美艦隊殘破，曾派志摩的第二遊擊部隊南下（日文維基百科記為救援與掃蕩殘敵），最後並未與美艦交戰。",
+      "sources": [
+        {
+          "title": "Formosa Air Battle（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Formosa_Air_Battle"
+        },
+        {
+          "title": "台湾沖航空戦（日文維基百科）",
+          "url": "https://ja.wikipedia.org/wiki/%E5%8F%B0%E6%B9%BE%E6%B2%96%E8%88%AA%E7%A9%BA%E6%88%A6"
+        }
+      ]
+    },
+    {
+      "phase": "p6",
+      "date": "1944-10-16",
+      "side": "japan",
+      "commander": "豐田副武",
+      "title": "相信「大捷」並全力追擊，還是先查證戰果？",
+      "situation": "返航飛行員紛紛報告擊沉多艘美國航艦，戰果一路上報到內閣與天皇；但損失也極重，出擊機大多未返，夜間攻擊幾乎無法確認戰果。",
+      "intel": [
+        "飛行員報告：多艘航艦轟沉、敵機動部隊潰走",
+        "部分海軍將領起初存疑",
+        "16 日又出現新的美國機動部隊"
+      ],
+      "options": [
+        {
+          "label": "照報告全力追擊殘敵",
+          "detail": "派艦隊與航空兵力追擊「潰走中」的美艦隊"
+        },
+        {
+          "label": "先停下查證",
+          "detail": "以偵察重新確認美艦隊的實際損失"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "大本營發表擊沉航艦 11 艘等「大戰果」，天皇下詔嘉勉；豐田下令全力追擊，很快以失敗收場。實際上美方沒有任何航艦沉沒，日方卻損失約 300 架飛機，嚴重削弱了即將到來的雷伊泰作戰。",
+      "hindsight": "美軍只有坎培拉號、休士頓號兩艘巡洋艦重創；聯合艦隊內部的重新檢討要到 18 日以後才把戰果修正為「約擊滅 4 艘航艦」，那時雷伊泰作戰已經開始。",
+      "sources": [
+        {
+          "title": "Formosa Air Battle（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Formosa_Air_Battle"
+        },
+        {
+          "title": "台湾沖航空戦（日文維基百科，「大本営発表での戦果」一節）",
+          "url": "https://ja.wikipedia.org/wiki/%E5%8F%B0%E6%B9%BE%E6%B2%96%E8%88%AA%E7%A9%BA%E6%88%A6"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "第30.3特遣支隊（殘破第一分隊）",
+      "side": "usa",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1944-10-13",
+          "lat": 22.9,
+          "lng": 123,
+          "note": "坎培拉號中雷，開始拖曳"
+        },
+        {
+          "lat": 22.3,
+          "lng": 124
+        },
+        {
+          "date": "1944-10-16",
+          "lat": 20.5,
+          "lng": 125.5,
+          "note": "休士頓號再中一雷，仍未沉沒"
+        },
+        {
+          "date": "1944-10-18",
+          "lat": 18,
+          "lng": 130,
+          "note": "兩艦被拖往烏利西"
+        }
+      ]
+    },
+    {
+      "unit": "第二遊擊部隊",
+      "side": "japan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1944-10-15",
+          "lat": 33.5,
+          "lng": 132.5,
+          "note": "出擊追擊「殘敵」"
+        },
+        {
+          "lat": 28.5,
+          "lng": 128
+        },
+        {
+          "date": "1944-10-16",
+          "lat": 24.5,
+          "lng": 125,
+          "status": "withdrawn",
+          "note": "察覺美艦隊實力未損，撤回"
+        }
+      ]
+    }
+  ],
+  "revision": "2026-10-28T07:56:22Z"
 }

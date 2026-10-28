@@ -874,7 +874,20 @@
             ]
           ]
         }
-      ]
+      ],
+      "conditions": {
+        "weather": "原定 2 月 12 日發動，因濃霧、大雨與強風延至 21 日；25 日黃昏降雪",
+        "visibility": "25 日暮色與落雪中，德軍突擊隊打出的信號彈連己方砲兵都沒看見",
+        "fx": [
+          "snow"
+        ],
+        "sources": [
+          {
+            "title": "Battle of Verdun（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+          }
+        ]
+      }
     },
     {
       "id": "p2",
@@ -1038,7 +1051,17 @@
             ]
           ]
         }
-      ]
+      ],
+      "conditions": {
+        "ground": "2 月 27 日解凍，戰場化為沼澤",
+        "note": "部分德軍火砲故障或陷在泥中，步兵疲憊、傷亡超出預期。",
+        "sources": [
+          {
+            "title": "Battle of Verdun（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+          }
+        ]
+      }
     },
     {
       "id": "p3",
@@ -1883,7 +1906,17 @@
             ]
           ]
         }
-      ]
+      ],
+      "conditions": {
+        "weather": "12 月攻勢在惡劣天候下發起",
+        "note": "法軍仍拿下瓦什羅維爾、盧夫蒙與胡椒嶺；德軍預備營直到傍晚才趕到前線。",
+        "sources": [
+          {
+            "title": "Battle of Verdun（英文維基百科）",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+          }
+        ]
+      }
     }
   ],
   "places": [
@@ -2358,6 +2391,200 @@
       "casualties": "contested",
       "weapons": "medium"
     },
-    "notes": "中文維基直連失敗，改用 wiki.kfd.me 鏡像；英文維基以 2016 年版 IPFS 鏡像為主、2024 Kiwix 版核對。地點座標依地名以一般知識估定，前線 zones 與移動箭頭皆為示意，非精確路線；tracks 由本紀錄事件與箭頭拼接，第 3 軍 6 月 23 日點與第 5 師 4 月 9 日點以階段日期示意。以下由一般知識補充：武器型號與規格（M-Gerät、38 cm SK L/45、sFH 13、Rimailho 155、Saint-Chamond 400 mm、Filloux 370 mm、MG 08、Gew 98、Hotchkiss M1914、Lebel、Fokker E.III、Nieuport 11 的數據）、火焰噴射器型號 Kleif/Grof、法軍光氣彈型號、九個被毀村莊與「紅區」說法、杜奧蒙藏骨堂座標與約 13 萬人遺骸數字。德軍飛機 280 架與聖路數字取自搜尋摘要。"
-  }
+    "notes": "中文維基直連失敗，改用 wiki.kfd.me 鏡像；英文維基以 2016 年版 IPFS 鏡像為主、2024 Kiwix 版核對。地點座標依地名以一般知識估定，前線 zones 與移動箭頭皆為示意，非精確路線；tracks 由本紀錄事件與箭頭拼接，第 3 軍 6 月 23 日點與第 5 師 4 月 9 日點以階段日期示意。以下由一般知識補充：武器型號與規格（M-Gerät、38 cm SK L/45、sFH 13、Rimailho 155、Saint-Chamond 400 mm、Filloux 370 mm、MG 08、Gew 98、Hotchkiss M1914、Lebel、Fokker E.III、Nieuport 11 的數據）、火焰噴射器型號 Kleif/Grof、法軍光氣彈型號、九個被毀村莊與「紅區」說法、杜奧蒙藏骨堂座標與約 13 萬人遺骸數字。德軍飛機 280 架與聖路數字取自搜尋摘要。 沉浸內容：德方引文為 1916 年 2 月 26 日官方軍事公報（以 Karlsruher Zeitung 刊本為準，各報刊本措辭略有差異），法方為貝當 4 月 10 日當日命令的結語（全文未取得，僅引結語）；中文為本站翻譯。照片授權皆在 Wikimedia Commons 檔案頁確認：德國聯邦檔案館照片為 CC BY-SA 3.0 DE，法國照片為 PD-France。抉擇與環境條件依英文維基百科 Battle of Verdun 條目整理。"
+  },
+  "voices": [
+    {
+      "phase": "p2",
+      "date": "1916-02-26",
+      "side": "germany",
+      "who": "德軍最高陸軍指揮部（Heeresbericht）",
+      "role": "1916 年 2 月 26 日官方軍事公報",
+      "quote": "杜奧蒙裝甲要塞——凡爾登要塞永久主防線的東北角支柱——已於昨日下午由布蘭登堡第 24 步兵團攻克。",
+      "original": "Die Panzerfeste Douaumont, der nordöstliche Eckpfeiler der permanenten Hauptbefestigungslinie der Festung Verdun, wurde gestern nachmittag durch das brandenburgische Infanterieregiment 24 erstürmt.",
+      "lang": "de",
+      "translated": "本站",
+      "source": {
+        "title": "Karlsruher Zeitung，1916 年 2 月 26 日（巴登邦立圖書館數位典藏）",
+        "url": "https://digital.blb-karlsruhe.de/download/pdf/1960254.pdf"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（1916 年德國官方公報；官方著作不受著作權保護，且出版逾百年）"
+      }
+    },
+    {
+      "phase": "p3",
+      "date": "1916-04-10",
+      "side": "france",
+      "who": "貝當（Philippe Pétain）",
+      "role": "第二集團軍司令，1916 年 4 月 10 日當日命令的結語",
+      "quote": "鼓起勇氣！……我們會打敗他們！",
+      "original": "Courage !... On les aura !",
+      "lang": "fr",
+      "translated": "本站",
+      "source": {
+        "title": "Hérodote.net：Philippe Pétain 引文",
+        "url": "https://www.herodote.net/Petain-citations-UMOpdGFpbg==.php"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（1916 年軍隊當日命令；作者 1951 年歿，保護期已屆滿）"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p1",
+      "type": "image",
+      "title": "凡爾登前線的彈幕",
+      "caption": "凡爾登，阻絕彈幕中爆炸的砲彈（1916，確切日期不詳）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Bundesarchiv_Bild_183-R06111%2C_Verdun%2C_Sperrfeuer%2C_explodierende_Granaten.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bundesarchiv_Bild_183-R06111%2C_Verdun%2C_Sperrfeuer%2C_explodierende_Granaten.jpg/500px-Bundesarchiv_Bild_183-R06111%2C_Verdun%2C_Sperrfeuer%2C_explodierende_Granaten.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_183-R06111%2C_Verdun%2C_Sperrfeuer%2C_explodierende_Granaten.jpg",
+      "credit": "Bundesarchiv, Bild 183-R06111／攝影者不詳",
+      "license": {
+        "code": "cc-by-sa",
+        "name": "CC BY-SA 3.0 DE",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.zh-hant"
+      },
+      "event": "十小時砲擊開始"
+    },
+    {
+      "phase": "p4",
+      "type": "image",
+      "title": "法軍躍出戰壕",
+      "caption": "凡爾登戰役中，法國士兵自戰壕躍出發起衝鋒（1916）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Bataille_de_Verdun_1916.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Bataille_de_Verdun_1916.jpg/500px-Bataille_de_Verdun_1916.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Bataille_de_Verdun_1916.jpg",
+      "credit": "Collection DocAnciens／docpix.fr",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-France；美國 PD-US）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-France"
+      },
+      "event": "芒然反攻杜奧蒙堡"
+    },
+    {
+      "phase": "p5",
+      "type": "image",
+      "title": "第 164 步兵團的前線戰壕",
+      "caption": "凡爾登地區，法軍第 164 步兵團士兵在第一線戰壕中（Agence Rol 新聞照片，1916 年 7 月）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/%28Soldats%29_de_1%C3%A8re_ligne_%28du_164_%C3%A8me_d%27infanterie_dans_une_tranch%C3%A9e%2C_r%C3%A9gion_de_Verdun%29_-_btv1b6951876f.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/%28Soldats%29_de_1%C3%A8re_ligne_%28du_164_%C3%A8me_d%27infanterie_dans_une_tranch%C3%A9e%2C_r%C3%A9gion_de_Verdun%29_-_btv1b6951876f.jpg/500px-%28Soldats%29_de_1%C3%A8re_ligne_%28du_164_%C3%A8me_d%27infanterie_dans_une_tranch%C3%A9e%2C_r%C3%A9gion_de_Verdun%29_-_btv1b6951876f.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:%28Soldats%29_de_1%C3%A8re_ligne_%28du_164_%C3%A8me_d%27infanterie_dans_une_tranch%C3%A9e%2C_r%C3%A9gion_de_Verdun%29_-_btv1b6951876f.jpg",
+      "credit": "Agence Rol／法國國家圖書館 Gallica",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-France；美國 PD-US-expired）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-France"
+      },
+      "date": "1916-07"
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p1",
+      "event": "貝當接掌凡爾登",
+      "side": "france",
+      "commander": "卡斯泰爾諾（Noël de Castelnau）",
+      "title": "放棄默茲河東岸，還是死守？",
+      "situation": "1916 年 2 月 25 日。德軍三天內突破兩道防線，杜奧蒙堡不戰而失。中央集團軍群司令德朗格勒德卡里懷疑東岸守不住。身為總司令部參謀長的卡斯泰爾諾奉霞飛之命趕到前線。",
+      "intel": [
+        "東岸第一、二道防線已失",
+        "杜奧蒙堡落入德軍手中",
+        "第 20 軍剛趕到",
+        "前一晚已建議把貝當的第二集團軍調來"
+      ],
+      "options": [
+        {
+          "label": "退到默茲河西岸",
+          "detail": "放棄東岸，以河流為屏障重整防線"
+        },
+        {
+          "label": "不惜代價死守東岸",
+          "detail": "從西岸抽調一個師，命令第 30 軍守住布拉—杜奧蒙—沃—艾克斯一線"
+        }
+      ],
+      "chosen": 1,
+      "outcome": "卡斯泰爾諾不同意撤退，命令軍長艾爾不惜代價守住東岸。當晚 23:00 貝當接掌凡爾登防務，隨即下令重新駐守其餘要塞，並以「聖路」與輪替制度支撐長期消耗戰。",
+      "hindsight": "德軍的目標正是逼法軍在凡爾登不斷投入兵力；死守東岸讓法軍承受巨大傷亡，但凡爾登始終沒有失守。",
+      "sources": [
+        {
+          "title": "Battle of Verdun（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+        }
+      ]
+    },
+    {
+      "phase": "p2",
+      "date": "1916-02-29",
+      "side": "germany",
+      "commander": "法金漢（Erich von Falkenhayn）",
+      "title": "結束攻勢，還是增兵並把戰火擴大到西岸？",
+      "situation": "2 月 27 日起攻勢停滯：解凍讓戰場變成沼澤，火砲陷在泥中，步兵疲憊且傷亡超出預期；默茲河西岸的法軍砲兵持續從側翼轟擊東岸的德軍。",
+      "intel": [
+        "原以為反砲兵射擊能壓制西岸法軍砲兵，但沒有做到",
+        "第五集團軍要求增兵",
+        "法金漢想把總預備隊留給別處的攻勢"
+      ],
+      "options": [
+        {
+          "label": "就此停止攻勢",
+          "detail": "守住已得的東岸陣地"
+        },
+        {
+          "label": "增兵並攻打西岸高地",
+          "detail": "奪取 304 高地與死人山，摧毀側射的法軍砲兵，再回頭完成東岸攻勢"
+        }
+      ],
+      "chosen": 1,
+      "outcome": "2 月 29 日，第五集團軍參謀長克諾貝爾斯多夫從總預備隊爭取到兩個師，承諾拿下西岸高地後就能完成東岸攻勢。3 月 6 日西岸攻勢展開；到 3 月 30 日才拿下馬朗庫爾森林，代價約 2 萬人，304 高地仍未到手。",
+      "hindsight": "西岸攻勢讓凡爾登變成兩岸同時進行、看不到盡頭的消耗戰；攻方失去了奇襲優勢，面對的是補給充足、陣地更好的守軍。",
+      "sources": [
+        {
+          "title": "Battle of Verdun（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+        }
+      ]
+    },
+    {
+      "phase": "p4",
+      "date": "1916-04-20",
+      "side": "germany",
+      "commander": "克諾貝爾斯多夫（Konstantin Schmidt von Knobelsdorf）",
+      "title": "小步推進、全面強攻，還是退回起點？",
+      "situation": "4 月初東岸攻勢失敗。各軍長一致主張繼續；德軍步兵暴露在側翼與後方的砲火下，陣地幾乎沒有掩蔽，第 15 軍軍長戴姆林寫道法軍重砲與毒氣正在瓦解士氣。",
+      "intel": [
+        "不前進就只能退回 2 月 21 日的出發線",
+        "穆德拉主張有限目標、逐步推進以保存步兵",
+        "要攻到蒂奧蒙—弗勒里—蘇維爾一線才有較安全的陣地"
+      ],
+      "options": [
+        {
+          "label": "有限目標、逐步推進",
+          "detail": "照法金漢先前要求，以砲兵掩護小步前進、節約步兵"
+        },
+        {
+          "label": "寬正面、不設限的強攻",
+          "detail": "迅速推進到蒂奧蒙堡、弗勒里、蘇維爾堡與塔瓦訥堡一線"
+        },
+        {
+          "label": "退回出發線",
+          "detail": "放棄已奪取的陣地"
+        }
+      ],
+      "chosen": 1,
+      "outcome": "克諾貝爾斯多夫否定穆德拉的有限攻擊，說服法金漢改採寬正面強攻；到 4 月底已有 21 個師、大部分總預備隊投入凡爾登。德軍拿下沃堡（6 月 7 日）並在 6 月 23 日推進到聖芬教堂，但再也沒有更進一步。",
+      "hindsight": "大規模強攻讓雙方都付出慘重代價：德軍不再是在安全陣地上以砲火殺傷法軍，而是用不斷的攻擊引發法軍反擊，消耗比遠不如預期。",
+      "sources": [
+        {
+          "title": "Battle of Verdun（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Verdun"
+        }
+      ]
+    }
+  ],
+  "revision": "2026-10-28T07:56:22Z"
 }
