@@ -330,7 +330,7 @@ body.has-side .tl{right:calc(min(var(--side-w),100vw) + 12px)}
 body.recording .tl .rec{background:var(--bad);border-color:var(--bad);color:#fff;animation:recblink 1.2s ease-in-out infinite}
 @keyframes recblink{50%{opacity:.55}}
 .tl-main{min-width:0;display:grid;gap:6px}
-.tl-cap{display:flex;gap:10px;align-items:baseline;min-width:0}
+.tl-cap{display:flex;gap:10px;align-items:center;min-width:0}
 .tl-cap b{font-family:var(--f-display);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tl-cap span{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
 .segs{display:flex;gap:3px;height:22px}
@@ -339,6 +339,22 @@ body.recording .tl .rec{background:var(--bad);border-color:var(--bad);color:#fff
 .seg.done{background:color-mix(in srgb,var(--accent) 35%,var(--paper-2));color:var(--ink-2)}
 .seg.on{background:var(--accent);color:var(--paper)}
 .seg .prog{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--paper) 30%,transparent);width:0}
+#map3d{position:fixed;inset:0;z-index:1;background:var(--sea)}
+body.is3d #map{visibility:hidden}
+#map3d .maplibregl-ctrl-group{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+#map3d .maplibregl-ctrl-group button+button{border-top-color:var(--line)}
+#map3d .maplibregl-ctrl-attrib{background:color-mix(in srgb,var(--paper) 85%,transparent);color:var(--ink-3);font-size:10px}
+#map3d .maplibregl-ctrl-attrib a{color:var(--ink-2)}
+body.has-battle #map3d .maplibregl-ctrl-bottom-right{bottom:96px}
+body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(var(--side-w),100vw)}
+.p3d{display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--f-display);font-weight:700;font-size:12px;color:var(--ink);text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 6px var(--land)}
+.p3d i{width:9px;height:9px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);flex:none}
+#map3d.lowzoom .p3d{display:none}
+#map3d.lowzoom .trk span{display:none}
+.tl-cap .follow{margin-left:auto;max-width:150px;height:24px;border-radius:6px;border:1px solid var(--line);background:var(--paper-2);font-size:11.5px;color:var(--ink-2);padding:0 4px}
+.tl-cap .v3{flex:none;height:24px;padding:0 9px;border-radius:6px;border:1px solid var(--line);background:var(--paper-2);font-family:var(--f-mono);font-weight:600;font-size:11.5px;color:var(--ink-2);cursor:pointer}
+.tl-cap .follow[hidden]+.v3{margin-left:auto}
+.tl-cap .v3[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
 .tl-ev{display:flex;gap:7px;align-items:center;min-width:0;height:18px;font-size:12px;color:var(--ink-2)}
 .tl-ev:empty{display:none}
 .tl-ev i{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;flex:none;animation:pop .4s cubic-bezier(.3,1.6,.5,1) both}
@@ -391,6 +407,7 @@ body.has-battle .legend{display:none}
 </style>
 
 <div id="map" aria-label="戰役地圖"></div>
+<div id="map3d" aria-label="3D 戰役地圖" hidden></div>
 
 <div class="topbar">
   <div class="brand">
@@ -423,7 +440,7 @@ body.has-battle .legend{display:none}
 <div class="tl" id="tl" hidden>
   <div class="tl-btns"><button class="play" id="play" aria-label="播放"></button><button class="rec" id="rec" title="錄成影片（WebM）" aria-label="錄成影片"></button></div>
   <div class="tl-main">
-    <div class="tl-cap"><b id="tlTitle"></b><span id="tlDate"></span></div>
+    <div class="tl-cap"><b id="tlTitle"></b><span id="tlDate"></span><select id="follow" class="follow" aria-label="鏡頭跟隨部隊" hidden></select><button class="v3" id="btn3d" aria-pressed="false" title="3D 地形斜視（右鍵拖曳可旋轉、傾斜）">3D</button></div>
     <div class="tl-ev" id="tlEv" aria-live="polite"></div>
     <div class="segs" id="segs"></div>
   </div>
@@ -519,16 +536,20 @@ const phaseLayer = L.layerGroup().addTo(map);
 let landLayer, borderLayer, gratLayer;
 
 function paintBase(){
+  if (typeof paint3d === "function") paint3d();
   if (!landLayer) return;
   landLayer.setStyle({ fillColor:css("--land"), fillOpacity:1, stroke:false });
   borderLayer.setStyle({ color:css("--border"), weight:.8, opacity:.9 });
   gratLayer.setStyle({ color:css("--grat"), weight:.6, opacity:.9, dashArray:"2 4" });
 }
+const BASE_GEO = { borders:null };   // Natural Earth, shared with the 3D view
 async function loadBasemap(){
   try {
     const topo = await getJSON("assets/countries-50m.json");
     const land = topojson.feature(topo, topo.objects.countries);
     const borders = topojson.mesh(topo, topo.objects.countries, (a,b) => a !== b);
+    BASE_GEO.borders = borders;
+    if (V3.ready) V3.ml.getSource("borders")?.setData(borders);
     const lines = [];
     for (let lng=-180; lng<=180; lng+=15) lines.push([[ -85, lng ], [ 85, lng ]]);
     for (let lat=-75; lat<=75; lat+=15) lines.push([[ lat, -180 ], [ lat, 180 ]]);
@@ -754,7 +775,7 @@ async function select(id, opts={}){
   if (opts.phase != null) setTimeout(() => goPhase(opts.phase), 1200);
 }
 function closeSide(){
-  stopRecording(); stop(); S.sel = null; cur = null;
+  stopRecording(); stop(); exit3d(); S.sel = null; cur = null;
   try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
   $("#side").classList.remove("open"); document.body.classList.remove("has-battle","has-side","sheet-mini");
   clearPhase(); battleLayer.clearLayers(); $("#tl").hidden = true;
@@ -762,6 +783,7 @@ function closeSide(){
 }
 /* center a point inside the part of the map not covered by the dossier / sheet / timeline */
 function flyVis(ll, z, dur){
+  if (V3.on) return fly3d(ll, z, dur);
   const W = innerWidth, H = innerHeight, mobile = W <= 760;
   const side = document.body.classList.contains("has-side") ? (mobile ? 0 : Math.min(540, W)) : 0;
   const sheet = mobile && document.body.classList.contains("has-side") ? $("#side").getBoundingClientRect().height : 0;
@@ -1142,6 +1164,7 @@ function visibleBox(){
   return { x0:40, y0:top + 40, x1:W - side - 40, y1:H - Math.max(sheet, tl) - 30 };
 }
 function keepInView(ll){
+  if (V3.on || S.follow) return;
   const pt = map.latLngToContainerPoint(ll), v = visibleBox();
   if (v.x1 - v.x0 < 80 || v.y1 - v.y0 < 80) return;
   const dx = pt.x < v.x0 ? pt.x - v.x0 : pt.x > v.x1 ? pt.x - v.x1 : 0;
@@ -1190,6 +1213,7 @@ function render(force){
       if (zoomed || force || !m.g) m.g = geom(pathPx(m.mv.path));
       const a = arrowPx(m.g, p, m.w, m.blunt);
       if (a) { m.layer.setLatLngs(toLL(a.ring)); if (!m.shown) { phaseLayer.addLayer(m.layer); m.shown = true; } }
+      if (a && p < 1) m.tipLL = map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom());
       if (a && p < 1 && m.token) m.token.setLatLng(map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom()));
     }
     if (m.mark) { const on = p >= 1; if (on !== m.markOn) { on ? phaseLayer.addLayer(m.mark) : phaseLayer.removeLayer(m.mark); m.markOn = on; } }
@@ -1214,6 +1238,7 @@ function render(force){
   const light = renderNight(t, plan.timed);
   $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "") + (light ? ` · ${light}` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
+  if (S.follow && !V3.on) follow2d();
 }
 function frame(now){
   A.raf = 0;
@@ -1235,7 +1260,7 @@ function goPhase(pi, o={}){
   S.phase = pi;
   const p = cur.phases[pi];
   const v = p.view || cur.location;
-  flyVis([v.lat, v.lng], v.zoom || cur.location.zoom || 8, 1);
+  if (!S.follow) flyVis([v.lat, v.lng], v.zoom || cur.location.zoom || 8, 1);
   evMarkers.forEach(m => { if (m._st === "focus") m._st = "reset"; });
   buildPhase(pi);
   A.el = (o.instant || RM) ? A.plan.dur + 2000 : -LEAD; A.paused = false;
@@ -1296,9 +1321,264 @@ function buildTimeline(b){
   $("#tlTitle").textContent = "按播放，依序重現戰局";
   $("#tlDate").textContent = `${(b.phases||[]).length} 個階段`;
   $("#tlEv").innerHTML = "";
+  buildFollow(b);
   setPlayIcon();
 }
 $("#segs").addEventListener("click", ev => { const s = ev.target.closest(".seg"); if (s) { stop(); goPhase(+s.dataset.p); } });
+
+/* ---------------- 3D view ----------------
+   MapLibre GL over open terrain (AWS Terrain Tiles, seafloor flattened to sea level) and the Natural Earth
+   land/borders. It mirrors whatever the 2D engine draws — every Leaflet path and marker of the battle, phase,
+   track and night layers — so the phase clock, tracks and all record fields work unchanged; Leaflet keeps
+   running hidden underneath with its view synced to the 3D camera. */
+const ML_VER = "4.7.1";
+const ML_JS = `https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.js`, ML_CSS = `https://unpkg.com/maplibre-gl@${ML_VER}/dist/maplibre-gl.css`;
+const TERRAIN_ATTR = '地形 <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles</a>（Mapzen／AWS Open Data；USGS SRTM・GMTED2010・3DEP、NOAA ETOPO1、Copernicus EU-DEM 等，<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">完整來源</a>）· 高度放大 ×' ;
+const EXAG = 2;
+const TINT_URL = "seatint://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+const EMPTY = { type:"FeatureCollection", features:[] };
+const V3 = { on:false, ml:null, loading:null, marks:new Map(), last:0, raf:0, sig:"", ready:false, head:null, prev:null };
+function loadML(){
+  if (window.maplibregl) return Promise.resolve();
+  return V3.loading ||= new Promise((res, rej) => {
+    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = ML_CSS; document.head.appendChild(l);
+    const s = document.createElement("script"); s.src = ML_JS; s.onload = res;
+    s.onerror = () => { V3.loading = null; rej(new Error("3D 元件載入失敗，請檢查網路")); };
+    document.head.appendChild(s);
+  });
+}
+// Both 3D layers come from the same terrarium elevation tiles (h = R·256 + G + B/256 − 32768):
+//  seadem:  the terrain itself, with heights below sea level clamped to 0 so seas stay flat for fleets;
+//  seatint: a coloured base map — sea where h ≤ 0, land tinted by height — so coastlines stay sharp at every zoom.
+const hex2rgb = h => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(String(h).trim()); return m ? [1, 2, 3].map(i => parseInt(m[i], 16)) : [128, 128, 128]; };
+function tintColors(){ return { sea:hex2rgb(css("--sea")), land:hex2rgb(css("--land")), high:isDark() ? [58, 54, 44] : [190, 178, 150], dark:isDark() }; }
+async function demPixels(url, signal){
+  const r = await fetch(url, { signal });
+  if (!r.ok) throw new Error("dem " + r.status);
+  const bmp = await createImageBitmap(await r.blob());
+  const c = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(bmp.width, bmp.height) : Object.assign(document.createElement("canvas"), { width:bmp.width, height:bmp.height });
+  const g = c.getContext("2d", { willReadFrequently:true });
+  g.drawImage(bmp, 0, 0);
+  return { c, g, im:g.getImageData(0, 0, c.width, c.height) };
+}
+async function pngOf(c){ const blob = c.convertToBlob ? await c.convertToBlob({ type:"image/png" }) : await new Promise(ok => c.toBlob(ok, "image/png")); return { data:await blob.arrayBuffer() }; }
+function registerSeaDem(){
+  if (registerSeaDem.done) return; registerSeaDem.done = true;
+  maplibregl.addProtocol("seadem", async (params, abort) => {
+    const { c, g, im } = await demPixels(params.url.replace("seadem://", "https://"), abort.signal), d = im.data;
+    for (let i = 0; i < d.length; i += 4) if (d[i] < 128) { d[i] = 128; d[i + 1] = 0; d[i + 2] = 0; }
+    g.putImageData(im, 0, 0);
+    return pngOf(c);
+  });
+  maplibregl.addProtocol("seatint", async (params, abort) => {
+    const { c, g, im } = await demPixels(params.url.replace("seatint://", "https://").replace(/\?.*$/, ""), abort.signal), d = im.data;
+    const { sea, land, high } = V3.tint || tintColors();
+    for (let i = 0; i < d.length; i += 4){
+      const h = d[i] * 256 + d[i + 1] + d[i + 2] / 256 - 32768;
+      const col = h <= 0 ? sea : (t => land.map((v, j) => v + (high[j] - v) * t))(Math.min(1, Math.sqrt(h / 3000)));
+      d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
+    }
+    g.putImageData(im, 0, 0);
+    return pngOf(c);
+  });
+}
+function style3d(){
+  V3.tint = tintColors();
+  const dem = { type:"raster-dem", tiles:["seadem://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"], tileSize:256, maxzoom:14, encoding:"terrarium" };
+  const dark = isDark();
+  return { version:8,
+    sources:{
+      borders:{ type:"geojson", data:BASE_GEO.borders || EMPTY, attribution:"國界 Natural Earth（公有領域）· 現代國界僅供定位" },
+      dem:{ ...dem, attribution:TERRAIN_ATTR + EXAG }, shade:dem,
+      tint:{ type:"raster", tiles:[TINT_URL + "?v=" + (V3.tintV || 0)], tileSize:256, maxzoom:14 },
+      v:{ type:"geojson", data:EMPTY }
+    },
+    layers:[
+      { id:"sea", type:"background", paint:{ "background-color":css("--sea") } },
+      { id:"tint", type:"raster", source:"tint", paint:{ "raster-fade-duration":0 } },
+      { id:"shade", type:"hillshade", source:"shade", paint:{ "hillshade-exaggeration":.45, "hillshade-shadow-color":dark ? "rgba(0,0,0,.8)" : "rgba(60,72,62,.75)", "hillshade-highlight-color":dark ? "rgba(70,86,78,.35)" : "rgba(255,255,255,.35)", "hillshade-accent-color":dark ? "#0b1210" : "#6f7d70" } },
+      { id:"borders", type:"line", source:"borders", paint:{ "line-color":css("--border"), "line-width":.8 } },
+      { id:"v-fill", type:"fill", source:"v", filter:["==", ["geometry-type"], "Polygon"], layout:{ "fill-sort-key":["get", "k"] }, paint:{ "fill-color":["get", "fc"], "fill-opacity":["get", "fo"] } },
+      { id:"v-line", type:"line", source:"v", filter:["all", ["==", ["geometry-type"], "LineString"], ["==", ["get", "dash"], 0]], layout:{ "line-cap":"round", "line-join":"round", "line-sort-key":["get", "k"] }, paint:{ "line-color":["get", "lc"], "line-width":["get", "lw"], "line-opacity":["get", "lo"] } },
+      { id:"v-dash", type:"line", source:"v", filter:["all", ["==", ["geometry-type"], "LineString"], ["==", ["get", "dash"], 1]], layout:{ "line-join":"round" }, paint:{ "line-color":["get", "lc"], "line-width":["get", "lw"], "line-opacity":["get", "lo"], "line-dasharray":[2.5, 1.8] } },
+      { id:"v-dot", type:"line", source:"v", filter:["all", ["==", ["geometry-type"], "LineString"], ["==", ["get", "dash"], 2]], layout:{ "line-cap":"round" }, paint:{ "line-color":["get", "lc"], "line-width":["get", "lw"], "line-opacity":["get", "lo"], "line-dasharray":[.1, 2.2] } }
+    ] };
+}
+function paint3d(){
+  const ml = V3.ml; if (!ml || !V3.ready) return;
+  ml.setPaintProperty("sea", "background-color", css("--sea"));
+  const t = tintColors();
+  if (JSON.stringify(t) !== JSON.stringify(V3.tint)) { V3.tint = t; V3.tintV = (V3.tintV || 0) + 1; ml.getSource("tint")?.setTiles([TINT_URL + "?v=" + V3.tintV]); }
+  ml.setPaintProperty("borders", "line-color", css("--border"));
+}
+/* what the camera should leave free: dossier on the right, bottom sheet / timeline at the bottom */
+function pad3d(){
+  const W = innerWidth, H = innerHeight, mobile = W <= 760, has = document.body.classList.contains("has-side");
+  const side = has && !mobile ? Math.min(540, W) : 0, sheet = mobile && has ? $("#side").getBoundingClientRect().height : 0;
+  const tl = $("#tl").hidden ? 0 : $("#tl").getBoundingClientRect().height + 12;
+  return { top:mobile ? 70 : 20, bottom:Math.min(H * .6, Math.max(sheet, tl)), left:0, right:side };
+}
+function fly3d(ll, z, dur){
+  if (S.follow) return;
+  V3.ml.flyTo({ center:[ll[1], ll[0]], zoom:z - .8, pitch:Math.max(45, V3.ml.getPitch()), bearing:V3.ml.getBearing(), duration:RM ? 0 : dur * 1000, padding:pad3d(), essential:true });
+}
+function syncLeaflet(){
+  const c = V3.ml.getCenter(), z = Math.round(V3.ml.getZoom() + 1);
+  const lc = map.getCenter();
+  if (z !== map.getZoom() || Math.abs(lc.lat - c.lat) + Math.abs(lc.lng - c.lng) > 1e-4) map.setView([c.lat, c.lng], z, { animate:false });
+  map.getContainer().classList.toggle("lowzoom", map.getZoom() < 7);
+  $("#map3d").classList.toggle("lowzoom", map.getZoom() < 7);
+}
+async function enter3d(){
+  if (V3.on || !cur) return;
+  try { await loadML(); } catch(e){ toast(e.message); return; }
+  if (!cur) return;
+  const c = map.getCenter();
+  if (!V3.ml){
+    registerSeaDem();
+    try {
+      V3.ml = new maplibregl.Map({ container:"map3d", style:style3d(), center:[c.lng, c.lat], zoom:map.getZoom() - 1.3, pitch:0, bearing:0,
+        maxPitch:78, attributionControl:false, fadeDuration:0, localIdeographFontFamily:"'Noto Sans TC', 'PingFang TC', sans-serif" });
+    } catch(e){ toast("這個裝置或瀏覽器不支援 3D（WebGL）"); V3.ml = null; return; }
+    V3.ml.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), "bottom-right");
+    V3.ml.addControl(new maplibregl.AttributionControl({ compact:true }), "bottom-right");
+    V3.ml.on("load", () => {
+      V3.ml.setTerrain({ source:"dem", exaggeration:EXAG }); V3.ready = true; V3.sig = "";
+      document.querySelector("#map3d .maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");   // start collapsed (ⓘ opens it)
+    });
+    V3.ml.on("move", () => { if (V3.on) syncLeaflet(); });
+    V3.ml.on("dragstart", () => { if (S.follow) setFollow(""); });
+    V3.ml.on("error", e => console.warn("3d", e?.error || e));
+  } else V3.ml.jumpTo({ center:[c.lng, c.lat], zoom:map.getZoom() - 1.3 });
+  V3.on = true;
+  document.body.classList.add("is3d"); $("#map3d").hidden = false; $("#btn3d").setAttribute("aria-pressed", "true");
+  V3.ml.resize();
+  if (tileLayer) { map.removeLayer(tileLayer); tileLayer = null; }
+  showVector(false);
+  V3.ml.easeTo({ pitch:60, bearing:-20, duration:RM ? 0 : 1200, padding:pad3d() });
+  V3.sig = "";
+  if (!V3.raf) V3.raf = requestAnimationFrame(loop3d);
+}
+function exit3d(){
+  if (!V3.on) return;
+  V3.on = false;
+  cancelAnimationFrame(V3.raf); V3.raf = 0;
+  for (const m of V3.marks.values()) m.mk.remove();
+  V3.marks.clear();
+  document.body.classList.remove("is3d"); $("#map3d").hidden = true; $("#btn3d").setAttribute("aria-pressed", "false");
+  map.invalidateSize(); setBase(baseIdx, true);
+}
+/* mirror the Leaflet layers: paths → one GeoJSON source, markers → MapLibre HTML markers */
+function dashKind(d){ if (!d) return 0; const f = parseFloat(String(d)); return f <= 2 ? 2 : 1; }
+function ringOf(ll){ while (Array.isArray(ll[0]) && Array.isArray(ll[0][0] ?? null)) ll = ll[0]; return Array.isArray(ll[0]) ? ll[0] : ll; }
+function mirror(){
+  const feats = [], seen = new Set();
+  let k = 0;
+  const path = l => {
+    const o = l.options, ll = l.getLatLngs(); if (!ll.length) return;
+    const poly = l instanceof L.Polygon, pts = (poly ? ringOf(ll) : (Array.isArray(ll[0]) ? ll.flat() : ll)).map(p => [p.lng, p.lat]);
+    if (pts.length < 2) return;
+    k++;
+    if (poly && o.fill !== false && pts.length > 2) feats.push({ type:"Feature", properties:{ k, fc:o.fillColor || o.color, fo:o.fillOpacity ?? .2 }, geometry:{ type:"Polygon", coordinates:[[...pts, pts[0]]] } });
+    if (o.stroke !== false && (o.weight ?? 3) > 0 && (o.opacity ?? 1) > 0)
+      feats.push({ type:"Feature", properties:{ k, lc:o.color, lw:o.weight ?? 3, lo:o.opacity ?? 1, dash:dashKind(o.dashArray) }, geometry:{ type:"LineString", coordinates:poly ? [...pts, pts[0]] : pts } });
+  };
+  const mark = (l, html, size, anchor, title, z) => {
+    const id = L.stamp(l); seen.add(id);
+    let m = V3.marks.get(id);
+    if (!m){
+      const el = document.createElement("div"); el.className = "m3d";
+      el.addEventListener("click", ev => { ev.stopPropagation(); l.fire("click"); });
+      m = { el, html:null, mk:new maplibregl.Marker({ element:el, anchor:"top-left" }).setLngLat([0, 0]).addTo(V3.ml) };
+      V3.marks.set(id, m);
+    }
+    if (m.html !== html) { m.el.innerHTML = html; m.html = html; }
+    if (m.size !== String(size)) { m.size = String(size); m.el.style.width = size ? size[0] + "px" : ""; m.el.style.height = size ? size[1] + "px" : ""; m.mk.setOffset([-(anchor?.[0] || 0), -(anchor?.[1] || 0)]); }
+    m.el.title = title || ""; m.el.style.zIndex = String(z || 0); m.el.style.cursor = l.listens("click") ? "pointer" : "default";
+    const p = l.getLatLng(); m.mk.setLngLat([p.lng, p.lat]);
+  };
+  const tipText = l => { const t = l.getTooltip?.(); if (!t) return ""; const c = t.getContent(); return String(typeof c === "function" ? "" : c).replace(/<br\s*\/?>/g, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"); };
+  const visit = l => {
+    if (!l._map) return;
+    if (l instanceof L.Marker){
+      const ic = l.options.icon?.options || {}, html = l._icon ? l._icon.innerHTML : "";
+      mark(l, html, ic.iconSize ? [].concat(ic.iconSize) : null, ic.iconAnchor ? [].concat(ic.iconAnchor) : null, tipText(l), (l.options.zIndexOffset || 0) + 10);
+    } else if (l instanceof L.CircleMarker){
+      const t = tipText(l);
+      mark(l, `<span class="p3d"><i></i>${esc(t)}</span>`, null, [5, 5], t, 1);
+    } else if (l instanceof L.Polyline) path(l);
+    else if (l.eachLayer) l.eachLayer(visit);
+  };
+  if (map.hasLayer(nightLayer)) path(nightLayer);
+  [battleLayer, phaseLayer, trackLayer].forEach(g => g.eachLayer(visit));
+  for (const [id, m] of V3.marks) if (!seen.has(id)) { m.mk.remove(); V3.marks.delete(id); }
+  const sig = JSON.stringify(feats);
+  if (sig !== V3.sig && V3.ready){ const src = V3.ml.getSource("v"); if (src) { src.setData({ type:"FeatureCollection", features:feats }); V3.sig = sig; } }
+}
+function loop3d(t){
+  V3.raf = requestAnimationFrame(loop3d);
+  if (t - V3.last < 33) return;
+  V3.last = t;
+  mirror();
+  follow3d();
+}
+$("#btn3d").addEventListener("click", () => V3.on ? exit3d() : enter3d());
+
+/* ---------------- follow a unit ----------------
+   The camera rides with one unit: its track token when it has a track, otherwise the tip of its arrow in the
+   current phase (the arrow's end once drawn). In 3D the camera also turns to look along its heading. */
+function followCandidates(b){
+  const out = new Map(), add = (side, n) => { if (!n) return; const k = side + "|" + baseName(n); if (!out.has(k)) out.set(k, { side, name:baseName(n), full:n }); };
+  (b.tracks || []).forEach(t => add(t.side, t.unit));
+  (b.phases || []).forEach(p => (p.moves || []).forEach(m => add(m.side, m.unit || m.label)));
+  return [...out.values()];
+}
+function buildFollow(b){
+  const c = followCandidates(b), sel = $("#follow");
+  sel.innerHTML = `<option value="">鏡頭：自由</option>` + b.sides.map(s => {
+    const xs = c.filter(x => x.side === s.id); if (!xs.length) return "";
+    return `<optgroup label="${esc(s.name)}">${xs.map(x => `<option value="${esc(x.side + "|" + x.name)}">跟隨 ${esc(x.name)}</option>`).join("")}</optgroup>`;
+  }).join("");
+  sel.hidden = !c.length; sel.value = ""; S.follow = null;
+}
+function setFollow(v){
+  const [side, ...rest] = String(v || "").split("|");
+  S.follow = v ? { side, name:rest.join("|") } : null;
+  $("#follow").value = v || "";
+  V3.prev = null; V3.head = null;
+  if (S.follow && A.pi >= 0) render(true);
+}
+$("#follow").addEventListener("change", ev => setFollow(ev.target.value));
+function followPos(){
+  const f = S.follow; if (!f || A.pi < 0) return null;
+  const k = tracks.find(k => k.on && k.tr.side === f.side && baseName(k.tr.unit) === f.name);
+  if (k) return k.marker.getLatLng();
+  const ms = A.moves.filter(m => m.mv.side === f.side && [m.mv.unit, m.mv.label].some(n => n && baseName(n) === f.name));
+  const act = ms.find(m => m.p > 0 && m.p < 1) || ms.filter(m => m.p >= 1).pop();
+  if (!act) return null;
+  if (act.p >= 1) { const e = act.mv.path[act.mv.path.length - 1]; return L.latLng(e[0], e[1]); }
+  return act.tipLL || L.latLng(act.mv.path[0][0], act.mv.path[0][1]);
+}
+function follow2d(){
+  const ll = followPos(); if (!ll) return;
+  const W = innerWidth, H = innerHeight, v = visibleBox(), z = map.getZoom();
+  const pt = map.project(ll, z).add([W / 2 - (v.x0 + v.x1) / 2, H / 2 - (v.y0 + v.y1) / 2]);
+  const c = map.project(map.getCenter(), z);
+  if (pt.distanceTo(c) > 2) map.setView(map.unproject(pt, z), z, { animate:false });
+}
+function follow3d(){
+  if (!S.follow || !V3.ready) return;
+  const ll = followPos(); if (!ll) return;
+  if (V3.prev && V3.prev.distanceTo(ll) > 30){   // metres; heading from the last position, smoothed
+    const y = Math.sin((ll.lng - V3.prev.lng) * RAD) * Math.cos(ll.lat * RAD);
+    const x = Math.cos(V3.prev.lat * RAD) * Math.sin(ll.lat * RAD) - Math.sin(V3.prev.lat * RAD) * Math.cos(ll.lat * RAD) * Math.cos((ll.lng - V3.prev.lng) * RAD);
+    const h = Math.atan2(y, x) / RAD;
+    V3.head = V3.head == null ? h : V3.head + ((((h - V3.head) % 360) + 540) % 360 - 180) * .08;
+    V3.prev = ll;
+  } else if (!V3.prev) V3.prev = ll;
+  V3.ml.jumpTo({ center:[ll.lng, ll.lat], bearing:V3.head ?? V3.ml.getBearing(), pitch:Math.max(55, V3.ml.getPitch()), padding:pad3d() });
+}
+
 
 /* ---------------- sidebar ---------------- */
 function dateRange(a, b){
@@ -1793,7 +2073,8 @@ $("#btnAdd").addEventListener("click", openAdd);
 window.WarAtlas = {
   attachRemote(api){ R.api = api; $("#btnAdd").hidden = false; },
   setAuth(a){ R.auth = a; renderAddAuth(); },
-  addRemote, validateRecord, parseInput
+  addRemote, validateRecord, parseInput,
+  state:() => ({ zoom2d:map.getZoom(), center2d:map.getCenter(), is3d:V3.on, zoom3d:V3.ml?.getZoom(), pitch:V3.ml?.getPitch(), bearing:V3.ml?.getBearing(), phase:A.pi, el:A.el, follow:S.follow, feats:V3.ml?.getStyle()?.sources?.v?.data?.features?.map(f => f.geometry.type + ":" + (f.properties.fc || f.properties.lc) + ":" + (f.properties.fo ?? f.properties.lw) + ":" + f.geometry.coordinates.flat().length) })
 };
 if (/\/war-atlas\/(index\.html)?$/.test(location.pathname)) { $("#btnHome").innerHTML = ICON.home; $("#btnHome").hidden = false; }
 
