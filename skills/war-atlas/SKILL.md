@@ -284,7 +284,7 @@ Recommended side colors (keep consistent across the atlas): China/ROC `#3f6e8c`,
 
 In a phase that has hour stamps, a date-only event plays right after the event listed before it, so keep events in narrative order.
 
-Phases with hour stamps also get day/night shading (solar terminator at the clock time, local time taken as mean solar time) and a 白晝／晨昏／夜間 tag on the ticker. The timeline's ⦿ button records the whole playback to a WebM video (tab capture; desktop Chrome/Edge/Firefox on the website, not inside an Artifact preview).
+Phases with hour stamps that span about a day or less also get day/night shading (solar terminator at the clock time, local time taken as mean solar time) and a 白晝／晨昏／夜間 tag on the ticker. The timeline's ⦿ button records the whole playback to a WebM video (tab capture; desktop Chrome/Edge/Firefox on the website, not inside an Artifact preview).
 
 **`tracks`** (optional, top level): a unit token that stays on the map across phases, moved by the battle clock, with a dotted trail behind it. Use it for the 3–10 formations the story follows (the ones whose `note` says where they went and what happened to them), built from the record's own dated events, moves and unit notes — never invent a route.
 

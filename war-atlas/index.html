@@ -349,6 +349,7 @@ body.recording .tl .rec{background:var(--bad);border-color:var(--bad);color:#fff
 .seg.on{background:var(--accent);color:var(--paper)}
 .seg .prog{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--paper) 30%,transparent);width:0}
 #map3d{position:fixed;inset:0;z-index:1;background:var(--sea)}
+path.night-shade{transition:fill-opacity .6s linear}
 body.is3d #map{visibility:hidden}
 #map3d .maplibregl-ctrl-group{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
 #map3d .maplibregl-ctrl-group button+button{border-top-color:var(--line)}
@@ -372,7 +373,7 @@ body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(va
 .tl-cond b{font-weight:500;color:var(--ink-3);margin-right:4px}
 .story{position:fixed;z-index:610;left:max(12px,env(safe-area-inset-left,0px));bottom:var(--story-b,130px);width:min(380px,calc(100vw - 24px));max-height:min(46vh,calc(100vh - var(--story-b,130px) - 80px));overflow:auto;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px}
 .story.in{animation:storyin .45s cubic-bezier(.2,.8,.2,1) both}
-@keyframes storyin{from{opacity:0;transform:translateY(10px)}}
+@keyframes storyin{from{opacity:.55;transform:translateY(6px)}}
 .story-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:6px;background:none;color:var(--ink-3);cursor:pointer;display:grid;place-items:center}
 .story-x svg{width:14px;height:14px}
 .story-k{font-size:11px;letter-spacing:.08em;color:var(--accent-ink);margin-bottom:6px}
@@ -1012,7 +1013,10 @@ function phasePlan(b, pi){
     return { mv, f0, f1:f0 + drawF };
   });
   const cams = (p.view_keys||[]).map(k => ({ ...k, f:frac(k.at) })).filter(k => k.f != null && k.f > 0 && k.f < 1).sort((a, b) => a.f - b.f);
-  return { t0, t1, dur, timed, endTimed:hasTime(p.end || p.start), events:evs, moves, cams };
+  // day/night only for phases of about a day or less: on a multi-day phase the clock runs through a whole
+  // day-night cycle every second or two and the map would strobe dark and light
+  const night = timed && t1 - t0 <= 30 * 3600e3;
+  return { t0, t1, dur, timed, night, endTimed:hasTime(p.end || p.start), events:evs, moves, cams };
 }
 
 /* geometry: smoothed path in layer pixels at the current zoom */
@@ -1112,7 +1116,7 @@ function clearPhase(){
    Dates are local time of the battle area, taken as local mean solar time (UTC + lng/15 h). */
 map.createPane("night").style.zIndex = 390;
 const RAD = Math.PI / 180;
-const nightLayer = L.polygon([[0, 0]], { pane:"night", stroke:false, fillColor:"#071420", fillOpacity:.45, interactive:false });
+const nightLayer = L.polygon([[0, 0]], { pane:"night", stroke:false, fillColor:"#071420", fillOpacity:0, interactive:false, className:"night-shade" });
 function subsolar(utc){
   const d = utc / DAY - 10957.5;                           // days from J2000.0
   const g = (357.529 + .98560028 * d) * RAD, q = 280.459 + .98564736 * d;
@@ -1128,16 +1132,13 @@ let nightAt = null;
 function renderNight(T, timed){
   const show = T != null && timed && !RM;
   if (!show) { if (map.hasLayer(nightLayer)) map.removeLayer(nightLayer); nightAt = null; return ""; }
-  const loc = cur.location, sun = subsolar(T - loc.lng / 15 * 3600e3);
-  if (nightAt == null || Math.abs(T - nightAt) > 5 * 60e3){
-    nightAt = T;
-    const dec = Math.abs(sun.lat) < .1 ? (sun.lat < 0 ? -.1 : .1) : sun.lat, tanD = Math.tan(dec * RAD), ring = [];   // keep the sign at equinox
-    for (let x = -540; x <= 540; x += 3) ring.push([clamp(Math.atan(-Math.cos((x - sun.lng) * RAD) / tanD) / RAD, -85, 85), x]);
-    const pole = dec > 0 ? -85 : 85;
-    nightLayer.setLatLngs([...ring, [pole, 540], [pole, -540]]);
-    if (!map.hasLayer(nightLayer)) nightLayer.addTo(map);
-  }
-  const alt = sunAlt(sun, loc.lat, loc.lng);
+  // darkness follows the sun's altitude over the battle area and fades through twilight (+1° … −12°),
+  // instead of a hard day/night line sweeping across the whole view at once
+  const loc = cur.location, c = map.getCenter(), sun = subsolar(T - loc.lng / 15 * 3600e3);
+  const alt = sunAlt(sun, c.lat, c.lng), op = Math.round(clamp((1 - alt) / 13, 0, 1) * .45 * 100) / 100;
+  if (nightAt == null) { nightAt = T; nightLayer.setLatLngs([[-85, -540], [85, -540], [85, 540], [-85, 540]]); }
+  if (nightLayer.options.fillOpacity !== op) nightLayer.setStyle({ fillOpacity:op });
+  if (!map.hasLayer(nightLayer)) nightLayer.addTo(map);
   return alt > -.833 ? "白晝" : alt > -6 ? "晨昏" : "夜間";
 }
 
@@ -1326,7 +1327,7 @@ function render(force){
   const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - (plan.endTimed ? 0 : 1)), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
   renderTracks(t);
-  const light = renderNight(t, plan.timed);
+  const light = renderNight(t, plan.night);
   $("#tlDate").textContent = fmtT(t, plan.timed) + (day != null && day > 0 ? ` · 第 ${day} 天` : "") + (light ? ` · ${light}` : "");
   const seg = document.querySelector(`.seg[data-p="${A.pi}"] .prog`); if (seg) seg.style.width = (clamp(f, 0, 1) * 100) + "%";
   if (S.follow && !V3.on) follow2d();
@@ -1581,7 +1582,8 @@ function buildImmersion(pi, instant){
   const b = cur, { voices, media, decisions } = itemsOf(b, pi);
   A.cards = [...voices.map(v => ({ kind:"voice", item:v })), ...media.map(m => ({ kind:"media", item:m }))]
     .map(c => ({ ...c, f:itemFrac(A.plan, b, pi, c.item), shown:!!instant })).sort((a, c) => a.f - c.f);
-  A.cards.forEach((c, i) => { if (i && c.f < A.cards[i - 1].f + .12) c.f = A.cards[i - 1].f + .12; });
+  const gap = Math.max(.12, 3500 / A.plan.dur);   // each card stays up at least ~3.5 s
+  A.cards.forEach((c, i) => { if (i && c.f < A.cards[i - 1].f + gap) c.f = A.cards[i - 1].f + gap; });
   const over = A.cards.length ? A.cards[A.cards.length - 1].f - .95 : 0;
   if (over > 0) A.cards.forEach((c, i) => { c.f = Math.max(.02, c.f - over * (i + 1) / A.cards.length); });
   A.decs = decisions.map(d => ({ d, f:itemFrac(A.plan, b, pi, d, true), done:!!instant }));
