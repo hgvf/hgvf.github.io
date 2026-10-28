@@ -45,11 +45,11 @@
       "period": "1932–1939"
     },
     {
-      "name_en": "Western Front (WWI)",
-      "name": "西方戰線（一戰）",
+      "name_en": "Western Front (World War I)",
+      "name": "第一次世界大戰西方戰線",
       "short": "西線",
       "id": "western-front-wwi",
-      "color": "#5f7a52",
+      "color": "#7a4f6d",
       "parent": "wwi",
       "period": "1914–1918"
     },
@@ -58,7 +58,7 @@
       "name": "第一次世界大戰",
       "short": "一戰",
       "id": "wwi",
-      "color": "#7a6a3a",
+      "color": "#6b5b3e",
       "period": "1914–1918"
     },
     {
@@ -84,6 +84,14 @@
       "name_en": "Russo-Japanese War",
       "period": "1904–1905",
       "id": "russo-japanese-war"
+    },
+    {
+      "short": "九一八",
+      "name_en": "Japanese invasion of Manchuria",
+      "period": "1931–1933",
+      "color": "#8c3f5a",
+      "id": "japanese-invasion-of-manchuria",
+      "name": "九一八事變（日本侵佔東北）"
     }
   ]
 }

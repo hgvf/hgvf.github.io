@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-26",
+ "generated_at": "2026-10-28",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -136,6 +136,40 @@
    ]
   },
   {
+   "id": "battle-of-verdun-1916",
+   "file": "battles/battle-of-verdun-1916.json",
+   "kind": "battle",
+   "title": "凡爾登戰役",
+   "title_en": "Battle of Verdun",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1916-02-21",
+    "end": "1916-12-18",
+    "label": "1916 年 2 月 21 日 – 12 月 18 日",
+    "duration_days": 302
+   },
+   "lat": 49.208,
+   "lng": 5.38,
+   "zoom": 11,
+   "summary": "德國總參謀長法金漢以「審判行動」集中 1,201 門火砲進攻凡爾登突出部，意圖逼法軍在不利地形上反覆反攻而失血。德軍開戰三天內奪下杜奧蒙堡，但法軍在貝當指揮下靠「聖路」補給與部隊輪替穩住防線，戰事擴大到默茲河西岸並陷入長達十個月的拉鋸。索姆河戰役開打後德軍攻勢逐步收縮，法軍於 1",
+   "result": "法軍勝利（守住凡爾登）",
+   "sides": [
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    },
+    {
+     "id": "france",
+     "name": "法蘭西第三共和國",
+     "color": "#2c4f9e"
+    }
+   ]
+  },
+  {
    "id": "battle-of-the-somme-1916",
    "file": "battles/battle-of-the-somme-1916.json",
    "kind": "campaign",
@@ -148,14 +182,14 @@
    "date": {
     "start": "1916-07-01",
     "end": "1916-11-18",
-    "label": "1916 年 7 月 1 日 – 11 月 18 日（砲擊自 6 月 24 日起）",
+    "label": "1916 年 7 月 1 日 – 11 月 18 日",
     "duration_days": 141
    },
-   "lat": 50.01,
+   "lat": 50.02,
    "lng": 2.78,
    "zoom": 10,
-   "summary": "一戰西線規模最大的戰役之一：英國遠征軍與法國第六軍團在索姆河兩岸對德軍陣地發動 141 天的攻勢，原意是減輕凡爾登壓力並消耗德軍。7 月 1 日英軍單日傷亡 57,470 人（陣亡 19,240），為英軍史上最慘痛的一天；9 月 15 日戰車首度投入實戰。超過 300 萬人參戰，",
-   "result": "戰果未定（英法有限推進）",
+   "summary": "英法為紓解凡爾登壓力並加速勝利，在索姆河兩岸發動 1916 年最大攻勢。開戰第一天英軍傷亡 57,470 人（陣亡 19,240 人），為英國陸軍史上最慘烈的一日，但南翼與法軍取得突破。此後四個半月雙方在巴藏坦嶺、德爾維爾森林、波濟耶爾、弗萊爾—庫爾瑟萊特等地反覆爭奪，英軍首次使",
+   "result": "勝負未決（英法未能突破）",
    "sides": [
     {
      "id": "britain",
@@ -165,7 +199,7 @@
     {
      "id": "france",
      "name": "法蘭西第三共和國",
-     "color": "#6a8fd6"
+     "color": "#2c4f9e"
     },
     {
      "id": "germany",
@@ -205,6 +239,138 @@
      "id": "germany",
      "name": "德意志帝國",
      "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "mukden-incident-1931",
+   "file": "battles/mukden-incident-1931.json",
+   "kind": "campaign",
+   "title": "九一八事變",
+   "title_en": "Mukden Incident and Japanese invasion of Manchuria",
+   "wars": [
+    "japanese-invasion-of-manchuria"
+   ],
+   "date": {
+    "start": "1931-09-18",
+    "end": "1932-02-27",
+    "label": "1931 年 9 月 18 日 – 1932 年 2 月 27 日",
+    "duration_days": 163
+   },
+   "lat": 43.5,
+   "lng": 124.5,
+   "zoom": 6,
+   "summary": "1931 年 9 月 18 日晚，關東軍參謀板垣征四郎、石原莞爾策劃在瀋陽北郊柳條湖炸毀南滿鐵路一小段，誣指中國軍隊所為，隨即以約 500 人攻擊駐有約 7,000 名東北軍的北大營，19 日佔領瀋陽及營口、遼陽、撫順、丹東、四平、長春等南滿鐵路沿線城市。張學良下令不抵抗，關東軍",
+   "result": "日本佔領東北",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國",
+     "color": "#b5452f"
+    },
+    {
+     "id": "roc",
+     "name": "中華民國（東北軍）",
+     "color": "#3f6e8c"
+    }
+   ]
+  },
+  {
+   "id": "jiangqiao-campaign-1931",
+   "file": "battles/jiangqiao-campaign-1931.json",
+   "kind": "battle",
+   "title": "江橋抗戰",
+   "title_en": "Jiangqiao Campaign",
+   "wars": [
+    "japanese-invasion-of-manchuria"
+   ],
+   "date": {
+    "start": "1931-10-15",
+    "end": "1931-11-19",
+    "label": "1931 年 10 月 15 日 – 11 月 19 日（主戰 11 月 4 日 – 19 日）",
+    "duration_days": 36
+   },
+   "lat": 47.05,
+   "lng": 123.8,
+   "zoom": 9,
+   "summary": "九一八事變後，關東軍唆使附日的洮南鎮守使張海鵬北上奪取黑龍江。10 月 14 日夜于兆麟部炸毀嫩江鐵橋，15–17 日擊退張海鵬部與日軍裝甲列車的進攻。新任黑龍江代理主席馬占山拒絕日方修橋與讓路的要求，11 月 4 日約 800 名日軍掩護修橋隊與約 2,500 名守軍激戰，日軍",
+   "result": "日軍勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國（含附日的張海鵬部）",
+     "color": "#b5452f"
+    },
+    {
+     "id": "roc",
+     "name": "中華民國（黑龍江省軍）",
+     "color": "#3f6e8c"
+    }
+   ]
+  },
+  {
+   "id": "defense-of-harbin-1932",
+   "file": "battles/defense-of-harbin-1932.json",
+   "kind": "battle",
+   "title": "哈爾濱保衛戰",
+   "title_en": "Defense of Harbin",
+   "wars": [
+    "japanese-invasion-of-manchuria"
+   ],
+   "date": {
+    "start": "1932-01-25",
+    "end": "1932-02-05",
+    "label": "1932 年 1 月 25 日 – 2 月 5 日",
+    "duration_days": 12
+   },
+   "lat": 45.6,
+   "lng": 126.5,
+   "zoom": 10,
+   "summary": "九一八事變後，北滿重鎮哈爾濱成為東北最後一個未被日軍控制的大城市。1932 年 1 月 25 日附日的熙洽派「新吉林軍」北上至雙城，26 日被丁超擊敗。日方以哈爾濱騷亂為藉口，28 日派第2師團搭火車北上，但嚴寒拖慢運輸，丁超趁機於 29 日接管市政、軟禁附日的行政長官。混成第4",
+   "result": "日軍佔領哈爾濱",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國（含附日的新吉林軍）",
+     "color": "#b5452f"
+    },
+    {
+     "id": "roc",
+     "name": "中華民國（吉林自衛軍）",
+     "color": "#3f6e8c"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-rehe-1933",
+   "file": "battles/battle-of-rehe-1933.json",
+   "kind": "campaign",
+   "title": "熱河戰役",
+   "title_en": "Battle of Rehe",
+   "wars": [
+    "japanese-invasion-of-manchuria"
+   ],
+   "date": {
+    "start": "1933-02-21",
+    "end": "1933-03-12",
+    "label": "1933 年 2 月 21 日 – 3 月 12 日（1 月山海關為前奏）",
+    "duration_days": 20
+   },
+   "lat": 41.3,
+   "lng": 118.9,
+   "zoom": 7,
+   "summary": "日本在建立滿洲國後宣稱熱河屬於滿洲國，1933 年 1 月先攻佔長城東端的山海關。2 月 23 日關東軍以第6、第8師團與混成旅團等約 10 萬日滿部隊發動「熱河作戰」，25 日即取朝陽、開魯。中方名義上有 10 萬至 15 萬人，但熱河省主席湯玉麟部兵少械劣、軍官投敵，孫殿英部",
+   "result": "日本與滿洲國勝利",
+   "sides": [
+    {
+     "id": "japan",
+     "name": "大日本帝國、滿洲國",
+     "color": "#b5452f"
+    },
+    {
+     "id": "roc",
+     "name": "中華民國",
+     "color": "#3f6e8c"
     }
    ]
   },
