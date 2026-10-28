@@ -427,11 +427,8 @@ body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(va
 .media-box img,.media-box video{display:block;max-width:100%;max-height:68vh;margin:0 auto;border-radius:6px;background:#000}
 .media-dlg .d{font-family:var(--f-mono);font-size:12px}
 #fx{position:fixed;inset:0;z-index:2;pointer-events:none;transition:opacity .8s}
-#fx .fx-rain{position:absolute;inset:0;background:repeating-linear-gradient(104deg,transparent 0 11px,rgba(170,190,205,.32) 11px 12px);background-size:140px 140px;animation:fxrain .45s linear infinite}
-#fx .fx-storm{position:absolute;inset:0;background:repeating-linear-gradient(104deg,transparent 0 8px,rgba(170,190,205,.38) 8px 9px),linear-gradient(rgba(20,28,36,.28),rgba(20,28,36,.28));background-size:110px 110px,auto;animation:fxrain .35s linear infinite}
-@keyframes fxrain{to{background-position:-34px 140px,0 0}}
-#fx .fx-snow{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.9) 0 1.6px,transparent 2.2px) 0 0/46px 46px,radial-gradient(circle,rgba(255,255,255,.7) 0 1.1px,transparent 1.6px) 20px 13px/31px 31px;animation:fxsnow 6s linear infinite}
-@keyframes fxsnow{to{background-position:30px 460px,-10px 310px}}
+#fx canvas{position:absolute;inset:0;width:100%;height:100%}
+#fx .fx-storm{position:absolute;inset:0;background:rgba(20,28,36,.2)}
 #fx .fx-fog{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,rgba(232,234,230,.55),transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(232,234,230,.5),transparent 55%),rgba(232,234,230,.18);animation:fxdrift 18s ease-in-out infinite alternate}
 #fx .fx-smoke{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 45%,rgba(60,58,54,.35),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(70,66,60,.3),transparent 45%),rgba(60,58,54,.08);animation:fxdrift 14s ease-in-out infinite alternate}
 #fx .fx-dust{position:absolute;inset:0;background:radial-gradient(ellipse at 40% 60%,rgba(190,160,110,.3),transparent 55%),rgba(190,160,110,.12);animation:fxdrift 16s ease-in-out infinite alternate}
@@ -1588,7 +1585,10 @@ function buildImmersion(pi, instant){
   if (over > 0) A.cards.forEach((c, i) => { c.f = Math.max(.02, c.f - over * (i + 1) / A.cards.length); });
   A.decs = decisions.map(d => ({ d, f:itemFrac(A.plan, b, pi, d, true), done:!!instant }));
   const c = b.phases[pi].conditions, fx = [].concat(c?.fx || []).filter(x => FX.includes(x));
-  $("#fx").innerHTML = fx.map(x => `<i class="fx-${x}"></i>`).join(""); $("#fx").hidden = !fx.length || RM;   // one layer per effect, so they stack
+  const drops = fx.filter(x => PFX[x]);   // rain, storm and snow are drawn as particles; the rest are CSS haze layers
+  $("#fx").innerHTML = fx.filter(x => x !== "rain" && x !== "snow").map(x => `<i class="fx-${x}"></i>`).join("") + (drops.length ? "<canvas></canvas>" : "");
+  $("#fx").hidden = !fx.length || RM;
+  runParticles(RM ? [] : drops);
   const cond = c ? COND.filter(([k]) => c[k]).map(([k, n]) => `<span><b>${n}</b>${esc(c[k])}</span>`).join("") : "";
   $("#tlCond").innerHTML = cond; $("#tlCond").hidden = !cond;
 }
@@ -1600,7 +1600,44 @@ function tickImmersion(el, dur){
     if (DEC.on && !REC.rec && el < dur && $("#modal").hidden) openDecision(x.d, true);
   }
 }
-function clearImmersion(){ A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").innerHTML = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
+/* Sparse falling streaks / flakes on a canvas: a tiled CSS pattern showed as dense stripes with seams. */
+const PFX = { rain:{ n:110, len:13, vy:950, vx:-170, a:.2, w:1 }, storm:{ n:220, len:20, vy:1350, vx:-330, a:.26, w:1.1 }, snow:{ n:90, r:1.8, vy:45, vx:14, a:.7 } };
+let fxRaf = 0;
+function runParticles(kinds){
+  cancelAnimationFrame(fxRaf); fxRaf = 0;
+  const cv = $("#fx canvas");
+  if (!cv || !kinds.length) return;
+  const ctx = cv.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1);
+  let W = 0, H = 0, ps = [], last = performance.now();
+  const seed = () => {
+    W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr;
+    const area = W * H / 1e6;   // densities are per megapixel, so small screens stay light
+    ps = kinds.flatMap(k => Array.from({ length:Math.round(PFX[k].n * area) }, () => ({ k, x:Math.random() * W, y:Math.random() * H, s:.6 + Math.random() * .8, ph:Math.random() * 6.3 })));
+  };
+  const step = now => {
+    if (!cv.isConnected) { fxRaf = 0; return; }
+    if (cv.clientWidth !== W || cv.clientHeight !== H) seed();
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    for (const p of ps){
+      const c = PFX[p.k];
+      p.y += c.vy * p.s * dt; p.x += (c.vx + (c.r ? Math.sin(now / 900 + p.ph) * 18 : 0)) * p.s * dt;
+      if (p.y > H + 20) { p.y = -20; p.x = Math.random() * (W + 200); }
+      if (p.x < -40) p.x += W + 80; else if (p.x > W + 40) p.x -= W + 80;
+      if (c.r){
+        ctx.fillStyle = `rgba(255,255,255,${c.a * p.s * .8})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, c.r * p.s, 0, 6.283); ctx.fill();
+      } else {
+        const l = c.len * p.s / Math.hypot(c.vx, c.vy);
+        ctx.strokeStyle = `rgba(200,214,226,${c.a * p.s})`; ctx.lineWidth = c.w;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - c.vx * l, p.y - c.vy * l); ctx.stroke();
+      }
+    }
+    fxRaf = requestAnimationFrame(step);
+  };
+  seed(); fxRaf = requestAnimationFrame(step);
+}
+function clearImmersion(){ runParticles([]); A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").innerHTML = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
 
 /* ---------------- 3D view ----------------
    MapLibre GL over open terrain (AWS Terrain Tiles, seafloor flattened to sea level) and the Natural Earth
