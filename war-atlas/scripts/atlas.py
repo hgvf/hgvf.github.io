@@ -154,7 +154,7 @@ def validate(b, wars, fname=""):
                 warns.append(f"{wm}.end is before start")
             if "strength" in m and not (isinstance(m["strength"], (int, float)) and not isinstance(m["strength"], bool) and m["strength"] > 0):
                 errs.append(f"{wm}.strength must be a positive number (troops, ships or aircraft in the move)")
-            if m.get("model") is not None and m["model"] not in MODELS:
+            if m.get("model") is not None and (not isinstance(m["model"], str) or m["model"] not in MODELS):
                 errs.append(f"{wm}.model not in {sorted(MODELS)}")
             if m.get("outcome") and not (isinstance(m["outcome"], str) and m["outcome"] in OUTCOMES):
                 errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
@@ -199,7 +199,7 @@ def validate(b, wars, fname=""):
             warns.append(f"{wt}.unit '{t['unit']}' is not in {t.get('side')}.units[].name")
         if not isinstance(t.get("side"), str) or t.get("side") not in side_ids:
             errs.append(f"{wt}.side '{t.get('side')}' is not a side id")
-        if t.get("model") is not None and t["model"] not in MODELS:
+        if t.get("model") is not None and (not isinstance(t["model"], str) or t["model"] not in MODELS):
             errs.append(f"{wt}.model not in {sorted(MODELS)}")
         pts = t.get("points") if isinstance(t.get("points"), list) else []
         if len(pts) < 2:
@@ -225,7 +225,7 @@ def validate(b, wars, fname=""):
     phase_ids = {p.get("id") for p in b["phases"]}
     https = lambda u: isinstance(u, str) and re.match(r"^https://[^\s\"'<>]+\Z", u) is not None
     def lic(where, l):
-        if not isinstance(l, dict) or l.get("code") not in LICENCES:
+        if not isinstance(l, dict) or not isinstance(l.get("code"), str) or l["code"] not in LICENCES:
             errs.append(f"{where}.license.code must be one of {sorted(LICENCES)} (only open licences, no permission needed)")
         elif l.get("url") and not https(l["url"]):
             errs.append(f"{where}.license.url must be https")
@@ -237,7 +237,7 @@ def validate(b, wars, fname=""):
         elif need_url and not s.get("url"):
             errs.append(f"{where}.url required")
     def where_in_phase(where, it):
-        if it.get("phase") not in phase_ids:
+        if not isinstance(it.get("phase"), str) or it["phase"] not in phase_ids:
             errs.append(f"{where}.phase must be a phase id")
         for k in ("date", "at"):
             if it.get(k) is not None and not DATE_RE.match(str(it[k])):
@@ -246,7 +246,7 @@ def validate(b, wars, fname=""):
             p = next((p for p in b["phases"] if p.get("id") == it.get("phase")), {})
             if it["event"] not in {e.get("title") for e in p.get("events", [])}:
                 warns.append(f"{where}.event '{it['event']}' is not an event title in that phase")
-        if it.get("side") is not None and it["side"] not in side_ids:
+        if it.get("side") is not None and (not isinstance(it["side"], str) or it["side"] not in side_ids):
             errs.append(f"{where}.side is not a side id")
     for key in ("voices", "media", "decisions"):
         if key in b and not isinstance(b[key], list):
@@ -288,7 +288,7 @@ def validate(b, wars, fname=""):
         if len(opts) < 2 or not all(isinstance(o, dict) and isinstance(o.get("label"), str) and o.get("label") for o in opts):
             errs.append(f"{w}.options needs ≥2 objects with a label")
         c = d.get("chosen")
-        if not (isinstance(c, int) and not isinstance(c, bool) and 0 <= c < len(opts)):
+        if not (isinstance(c, (int, float)) and not isinstance(c, bool) and c == int(c) and 0 <= c < len(opts)):
             errs.append(f"{w}.chosen must be the index of the option the commander took")
         if not isinstance(d.get("sources"), list) or not d["sources"]:
             errs.append(f"{w}.sources required")
@@ -301,9 +301,9 @@ def validate(b, wars, fname=""):
         w = f"phases[{i}].conditions"
         if not isinstance(c, dict):
             errs.append(f"{w} must be an object"); continue
-        fx = c.get("fx", [])
+        fx = c.get("fx") or []
         for x in (fx if isinstance(fx, list) else [fx]):
-            if x not in FX:
+            if not isinstance(x, str) or x not in FX:
                 errs.append(f"{w}.fx '{x}' not in {sorted(FX)}")
         if not isinstance(c.get("sources"), list) or not c["sources"]:
             errs.append(f"{w}.sources required")

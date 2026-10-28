@@ -273,25 +273,52 @@ def check(b):
             if p.get("date") and not DATE.match(str(p["date"])): errs.append(f"{w}.points[{j}].date invalid")
             if p.get("status") and p["status"] not in E["trk"]: errs.append(f"{w}.points[{j}].status not in {sorted(E['trk'])}")
             if j in (0, len(pts) - 1) and not p.get("date"): errs.append(f"{w}.points[{j}]: first and last points need a date")
-    lic_ok = lambda l: isinstance(l, dict) and l.get("code") in {"pd", "cc0", "cc-by", "cc-by-sa"}
-    https = lambda u: isinstance(u, str) and u.startswith("https://")
+    S = lambda x: isinstance(x, str) and x != ""
+    lic_ok = lambda l: isinstance(l, dict) and l.get("code") in ("pd", "cc0", "cc-by", "cc-by-sa") and (not l.get("url") or https(l["url"]))
+    https = lambda u: isinstance(u, str) and re.match(r"^https://[^\s\"'<>]+$", u) is not None
     pids = {p.get("id") for p in b["phases"]}
+    src_ok = lambda xs: isinstance(xs, list) and xs and all(isinstance(s, dict) and S(s.get("title")) and (not s.get("url") or https(s["url"])) for s in xs)
+    def when(w, it):
+        if not isinstance(it.get("phase"), str) or it["phase"] not in pids: errs.append(f"{w}.phase not a phase id")
+        for k in ("date", "at"):
+            if it.get(k) is not None and not DATE.match(str(it[k])): errs.append(f"{w}.{k} invalid")
+        if it.get("side") is not None and (not isinstance(it["side"], str) or it["side"] not in sids): errs.append(f"{w}.side not a side id")
+    for key in ("voices", "media", "decisions"):
+        if not isinstance(b.get(key, []), list): errs.append(f"{key} must be a list"); b = {**b, key: []}
     for i, v in enumerate(b.get("voices", [])):
-        if v.get("phase") not in pids: errs.append(f"voices[{i}].phase not a phase id")
-        if not v.get("quote") or not v.get("who") or not (v.get("source") or {}).get("title"): errs.append(f"voices[{i}] needs quote, who, source.title")
+        if not isinstance(v, dict): errs.append(f"voices[{i}] must be an object"); continue
+        when(f"voices[{i}]", v)
+        src = v.get("source") if isinstance(v.get("source"), dict) else {}
+        if not S(v.get("quote")) or not S(v.get("who")) or not S(src.get("title")) or (src.get("url") and not https(src["url"])): errs.append(f"voices[{i}] needs quote, who, source.title (https url)")
         if not lic_ok(v.get("license")): errs.append(f"voices[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
     for i, m in enumerate(b.get("media", [])):
-        if m.get("phase") not in pids: errs.append(f"media[{i}].phase not a phase id")
-        if m.get("type") not in ("image", "video") or not https(m.get("url")) or not https(m.get("page")) or not m.get("credit"): errs.append(f"media[{i}] needs type, https url and page, credit")
+        if not isinstance(m, dict): errs.append(f"media[{i}] must be an object"); continue
+        when(f"media[{i}]", m)
+        if m.get("type") not in ("image", "video") or not https(m.get("url")) or not https(m.get("page")) or not S(m.get("credit")) or (m.get("thumb") is not None and not https(m["thumb"])): errs.append(f"media[{i}] needs type, https url / page / thumb, credit")
         if not lic_ok(m.get("license")): errs.append(f"media[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
     for i, d in enumerate(b.get("decisions", [])):
-        o = d.get("options", [])
-        if d.get("phase") not in pids or len(o) < 2 or not isinstance(d.get("chosen"), int) or not 0 <= d["chosen"] < len(o) or not d.get("sources"): errs.append(f"decisions[{i}] needs phase, ≥2 options, chosen index, sources")
+        if not isinstance(d, dict): errs.append(f"decisions[{i}] must be an object"); continue
+        when(f"decisions[{i}]", d)
+        o = d.get("options") if isinstance(d.get("options"), list) else []
+        c = d.get("chosen")
+        if not all(S(d.get(k)) for k in ("commander", "title", "situation", "outcome")): errs.append(f"decisions[{i}] needs commander, title, situation, outcome")
+        if len(o) < 2 or not all(isinstance(x, dict) and S(x.get("label")) for x in o): errs.append(f"decisions[{i}].options needs ≥2 with a label")
+        if isinstance(c, bool) or not isinstance(c, (int, float)) or c != int(c) or not 0 <= c < len(o): errs.append(f"decisions[{i}].chosen must be an option index")
+        if not src_ok(d.get("sources")): errs.append(f"decisions[{i}].sources need titles (https urls)")
     for i, p in enumerate(b["phases"]):
         c = p.get("conditions")
-        if c is not None and not c.get("sources"): errs.append(f"phases[{i}].conditions.sources required")
-        for x in ([] if c is None else (c.get("fx") if isinstance(c.get("fx"), list) else [c.get("fx")] if c.get("fx") else [])):
-            if x not in {"rain", "snow", "fog", "smoke", "dust", "storm"}: errs.append(f"phases[{i}].conditions.fx '{x}' invalid")
+        if c is None: continue
+        if not isinstance(c, dict): errs.append(f"phases[{i}].conditions must be an object"); continue
+        if not src_ok(c.get("sources")): errs.append(f"phases[{i}].conditions.sources required (titles, https urls)")
+        fx = c.get("fx") or []
+        for x in (fx if isinstance(fx, list) else [fx]):
+            if x not in ("rain", "snow", "fog", "smoke", "dust", "storm"): errs.append(f"phases[{i}].conditions.fx '{x}' invalid")
+    MODELS = ("tank", "infantry", "cavalry", "artillery", "vehicle", "ship", "carrier", "aircraft")
+    for i, p in enumerate(b["phases"]):
+        for j, m in enumerate(p.get("moves", [])):
+            if m.get("model") is not None and m["model"] not in MODELS: errs.append(f"phases[{i}].moves[{j}].model invalid")
+    for i, t in enumerate(b.get("tracks", [])):
+        if t.get("model") is not None and t["model"] not in MODELS: errs.append(f"tracks[{i}].model invalid")
     if not b["sources"]: errs.append("sources: at least one")
     for i, s in enumerate(b["sources"]):
         if s.get("type") not in E["src"] or not s.get("title"): errs.append(f"sources[{i}] needs title and valid type")

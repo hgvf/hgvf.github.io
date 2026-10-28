@@ -361,7 +361,7 @@ body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(va
 .tl-cap .v3[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
 .tl-cond{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2)}
 .tl-cond b{font-weight:500;color:var(--ink-3);margin-right:4px}
-.story{position:fixed;z-index:560;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(var(--tl-h,110px) + 24px);width:min(380px,calc(100vw - 24px));max-height:46vh;overflow:auto;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px}
+.story{position:fixed;z-index:610;left:max(12px,env(safe-area-inset-left,0px));bottom:var(--story-b,130px);width:min(380px,calc(100vw - 24px));max-height:min(46vh,calc(100vh - var(--story-b,130px) - 80px));overflow:auto;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px}
 .story.in{animation:storyin .45s cubic-bezier(.2,.8,.2,1) both}
 @keyframes storyin{from{opacity:0;transform:translateY(10px)}}
 .story-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:6px;background:none;color:var(--ink-3);cursor:pointer;display:grid;place-items:center}
@@ -1173,7 +1173,7 @@ function renderTracks(T){
     k.marker.setLatLng(pos);
     const s0 = P[Math.min(i, P.length - 2)], s1 = P[Math.min(i + 1, P.length - 1)];
     k.marker._model = { type:k.model, color:k.c, label:baseName(k.tr.unit), status:st, past,
-      head:P.length > 1 ? Math.atan2((s1.lng - s0.lng) * Math.cos(s0.lat * RAD), s1.lat - s0.lat) / RAD : null };
+      head:P.length > 1 && (s1.lat !== s0.lat || s1.lng !== s0.lng) ? Math.atan2((s1.lng - s0.lng) * Math.cos(s0.lat * RAD), s1.lat - s0.lat) / RAD : null };
     k.trail.setLatLngs([...P.slice(0, i + 1).map(p => [p.lat, p.lng]), pos]);
     const key = st + "|" + past + "|" + note;
     if (key !== k.st){
@@ -1348,6 +1348,7 @@ function goPhase(pi, o={}){
   evMarkers.forEach(m => { if (m._st === "focus") m._st = "reset"; });
   buildPhase(pi);
   A.el = (o.instant || RM) ? A.plan.dur + 2000 : -LEAD; A.paused = false;
+  hideStory();
   buildImmersion(pi, o.instant || RM);
   $("#tlEv").innerHTML = "";
   render(true); kick();
@@ -1453,7 +1454,7 @@ function itemFrac(plan, b, pi, it, before){
   return .06;
 }
 function voiceHTML(v, full){
-  return `<figure class="voice${v.sensitive && !full ? " sens" : ""}">
+  return `<figure class="voice${v.sensitive ? " sens" : ""}">
     <blockquote>${esc(v.quote)}</blockquote>
     ${v.original && full ? `<blockquote class="orig" lang="${esc(v.lang || "")}">${esc(v.original)}</blockquote>` : ""}
     <figcaption><b>${esc(v.who)}</b>${v.role ? `<span>${esc(v.role)}</span>` : ""}${v.date ? `<span class="d">${esc(String(v.date).replace("T", " "))}</span>` : ""}
@@ -1486,7 +1487,7 @@ function phaseExtrasHTML(b, pi){
 /* playback card (bottom left, above the timeline) */
 function showStory(html){
   const el = $("#story"), tl = $("#tl");
-  document.documentElement.style.setProperty("--tl-h", (tl.hidden ? 0 : tl.getBoundingClientRect().height) + "px");
+  document.documentElement.style.setProperty("--story-b", (tl.hidden ? 12 : innerHeight - tl.getBoundingClientRect().top + 10) + "px");
   el.innerHTML = `<button class="story-x" aria-label="關閉">${ICON.close}</button>${html}`;
   el.hidden = false; el.classList.remove("in"); void el.offsetWidth; el.classList.add("in");
 }
@@ -1505,6 +1506,7 @@ function storyFor(it){
 }
 function openMedia(i){
   const m = (cur?.media || [])[i]; if (!m) return;
+  if (DEC.open) afterDecision();
   const src = httpsUrl(m.url); if (!src) return;
   const body = m.type === "video"
     ? `<video src="${esc(src)}" controls preload="metadata" playsinline ${httpsUrl(m.thumb) ? `poster="${esc(m.thumb)}"` : ""}></video>`
@@ -1518,14 +1520,15 @@ function openMedia(i){
 $("#modal").addEventListener("click", ev => { if (ev.target.closest("[data-close]") || ev.target === $("#modal")) closeModal(); });
 $("#sideBody").addEventListener("click", ev => {
   const t = ev.target.closest(".pextra [data-media]"); if (t) { ev.stopPropagation(); if (t.classList.contains("sens")) t.classList.remove("sens"); else openMedia(+t.dataset.media); return; }
-  const d = ev.target.closest(".dec-open"); if (d) { ev.stopPropagation(); openDecision(cur.decisions[+d.dataset.dec], false); }
+  const d = ev.target.closest(".dec-open"); if (d) { ev.stopPropagation(); openDecision(cur.decisions[+d.dataset.dec], false); return; }
+  const sv = ev.target.closest(".pextra .voice.sens"); if (sv) { ev.stopPropagation(); sv.classList.remove("sens"); }
 }, true);
 
 /* commander decisions: pause, ask, then reveal */
 const DEC = { on:true, resume:false, open:null };
 function openDecision(d, fromPlayback){
   if (!d) return;
-  DEC.resume = fromPlayback && S.playing;
+  DEC.resume = fromPlayback ? (S.playing ? "play" : A.paused ? "" : "clock") : "";
   if (fromPlayback) { S.playing = false; A.paused = true; setPlayIcon(); }
   DEC.open = d;
   const s = cur.sides.find(x => x.id === d.side);
@@ -1558,7 +1561,9 @@ $("#modal").addEventListener("click", ev => {
 function afterDecision(){
   if (!DEC.open) return;
   DEC.open = null;
-  if (DEC.resume) { DEC.resume = false; play(); }
+  const r = DEC.resume; DEC.resume = "";
+  if (r === "play") play();
+  else if (r === "clock" && A.pi >= 0) { A.paused = false; kick(); }
 }
 $("#btnDec").addEventListener("click", () => { DEC.on = !DEC.on; $("#btnDec").setAttribute("aria-pressed", String(DEC.on)); toast(DEC.on ? "抉擇模式：播放到關鍵時刻會暫停，讓你先做決定" : "抉擇模式已關閉"); });
 
@@ -1567,6 +1572,9 @@ function buildImmersion(pi, instant){
   const b = cur, { voices, media, decisions } = itemsOf(b, pi);
   A.cards = [...voices.map(v => ({ kind:"voice", item:v })), ...media.map(m => ({ kind:"media", item:m }))]
     .map(c => ({ ...c, f:itemFrac(A.plan, b, pi, c.item), shown:!!instant })).sort((a, c) => a.f - c.f);
+  A.cards.forEach((c, i) => { if (i && c.f < A.cards[i - 1].f + .12) c.f = A.cards[i - 1].f + .12; });
+  const over = A.cards.length ? A.cards[A.cards.length - 1].f - .95 : 0;
+  if (over > 0) A.cards.forEach((c, i) => { c.f = Math.max(.02, c.f - over * (i + 1) / A.cards.length); });
   A.decs = decisions.map(d => ({ d, f:itemFrac(A.plan, b, pi, d, true), done:!!instant }));
   const c = b.phases[pi].conditions, fx = [].concat(c?.fx || []).filter(x => FX.includes(x));
   $("#fx").className = fx.map(x => "fx-" + x).join(" "); $("#fx").hidden = !fx.length || RM;
@@ -1578,7 +1586,7 @@ function tickImmersion(el, dur){
   for (const x of A.decs || []){
     if (x.done || el < x.f * dur) continue;
     x.done = true;
-    if (DEC.on && el < dur && $("#modal").hidden) openDecision(x.d, true);
+    if (DEC.on && !REC.rec && el < dur && $("#modal").hidden) openDecision(x.d, true);
   }
 }
 function clearImmersion(){ A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").className = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
@@ -1818,7 +1826,7 @@ function modelFor(b, side, name, kind, explicit){
   const s = b.sides.find(x => x.id === side), u = (s?.units||[]).find(u => typeof u === "object" && u.name && name && baseName(u.name) === baseName(name));
   const n = String(name || "") + " " + String(u?.echelon || "");
   if (u?.branch === "navy" || /艦|艦隊|戰隊|驅逐|潛艇|潛艦|fleet|TF ?\d|特遣/i.test(n)) return /航艦|航空母艦|機動部隊|carrier/i.test(n) ? "carrier" : "ship";
-  if (u?.branch === "air" || /航空|飛行|空軍|機隊|艦載機|特攻|Luftwaffe|air/i.test(n)) return "aircraft";
+  if (u?.branch === "air" || /航空|飛行|空軍|機隊|艦載機|Luftwaffe|\bair ?(force|group|wing|fleet|corps)\b|squadron/i.test(n)) return "aircraft";
   if (/坦克|戰車|裝甲|機械化|Panzer|tank|armou?r/i.test(n)) return "tank";
   if (/騎兵|cavalry/i.test(n)) return "cavalry";
   if (/砲兵|炮兵|砲團|artillery/i.test(n)) return "artillery";
@@ -1875,10 +1883,14 @@ function modelLayer(){
     object(m){
       const T = this.T;
       let o = M3.objs.get(m.id);
-      if (o && (o.type !== m.type || o.color !== m.color)) { this.scene.remove(o.g); M3.objs.delete(m.id); o = null; }
+      if (o && (o.type !== m.type || o.color !== m.color)) {
+        this.scene.remove(o.g); o.g.traverse(x => { x.material?.dispose?.(); if (x.geometry && x.geometry !== this.shadowGeo) x.geometry.dispose(); });
+        M3.objs.delete(m.id); o = null;
+      }
       if (!o){
-        const g = new T.Group(), body = new T.Group(), mat = new T.MeshLambertMaterial({ color:new T.Color(m.color), transparent:true });
+        const g = new T.Group(), body = new T.Group(), mat = new T.MeshLambertMaterial({ color:new T.Color(m.color), transparent:true, side:T.DoubleSide });
         M3.geo[m.type](mat).forEach(x => body.add(x));
+        body.traverse(x => { if (!x.material) return; if (x.material !== mat) x.material = x.material.clone(); x.material.transparent = true; x.material.side = T.DoubleSide; x.userData.base = x.material.color.clone(); });
         const sh = new T.Mesh(this.shadowGeo, new T.MeshBasicMaterial({ color:0x000000, transparent:true, opacity:.22, depthWrite:false }));
         sh.rotation.x = -Math.PI / 2; sh.position.y = .01;
         g.add(sh); g.add(body); g.matrixAutoUpdate = false;
@@ -1890,17 +1902,18 @@ function modelLayer(){
     },
     render(gl, matrix){
       const T = this.T, ml = this.ml, z = ml.getZoom(), seen = new Set();
+      let turning = false;
       for (const m of V3.models){
         seen.add(m.id);
         const o = this.object(m);
-        if (o.status !== m.status){
-          o.status = m.status;
+        const sk = m.status + "|" + m.past;
+        if (o.status !== sk){
+          o.status = sk;
           const gone = m.status === "destroyed", out = m.status === "withdrawn" || m.past;
-          o.body.traverse(x => { if (x.material && x.material !== o.mat) { x.material = x.material.clone(); x.material.transparent = true; } });
-          o.body.traverse(x => { if (x.material) { x.material.opacity = out || gone ? .45 : 1; if (gone) x.material.color?.multiplyScalar?.(.55); } });
+          o.body.traverse(x => { if (x.material) { x.material.opacity = out || gone ? .45 : 1; x.material.color.copy(x.userData.base).multiplyScalar(gone ? .55 : 1); } });
           o.body.rotation.set(0, 0, gone ? .5 : 0); o.body.position.y = gone ? -.06 : 0;
         }
-        if (m.head != null) o.head += ((((m.head - o.head) % 360) + 540) % 360 - 180) * .25;   // ease the turn
+        if (m.head != null) { const dh = ((((m.head - o.head) % 360) + 540) % 360 - 180); o.head += dh * .25; if (Math.abs(dh) > 1) turning = true; }   // ease the turn
         const mpp = 156543.03392 * Math.cos(m.lat * RAD) / Math.pow(2, z + 1);              // metres per CSS pixel (512-px tiles)
         const size = 40 * mpp * (MODEL_SCALE[m.type] || 1);
         const ground = ml.queryTerrainElevation?.([m.lng, m.lat]) ?? 0;
@@ -1913,10 +1926,15 @@ function modelLayer(){
           .multiply(new T.Matrix4().makeRotationY(-o.head * RAD));
         o.g.matrixWorldNeedsUpdate = true;
       }
-      for (const [id, o] of M3.objs) if (!seen.has(id)) { this.scene.remove(o.g); o.g.traverse(x => { if (x.material && x.material !== o.mat) x.material.dispose?.(); }); o.mat.dispose(); M3.objs.delete(id); }
+      for (const [id, o] of M3.objs) if (!seen.has(id)) {
+        this.scene.remove(o.g);
+        o.g.traverse(x => { x.material?.dispose?.(); if (x.geometry && x.geometry !== this.shadowGeo) x.geometry.dispose(); });
+        M3.objs.delete(id);
+      }
       this.camera.projectionMatrix = new T.Matrix4().fromArray(matrix);
       this.renderer.resetState();
       this.renderer.render(this.scene, this.camera);
+      if (turning) ml.triggerRepaint();
     }
   };
 }
@@ -2137,7 +2155,7 @@ $("#sideBody").addEventListener("keydown", ev => { if (ev.key === "Enter" && ev.
 addEventListener("keydown", ev => {
   if (ev.target.matches("input,textarea")) return;
   if (ev.key === "Escape") { if (!$("#modal").hidden) closeModal(); else if (cur) closeSide(); }
-  if (!cur) return;
+  if (!cur || !$("#modal").hidden) return;   // a dialog (decision, media, data) owns the keyboard
   // capture phase + stopPropagation: Leaflet's keyboard panning would otherwise swallow the arrows while the map has focus
   if (ev.key === "ArrowRight") { ev.stopPropagation(); ev.preventDefault(); stop(); goPhase(Math.min(S.phase + 1, cur.phases.length - 1)); }
   if (ev.key === "ArrowLeft") { ev.stopPropagation(); ev.preventDefault(); stop(); goPhase(Math.max(S.phase - 1, 0)); }
