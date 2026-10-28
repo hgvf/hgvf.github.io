@@ -297,6 +297,31 @@ Phases with hour stamps also get day/night shading (solar terminator at the cloc
 - `points`: ≥2, first and last dated, dates non-decreasing; undated middle points are spread evenly in time. `status`: `active` (default), `destroyed`, `withdrawn` — from that point on. A track that ends `active` disappears a day after its last point; one that ends destroyed/withdrawn stays as a faded marker.
 - Say in `provenance.notes` that tracks are stitched from the record's events and moves and are schematic.
 
+### Immersion fields (optional): first-hand voices, period media, commander decisions, conditions
+
+**Licensing rule — no exceptions:** a voice or media item goes in only if its licence needs no permission: `license.code` ∈ `pd` (public domain, e.g. US federal government works "PD-USGov", or author dead long enough), `cc0`, `cc-by`, `cc-by-sa`. Check the licence on the file's own page (Wikimedia Commons file page, archive catalogue record) and link that page. Skip anything "all rights reserved", NC/ND, "fair use", "permission granted", unclear, or whose public-domain status depends on a country rule you cannot confirm. Quotations: only from public-domain texts (official reports, PD memoirs); your own Chinese translation is fine (`translated`). Never invent or paraphrase a quote as if it were a quote.
+
+```json
+"voices": [{"phase":"p4","event":"甘比爾灣號沉沒","date":"1944-10-25T09:07","side":"allies","who":"C. A. F. Sprague","role":"第77.4.3特遣分隊指揮官",
+  "quote":"（中譯）…","original":"…","lang":"en","translated":"本站",
+  "source":{"title":"Action Report …","url":"https://…"},"license":{"code":"pd","name":"公有領域（美國政府著作）","url":"https://…"}}],
+"media": [{"phase":"p4","event":"…","type":"image","title":"…","caption":"…","date":"1944-10-25",
+  "url":"https://upload.wikimedia.org/…jpg","thumb":"https://upload.wikimedia.org/…/640px-…jpg","page":"https://commons.wikimedia.org/wiki/File:…",
+  "credit":"U.S. Navy (NARA 80-G-…)","license":{"code":"pd","name":"公有領域（美國海軍）","url":"https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"},"sensitive":false}],
+"decisions": [{"phase":"p2","at":"1944-10-24T20:00","side":"allies","commander":"海爾賽","title":"北上追擊小澤，還是守住聖貝納迪諾海峽？",
+  "situation":"…（只寫他當時知道的）","intel":["…"],"options":[{"label":"…","detail":"…"},{"label":"…"}],"chosen":0,
+  "outcome":"…","hindsight":"…（事後才知道的）","sources":[{"title":"…","url":"https://…"}]}],
+"phases[].conditions": {"weather":"…","temp":"…","wind":"…","sea":"…","visibility":"…","ground":"…","light":"…","note":"…","fx":["rain"],"sources":[{"title":"…","url":"https://…"}]}
+```
+- Items are tied to a phase (`phase` id) and appear on the clock at `date`/`at`, else with `event` (an event title in that phase), else at the phase start. Voices and media show as a card during playback and in the phase's dossier block; decisions pause the playback (抉擇模式, on by default) and reveal what happened after the reader chooses.
+- `sensitive: true` blurs an image/quote until clicked — use for dead bodies, atrocities, executions.
+- `conditions.fx`: rain, snow, fog, smoke, dust, storm — a light overlay on the map; only when a source states it. Every field must come from `conditions.sources`.
+- `decisions`: 1–3 per record, at real turning points where sources describe the options the commander weighed. `situation`/`intel` = only what he knew then; `hindsight` = what was learned later.
+
+### 3D view and unit models
+
+The timeline's `3D` button tilts the map over open terrain (AWS Terrain Tiles, attribution shown; sea floor flattened) and turns track and arrow tokens into simplified 3D models; `鏡頭` follows a unit. Models are chosen from the unit (branch, name, move kind); set `model` on a move or track to override: tank, infantry, cavalry, artillery, vehicle, ship, carrier, aircraft.
+
 ```json
 {"side":"ussr","kind":"attack","label":"南翼集團","unit":"第57特別軍","strength":20000,
  "start":"1939-08-20","end":"1939-08-24","outcome":"success","path":[[47.6,118.6],[47.62,118.8],[47.75,118.88]]}

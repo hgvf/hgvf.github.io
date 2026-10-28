@@ -359,6 +359,73 @@ body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(va
 .tl-cap .v3{flex:none;height:24px;padding:0 9px;border-radius:6px;border:1px solid var(--line);background:var(--paper-2);font-family:var(--f-mono);font-weight:600;font-size:11.5px;color:var(--ink-2);cursor:pointer}
 .tl-cap .follow[hidden]+.v3{margin-left:auto}
 .tl-cap .v3[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.tl-cond{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2)}
+.tl-cond b{font-weight:500;color:var(--ink-3);margin-right:4px}
+.story{position:fixed;z-index:560;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(var(--tl-h,110px) + 24px);width:min(380px,calc(100vw - 24px));max-height:46vh;overflow:auto;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;box-shadow:var(--shadow);padding:12px 14px}
+.story.in{animation:storyin .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes storyin{from{opacity:0;transform:translateY(10px)}}
+.story-x{position:absolute;top:6px;right:6px;width:26px;height:26px;border:0;border-radius:6px;background:none;color:var(--ink-3);cursor:pointer;display:grid;place-items:center}
+.story-x svg{width:14px;height:14px}
+.story-k{font-size:11px;letter-spacing:.08em;color:var(--accent-ink);margin-bottom:6px}
+.voice{margin:0}
+.voice blockquote{margin:0;font-family:var(--f-display);font-size:15px;line-height:1.6;color:var(--ink)}
+.voice blockquote::before{content:"「"}.voice blockquote::after{content:"」"}
+.voice blockquote.orig{font-family:var(--f-body);font-size:12.5px;color:var(--ink-3);margin-top:4px}
+.voice blockquote.orig::before,.voice blockquote.orig::after{content:""}
+.voice figcaption{margin-top:6px;font-size:12px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:2px 8px}
+.voice figcaption small{flex-basis:100%;color:var(--ink-3);font-size:11px}
+.voice figcaption .d{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.voice.sens blockquote{filter:blur(5px);cursor:pointer}
+.voice small a,.story small a,.cond small a,.dlg small a{color:var(--ink-2)}
+.mthumb{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;border-radius:6px;overflow:hidden;cursor:zoom-in;background:var(--paper-2)}
+.mthumb img{display:block;width:100%;max-height:220px;object-fit:cover}
+.mthumb.sens img{filter:blur(14px) grayscale(.6)}
+.mthumb .sens-l{position:absolute;inset:auto 8px 8px 8px;font-size:11.5px;background:var(--paper);border-radius:4px;padding:2px 6px;color:var(--ink-2)}
+.mthumb .play-ic{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:grid;place-items:center}
+.mthumb .play-ic svg{width:18px;height:18px}
+.mcap{margin:6px 0 2px;font-size:12.5px;color:var(--ink)}
+.story small{display:block;font-size:11px;color:var(--ink-3)}
+.pextra h5{margin:12px 0 6px;font-size:12px;color:var(--ink-3);letter-spacing:.06em}
+.pextra .voice{padding:8px 10px;border-left:3px solid var(--line);margin-bottom:8px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.mgrid .mthumb img{height:90px}
+.cond{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px}
+.cond b{font-weight:500;color:var(--ink-3);margin-right:4px}
+.cond p{flex-basis:100%;margin:2px 0}
+.cond small{flex-basis:100%;font-size:11px;color:var(--ink-3)}
+.dec-open{all:unset;box-sizing:border-box;display:flex;gap:8px;align-items:center;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;cursor:pointer;margin-bottom:6px}
+.dec-open:hover{background:var(--paper-2)}
+.dec-open svg{width:18px;height:18px;flex:none;color:var(--accent-ink)}
+.dec-open b{display:block;font-size:13px;color:var(--ink)}
+.dec-open small{font-size:11px;color:var(--ink-3)}
+.dec-dlg{border-top:4px solid var(--c)}
+.dec-k{font-size:11px;letter-spacing:.08em;color:var(--c)}
+.dec-who{margin:-6px 0 0;font-size:13px}
+.dec-intel{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2);display:grid;gap:4px}
+.dec-opts{display:grid;gap:8px}
+.dec-opts button{all:unset;box-sizing:border-box;display:grid;gap:2px;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;background:var(--paper)}
+.dec-opts button:hover:not(:disabled),.dec-opts button:focus-visible{border-color:var(--c)}
+.dec-opts button b{font-size:14px}
+.dec-opts button span{font-size:12.5px;color:var(--ink-2)}
+.dec-opts button.picked{border-color:var(--ink-3)}
+.dec-opts button.real{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--paper))}
+.dec-opts button.real b::after{content:"　← 史實";font-size:12px;color:var(--c)}
+.dec-opts button:disabled{cursor:default}
+.dec-verdict{font-weight:700;color:var(--ink)}
+.dec-out h3{margin-top:10px}
+.media-dlg{width:min(980px,100%)}
+.media-box img,.media-box video{display:block;max-width:100%;max-height:68vh;margin:0 auto;border-radius:6px;background:#000}
+.media-dlg .d{font-family:var(--f-mono);font-size:12px}
+#fx{position:fixed;inset:0;z-index:2;pointer-events:none;transition:opacity .8s}
+#fx.fx-rain{background:repeating-linear-gradient(104deg,transparent 0 11px,rgba(170,190,205,.32) 11px 12px);background-size:140px 140px;animation:fxrain .45s linear infinite}
+#fx.fx-storm{background:repeating-linear-gradient(104deg,transparent 0 8px,rgba(170,190,205,.38) 8px 9px),linear-gradient(rgba(20,28,36,.28),rgba(20,28,36,.28));background-size:110px 110px,auto;animation:fxrain .35s linear infinite}
+@keyframes fxrain{to{background-position:-34px 140px,0 0}}
+#fx.fx-snow{background:radial-gradient(circle,rgba(255,255,255,.9) 0 1.6px,transparent 2.2px) 0 0/46px 46px,radial-gradient(circle,rgba(255,255,255,.7) 0 1.1px,transparent 1.6px) 20px 13px/31px 31px;animation:fxsnow 6s linear infinite}
+@keyframes fxsnow{to{background-position:30px 460px,-10px 310px}}
+#fx.fx-fog{background:radial-gradient(ellipse at 20% 40%,rgba(232,234,230,.55),transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(232,234,230,.5),transparent 55%),rgba(232,234,230,.18);animation:fxdrift 18s ease-in-out infinite alternate}
+#fx.fx-smoke{background:radial-gradient(ellipse at 35% 45%,rgba(60,58,54,.35),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(70,66,60,.3),transparent 45%),rgba(60,58,54,.08);animation:fxdrift 14s ease-in-out infinite alternate}
+#fx.fx-dust{background:radial-gradient(ellipse at 40% 60%,rgba(190,160,110,.3),transparent 55%),rgba(190,160,110,.12);animation:fxdrift 16s ease-in-out infinite alternate}
+@keyframes fxdrift{to{background-position:60px -20px,-50px 30px,0 0}}
 .tl-ev{display:flex;gap:7px;align-items:center;min-width:0;height:18px;font-size:12px;color:var(--ink-2)}
 .tl-ev:empty{display:none}
 .tl-ev i{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;flex:none;animation:pop .4s cubic-bezier(.3,1.6,.5,1) both}
@@ -412,6 +479,8 @@ body.has-battle .legend{display:none}
 
 <div id="map" aria-label="戰役地圖"></div>
 <div id="map3d" aria-label="3D 戰役地圖" hidden></div>
+<div id="fx" hidden aria-hidden="true"></div>
+<aside class="story" id="story" hidden aria-live="polite" aria-label="史料卡"></aside>
 
 <div class="topbar">
   <div class="brand">
@@ -444,8 +513,9 @@ body.has-battle .legend{display:none}
 <div class="tl" id="tl" hidden>
   <div class="tl-btns"><button class="play" id="play" aria-label="播放"></button><button class="rec" id="rec" title="錄成影片（WebM）" aria-label="錄成影片"></button></div>
   <div class="tl-main">
-    <div class="tl-cap"><b id="tlTitle"></b><span id="tlDate"></span><select id="follow" class="follow" aria-label="鏡頭跟隨部隊" hidden></select><button class="v3" id="btn3d" aria-pressed="false" title="3D 地形斜視（右鍵拖曳可旋轉、傾斜）">3D</button></div>
+    <div class="tl-cap"><b id="tlTitle"></b><span id="tlDate"></span><select id="follow" class="follow" aria-label="鏡頭跟隨部隊" hidden></select><button class="v3" id="btnDec" aria-pressed="true" title="抉擇模式：播放到關鍵時刻暫停，先讓你做決定" hidden>抉擇</button><button class="v3" id="btn3d" aria-pressed="false" title="3D 地形斜視（右鍵拖曳可旋轉、傾斜）">3D</button></div>
     <div class="tl-ev" id="tlEv" aria-live="polite"></div>
+    <div class="tl-cond" id="tlCond" hidden></div>
     <div class="segs" id="segs"></div>
   </div>
 </div>
@@ -762,7 +832,7 @@ $("#btnBase").addEventListener("click", () => setBase(baseIdx + 1));
 /* ---------------- battle selection ---------------- */
 let cur = null;
 async function select(id, opts={}){
-  stopRecording(); stop();
+  stopRecording(); stop(); hideStory();
   let b;
   try { b = await getBattle(id); } catch(e){ toast("找不到這筆戰役資料"); return; }
   cur = b; S.sel = id; S.phase = -1;
@@ -779,7 +849,7 @@ async function select(id, opts={}){
   if (opts.phase != null) setTimeout(() => goPhase(opts.phase), 1200);
 }
 function closeSide(){
-  stopRecording(); stop(); exit3d(); S.sel = null; cur = null;
+  stopRecording(); stop(); exit3d(); hideStory(); S.sel = null; cur = null;
   try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
   $("#side").classList.remove("open"); document.body.classList.remove("has-battle","has-side","sheet-mini");
   clearPhase(); battleLayer.clearLayers(); $("#tl").hidden = true;
@@ -1024,7 +1094,7 @@ const A = { pi:-1, plan:null, el:0, last:0, paused:false, raf:0, moves:[], zones
 function clearPhase(){
   A.pi = -1; A.plan = null; if (A.raf) cancelAnimationFrame(A.raf); A.raf = 0;
   phaseLayer.clearLayers(); A.moves = []; A.zones = []; A.ghosts = [];
-  renderTracks(null); renderNight(null);
+  renderTracks(null); renderNight(null); clearImmersion();
 }
 
 /* day / night: the solar terminator at the clock time, shown only for phases with hour stamps.
@@ -1240,6 +1310,7 @@ function render(force){
     k.done = true;
     if (el < plan.dur) flyVis([k.lat, k.lng], k.zoom || map.getZoom(), 1.1);
   }
+  tickImmersion(el, plan.dur);
   // clock readout
   const t = plan.t0 + clamp(f, 0, 1) * (plan.t1 - plan.t0 - (plan.endTimed ? 0 : 1)), bs = tParse(cur.date.start);
   const day = bs != null ? Math.floor((t - bs) / DAY) + 1 : null;
@@ -1273,6 +1344,7 @@ function goPhase(pi, o={}){
   evMarkers.forEach(m => { if (m._st === "focus") m._st = "reset"; });
   buildPhase(pi);
   A.el = (o.instant || RM) ? A.plan.dur + 2000 : -LEAD; A.paused = false;
+  buildImmersion(pi, o.instant || RM);
   $("#tlEv").innerHTML = "";
   render(true); kick();
   document.querySelectorAll(".ph").forEach((el, i) => el.classList.toggle("active", i === pi));
@@ -1331,9 +1403,178 @@ function buildTimeline(b){
   $("#tlDate").textContent = `${(b.phases||[]).length} 個階段`;
   $("#tlEv").innerHTML = "";
   buildFollow(b);
+  $("#btnDec").hidden = !(b.decisions || []).length; $("#btnDec").setAttribute("aria-pressed", String(DEC.on));
   setPlayIcon();
 }
 $("#segs").addEventListener("click", ev => { const s = ev.target.closest(".seg"); if (s) { stop(); goPhase(+s.dataset.p); } });
+
+/* ---------------- immersion: voices, media, commander decisions, conditions ----------------
+   All optional record fields. voices / media are first-hand words and period images; each carries its
+   source and a licence (only public domain, CC0, CC BY or CC BY-SA are accepted, so nothing needs a
+   permission request), and appears as a card when the clock reaches it. decisions pause the playback and
+   ask the reader to choose before revealing what the commander did. phases[].conditions describe weather,
+   ground and sea with sources, and may add a visual effect (rain, snow, fog, smoke, dust, storm). */
+const LIC = { pd:"公有領域", cc0:"CC0", "cc-by":"CC BY", "cc-by-sa":"CC BY-SA" };
+const FX = ["rain", "snow", "fog", "smoke", "dust", "storm"];
+const COND = [["weather", "天候"], ["temp", "氣溫"], ["wind", "風"], ["sea", "海況"], ["visibility", "能見度"], ["ground", "地面"], ["light", "光線"]];
+const httpsUrl = u => /^https:\/\/[^\s"'<>]+$/.test(String(u || "")) ? String(u) : "";
+function licHTML(l){
+  if (!l) return "";
+  const name = l.name || LIC[l.code] || l.code, u = httpsUrl(l.url);
+  return u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name);
+}
+function srcHTML(s){
+  if (!s) return "";
+  const u = httpsUrl(s.url);
+  return u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(s.title || u)}</a>` : esc(s.title || "");
+}
+const phaseIdx = (b, id) => (b.phases || []).findIndex(p => p.id === id);
+function itemsOf(b, pi){
+  const id = b.phases[pi]?.id;
+  return {
+    voices:(b.voices || []).filter(v => v.phase === id),
+    media:(b.media || []).filter(m => m.phase === id),
+    decisions:(b.decisions || []).filter(d => d.phase === id)
+  };
+}
+/* when an item fires on the phase clock: its own date, else its linked event, else just after the start */
+function itemFrac(plan, b, pi, it){
+  const p = b.phases[pi], t = tParse(it.at || it.date);
+  if (t != null) return clamp((t - plan.t0) / (plan.t1 - plan.t0), .02, .95);
+  if (it.event){
+    const ei = (p.events || []).findIndex(e => e.title === it.event), x = plan.events.find(v => v.ei === ei);
+    if (x) return clamp(x.f + .01, .02, .95);
+  }
+  return .06;
+}
+function voiceHTML(v, full){
+  return `<figure class="voice${v.sensitive && !full ? " sens" : ""}">
+    <blockquote>${esc(v.quote)}</blockquote>
+    ${v.original && full ? `<blockquote class="orig" lang="${esc(v.lang || "")}">${esc(v.original)}</blockquote>` : ""}
+    <figcaption><b>${esc(v.who)}</b>${v.role ? `<span>${esc(v.role)}</span>` : ""}${v.date ? `<span class="d">${esc(String(v.date).replace("T", " "))}</span>` : ""}
+      <small>出處：${srcHTML(v.source)}${v.translated ? ` · 中譯：${esc(v.translated)}` : ""} · 授權：${licHTML(v.license)}</small></figcaption>
+  </figure>`;
+}
+function mediaThumb(m, i){
+  const src = httpsUrl(m.thumb || m.url);
+  if (!src) return "";
+  return `<button class="mthumb${m.sensitive ? " sens" : ""}" data-media="${i}" title="${esc(m.title || m.caption || "")}"><img src="${esc(src)}" alt="${esc(m.title || m.caption || "史料影像")}" loading="lazy" referrerpolicy="no-referrer">${m.type === "video" ? `<i class="play-ic">${ICON.play}</i>` : ""}${m.sensitive ? `<span class="sens-l">內容提示：點選檢視</span>` : ""}</button>`;
+}
+function mediaCredit(m){
+  return `<small>${m.credit ? esc(m.credit) + " · " : ""}授權：${licHTML(m.license)}${httpsUrl(m.page) ? ` · <a href="${esc(m.page)}" target="_blank" rel="noopener">來源頁面</a>` : ""}</small>`;
+}
+function condHTML(c){
+  if (!c) return "";
+  const rows = COND.filter(([k]) => c[k]).map(([k, n]) => `<span><b>${n}</b>${esc(c[k])}</span>`).join("");
+  return `<div class="cond">${rows}${c.note ? `<p>${esc(c.note)}</p>` : ""}${(c.sources || []).length ? `<small>來源：${c.sources.map(srcHTML).join("、")}</small>` : ""}</div>`;
+}
+/* dossier: per-phase block under the events */
+function phaseExtrasHTML(b, pi){
+  const { voices, media, decisions } = itemsOf(b, pi), p = b.phases[pi], all = b.media || [];
+  let h = "";
+  if (p.conditions) h += `<h5>環境條件</h5>${condHTML(p.conditions)}`;
+  if (media.length) h += `<h5>史料影像</h5><div class="mgrid">${media.map(m => mediaThumb(m, all.indexOf(m))).join("")}</div>`;
+  if (voices.length) h += `<h5>親歷者之聲</h5>${voices.map(v => voiceHTML(v, true)).join("")}`;
+  if (decisions.length) h += `<h5>指揮官抉擇</h5>${decisions.map(d => `<button class="dec-open" data-dec="${(b.decisions || []).indexOf(d)}">${ICON.hq}<span><b>${esc(d.title)}</b><small>${esc(d.commander)} · ${esc(String(d.at || "").replace("T", " "))}</small></span></button>`).join("")}`;
+  return h ? `<div class="pextra">${h}</div>` : "";
+}
+/* playback card (bottom left, above the timeline) */
+function showStory(html){
+  const el = $("#story"), tl = $("#tl");
+  document.documentElement.style.setProperty("--tl-h", (tl.hidden ? 0 : tl.getBoundingClientRect().height) + "px");
+  el.innerHTML = `<button class="story-x" aria-label="關閉">${ICON.close}</button>${html}`;
+  el.hidden = false; el.classList.remove("in"); void el.offsetWidth; el.classList.add("in");
+}
+function hideStory(){ $("#story").hidden = true; $("#story").innerHTML = ""; }
+$("#story").addEventListener("click", ev => {
+  if (ev.target.closest(".story-x")) { hideStory(); return; }
+  const t = ev.target.closest("[data-media]"); if (t) { if (t.classList.contains("sens")) t.classList.remove("sens"); else openMedia(+t.dataset.media); return; }
+  const s = ev.target.closest(".voice.sens"); if (s) s.classList.remove("sens");
+});
+function storyFor(it){
+  if (it.kind === "voice") return `<div class="story-k">親歷者之聲</div>${voiceHTML(it.item, false)}`;
+  const m = it.item, i = (cur.media || []).indexOf(m);
+  return `<div class="story-k">史料影像</div>${mediaThumb(m, i)}<p class="mcap">${esc(m.caption || m.title || "")}</p>${mediaCredit(m)}`;
+}
+function openMedia(i){
+  const m = (cur?.media || [])[i]; if (!m) return;
+  const src = httpsUrl(m.url); if (!src) return;
+  const body = m.type === "video"
+    ? `<video src="${esc(src)}" controls preload="metadata" playsinline ${httpsUrl(m.thumb) ? `poster="${esc(m.thumb)}"` : ""}></video>`
+    : `<img src="${esc(src)}" alt="${esc(m.title || m.caption || "")}" referrerpolicy="no-referrer">`;
+  $("#modal").innerHTML = `<div class="dlg media-dlg" role="dialog" aria-modal="true" aria-label="${esc(m.title || "史料影像")}">
+    <div class="row" style="justify-content:space-between"><h2>${esc(m.title || "史料影像")}</h2><button class="iconbtn" data-close aria-label="關閉">${ICON.close}</button></div>
+    <div class="media-box">${body}</div>
+    ${m.caption ? `<p>${esc(m.caption)}</p>` : ""}${m.date ? `<p class="d">${esc(String(m.date).replace("T", " "))}</p>` : ""}${mediaCredit(m)}</div>`;
+  $("#modal").hidden = false;
+}
+$("#modal").addEventListener("click", ev => { if (ev.target.closest("[data-close]") || ev.target === $("#modal")) closeModal(); });
+$("#sideBody").addEventListener("click", ev => {
+  const t = ev.target.closest(".pextra [data-media]"); if (t) { ev.stopPropagation(); if (t.classList.contains("sens")) t.classList.remove("sens"); else openMedia(+t.dataset.media); return; }
+  const d = ev.target.closest(".dec-open"); if (d) { ev.stopPropagation(); openDecision(cur.decisions[+d.dataset.dec], false); }
+}, true);
+
+/* commander decisions: pause, ask, then reveal */
+const DEC = { on:true, resume:false, open:null };
+function openDecision(d, fromPlayback){
+  if (!d) return;
+  DEC.resume = fromPlayback && S.playing;
+  if (fromPlayback) { S.playing = false; A.paused = true; setPlayIcon(); }
+  DEC.open = d;
+  const s = cur.sides.find(x => x.id === d.side);
+  $("#modal").innerHTML = `<div class="dlg dec-dlg" role="dialog" aria-modal="true" aria-label="指揮官抉擇" style="--c:${esc(s?.color || css("--accent"))}">
+    <div class="dec-k">指揮官抉擇 · ${esc(s?.name || "")}</div>
+    <h2>${esc(d.title)}</h2>
+    <p class="dec-who"><b>${esc(d.commander)}</b>${d.at ? ` · ${esc(String(d.at).replace("T", " "))}` : ""}</p>
+    <h3>當時的情勢</h3><p>${esc(d.situation)}</p>
+    ${(d.intel || []).length ? `<h3>手上的情報</h3><ul class="dec-intel">${d.intel.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    <h3>如果你是${esc(d.commander)}，你會怎麼做？</h3>
+    <div class="dec-opts">${d.options.map((o, i) => `<button data-opt="${i}"><b>${esc(o.label)}</b>${o.detail ? `<span>${esc(o.detail)}</span>` : ""}</button>`).join("")}</div>
+    <div class="dec-out" hidden></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-close>${fromPlayback ? "略過，繼續播放" : "關閉"}</button></div>
+  </div>`;
+  $("#modal").hidden = false;
+  $("#modal").querySelector(".dec-opts button")?.focus();
+}
+$("#modal").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-opt]"); if (!b || !DEC.open) return;
+  const d = DEC.open, pick = +b.dataset.opt, real = d.options[d.chosen];
+  $("#modal").querySelectorAll("[data-opt]").forEach(x => { x.disabled = true; x.classList.toggle("picked", +x.dataset.opt === pick); x.classList.toggle("real", +x.dataset.opt === d.chosen); });
+  const out = $("#modal").querySelector(".dec-out");
+  out.innerHTML = `<p class="dec-verdict">${pick === d.chosen ? "你的選擇與史實相同。" : "史實並非如此。"}</p>
+    <h3>史實：${esc(d.commander)}選擇「${esc(real?.label || "")}」</h3><p>${esc(d.outcome)}</p>
+    ${d.hindsight ? `<h3>事後才知道的事</h3><p>${esc(d.hindsight)}</p>` : ""}
+    <small>來源：${(d.sources || []).map(srcHTML).join("、")}</small>`;
+  out.hidden = false;
+  const c = $("#modal").querySelector("[data-close]"); if (c) c.textContent = DEC.resume ? "繼續播放" : "關閉";
+});
+function afterDecision(){
+  if (!DEC.open) return;
+  DEC.open = null;
+  if (DEC.resume) { DEC.resume = false; play(); }
+}
+$("#btnDec").addEventListener("click", () => { DEC.on = !DEC.on; $("#btnDec").setAttribute("aria-pressed", String(DEC.on)); toast(DEC.on ? "抉擇模式：播放到關鍵時刻會暫停，讓你先做決定" : "抉擇模式已關閉"); });
+
+/* per-phase setup and per-frame triggers, called from buildPhase / render */
+function buildImmersion(pi, instant){
+  const b = cur, { voices, media, decisions } = itemsOf(b, pi);
+  A.cards = [...voices.map(v => ({ kind:"voice", item:v })), ...media.map(m => ({ kind:"media", item:m }))]
+    .map(c => ({ ...c, f:itemFrac(A.plan, b, pi, c.item), shown:!!instant })).sort((a, c) => a.f - c.f);
+  A.decs = decisions.map(d => ({ d, f:itemFrac(A.plan, b, pi, d), done:!!instant }));
+  const c = b.phases[pi].conditions, fx = [].concat(c?.fx || []).filter(x => FX.includes(x));
+  $("#fx").className = fx.map(x => "fx-" + x).join(" "); $("#fx").hidden = !fx.length || RM;
+  const cond = c ? COND.filter(([k]) => c[k]).map(([k, n]) => `<span><b>${n}</b>${esc(c[k])}</span>`).join("") : "";
+  $("#tlCond").innerHTML = cond; $("#tlCond").hidden = !cond;
+}
+function tickImmersion(el, dur){
+  for (const c of A.cards || []){ if (c.shown || el < c.f * dur) continue; c.shown = true; if (el < dur + 500) showStory(storyFor(c)); }
+  for (const x of A.decs || []){
+    if (x.done || el < x.f * dur) continue;
+    x.done = true;
+    if (DEC.on && el < dur && $("#modal").hidden) openDecision(x.d, true);
+  }
+}
+function clearImmersion(){ A.cards = []; A.decs = []; $("#fx").hidden = true; $("#fx").className = ""; $("#tlCond").hidden = true; $("#tlCond").innerHTML = ""; }
 
 /* ---------------- 3D view ----------------
    MapLibre GL over open terrain (AWS Terrain Tiles, seafloor flattened to sea level) and the Natural Earth
@@ -1783,7 +2024,7 @@ function sideBody(b){
   </div></section>`);
   out.push(`<section class="sec"><h3>經過<small>${(b.phases||[]).length} PHASES</small></h3><div class="phases">${(b.phases||[]).map((p, i) => `
     <div class="ph" data-p="${i}"><button data-p="${i}" aria-label="第 ${i+1} 階段：${esc(p.title)}"><span class="num">${i+1}</span><span class="pt">${esc(p.title)}</span><span class="pd">${esc(dateRange(p.start, p.end))}</span></button>
-    <div class="pb"><p style="margin:0">${esc(p.summary)}</p>${(p.events||[]).length ? `<ul class="evl">${p.events.map((e, ei) => `<li data-ev="${i}-${ei}" tabindex="0"><span class="ei" style="--c:${esc(e.side ? sideColor(b, e.side) : "var(--ink-3)")}">${ICON[e.type]||ICON.other}</span><div><b>${esc(e.title)}</b><span class="d">${esc(String(e.date||"").replace("T"," "))}</span><p>${esc(e.text||"")}</p></div></li>`).join("")}</ul>` : ""}</div></div>`).join("")}</div></section>`);
+    <div class="pb"><p style="margin:0">${esc(p.summary)}</p>${(p.events||[]).length ? `<ul class="evl">${p.events.map((e, ei) => `<li data-ev="${i}-${ei}" tabindex="0"><span class="ei" style="--c:${esc(e.side ? sideColor(b, e.side) : "var(--ink-3)")}">${ICON[e.type]||ICON.other}</span><div><b>${esc(e.title)}</b><span class="d">${esc(String(e.date||"").replace("T"," "))}</span><p>${esc(e.text||"")}</p></div></li>`).join("")}</ul>` : ""}${phaseExtrasHTML(b, i)}</div></div>`).join("")}</div></section>`);
   out.push(weaponsSection(b));
   if (b.significance?.length) out.push(`<section class="sec"><h3>影響與意義<small>LEGACY</small></h3><ul class="sig">${b.significance.map(x => `<li>${esc(x)}</li>`).join("")}</ul></section>`);
   if (b.facts?.length) out.push(`<section class="sec"><h3>小知識</h3><div class="facts">${b.facts.map(f => `<div class="fact"><b>${esc(f.label)}</b><span>${esc(f.text)}</span></div>`).join("")}</div></section>`);
@@ -1888,7 +2129,7 @@ addEventListener("keydown", ev => {
 }, true);
 
 /* ---------------- import / export ---------------- */
-function closeModal(){ $("#modal").hidden = true; $("#modal").innerHTML = ""; }
+function closeModal(){ $("#modal").hidden = true; $("#modal").innerHTML = ""; afterDecision(); }
 $("#modal").addEventListener("click", ev => { if (ev.target.id === "modal") closeModal(); });
 async function copyText(ta){
   try { await navigator.clipboard.writeText(ta.value); toast("已複製到剪貼簿"); }
@@ -1992,7 +2233,7 @@ const V = {
   branches:["army","marine","navy","air","other"],
   sources:["wiki","book","paper","web","primary","video","other"],
   conf:["high","medium","low","approx","contested"],
-  outcomes:["success","stopped","repulsed"], track:["active","destroyed","withdrawn"], models:["tank","infantry","cavalry","artillery","vehicle","ship","carrier","aircraft"],
+  outcomes:["success","stopped","repulsed"], track:["active","destroyed","withdrawn"], lic:["pd","cc0","cc-by","cc-by-sa"], fx:["rain","snow","fog","smoke","dust","storm"], models:["tank","infantry","cavalry","artillery","vehicle","ship","carrier","aircraft"],
   date:/^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$/, id:/^[a-z0-9][a-z0-9-]*$/, color:/^#[0-9a-fA-F]{6}$/
 };
 const isObj = o => o && typeof o === "object" && !Array.isArray(o);
@@ -2107,6 +2348,47 @@ function validateRecord(b, warIds){
       if (p.date && prev && String(p.date).length === prev.length && String(p.date) < prev) errs.push(`${wp}.date 早於前一點`);
       if (p.date) prev = String(p.date);
     });
+  });
+  // immersion fields: voices / media need a source and an open licence; decisions and conditions need sources
+  const phaseIds = new Set(phases.map(p => p?.id)), https = u => typeof u === "string" && /^https:\/\/[^\s"'<>]+$/.test(u);
+  const lic = (w, l) => { if (!isObj(l) || !V.lic.includes(l.code)) errs.push(`${w}.license.code 需為 ${V.lic.join("/")}（只收不需另行授權的開放授權）`); else if (l.url && !https(l.url)) errs.push(`${w}.license.url 需為 https`); };
+  const src = (w, s, needUrl) => { if (!isObj(s) || typeof s.title !== "string" || !s.title) errs.push(`${w} 需要 title`); else if (s.url && !https(s.url)) errs.push(`${w}.url 需為 https`); else if (needUrl && !s.url) errs.push(`${w}.url 必填`); };
+  const inPhase = (w, it) => {
+    if (!phaseIds.has(it.phase)) errs.push(`${w}.phase 需為 phase id`);
+    ["date","at"].forEach(k => { if (it[k] != null && !V.date.test(String(it[k]))) errs.push(`${w}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
+    if (it.event != null) { const p = phases.find(p => p?.id === it.phase) || {}; if (!(p.events||[]).some(e => e?.title === it.event)) warns.push(`${w}.event「${it.event}」不是該階段的事件標題`); }
+    if (it.side != null && !sideIds.has(it.side)) errs.push(`${w}.side 不是 side id`);
+  };
+  ["voices","media","decisions"].forEach(k => { if (k in b && !Array.isArray(b[k])) errs.push(`${k} 需為陣列`); });
+  (Array.isArray(b.voices) ? b.voices : []).forEach((v, i) => {
+    const w = `voices[${i}]`; if (!isObj(v)) { errs.push(`${w} 需為物件`); return; }
+    inPhase(w, v); ["quote","who"].forEach(k => { if (typeof v[k] !== "string" || !v[k]) errs.push(`${w}.${k} 必填`); });
+    src(`${w}.source`, v.source); lic(w, v.license);
+  });
+  (Array.isArray(b.media) ? b.media : []).forEach((m, i) => {
+    const w = `media[${i}]`; if (!isObj(m)) { errs.push(`${w} 需為物件`); return; }
+    inPhase(w, m);
+    if (!["image","video"].includes(m.type)) errs.push(`${w}.type 需為 image 或 video`);
+    ["url","page"].forEach(k => { if (!https(m[k])) errs.push(`${w}.${k} 需為 https 網址（檔案，以及標示授權的頁面）`); });
+    if (m.thumb != null && !https(m.thumb)) errs.push(`${w}.thumb 需為 https`);
+    if (typeof m.credit !== "string" || !m.credit) errs.push(`${w}.credit 必填（作者／機構）`);
+    lic(w, m.license);
+  });
+  (Array.isArray(b.decisions) ? b.decisions : []).forEach((d, i) => {
+    const w = `decisions[${i}]`; if (!isObj(d)) { errs.push(`${w} 需為物件`); return; }
+    inPhase(w, d); ["commander","title","situation","outcome"].forEach(k => { if (typeof d[k] !== "string" || !d[k]) errs.push(`${w}.${k} 必填`); });
+    const opts = Array.isArray(d.options) ? d.options : [];
+    if (opts.length < 2 || !opts.every(o => isObj(o) && typeof o.label === "string" && o.label)) errs.push(`${w}.options 至少 2 個含 label 的選項`);
+    if (!(Number.isInteger(d.chosen) && d.chosen >= 0 && d.chosen < opts.length)) errs.push(`${w}.chosen 需為史實選項的索引`);
+    if (!Array.isArray(d.sources) || !d.sources.length) errs.push(`${w}.sources 必填`);
+    (Array.isArray(d.sources) ? d.sources : []).forEach((s, j) => src(`${w}.sources[${j}]`, s));
+  });
+  phases.forEach((p, i) => {
+    const c = p?.conditions; if (c == null) return;
+    const w = `phases[${i}].conditions`; if (!isObj(c)) { errs.push(`${w} 需為物件`); return; }
+    [].concat(c.fx ?? []).forEach(x => { if (!V.fx.includes(x)) errs.push(`${w}.fx「${x}」不在 ${V.fx.join("/")}`); });
+    if (!Array.isArray(c.sources) || !c.sources.length) errs.push(`${w}.sources 必填`);
+    (Array.isArray(c.sources) ? c.sources : []).forEach((s, j) => src(`${w}.sources[${j}]`, s));
   });
   if (!Array.isArray(b.sources) || !b.sources.length) errs.push("sources 至少一筆");
   (b.sources||[]).forEach((s, i) => {

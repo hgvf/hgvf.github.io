@@ -119,6 +119,18 @@ Phase:
 
 `tracks`: 3–10 formations the story follows, stitched only from the record's own events, move paths and unit notes (no new coordinates or dates); first and last points dated, undated middle points are interpolated; end `destroyed`/`withdrawn` only when sourced; say in `provenance.notes` that tracks are schematic and which dates are phase dates.
 
+**Immersion fields (optional).** Only material whose licence needs no permission: `license.code` ∈ `pd`, `cc0`, `cc-by`, `cc-by-sa`, checked on the file's own page (Commons file page, archive record), which goes in `page`. Skip all-rights-reserved, NC/ND, fair-use, unclear or country-dependent public-domain items. Quotes only from public-domain texts, never invented; your Chinese translation goes in `quote`, the original in `original`, `"translated":"本站"`.
+
+| field | shape |
+|---|---|
+| `voices` | `[{"phase","date"?,"event"?,"side"?,"who","role"?,"quote","original"?,"lang"?,"translated"?,"source":{"title","url"},"license":{"code","name","url"},"sensitive"?}]` |
+| `media` | `[{"phase","date"?,"event"?,"type":"image|video","title","caption","url":"https://upload.wikimedia.org/…","thumb"?,"page":"https://commons.wikimedia.org/wiki/File:…","credit","license":{"code","name","url"},"sensitive"?}]` |
+| `decisions` | `[{"phase","at","side","commander","title","situation","intel"?:[…],"options":[{"label","detail"?}…≥2],"chosen":<index>,"outcome","hindsight"?,"sources":[{"title","url"}]}]` — 1–3 real turning points; `situation`/`intel` only what he knew then |
+| `phases[].conditions` | `{"weather"?,"temp"?,"wind"?,"sea"?,"visibility"?,"ground"?,"light"?,"note"?,"fx"?:["rain|snow|fog|smoke|dust|storm"],"sources":[…]}` — only sourced facts |
+| `model` | on a move or track: tank, infantry, cavalry, artillery, vehicle, ship, carrier, aircraft (3D view; inferred when absent) |
+
+`sensitive: true` blurs atrocity / casualty images and quotes until clicked.
+
 ## Wars
 
 ```json
@@ -241,6 +253,25 @@ def check(b):
             if p.get("date") and not DATE.match(str(p["date"])): errs.append(f"{w}.points[{j}].date invalid")
             if p.get("status") and p["status"] not in E["trk"]: errs.append(f"{w}.points[{j}].status not in {sorted(E['trk'])}")
             if j in (0, len(pts) - 1) and not p.get("date"): errs.append(f"{w}.points[{j}]: first and last points need a date")
+    lic_ok = lambda l: isinstance(l, dict) and l.get("code") in {"pd", "cc0", "cc-by", "cc-by-sa"}
+    https = lambda u: isinstance(u, str) and u.startswith("https://")
+    pids = {p.get("id") for p in b["phases"]}
+    for i, v in enumerate(b.get("voices", [])):
+        if v.get("phase") not in pids: errs.append(f"voices[{i}].phase not a phase id")
+        if not v.get("quote") or not v.get("who") or not (v.get("source") or {}).get("title"): errs.append(f"voices[{i}] needs quote, who, source.title")
+        if not lic_ok(v.get("license")): errs.append(f"voices[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
+    for i, m in enumerate(b.get("media", [])):
+        if m.get("phase") not in pids: errs.append(f"media[{i}].phase not a phase id")
+        if m.get("type") not in ("image", "video") or not https(m.get("url")) or not https(m.get("page")) or not m.get("credit"): errs.append(f"media[{i}] needs type, https url and page, credit")
+        if not lic_ok(m.get("license")): errs.append(f"media[{i}].license.code must be pd, cc0, cc-by or cc-by-sa")
+    for i, d in enumerate(b.get("decisions", [])):
+        o = d.get("options", [])
+        if d.get("phase") not in pids or len(o) < 2 or not isinstance(d.get("chosen"), int) or not 0 <= d["chosen"] < len(o) or not d.get("sources"): errs.append(f"decisions[{i}] needs phase, ≥2 options, chosen index, sources")
+    for i, p in enumerate(b["phases"]):
+        c = p.get("conditions")
+        if c is not None and not c.get("sources"): errs.append(f"phases[{i}].conditions.sources required")
+        for x in ([] if c is None else (c.get("fx") if isinstance(c.get("fx"), list) else [c.get("fx")] if c.get("fx") else [])):
+            if x not in {"rain", "snow", "fog", "smoke", "dust", "storm"}: errs.append(f"phases[{i}].conditions.fx '{x}' invalid")
     if not b["sources"]: errs.append("sources: at least one")
     for i, s in enumerate(b["sources"]):
         if s.get("type") not in E["src"] or not s.get("title"): errs.append(f"sources[{i}] needs title and valid type")
