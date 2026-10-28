@@ -87,6 +87,10 @@ button,input,textarea,select{font:inherit;color:inherit}
 .grp-f svg{width:15px;height:15px}
 .grp-f:hover{color:var(--ink)}
 .grp-f[aria-pressed="true"]{color:var(--c,var(--accent))}
+.grp-x{flex:none;width:28px;border:0;background:none;color:var(--ink-3);cursor:pointer;display:grid;place-items:center;opacity:.6}
+.grp-x svg{width:13px;height:13px}
+.grp-x:hover,.grp-x:focus-visible{color:#c0392b;opacity:1}
+.btn.danger{background:#b03a2e;border-color:#b03a2e;color:#fff}
 .grp.lv1 > .grp-h{padding-left:18px;background:color-mix(in srgb,var(--paper-2) 50%,var(--paper))}
 .grp.lv2 > .grp-h{padding-left:34px}
 .grp.lv1 .item{padding-left:30px}
@@ -582,7 +586,7 @@ const SRC = {wiki:"wiki",book:"書",paper:"論文",web:"網頁",primary:"一手"
 // repoIndex = data/index.json (GitHub), remote = full records from the site's database (Firestore,
 // attached by site/remote.js when the page runs on the website), local = this browser only.
 // Precedence on the same id: local > remote > repo.
-const S = { wars:{}, warOrder:[], index:[], repoIndex:[], full:{}, remote:{}, local:{}, filter:new Set(), q:"", sel:null, phase:-1, playing:false, loaded:false };
+const S = { wars:{}, warOrder:[], index:[], repoIndex:[], full:{}, remote:{}, local:{}, gone:{ wars:new Set(), battles:new Map() }, filter:new Set(), q:"", sel:null, phase:-1, playing:false, loaded:false };
 
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function lsSet(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ return false; } }
@@ -672,14 +676,24 @@ function saveLocal(){
   const ok = lsSet(LS_KEY, JSON.stringify({ battles:S.local, wars:S.localWars||{} }));
   if (!ok) toast("此瀏覽器無法儲存本機資料，請用匯出功能保存");
 }
-function mergeWar(w){ if (!w || !w.id) return; if (!S.wars[w.id]) S.warOrder.push(w.id); S.wars[w.id] = { ...S.wars[w.id], ...w }; }
+function mergeWar(w){ if (!w || !w.id || S.gone.wars.has(w.id)) return; if (!S.wars[w.id]) S.warOrder.push(w.id); S.wars[w.id] = { ...S.wars[w.id], ...w }; }
 // The same record can exist in the repo, the database (新增) and this browser's imports. The copy with the
 // newest `revision` (an ISO time stamped when it is saved) wins; on a tie: this browser > database > repo.
+// Deleted wars and battles are tombstones in the database (S.gone). A battle copy saved after its deletion
+// (a newer `revision`) survives; references to a deleted war are dropped from the remaining records.
+function dropGone(){
+  for (const w of S.gone.wars){ delete S.wars[w]; S.filter.delete(w); }
+  S.warOrder = S.warOrder.filter(w => S.wars[w]);
+}
+const liveWars = ws => (ws || []).filter(w => !S.gone.wars.has(w));
 function rebuildIndex(){
+  dropGone();
   const byId = new Map(), newer = (a, b) => String(a.revision || "") >= String(b?.revision || "");
   for (const e of S.repoIndex) byId.set(e.id, { ...e, src:"repo" });
   for (const b of Object.values(S.remote)) if (newer(b, byId.get(b.id))) byId.set(b.id, { ...summaryOf(b, null), local:false, remote:true, src:"remote" });
   for (const b of Object.values(S.local)) if (newer(b, byId.get(b.id))) byId.set(b.id, { ...summaryOf(b, null), local:true, override:byId.has(b.id), src:"local" });
+  for (const [id, at] of S.gone.battles) if (String(byId.get(id)?.revision || "") <= at) byId.delete(id);
+  for (const e of byId.values()) e.wars = liveWars(e.wars);
   S.index = [...byId.values()].sort((a,b) => String(a.date.start).localeCompare(String(b.date.start)));
 }
 async function loadData(){
@@ -693,6 +707,10 @@ async function loadData(){
   rebuildIndex();
 }
 async function getBattle(id){
+  const b = await loadBattle(id);
+  return b.wars?.some(w => S.gone.wars.has(w)) ? { ...b, wars:liveWars(b.wars) } : b;
+}
+async function loadBattle(id){
   const e = S.index.find(x => x.id === id);
   if (e?.src === "local" && S.local[id]) return S.local[id];
   if (e?.src === "remote" && S.remote[id]) return S.remote[id];
@@ -755,7 +773,7 @@ function groupHTML(key, o, body){
   const empty = o.empty, open = !empty && (!S.closed.has(key) || !!S.q);
   const ov = o.overview ? `<button class="grp-o" data-id="${esc(o.overview.id)}" aria-current="${S.sel===o.overview.id}" title="開啟「${esc(o.overview.title)}」總覽">總覽</button>` : "";
   return `<div class="grp lv${o.lvl||0}"${o.color ? ` style="--c:${esc(o.color)}"` : ""}>
-    <div class="grp-h"><button class="grp-t" ${empty ? `data-id="${esc(o.overview.id)}"` : `data-tog="${esc(key)}" aria-expanded="${open}"`}><span class="chev">${empty ? "" : ICON.chev}</span>${o.color ? '<i class="bar"></i>' : ""}<b>${esc(o.title)}</b>${o.sub ? `<span class="per">${esc(o.sub)}</span>` : ""}<span class="n">${o.n}</span></button>${ov}${o.war ? `<button class="grp-f" data-only="${esc(o.war)}" aria-pressed="${S.filter.has(o.war)}" title="${S.filter.has(o.war) ? "取消篩選" : "地圖只顯示這場戰爭"}" aria-label="篩選 ${esc(o.title)}">${ICON.focus}</button>` : ""}</div>
+    <div class="grp-h"><button class="grp-t" ${empty ? `data-id="${esc(o.overview.id)}"` : `data-tog="${esc(key)}" aria-expanded="${open}"`}><span class="chev">${empty ? "" : ICON.chev}</span>${o.color ? '<i class="bar"></i>' : ""}<b>${esc(o.title)}</b>${o.sub ? `<span class="per">${esc(o.sub)}</span>` : ""}<span class="n">${o.n}</span></button>${ov}${o.war && R.api ? `<button class="grp-x" data-delwar="${esc(o.war)}" title="刪除這場戰爭" aria-label="刪除 ${esc(o.title)}">${ICON.close}</button>` : ""}${o.war ? `<button class="grp-f" data-only="${esc(o.war)}" aria-pressed="${S.filter.has(o.war)}" title="${S.filter.has(o.war) ? "取消篩選" : "地圖只顯示這場戰爭"}" aria-label="篩選 ${esc(o.title)}">${ICON.focus}</button>` : ""}</div>
     ${open ? `<div class="grp-b">${body()}</div>` : ""}</div>`;
 }
 function warTree(vis){
@@ -795,6 +813,8 @@ function renderList(){
   $("#stat").textContent = `${vis.length} / ${S.index.length} 筆 · ${Object.keys(S.wars).length} 場戰爭`;
 }
 $("#items").addEventListener("click", ev => {
+  const x = ev.target.closest("[data-delwar]");
+  if (x) { openDeleteWar(x.dataset.delwar); return; }
   const t = ev.target.closest("[data-tog]");
   if (t) { const k = t.dataset.tog; S.closed.has(k) ? S.closed.delete(k) : S.closed.add(k); saveListPrefs(); renderList(); return; }
   const f = ev.target.closest("[data-only]");
@@ -2555,7 +2575,8 @@ function openAdd(){
     try {
       const newWars = r.wars.filter(w => w?.id);
       const stamp = new Date().toISOString();
-      r.battles.forEach(b => { b.revision = stamp; });   // newest copy wins over the repo and older imports
+      r.battles.forEach(b => { b.revision = stamp; S.gone.battles.delete(b.id); });   // newest copy wins over the repo, older imports and deletions
+      newWars.forEach(w => S.gone.wars.delete(w.id));
       await R.api.save(r.battles, newWars);
       addRemote(r.battles, newWars);
       closeModal();
@@ -2567,11 +2588,59 @@ function openAdd(){
     }
   };
 }
-function addRemote(battles, wars){
+/* Deleting a war removes it, its theatres (child wars) and every battle listed under them; battles filed under
+   another war only lose the tag. The database keeps tombstones; the daily sync deletes the repo files. */
+const warSubtree = w => S.warOrder.filter(x => x === w || ancestors(x).includes(w));
+function openDeleteWar(w){
+  if (!S.wars[w] || !R.api) return;
+  const ws = new Set(warSubtree(w)), name = S.wars[w].name || w;
+  const victims = S.index.filter(e => ws.has(primaryWar(e))), tagged = S.index.filter(e => !victims.includes(e) && e.wars.some(x => ws.has(x)));
+  const li = es => es.map(e => `<li>${esc(String(e.date.start || "").slice(0, 4))} ${esc(e.title)}</li>`).join("");
+  $("#modal").innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgT">
+    <div class="row"><h2 id="dlgT" style="flex:1">刪除戰爭「${esc(name)}」</h2><button class="iconbtn" id="mClose" aria-label="關閉">${ICON.close}</button></div>
+    <p>將刪除戰爭分類：${[...ws].map(x => esc(S.wars[x].name || x)).join("、")}</p>
+    <p>以及其下 ${victims.length} 筆戰役：</p>${victims.length ? `<ul class="v-list">${li(victims)}</ul>` : ""}
+    ${tagged.length ? `<p>以下戰役同時屬於其他戰爭，會保留，只移除這個戰爭標籤：</p><ul class="v-list">${li(tagged)}</ul>` : ""}
+    <p>刪除後所有裝置立即看不到；每日同步會一併刪除 GitHub repo 裡的檔案（仍可從 git 歷史還原，或重新用「新增」貼上 JSON）。</p>
+    <div id="aAuth"></div>
+    <div class="row"><button class="btn" id="dCancel">取消</button><button class="btn danger" id="aSave">刪除</button></div>
+    <div id="aMsg" aria-live="polite"></div>
+  </div>`;
+  $("#modal").hidden = false;
+  $("#mClose").onclick = $("#dCancel").onclick = closeModal;
+  renderAddAuth();
+  let armed = false;
+  $("#aSave").onclick = async () => {
+    if (!armed) { armed = true; $("#aSave").textContent = "再按一次確認刪除"; return; }
+    const btn = $("#aSave"); btn.disabled = true; btn.textContent = "刪除中…";
+    try {
+      const ids = victims.map(e => e.id);
+      await R.api.remove(ids, [...ws]);
+      removeLocal(ids, [...ws], new Date().toISOString());
+      closeModal();
+      toast(`已刪除「${name}」與 ${ids.length} 筆戰役`, 4000);
+    } catch(e){
+      $("#aMsg").innerHTML = `<div class="msg err">刪除失敗：${esc(e.message || e)}</div>`;
+      btn.disabled = false; btn.textContent = "刪除";
+    }
+  };
+}
+function removeLocal(ids, wars, at){
+  wars.forEach(w => { S.gone.wars.add(w); delete S.localWars?.[w]; });
+  ids.forEach(id => { S.gone.battles.set(id, at); delete S.local[id]; delete S.remote[id]; delete S.full[id]; });
+  saveLocal();
+  if (S.sel && (ids.includes(S.sel))) closeSide();
+  rebuildIndex(); renderAll(false);
+}
+function addRemote(battles, wars, gone){
+  for (const w of gone?.wars || []) S.gone.wars.add(w);
+  for (const [id, at] of Object.entries(gone?.battles || {})) S.gone.battles.set(id, at);
   (wars||[]).forEach(mergeWar);
   for (const b of battles||[]) { S.remote[b.id] = b; delete S.full[b.id]; }
   if (!S.loaded) return;
-  rebuildIndex(); renderAll(false);
+  rebuildIndex();
+  if (S.sel && !S.index.some(e => e.id === S.sel)) closeSide();
+  renderAll(false);
   const h = decodeURIComponent(location.hash.slice(1));
   if (!S.sel && h && S.remote[h]) select(h);
 }
@@ -2579,7 +2648,7 @@ $("#btnAdd").innerHTML = ICON.plus + "<span>新增</span>";
 $("#btnAdd").addEventListener("click", openAdd);
 // Bridge for site/remote.js (an ES module that loads Firebase); absent in the claude.ai Artifact build.
 window.WarAtlas = {
-  attachRemote(api){ R.api = api; $("#btnAdd").hidden = false; },
+  attachRemote(api){ R.api = api; $("#btnAdd").hidden = false; if (S.loaded) renderList(); },
   setAuth(a){ R.auth = a; renderAddAuth(); },
   addRemote, validateRecord, parseInput,
   state:() => ({ m3:{ ready:V3.ready, loaded:V3.ml?.loaded?.(), three:!!M3.THREE, layer:!!M3.layer, objs:M3.objs.size, models:V3.models.length, use:V3.useModels }, zoom2d:map.getZoom(), center2d:map.getCenter(), is3d:V3.on, zoom3d:V3.ml?.getZoom(), pitch:V3.ml?.getPitch(), bearing:V3.ml?.getBearing(), phase:A.pi, el:A.el, follow:S.follow, feats:V3.ml?.getStyle()?.sources?.v?.data?.features?.map(f => f.geometry.type + ":" + (f.properties.fc || f.properties.lc) + ":" + (f.properties.fo ?? f.properties.lw) + ":" + f.geometry.coordinates.flat().length) })
