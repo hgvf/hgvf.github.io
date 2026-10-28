@@ -131,6 +131,9 @@ After the record is written, read the fetched sources once more only for what dr
 4. **Tracks**: 3–10 formations the narrative follows, stitched from your own events, move paths and unit notes (no new coordinates, no invented dates; where a unit note has no exact date use the event or phase date and say so in `provenance.notes`). End with `destroyed`/`withdrawn` only when the source says so.
 5. Day/night shading appears by itself for phases with hour stamps; nothing to add.
 
+6. **Immersion material**: media, voices, decisions and conditions — follow "Finding immersion material" in `skills/war-atlas-json/SKILL.md` (Commons file-page licence check, public-domain quotes only).
+7. When editing a record in git, set `"revision"` to the current UTC time (`YYYY-MM-DDTHH:MM:SSZ`) so the site and the nightly Firestore pull keep your copy instead of an older 新增 copy.
+
 Then run `python3 scripts/atlas.py backfill <file>` (adds inferable keys and unit links) and `validate`.
 
 ### Granularity

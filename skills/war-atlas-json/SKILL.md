@@ -1,9 +1,9 @@
 ---
 name: "war-atlas"
-description: "Research a battle or war for the user's own battle-map site and output exactly one importable JSON file. Use instead of war-atlas whenever a battle name or source link is given."
+description: "Research a battle or war for the user's own battle-map site and output exactly one importable JSON file — facts, order of battle, weapons, phased map animation, plus immersion material (openly licensed period photos, public-domain first-hand words, commander decisions, weather and ground, unit tracks). Use instead of war-atlas whenever a battle name or source link is given."
 ---
 
-<!-- Copy of the claude.ai "war-atlas" (one JSON) skill, updated for the animation fields. Upload this file to replace the synced skill. -->
+<!-- The claude.ai "war-atlas" (one JSON) skill. Upload this file to replace the synced skill. -->
 
 # War Atlas → one JSON
 
@@ -12,10 +12,30 @@ The user runs their own battle-map site. The ONLY deliverable is one importable 
 ## Steps
 
 1. **Research.** Fetch every source the user gave, then cross-check with at least one more (other-language Wikipedia, or a non-wiki source: official history, paper, museum). `zh.wikipedia.org/zh-tw/…` often fails in WebFetch: WebSearch the battle name and fetch the en/zh URLs from the results. Ask fetches for: dates, belligerents, commanders, units (番號), strength (troops/aircraft/tanks/ships/artillery), casualties per side with each source's figure, equipment with model designations, phases with dates and named places, civilian toll, outcome, consequences. Keep numbers exact.
-2. **War ids.** Reuse ids already on the site: `wwii`, `second-sino-japanese-war`, `pacific-war`, `crimean-war` (defined under Wars), plus `wwi` and `western-front-wwi` and any id the user names — for those, write the war object into `new_wars.json` with the exact id. For a new war or theatre, define a full war object (see Wars). A theatre lists its broad war as `parent`, and a record lists both ids.
-3. **Write the record** to a scratch file `<id>.json` following the Schema below.
-4. **Validate and bundle** with the Validator script. Fix every ERROR and rerun until it prints `ok`.
-5. **Deliver** only the bundle file from `dist/` with SendUserFile (display: attach).
+2. **Immersion pass (always, after the facts).** Go back over the sources and search specifically for what lets a reader feel the battle. Aim per record for: 3–8 `media`, 2–5 `voices`, 1–3 `decisions`, `conditions` on every phase where a source states weather / light / sea / ground, 3–8 `tracks`, and hour stamps for naval and air actions. Fewer is fine — never pad. Follow **Finding immersion material** below; every rejected item stays out, and the report says what was skipped and why.
+3. **War ids.** Reuse ids already on the site: `wwii`, `second-sino-japanese-war`, `pacific-war`, `crimean-war` (defined under Wars), plus `wwi` and `western-front-wwi` and any id the user names — for those, write the war object into `new_wars.json` with the exact id. For a new war or theatre, define a full war object (see Wars). A theatre lists its broad war as `parent`, and a record lists both ids.
+4. **Write the record** to a scratch file `<id>.json` following the Schema below. Do not add `revision`: the site stamps it when the JSON is pasted into 新增, and the newest copy of an id replaces older ones (re-pasting a record with the same `id` updates it).
+5. **Validate and bundle** with the Validator script. Fix every ERROR and rerun until it prints `ok`.
+6. **Deliver** only the bundle file from `dist/` with SendUserFile (display: attach).
+
+## Finding immersion material
+
+**Licence rule (no exceptions).** Only material that needs no permission: `license.code` = `pd`, `cc0`, `cc-by` or `cc-by-sa`. If you cannot confirm the licence from a page you actually fetched, leave the item out.
+
+**Media (period photos, paintings, film).**
+1. Collect candidates: the `File:` names shown in the battle's Wikipedia articles (en and the belligerents' languages), the Commons category page `https://commons.wikimedia.org/wiki/Category:<Battle_name>` and its sub-categories, and searches such as `<battle> <year> site:commons.wikimedia.org`. Prefer photos taken in the battle and dated; avoid post-war memorials and modern photos unless nothing else exists.
+2. WebFetch each candidate's Commons **file page** and read its *Licensing* section. Accept: `PD-USGov…` (US federal / military works), `PD-old-…`/`PD-Art` together with a US tag (`PD-US`, `PD-US-expired`, `PD-1996`), a source-country PD tag (`PD-France`, `PD-1996`…) together with a US tag, `Cc-by-…`, `Cc-by-sa-…` (e.g. German Federal Archives `Cc-by-sa-3.0-de`), `Cc-zero`. Reject: "non-free", fair use, NC/ND, a PD tag with the "you must also include a United States public domain tag" warning and no US tag, deletion warnings, unknown source.
+3. Fill: `url` = the original file link from that page (`https://upload.wikimedia.org/wikipedia/commons/<a>/<ab>/<File>`); `thumb` = `https://upload.wikimedia.org/wikipedia/commons/thumb/<a>/<ab>/<File>/500px-<File>` (only standard widths such as 330, 500, 960 work; the site falls back to `url`); `page` = the file page; `credit` = author / archive and its photo number as the page gives them; `license` = `{code, name in zh-TW, url of the licence or template page}`; `title` and `caption` in zh-TW from the page's description, with the date; tie it to `phase` and to the `event` it shows (or `date`). `sensitive: true` for bodies, executions, atrocities.
+
+**Voices (first-hand words).** Quote only public-domain primary text that you saw verbatim in a fetched source: US federal documents, signals and radio messages (US government works); official communiqués, orders of the day and announcements of a government or army published before 1946; texts first published before 1931; writings of authors who died more than 70 years ago. Never quote memoirs, diaries, interviews or letters of people who died less than 70 years ago, never a paraphrase, never a wording that differs between sources (use only the part they agree on). Put the original in `original` (+ `lang`), your zh-TW translation in `quote`, `"translated":"本站"`, the fetched page in `source`, and say in `license.name` why it is public domain.
+
+**Decisions.** 1–3 real turning points where a source describes what the commander knew and what he weighed (pursue or guard, hold or withdraw, attack on or break off). `situation` and `intel` contain only what he knew then; `options` = the real choice plus the alternatives a source names or the obvious opposite; `chosen` = index of the real one; `outcome` and `hindsight` from sources; put it on the clock just before the event that reveals the answer (`at`, or `event`).
+
+**Conditions.** Weather, temperature, wind, sea, visibility, ground and light only where a source states them for that phase (fog that delayed an attack, snow, thaw and mud, rain squalls used for cover, night and flares). Add `fx` only for what the source states: rain, snow, fog, smoke, dust, storm.
+
+**Tracks and timing.** Hour stamps (`THH:MM`) on events whose text or source gives the hour. Tracks for the formations the story follows, built only from your own move paths, event positions and unit notes; set `model` (tank, infantry, cavalry, artillery, vehicle, ship, carrier, aircraft) when the type is clear.
+
+Name in `provenance.notes` where the immersion material came from, which licences apply, and which tracks or dates are schematic.
 
 Several battles in one message → still one file: pass every record to the validator; they all go into the same bundle's `battles` list.
 
@@ -318,9 +338,10 @@ It carries its own war definitions, so the site imports it as is (its import box
 
 ## Report back
 
-Two or three short lines in 繁體中文: what the file covers (records, phases, sides), and what is uncertain (contested casualties, approximate coordinates, sources that failed, facts or specs added from general knowledge). No JSON in chat, no build or deploy steps.
+Three or four short lines in 繁體中文: what the file covers (records, phases, sides); the immersion material found (how many photos, voices, decisions, phases with conditions, tracks) and anything left out because its licence could not be confirmed; and what is uncertain (contested casualties, approximate coordinates, sources that failed, facts or specs added from general knowledge). Remind the user to paste the file into the site's 新增 dialog (same id = update). No JSON in chat, no build or deploy steps.
 
 ## Rules
 
 - Never invent sources or URLs; schematic arrows are not exact routes.
 - One request → one delivered file, however many records it holds.
+- Immersion material only with a confirmed open licence or public-domain status; when in doubt, leave it out.
