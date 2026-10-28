@@ -347,6 +347,10 @@ body.is3d #map{visibility:hidden}
 #map3d .maplibregl-ctrl-attrib a{color:var(--ink-2)}
 body.has-battle #map3d .maplibregl-ctrl-bottom-right{bottom:96px}
 body.has-side:not(.sheet-mini) #map3d .maplibregl-ctrl-bottom-right{right:min(var(--side-w),100vw)}
+.lbl3d{display:block;transform:translate(-50%,20px);white-space:nowrap;font-family:var(--f-mono);font-size:10.5px;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--paper) 88%,transparent);border:1px solid var(--c);border-radius:4px;padding:0 5px;cursor:pointer}
+.lbl3d.destroyed{color:var(--ink-3);border-color:var(--ink-3);text-decoration:line-through}
+.lbl3d.withdrawn{opacity:.6;border-style:dashed}
+#map3d.lowzoom .lbl3d{display:none}
 .p3d{display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--f-display);font-weight:700;font-size:12px;color:var(--ink);text-shadow:0 0 3px var(--land),0 0 3px var(--land),0 0 6px var(--land)}
 .p3d i{width:9px;height:9px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);flex:none}
 #map3d.lowzoom .p3d{display:none}
@@ -1078,7 +1082,7 @@ function buildTracks(b){
     const marker = L.marker([P[0].lat, P[0].lng], { keyboard:false, zIndexOffset:300 });
     const trail = L.polyline([[P[0].lat, P[0].lng]], { color:c, weight:2, opacity:.55, dashArray:"2 5", lineCap:"round", interactive:false });
     if (unit) marker.on("click", () => showUnit(tr.side, unit));
-    tracks.push({ tr, P, c, marker, trail, st:null, on:false, unit });
+    tracks.push({ tr, P, c, marker, trail, st:null, on:false, unit, model:modelFor(b, tr.side, tr.unit, null, tr.model) });
   }
 }
 function renderTracks(T){
@@ -1095,6 +1099,9 @@ function renderTracks(T){
     if (on !== k.on){ on ? (trackLayer.addLayer(k.trail), trackLayer.addLayer(k.marker)) : (trackLayer.removeLayer(k.trail), trackLayer.removeLayer(k.marker)); k.on = on; }
     if (!on) continue;
     k.marker.setLatLng(pos);
+    const s0 = P[Math.min(i, P.length - 2)], s1 = P[Math.min(i + 1, P.length - 1)];
+    k.marker._model = { type:k.model, color:k.c, label:baseName(k.tr.unit), status:st, past,
+      head:P.length > 1 ? Math.atan2((s1.lng - s0.lng) * Math.cos(s0.lat * RAD), s1.lat - s0.lat) / RAD : null };
     k.trail.setLatLngs([...P.slice(0, i + 1).map(p => [p.lat, p.lng]), pos]);
     const key = st + "|" + past + "|" + note;
     if (key !== k.st){
@@ -1150,6 +1157,7 @@ function buildPhase(pi){
     const tracked = tracks.some(k => k.tr.side === mv.side && [mv.unit, mv.label].some(n => n && baseName(n) === baseName(k.tr.unit))
       && k.P[0].t < A.plan.t1 && k.P[k.P.length - 1].t + DAY > A.plan.t0);
     const token = tracked ? null : L.marker(mv.path[0], { icon:tokenIcon(mv.kind, c), interactive:false, keyboard:false });
+    if (token) token._model = { type:modelFor(b, mv.side, mv.unit || mv.label, mv.kind, mv.model), color:c, head:null };
     const label = mv.label && !tracked ? L.marker(mv.path[0], { interactive:false, keyboard:false, icon:L.divIcon({ className:"", iconSize:null, iconAnchor:[0,0],
       html:`<span class="mv-label" style="--c:${esc(c)}">${esc(mv.label)}</span>` }) }) : null;
     A.moves.push({ mv, st, w, blunt, c, f0, f1, layer, token, label, mark, p:-1, shown:false, tokOn:false, lblOn:false, markOn:false });
@@ -1214,6 +1222,7 @@ function render(force){
       const a = arrowPx(m.g, p, m.w, m.blunt);
       if (a) { m.layer.setLatLngs(toLL(a.ring)); if (!m.shown) { phaseLayer.addLayer(m.layer); m.shown = true; } }
       if (a && p < 1) m.tipLL = map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom());
+      if (a && m.token) m.token._model.head = Math.atan2(a.tip.tx, -a.tip.ty) / RAD;   // layer pixels: y grows southward
       if (a && p < 1 && m.token) m.token.setLatLng(map.unproject(L.point(a.tip.x, a.tip.y), map.getZoom()));
     }
     if (m.mark) { const on = p >= 1; if (on !== m.markOn) { on ? phaseLayer.addLayer(m.mark) : phaseLayer.removeLayer(m.mark); m.markOn = on; } }
@@ -1337,7 +1346,7 @@ const TERRAIN_ATTR = '地形 <a href="https://registry.opendata.aws/terrain-tile
 const EXAG = 2;
 const TINT_URL = "seatint://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
 const EMPTY = { type:"FeatureCollection", features:[] };
-const V3 = { on:false, ml:null, loading:null, marks:new Map(), last:0, raf:0, sig:"", ready:false, head:null, prev:null };
+const V3 = { on:false, ml:null, loading:null, marks:new Map(), last:0, raf:0, sig:"", ready:false, head:null, prev:null, models:[], useModels:false };
 function loadML(){
   if (window.maplibregl) return Promise.resolve();
   return V3.loading ||= new Promise((res, rej) => {
@@ -1442,13 +1451,19 @@ async function enter3d(){
     } catch(e){ toast("這個裝置或瀏覽器不支援 3D（WebGL）"); V3.ml = null; return; }
     V3.ml.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), "bottom-right");
     V3.ml.addControl(new maplibregl.AttributionControl({ compact:true }), "bottom-right");
-    V3.ml.on("load", () => {
+    // ready as soon as the style is parsed (the "load" event also waits for every first terrain tile)
+    const init = () => {
+      if (V3.ready || !V3.ml.isStyleLoaded()) return;
+      ["styledata", "load", "idle"].forEach(e => V3.ml.off(e, init));
       V3.ml.setTerrain({ source:"dem", exaggeration:EXAG }); V3.ready = true; V3.sig = "";
       document.querySelector("#map3d .maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");   // start collapsed (ⓘ opens it)
-    });
+      V3.ml.fire("war-atlas:ready");
+    };
+    V3.ml.on("styledata", init); V3.ml.on("load", init); V3.ml.on("idle", init); setTimeout(init, 0);
     V3.ml.on("move", () => { if (V3.on) syncLeaflet(); });
     V3.ml.on("dragstart", () => { if (S.follow) setFollow(""); });
     V3.ml.on("error", e => console.warn("3d", e?.error || e));
+    addModels();
   } else V3.ml.jumpTo({ center:[c.lng, c.lat], zoom:map.getZoom() - 1.3 });
   V3.on = true;
   document.body.classList.add("is3d"); $("#map3d").hidden = false; $("#btn3d").setAttribute("aria-pressed", "true");
@@ -1498,8 +1513,15 @@ function mirror(){
     const p = l.getLatLng(); m.mk.setLngLat([p.lng, p.lat]);
   };
   const tipText = l => { const t = l.getTooltip?.(); if (!t) return ""; const c = t.getContent(); return String(typeof c === "function" ? "" : c).replace(/<br\s*\/?>/g, "\n").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"); };
+  const models = [];
   const visit = l => {
     if (!l._map) return;
+    if (l instanceof L.Marker && V3.useModels && l._model){
+      const p = l.getLatLng(), d = l._model;
+      models.push({ id:L.stamp(l), lat:p.lat, lng:p.lng, type:d.type, color:d.color, head:d.head, status:d.status || "active", past:!!d.past });
+      if (d.label && !d.past) mark(l, `<span class="lbl3d${d.status && d.status !== "active" ? " " + esc(d.status) : ""}" style="--c:${esc(d.color)}">${esc(d.label)}</span>`, null, null, tipText(l), 5);
+      return;
+    }
     if (l instanceof L.Marker){
       const ic = l.options.icon?.options || {}, html = l._icon ? l._icon.innerHTML : "";
       mark(l, html, ic.iconSize ? [].concat(ic.iconSize) : null, ic.iconAnchor ? [].concat(ic.iconAnchor) : null, tipText(l), (l.options.zIndexOffset || 0) + 10);
@@ -1512,6 +1534,8 @@ function mirror(){
   if (map.hasLayer(nightLayer)) path(nightLayer);
   [battleLayer, phaseLayer, trackLayer].forEach(g => g.eachLayer(visit));
   for (const [id, m] of V3.marks) if (!seen.has(id)) { m.mk.remove(); V3.marks.delete(id); }
+  V3.models = models;
+  if (M3.layer) V3.ml.triggerRepaint();
   const sig = JSON.stringify(feats);
   if (sig !== V3.sig && V3.ready){ const src = V3.ml.getSource("v"); if (src) { src.setData({ type:"FeatureCollection", features:feats }); V3.sig = sig; } }
 }
@@ -1523,6 +1547,130 @@ function loop3d(t){
   follow3d();
 }
 $("#btn3d").addEventListener("click", () => V3.on ? exit3d() : enter3d());
+
+/* ---------------- 3D unit models ----------------
+   Simplified low-poly models built in code (no third-party model files, so no licences to clear): tank, infantry,
+   cavalry, artillery, vehicle, ship, carrier, aircraft. three.js (MIT) draws them in a MapLibre custom layer for
+   every track token and every arrow's riding token; their HTML tokens are hidden in 3D. A model keeps a constant
+   on-screen size, sits on the terrain (aircraft fly above it), faces its direction of travel and shows its fate
+   (destroyed: grey and tipped over; withdrawn: faded). */
+const THREE_URL = "https://unpkg.com/three@0.160.0/build/three.module.js";
+const MODEL_TYPES = ["tank", "infantry", "cavalry", "artillery", "vehicle", "ship", "carrier", "aircraft"];
+function modelFor(b, side, name, kind, explicit){
+  if (MODEL_TYPES.includes(explicit)) return explicit;
+  if (kind === "naval") return "ship";
+  if (kind === "air") return "aircraft";
+  const s = b.sides.find(x => x.id === side), u = (s?.units||[]).find(u => typeof u === "object" && u.name && name && baseName(u.name) === baseName(name));
+  const n = String(name || "") + " " + String(u?.echelon || "");
+  if (u?.branch === "navy" || /艦|艦隊|戰隊|驅逐|潛艇|潛艦|fleet|TF ?\d|特遣/i.test(n)) return /航艦|航空母艦|機動部隊|carrier/i.test(n) ? "carrier" : "ship";
+  if (u?.branch === "air" || /航空|飛行|空軍|機隊|艦載機|特攻|Luftwaffe|air/i.test(n)) return "aircraft";
+  if (/坦克|戰車|裝甲|機械化|Panzer|tank|armou?r/i.test(n)) return "tank";
+  if (/騎兵|cavalry/i.test(n)) return "cavalry";
+  if (/砲兵|炮兵|砲團|artillery/i.test(n)) return "artillery";
+  if (/摩托|輸送|補給|運輸|卡車|truck/i.test(n)) return "vehicle";
+  return "infantry";
+}
+const M3 = { THREE:null, loading:null, layer:null, objs:new Map(), geo:null };
+function loadThree(){
+  if (M3.THREE) return Promise.resolve(M3.THREE);
+  return M3.loading ||= import(THREE_URL).then(m => (M3.THREE = m)).catch(e => { M3.loading = null; throw e; });
+}
+function buildGeometries(T){
+  const mat = c => new T.MeshLambertMaterial({ color:c });
+  const dark = mat(0x2c2f2a), metal = mat(0x55595a), deck = mat(0x8a7a5c);
+  const box = (w, h, d, m, x = 0, y = 0, z = 0) => { const o = new T.Mesh(new T.BoxGeometry(w, h, d), m); o.position.set(x, y, z); return o; };
+  const cyl = (r1, r2, h, m, x = 0, y = 0, z = 0, rx = 0, rz = 0, seg = 10) => { const o = new T.Mesh(new T.CylinderGeometry(r1, r2, h, seg), m); o.position.set(x, y, z); o.rotation.set(rx, 0, rz); return o; };
+  const sph = (r, m, x = 0, y = 0, z = 0) => { const o = new T.Mesh(new T.SphereGeometry(r, 10, 8), m); o.position.set(x, y, z); return o; };
+  // every builder gets the side colour material `c`; forward is −z, up is +y, about one unit long
+  return {
+    tank:c => [box(.56, .2, 1, c, 0, .16), box(.14, .2, 1.06, dark, -.3, .1), box(.14, .2, 1.06, dark, .3, .1), box(.38, .16, .44, c, 0, .34, .06), cyl(.03, .035, .6, metal, 0, .34, -.42, Math.PI / 2)],
+    infantry:c => { const g = [box(.9, .04, .6, dark, 0, .02)]; for (const [x, z] of [[-.28, -.12], [0, .1], [.28, -.12], [-.14, .2], [.14, .2]]) { g.push(cyl(.06, .08, .3, c, x, .19, z)); g.push(sph(.06, c, x, .4, z)); } return g; },
+    cavalry:c => { const g = []; for (const x of [-.22, .22]) { g.push(box(.14, .16, .5, mat(0x6b4a2e), x, .3)); g.push(box(.08, .12, .16, mat(0x6b4a2e), x, .42, -.28)); for (const z of [-.18, .18]) g.push(cyl(.025, .025, .24, dark, x, .12, z)); g.push(cyl(.05, .06, .22, c, x, .5, .02)); g.push(sph(.05, c, x, .66, .02)); } return g; },
+    artillery:c => [cyl(.16, .16, .05, dark, -.22, .16, .1, 0, Math.PI / 2, 14), cyl(.16, .16, .05, dark, .22, .16, .1, 0, Math.PI / 2, 14), box(.42, .1, .3, c, 0, .2, .1), cyl(.04, .05, .8, metal, 0, .3, -.3, Math.PI / 2 - .18), box(.06, .05, .6, c, 0, .08, .45)],
+    vehicle:c => [box(.4, .26, .3, c, 0, .26, -.33), box(.44, .22, .64, c, 0, .24, .16), ...[[-.22, -.32], [.22, -.32], [-.22, .3], [.22, .3]].map(([x, z]) => cyl(.1, .1, .07, dark, x, .1, z, 0, Math.PI / 2, 12))],
+    ship:c => {
+      const s = new T.Shape(); s.moveTo(0, -.75); s.quadraticCurveTo(.13, -.35, .12, .1); s.lineTo(.1, .62); s.lineTo(-.1, .62); s.lineTo(-.12, .1); s.quadraticCurveTo(-.13, -.35, 0, -.75);
+      const hull = new T.Mesh(new T.ExtrudeGeometry(s, { depth:.1, bevelEnabled:false }), c); hull.rotation.x = Math.PI / 2; hull.position.y = .1;
+      return [hull, box(.14, .12, .3, mat(0xb9bcb6), 0, .16, .02), box(.1, .1, .12, mat(0xb9bcb6), 0, .26, -.02), cyl(.035, .04, .16, dark, 0, .3, .12),
+        box(.1, .07, .12, metal, 0, .14, -.4), cyl(.012, .012, .2, metal, 0, .16, -.52, Math.PI / 2), box(.1, .07, .12, metal, 0, .14, .42)];
+    },
+    carrier:c => {
+      const s = new T.Shape(); s.moveTo(0, -.8); s.quadraticCurveTo(.12, -.4, .11, .1); s.lineTo(.1, .7); s.lineTo(-.1, .7); s.lineTo(-.11, .1); s.quadraticCurveTo(-.12, -.4, 0, -.8);
+      const hull = new T.Mesh(new T.ExtrudeGeometry(s, { depth:.1, bevelEnabled:false }), c); hull.rotation.x = Math.PI / 2; hull.position.y = .1;
+      return [hull, box(.3, .03, 1.45, deck, 0, .12, -.02), box(.05, .14, .18, mat(0xb9bcb6), .14, .2, .05), cyl(.02, .025, .1, dark, .14, .3, .08)];
+    },
+    aircraft:c => [cyl(.06, .04, 1, c, 0, 0, 0, Math.PI / 2), sph(.06, c, 0, 0, -.5), box(1.05, .025, .2, c, 0, 0, -.06), box(.38, .02, .12, c, 0, .02, .43), box(.02, .16, .14, c, 0, .09, .44), cyl(.13, .13, .01, mat(0x9aa0a0), 0, 0, -.56, Math.PI / 2, 0, 16)]
+  };
+}
+const MODEL_SCALE = { tank:1, infantry:.9, cavalry:.9, artillery:.9, vehicle:.9, ship:1.5, carrier:1.6, aircraft:1.1 };
+function modelLayer(){
+  return {
+    id:"units3d", type:"custom", renderingMode:"3d",
+    onAdd(ml, gl){
+      const T = M3.THREE;
+      this.T = T; this.ml = ml;
+      this.camera = new T.Camera(); this.scene = new T.Scene();
+      this.scene.add(new T.AmbientLight(0xffffff, 2.2));
+      const sun = new T.DirectionalLight(0xffffff, 1.6); sun.position.set(.5, 1, .8); this.scene.add(sun);
+      this.renderer = new T.WebGLRenderer({ canvas:ml.getCanvas(), context:gl, antialias:true });
+      this.renderer.autoClear = false;
+      M3.geo = buildGeometries(T);
+      this.shadowGeo = new T.CircleGeometry(.62, 20);
+    },
+    object(m){
+      const T = this.T;
+      let o = M3.objs.get(m.id);
+      if (o && (o.type !== m.type || o.color !== m.color)) { this.scene.remove(o.g); M3.objs.delete(m.id); o = null; }
+      if (!o){
+        const g = new T.Group(), body = new T.Group(), mat = new T.MeshLambertMaterial({ color:new T.Color(m.color), transparent:true });
+        M3.geo[m.type](mat).forEach(x => body.add(x));
+        const sh = new T.Mesh(this.shadowGeo, new T.MeshBasicMaterial({ color:0x000000, transparent:true, opacity:.22, depthWrite:false }));
+        sh.rotation.x = -Math.PI / 2; sh.position.y = .01;
+        g.add(sh); g.add(body); g.matrixAutoUpdate = false;
+        this.scene.add(g);
+        o = { g, body, sh, mat, type:m.type, color:m.color, status:null, head:m.head ?? 0 };
+        M3.objs.set(m.id, o);
+      }
+      return o;
+    },
+    render(gl, matrix){
+      const T = this.T, ml = this.ml, z = ml.getZoom(), seen = new Set();
+      for (const m of V3.models){
+        seen.add(m.id);
+        const o = this.object(m);
+        if (o.status !== m.status){
+          o.status = m.status;
+          const gone = m.status === "destroyed", out = m.status === "withdrawn" || m.past;
+          o.body.traverse(x => { if (x.material && x.material !== o.mat) { x.material = x.material.clone(); x.material.transparent = true; } });
+          o.body.traverse(x => { if (x.material) { x.material.opacity = out || gone ? .45 : 1; if (gone) x.material.color?.multiplyScalar?.(.55); } });
+          o.body.rotation.set(0, 0, gone ? .5 : 0); o.body.position.y = gone ? -.06 : 0;
+        }
+        if (m.head != null) o.head += ((((m.head - o.head) % 360) + 540) % 360 - 180) * .25;   // ease the turn
+        const mpp = 156543.03392 * Math.cos(m.lat * RAD) / Math.pow(2, z + 1);              // metres per CSS pixel (512-px tiles)
+        const size = 40 * mpp * (MODEL_SCALE[m.type] || 1);
+        const ground = ml.queryTerrainElevation?.([m.lng, m.lat]) ?? 0;
+        const alt = m.type === "aircraft" ? ground + size * 2.2 : m.type === "ship" || m.type === "carrier" ? 0 : ground;
+        o.sh.visible = m.type !== "aircraft";
+        const mc = maplibregl.MercatorCoordinate.fromLngLat([m.lng, m.lat], alt), s = mc.meterInMercatorCoordinateUnits() * size;
+        o.g.matrix = new T.Matrix4().makeTranslation(mc.x, mc.y, mc.z)
+          .multiply(new T.Matrix4().makeScale(s, -s, s))
+          .multiply(new T.Matrix4().makeRotationX(Math.PI / 2))
+          .multiply(new T.Matrix4().makeRotationY(-o.head * RAD));
+        o.g.matrixWorldNeedsUpdate = true;
+      }
+      for (const [id, o] of M3.objs) if (!seen.has(id)) { this.scene.remove(o.g); o.g.traverse(x => { if (x.material && x.material !== o.mat) x.material.dispose?.(); }); o.mat.dispose(); M3.objs.delete(id); }
+      this.camera.projectionMatrix = new T.Matrix4().fromArray(matrix);
+      this.renderer.resetState();
+      this.renderer.render(this.scene, this.camera);
+    }
+  };
+}
+async function addModels(){
+  try { await loadThree(); } catch(e){ console.warn("three", e); return; }
+  if (!V3.ml || M3.layer) return;
+  const add = () => { if (M3.layer) return; M3.layer = modelLayer(); V3.ml.addLayer(M3.layer); V3.useModels = true; V3.sig = ""; };
+  V3.ready ? add() : V3.ml.once("war-atlas:ready", add);
+}
 
 /* ---------------- follow a unit ----------------
    The camera rides with one unit: its track token when it has a track, otherwise the tip of its arrow in the
@@ -1844,7 +1992,7 @@ const V = {
   branches:["army","marine","navy","air","other"],
   sources:["wiki","book","paper","web","primary","video","other"],
   conf:["high","medium","low","approx","contested"],
-  outcomes:["success","stopped","repulsed"], track:["active","destroyed","withdrawn"],
+  outcomes:["success","stopped","repulsed"], track:["active","destroyed","withdrawn"], models:["tank","infantry","cavalry","artillery","vehicle","ship","carrier","aircraft"],
   date:/^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?$/, id:/^[a-z0-9][a-z0-9-]*$/, color:/^#[0-9a-fA-F]{6}$/
 };
 const isObj = o => o && typeof o === "object" && !Array.isArray(o);
@@ -1926,6 +2074,7 @@ function validateRecord(b, warIds){
       ["start","end"].forEach(k => { if (m[k] && !V.date.test(String(m[k]))) errs.push(`${wm}.${k} 需為 YYYY[-MM[-DD[THH:MM]]]`); });
       if (m.start && m.end && String(m.start).length === String(m.end).length && String(m.end) < String(m.start)) warns.push(`${wm}.end 早於 start`);
       if ("strength" in m && !(typeof m.strength === "number" && m.strength > 0)) errs.push(`${wm}.strength 需為正數（該路兵力、艦數或機數）`);
+      if (m.model != null && !V.models.includes(m.model)) errs.push(`${wm}.model 不在 ${V.models.join("/")}`);
       if (m.outcome && !V.outcomes.includes(m.outcome)) errs.push(`${wm}.outcome 不在 ${V.outcomes.join("/")}`);
       if (m.unit && typeof m.unit !== "string") errs.push(`${wm}.unit 需為字串`);
       else if (m.unit && !unitNames[m.side]?.has(m.unit)) warns.push(`${wm}.unit「${m.unit}」不在 ${m.side} 的 units 名稱內`);
@@ -1944,6 +2093,7 @@ function validateRecord(b, warIds){
     if (typeof t.unit !== "string" || !t.unit) errs.push(`${wt}.unit 必填（部隊名）`);
     else if (!unitNames[t.side]?.has(t.unit)) warns.push(`${wt}.unit「${t.unit}」不在 ${t.side} 的 units 名稱內`);
     if (!sideIds.has(t.side)) errs.push(`${wt}.side「${t.side}」不是 side id`);
+    if (t.model != null && !V.models.includes(t.model)) errs.push(`${wt}.model 不在 ${V.models.join("/")}`);
     const pts = Array.isArray(t.points) ? t.points : [];
     if (pts.length < 2) errs.push(`${wt}.points 至少 2 點`);
     let prev = null;
@@ -2074,7 +2224,7 @@ window.WarAtlas = {
   attachRemote(api){ R.api = api; $("#btnAdd").hidden = false; },
   setAuth(a){ R.auth = a; renderAddAuth(); },
   addRemote, validateRecord, parseInput,
-  state:() => ({ zoom2d:map.getZoom(), center2d:map.getCenter(), is3d:V3.on, zoom3d:V3.ml?.getZoom(), pitch:V3.ml?.getPitch(), bearing:V3.ml?.getBearing(), phase:A.pi, el:A.el, follow:S.follow, feats:V3.ml?.getStyle()?.sources?.v?.data?.features?.map(f => f.geometry.type + ":" + (f.properties.fc || f.properties.lc) + ":" + (f.properties.fo ?? f.properties.lw) + ":" + f.geometry.coordinates.flat().length) })
+  state:() => ({ m3:{ ready:V3.ready, loaded:V3.ml?.loaded?.(), three:!!M3.THREE, layer:!!M3.layer, objs:M3.objs.size, models:V3.models.length, use:V3.useModels }, zoom2d:map.getZoom(), center2d:map.getCenter(), is3d:V3.on, zoom3d:V3.ml?.getZoom(), pitch:V3.ml?.getPitch(), bearing:V3.ml?.getBearing(), phase:A.pi, el:A.el, follow:S.follow, feats:V3.ml?.getStyle()?.sources?.v?.data?.features?.map(f => f.geometry.type + ":" + (f.properties.fc || f.properties.lc) + ":" + (f.properties.fo ?? f.properties.lw) + ":" + f.geometry.coordinates.flat().length) })
 };
 if (/\/war-atlas\/(index\.html)?$/.test(location.pathname)) { $("#btnHome").innerHTML = ICON.home; $("#btnHome").hidden = false; }
 

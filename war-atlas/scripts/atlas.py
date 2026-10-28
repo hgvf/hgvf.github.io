@@ -28,6 +28,7 @@ CONF = {"high", "medium", "low", "approx", "contested"}
 DATE_RE = re.compile(r"^-?\d{1,4}(-\d{2}(-\d{2}(T\d{2}:\d{2})?)?)?\Z", re.ASCII)  # time only with a full date
 OUTCOMES = {"success", "stopped", "repulsed"}
 TRACK_STATUS = {"active", "destroyed", "withdrawn"}
+MODELS = {"tank", "infantry", "cavalry", "artillery", "vehicle", "ship", "carrier", "aircraft"}
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*\Z")
 
 
@@ -151,6 +152,8 @@ def validate(b, wars, fname=""):
                 warns.append(f"{wm}.end is before start")
             if "strength" in m and not (isinstance(m["strength"], (int, float)) and not isinstance(m["strength"], bool) and m["strength"] > 0):
                 errs.append(f"{wm}.strength must be a positive number (troops, ships or aircraft in the move)")
+            if m.get("model") is not None and m["model"] not in MODELS:
+                errs.append(f"{wm}.model not in {sorted(MODELS)}")
             if m.get("outcome") and not (isinstance(m["outcome"], str) and m["outcome"] in OUTCOMES):
                 errs.append(f"{wm}.outcome not in {sorted(OUTCOMES)}")
             if m.get("unit") and not isinstance(m["unit"], str):
@@ -194,6 +197,8 @@ def validate(b, wars, fname=""):
             warns.append(f"{wt}.unit '{t['unit']}' is not in {t.get('side')}.units[].name")
         if not isinstance(t.get("side"), str) or t.get("side") not in side_ids:
             errs.append(f"{wt}.side '{t.get('side')}' is not a side id")
+        if t.get("model") is not None and t["model"] not in MODELS:
+            errs.append(f"{wt}.model not in {sorted(MODELS)}")
         pts = t.get("points") if isinstance(t.get("points"), list) else []
         if len(pts) < 2:
             errs.append(f"{wt}.points needs ≥2 points")
