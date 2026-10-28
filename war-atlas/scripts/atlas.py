@@ -365,7 +365,7 @@ def cmd_validate(files):
 
 def summary_entry(b, fname):
     return {
-        "id": b["id"], "file": f"battles/{fname}", "kind": b["kind"], "title": b["title"],
+        "id": b["id"], "file": f"battles/{fname}", "kind": b["kind"], "title": b["title"], "revision": b.get("revision", ""),
         "title_en": b.get("title_en", ""), "wars": b["wars"], "date": b["date"],
         "lat": b["location"]["lat"], "lng": b["location"]["lng"], "zoom": b["location"].get("zoom", 8),
         "summary": b["summary"][:140], "result": b["result"].get("label", ""),

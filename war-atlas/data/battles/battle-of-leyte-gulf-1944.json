@@ -761,7 +761,7 @@
           "side": "japan"
         },
         {
-          "date": "1944-10-23",
+          "date": "1944-10-23T05:24",
           "title": "巴拉望水道潛艦伏擊",
           "text": "05:24 達特號以魚雷命中旗艦愛宕至少 4 發，隨後命中高雄 2 發；05:56 鰷魚號 4 發命中摩耶。愛宕、摩耶迅速沉沒，栗田落水後轉乘大和號。",
           "lat": 9.4,
@@ -792,7 +792,8 @@
               11.2,
               119.4
             ]
-          ]
+          ],
+          "unit": "第一遊擊部隊（栗田艦隊）"
         },
         {
           "side": "japan",
@@ -811,7 +812,8 @@
               23.5,
               127.5
             ]
-          ]
+          ],
+          "unit": "機動部隊本隊（小澤艦隊）"
         },
         {
           "side": "japan",
@@ -830,7 +832,8 @@
               14,
               119.8
             ]
-          ]
+          ],
+          "unit": "第二遊擊部隊（志摩艦隊）"
         },
         {
           "side": "japan",
@@ -849,7 +852,8 @@
               8.6,
               121.5
             ]
-          ]
+          ],
+          "unit": "第三部隊（西村艦隊）"
         }
       ]
     },
@@ -866,7 +870,7 @@
       },
       "events": [
         {
-          "date": "1944-10-24",
+          "date": "1944-10-24T09:38",
           "title": "普林斯頓號被炸",
           "text": "09:38 一架彗星突破戰鬥空中巡邏，250 kg 穿甲彈引爆機庫中滿載的復仇者；15:23 艦尾彈藥庫大爆炸，靠舷救火的伯明罕號 241 死 412 傷。普林斯頓號 17:50 被雷諾號魚雷擊沉自沉，艦上 108 人陣亡。",
           "lat": 15.3,
@@ -875,7 +879,7 @@
           "side": "japan"
         },
         {
-          "date": "1944-10-24",
+          "date": "1944-10-24T10:30",
           "title": "第一波空襲栗田艦隊",
           "text": "約 10:30 無畏號與卡伯特號的飛機命中長門、大和、武藏，妙高被魚雷重創經科隆灣退往婆羅洲。",
           "lat": 12.9,
@@ -884,7 +888,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-24",
+          "date": "1944-10-24T19:35",
           "title": "武藏號沉沒",
           "text": "第二、三波攻擊集中武藏號，最終命中至少 17 枚炸彈與 19 枚魚雷；19:35 傾覆沉沒。",
           "lat": 13.12,
@@ -893,7 +897,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-24",
+          "date": "1944-10-24T17:15",
           "title": "栗田回頭",
           "text": "栗田先西撤避開空襲，17:15 再度轉向聖貝納迪諾海峽；同日 16:40 美機終於發現北方的小澤艦隊。",
           "lat": 12.75,
@@ -924,7 +928,8 @@
               12.6,
               123.6
             ]
-          ]
+          ],
+          "unit": "第一遊擊部隊（栗田艦隊）"
         },
         {
           "side": "allies",
@@ -954,15 +959,16 @@
               15.3,
               123.4
             ]
-          ]
+          ],
+          "unit": "第一航空艦隊"
         }
       ]
     },
     {
       "id": "p3",
       "title": "蘇里高海峽海戰",
-      "start": "1944-10-24",
-      "end": "1944-10-25",
+      "start": "1944-10-24T22:00",
+      "end": "1944-10-25T06:00",
       "summary": "西村艦隊無法與志摩、栗田協同，於 25 日凌晨單獨闖入蘇里高海峽。先遭 PT 艇襲擾，再被兩側驅逐艦魚雷夾擊，扶桑沉沒；殘部在海峽北口遭奧登多夫的戰艦與巡洋艦「橫切 T 字」，山城號連同西村沉沒。尾隨的志摩艦隊目睹慘狀後撤退，那智在混亂中撞上最上。這是史上最後一次戰艦對戰艦交火。",
       "view": {
         "lat": 10.15,
@@ -971,7 +977,7 @@
       },
       "events": [
         {
-          "date": "1944-10-24",
+          "date": "1944-10-24T22:36",
           "title": "PT 艇接敵",
           "text": "22:36 PT-131 在保和島外發現西村艦隊，PT 艇連續襲擾 3 個半小時，未命中但持續回報敵情。",
           "lat": 9.75,
@@ -980,7 +986,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T03:00",
           "title": "驅逐艦魚雷夾擊",
           "text": "約 03:00 兩艘日本戰艦皆中魚雷；扶桑被梅爾文號擊中脫隊，約 40 分鐘後沉沒。西村 4 艘驅逐艦中 3 艘沉沒或重創。",
           "lat": 10.15,
@@ -989,7 +995,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T03:53",
           "title": "戰列線開火",
           "text": "03:53 西維吉尼亞號於約 2.28 萬碼開火、首輪即命中山城；加州號、田納西號隨後加入，巡洋艦共射出 2,000 發以上。密西西比號的一輪齊射成為史上最後一次戰艦對戰艦射擊。",
           "lat": 10.55,
@@ -998,7 +1004,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T04:20",
           "title": "山城號沉沒",
           "text": "04:05 班尼恩號魚雷命中，山城約 04:20 沉沒，西村祥治殉艦；最上與時雨南撤。",
           "lat": 10.38,
@@ -1038,7 +1044,8 @@
               10.38,
               125.38
             ]
-          ]
+          ],
+          "unit": "第三部隊（西村艦隊）"
         },
         {
           "side": "japan",
@@ -1057,7 +1064,8 @@
               9.4,
               123.8
             ]
-          ]
+          ],
+          "unit": "第二遊擊部隊（志摩艦隊）"
         },
         {
           "side": "allies",
@@ -1072,7 +1080,8 @@
               10.3,
               125.36
             ]
-          ]
+          ],
+          "unit": "第56驅逐艦中隊"
         }
       ],
       "zones": [
@@ -1133,7 +1142,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T09:07",
           "title": "甘比爾灣號沉沒",
           "text": "位於隊尾的甘比爾灣號遭大和等艦集中砲擊，09:07 傾覆。",
           "lat": 11.5,
@@ -1178,7 +1187,8 @@
               11.85,
               125.95
             ]
-          ]
+          ],
+          "unit": "第一遊擊部隊（栗田艦隊）"
         },
         {
           "side": "allies",
@@ -1197,7 +1207,8 @@
               11.1,
               125.9
             ]
-          ]
+          ],
+          "unit": "第77.4.3特遣分隊（Taffy 3）"
         },
         {
           "side": "allies",
@@ -1212,7 +1223,8 @@
               11.65,
               126.05
             ]
-          ]
+          ],
+          "unit": "第77.4.2特遣分隊（Taffy 2）"
         },
         {
           "side": "japan",
@@ -1233,7 +1245,23 @@
             ]
           ]
         }
-      ]
+      ],
+      "conditions": {
+        "wind": "北北東風",
+        "visibility": "約 20 浬",
+        "weather": "低雲，間有強烈雨飑",
+        "note": "Taffy 3 的航艦躲進東方的雨飑、驅逐艦施放煙幕，日艦依賴光學測距，在雨與煙中難以鎖定目標。",
+        "fx": [
+          "rain",
+          "smoke"
+        ],
+        "sources": [
+          {
+            "title": "Battle off Samar（英文維基百科，引錄美方通訊原文）",
+            "url": "https://en.wikipedia.org/wiki/Battle_off_Samar"
+          }
+        ]
+      }
     },
     {
       "id": "p5",
@@ -1248,7 +1276,7 @@
       },
       "events": [
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T08:00",
           "title": "第一波空襲小澤艦隊",
           "text": "08:00 美機 180 架攻擊，護航戰鬥機殲滅小澤約 30 架戰鬥空中巡邏機；此前小澤放出的 75 架攻擊機大多被擊落。",
           "lat": 19.6,
@@ -1266,7 +1294,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T11:15",
           "title": "「全世界都在問」",
           "text": "尼米茲詢問第34特遣艦隊下落的電文因保留了填充字句而被海爾賽視為諷刺；11:15 海爾賽令戰艦南返，此時距小澤艦隊已幾乎進入砲擊距離。",
           "lat": 17.8,
@@ -1275,7 +1303,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T17:00",
           "title": "千代田、初月被擊沉",
           "text": "杜博斯的巡洋艦群約 17:00 擊沉千代田，20:59 經頑強纏鬥擊沉初月。",
           "lat": 19.9,
@@ -1284,7 +1312,7 @@
           "side": "allies"
         },
         {
-          "date": "1944-10-25",
+          "date": "1944-10-25T23:10",
           "title": "多摩號沉沒",
           "text": "約 23:10 潛艦傑勞號雷擊多摩，為恩加諾角海戰最後一擊。",
           "lat": 21,
@@ -1311,7 +1339,8 @@
               18.5,
               125.8
             ]
-          ]
+          ],
+          "unit": "第38特遣艦隊"
         },
         {
           "side": "japan",
@@ -1330,7 +1359,8 @@
               19.6,
               125.6
             ]
-          ]
+          ],
+          "unit": "機動部隊本隊（小澤艦隊）"
         },
         {
           "side": "allies",
@@ -1439,7 +1469,8 @@
               5,
               115.1
             ]
-          ]
+          ],
+          "unit": "第一遊擊部隊（栗田艦隊）"
         },
         {
           "side": "japan",
@@ -1704,13 +1735,474 @@
   ],
   "provenance": {
     "extracted_by": "Claude",
-    "extracted_at": "2026-10-21",
+    "extracted_at": "2026-10-28",
     "confidence": {
       "coordinates": "approx",
       "strength": "high",
       "casualties": "medium",
       "weapons": "medium"
     },
-    "notes": "中文維基頁面無法抓取，主體依英文維基兩條目，並以 EBSCO、國防部刊物、關鍵評論網書摘交叉比對。武器規格（排水量、航速、飛機速度航程、魚雷射程等）與部分艦級年份為一般知識補充；第二、第三、第十戰隊等日文番號譯名與鈴木義尾、橋本信太郎、白石萬隆、早川幹夫、木村進等姓名依英文拼寫回推。座標除武藏號沉沒點外多為依地名推估，特別是普林斯頓號、Taffy 1、恩加諾角外海戰場、阿武隈與能代沉沒點；航跡箭頭為示意，不代表實際航線。"
-  }
+    "notes": "中文維基頁面無法抓取，主體依英文維基兩條目，並以 EBSCO、國防部刊物、關鍵評論網書摘交叉比對。武器規格（排水量、航速、飛機速度航程、魚雷射程等）與部分艦級年份為一般知識補充；第二、第三、第十戰隊等日文番號譯名與鈴木義尾、橋本信太郎、白石萬隆、早川幹夫、木村進等姓名依英文拼寫回推。座標除武藏號沉沒點外多為依地名推估，特別是普林斯頓號、Taffy 1、恩加諾角外海戰場、阿武隈與能代沉沒點；航跡箭頭為示意，不代表實際航線。 事件時刻（THH:MM）取自各事件內文所引來源的時間；蘇里高海峽階段的起訖時刻（10/24 22:00–10/25 06:00）為涵蓋這些事件的播放區間，非史料時間。 沉浸內容：引文均為美國政府通訊或公文原文（公有領域），中文為本站翻譯；照片皆在 Wikimedia Commons 檔案頁確認為美國海軍／美國政府公有領域。部隊軌跡由本紀錄的箭頭座標與事件時間串接，Taffy 3 06:37 與栗田穿越海峽 03:00 取自 Battle off Samar 條目；軌跡為示意。抉擇內容依英文維基百科 Battle of Leyte Gulf、Battle off Samar 條目整理。"
+  },
+  "voices": [
+    {
+      "phase": "p2",
+      "event": "栗田回頭",
+      "side": "allies",
+      "who": "海爾賽（William F. Halsey Jr.）",
+      "role": "第三艦隊司令",
+      "quote": "依攻擊報告，中央部隊已受重創。我正率三個支隊北上，拂曉攻擊敵航艦部隊。",
+      "original": "CENTRAL FORCE HEAVILY DAMAGED ACCORDING TO STRIKE REPORTS. AM PROCEEDING NORTH WITH THREE GROUPS TO ATTACK CARRIER FORCES AT DAWN",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Battle of Leyte Gulf（英文維基百科）",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Leyte_Gulf"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國政府著作，17 U.S.C. §105）",
+        "url": "https://www.copyright.gov/title17/92chap1.html#105"
+      }
+    },
+    {
+      "phase": "p4",
+      "date": "1944-10-25T06:37",
+      "side": "allies",
+      "who": "布魯克斯少尉（William C. Brooks）",
+      "role": "聖羅號 TBF 復仇者式機飛行員，反潛巡邏",
+      "quote": "我看得到寶塔式桅樓。我看見我這輩子見過最大的戰艦上，掛著最大的一面『肉丸旗』！",
+      "original": "I can see pagoda masts. I see the biggest meatball flag on the biggest battleship I ever saw!",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Battle off Samar（英文維基百科，引錄美方通訊原文）",
+        "url": "https://en.wikipedia.org/wiki/Battle_off_Samar"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國政府著作，17 U.S.C. §105）",
+        "url": "https://www.copyright.gov/title17/92chap1.html#105"
+      }
+    },
+    {
+      "phase": "p4",
+      "date": "1944-10-25T08:00",
+      "side": "allies",
+      "who": "金開德（Thomas C. Kinkaid）",
+      "role": "第七艦隊司令（以明碼發出）",
+      "quote": "我方處境危急。唯有快速戰艦與空襲支援，或許能阻止敵人摧毀護航航艦並突入雷伊泰。",
+      "original": "My situation is critical. Fast battleships and support by airstrikes may be able to keep enemy from destroying CVEs and entering Leyte.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Battle off Samar（英文維基百科，引錄美方通訊原文）",
+        "url": "https://en.wikipedia.org/wiki/Battle_off_Samar"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國政府著作，17 U.S.C. §105）",
+        "url": "https://www.copyright.gov/title17/92chap1.html#105"
+      }
+    },
+    {
+      "phase": "p5",
+      "event": "「全世界都在問」",
+      "side": "allies",
+      "who": "尼米茲（Chester W. Nimitz）司令部",
+      "role": "太平洋艦隊總司令致海爾賽電報（前後為加密填充字）",
+      "quote": "（火雞向水邊小跑）第三十四特遣艦隊在哪裡？重複，在哪裡？（全世界都在問）",
+      "original": "TURKEY TROTS TO WATER GG FROM CINCPAC ACTION COM THIRD FLEET INFO COMINCH CTF SEVENTY-SEVEN X WHERE IS RPT WHERE IS TASK FORCE THIRTY FOUR RR THE WORLD WONDERS",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Battle of Leyte Gulf（英文維基百科）",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Leyte_Gulf"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國政府著作，17 U.S.C. §105）",
+        "url": "https://www.copyright.gov/title17/92chap1.html#105"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p2",
+      "type": "image",
+      "title": "武藏號遭第38特遣艦隊空襲",
+      "caption": "錫布延海，美軍艦載機攻擊戰艦武藏號（前景）與一艘驅逐艦。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Japanese_battleship_Musashi_and_a_destroyer_under_attack_in_the_Sibuyan_Sea%2C_24_October_1944_%28NH_63432%29.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Japanese_battleship_Musashi_and_a_destroyer_under_attack_in_the_Sibuyan_Sea%2C_24_October_1944_%28NH_63432%29.jpg/500px-Japanese_battleship_Musashi_and_a_destroyer_under_attack_in_the_Sibuyan_Sea%2C_24_October_1944_%28NH_63432%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Japanese_battleship_Musashi_and_a_destroyer_under_attack_in_the_Sibuyan_Sea%2C_24_October_1944_%28NH_63432%29.jpg",
+      "credit": "U.S. Navy／Naval History and Heritage Command NH 63432",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "武藏號沉沒",
+      "date": "1944-10-24"
+    },
+    {
+      "phase": "p2",
+      "type": "image",
+      "title": "普林斯頓號魚雷庫爆炸",
+      "caption": "輕型航艦普林斯頓號被炸後，艦內魚雷於 15:23 爆炸；這一側可見輕巡洋艦雷諾號。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/USS_Princeton_%28CVL-23%29_1944_10_24_1523explosion.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/USS_Princeton_%28CVL-23%29_1944_10_24_1523explosion.jpg/500px-USS_Princeton_%28CVL-23%29_1944_10_24_1523explosion.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:USS_Princeton_%28CVL-23%29_1944_10_24_1523explosion.jpg",
+      "credit": "U.S. Navy／National Museum of Naval Aviation 1983.046.010.039",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "date": "1944-10-24T15:23"
+    },
+    {
+      "phase": "p3",
+      "type": "image",
+      "title": "西維吉尼亞號在蘇里高海峽開火",
+      "caption": "自賓夕法尼亞號拍攝的西維吉尼亞號主砲射擊。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/USS_West_Virginia_%28BB-48%29_firing_during_the_Battle_of_Surigao_Strait_in_October_1944.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/USS_West_Virginia_%28BB-48%29_firing_during_the_Battle_of_Surigao_Strait_in_October_1944.jpg/500px-USS_West_Virginia_%28BB-48%29_firing_during_the_Battle_of_Surigao_Strait_in_October_1944.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:USS_West_Virginia_%28BB-48%29_firing_during_the_Battle_of_Surigao_Strait_in_October_1944.jpg",
+      "credit": "U.S. Navy 80-G-288497（自賓夕法尼亞號拍攝）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "戰列線開火"
+    },
+    {
+      "phase": "p4",
+      "type": "image",
+      "title": "驅逐艦施放煙幕",
+      "caption": "Taffy 3 的驅逐艦與護航驅逐艦施放煙幕掩護航艦，注意日艦砲彈激起的水柱。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Destroyers_laying_smoke_screen_during_Battle_off_Samar_1944.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Destroyers_laying_smoke_screen_during_Battle_off_Samar_1944.jpg/500px-Destroyers_laying_smoke_screen_during_Battle_off_Samar_1944.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Destroyers_laying_smoke_screen_during_Battle_off_Samar_1944.jpg",
+      "credit": "U.S. Navy／National Museum of Naval Aviation 1996.488.258.003",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "「小船攻擊」"
+    },
+    {
+      "phase": "p4",
+      "type": "image",
+      "title": "甘比爾灣號被齊射夾擊",
+      "caption": "起火的護航航艦甘比爾灣號被日艦齊射夾在水柱之間，背景右側隱約可見日本軍艦。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/LeyteGambierBayStraddle.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/LeyteGambierBayStraddle.jpg/500px-LeyteGambierBayStraddle.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:LeyteGambierBayStraddle.jpg",
+      "credit": "U.S. Navy（引自 HyperWar 收錄之戰史報告）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國政府著作）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov"
+      },
+      "event": "甘比爾灣號沉沒"
+    },
+    {
+      "phase": "p4",
+      "type": "image",
+      "title": "聖羅號被神風機撞擊後爆炸",
+      "caption": "護航航艦聖羅號遭神風特攻機撞擊後爆炸，是首艘被神風特攻擊沉的大型艦艇。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Explosion_on_USS_St._Lo_%28CVE-63%29_during_Battle_off_Samar%2C_25_October_1944_%2880-G-270516%29.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Explosion_on_USS_St._Lo_%28CVE-63%29_during_Battle_off_Samar%2C_25_October_1944_%2880-G-270516%29.jpg/500px-Explosion_on_USS_St._Lo_%28CVE-63%29_during_Battle_off_Samar%2C_25_October_1944_%2880-G-270516%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Explosion_on_USS_St._Lo_%28CVE-63%29_during_Battle_off_Samar%2C_25_October_1944_%2880-G-270516%29.jpg",
+      "credit": "U.S. Navy 80-G-270516（National Archives）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "聖羅號被神風機擊沉"
+    },
+    {
+      "phase": "p5",
+      "type": "image",
+      "title": "瑞鶴號在恩加諾角遭俯衝轟炸",
+      "caption": "瑞鶴號（左中）與可能是瑞鳳號（右）在美軍俯衝轟炸下高速航行並冒出濃煙。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Zuikaku_at_Cape_Engano.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Zuikaku_at_Cape_Engano.jpg/500px-Zuikaku_at_Cape_Engano.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Zuikaku_at_Cape_Engano.jpg",
+      "credit": "U.S. Navy",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國海軍官方攝影）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy"
+      },
+      "event": "第一波空襲小澤艦隊"
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p2",
+      "event": "栗田回頭",
+      "side": "allies",
+      "commander": "海爾賽",
+      "title": "北上追擊小澤，還是守住聖貝納迪諾海峽？",
+      "situation": "10 月 24 日傍晚。己方飛行員回報已重創栗田的中央部隊，偵察機也看見它向西撤退；16:40 終於在北方發現小澤的航艦部隊——這是日本僅存的航艦戰力。第三艦隊必須決定夜間的部署。",
+      "intel": [
+        "攻擊報告：中央部隊遭重創、正在西撤",
+        "北方發現 4 艘日本航艦",
+        "已預擬由李中將率戰艦組成第 34 特遣艦隊封鎖海峽的計畫，但尚未下令編成",
+        "第七艦隊以為第 34 特遣艦隊會留在海峽"
+      ],
+      "options": [
+        {
+          "label": "全軍北上",
+          "detail": "三個航艦支隊連同全部戰艦一起北上，拂曉攻擊小澤的航艦"
+        },
+        {
+          "label": "分兵",
+          "detail": "編成第 34 特遣艦隊（戰艦）守在聖貝納迪諾海峽外，航艦支隊北上"
+        },
+        {
+          "label": "按兵不動",
+          "detail": "全艦隊留在海峽外，等天亮查明中央部隊的動向"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "海爾賽率第三艦隊全部可用兵力北上，海峽連一艘哨戒驅逐艦都沒留。他以「三個支隊」北上的電文讓金開德與尼米茲誤以為第 34 特遣艦隊已留守。夜間偵察機回報栗田又轉回海峽、海峽航燈重新亮起，李中將也以燈號提醒那是誘餌，但都未被採納。25 日清晨栗田艦隊穿過海峽，在薩馬島外撞上只有護航航艦的 Taffy 3。",
+      "hindsight": "小澤艦隊是誘餌，4 艘航艦僅載約 108 架飛機；栗田在 17:15 已再度轉向海峽。海爾賽事後解釋，靜態守海峽「很幼稚」，並認為中央部隊已被重創到不構成威脅。",
+      "sources": [
+        {
+          "title": "Battle of Leyte Gulf（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Leyte_Gulf"
+        }
+      ]
+    },
+    {
+      "phase": "p4",
+      "date": "1944-10-25T09:10",
+      "side": "japan",
+      "commander": "栗田健男",
+      "title": "繼續衝進雷伊泰灣，還是撤出戰場？",
+      "situation": "10 月 25 日上午，激戰兩個多小時。栗田以為自己撞上的是海爾賽第三艦隊的一個航艦群；艦隊為閃避魚雷與空襲已散開，旗艦大和號為躲魚雷北轉而失去對戰場的掌握。他也接到報告：西村的南方部隊在蘇里高海峽已被殲滅。",
+      "intel": [
+        "相信已擊沉或重創數艘美國航艦",
+        "鳥海、筑摩、鈴谷已被擊沉或重創",
+        "沒有收到小澤『已成功引開海爾賽』的電報",
+        "附近可能還有其他美國航艦群"
+      ],
+      "options": [
+        {
+          "label": "重新集結後衝入雷伊泰灣",
+          "detail": "照原定計畫攻擊灣內的登陸船團"
+        },
+        {
+          "label": "全艦北撤",
+          "detail": "停止戰鬥，轉向北方，尋找據報出現的美國航艦部隊"
+        }
+      ],
+      "chosen": 1,
+      "outcome": "約 09:20 栗田下令「全艦航向北、速度 20」。他一度轉向雷伊泰灣，又因北方有美艦的報告改向北，最後經聖貝納迪諾海峽撤退。灣內的登陸船團得以保全，捷一號作戰的目標未能達成。",
+      "hindsight": "眼前只是 6 艘護航航艦與幾艘驅逐艦，海爾賽的主力遠在北方追擊小澤；北方並沒有另一支美國航艦部隊。",
+      "sources": [
+        {
+          "title": "Battle off Samar（英文維基百科，引錄美方通訊原文）",
+          "url": "https://en.wikipedia.org/wiki/Battle_off_Samar"
+        },
+        {
+          "title": "Battle of Leyte Gulf（英文維基百科）",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Leyte_Gulf"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "第一遊擊部隊（栗田艦隊）",
+      "side": "japan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1944-10-22",
+          "lat": 5,
+          "lng": 115.1,
+          "note": "自汶萊出擊"
+        },
+        {
+          "lat": 7.3,
+          "lng": 116.2
+        },
+        {
+          "date": "1944-10-23T05:24",
+          "lat": 9.4,
+          "lng": 117.2,
+          "note": "愛宕、摩耶被擊沉"
+        },
+        {
+          "lat": 11.2,
+          "lng": 119.4
+        },
+        {
+          "date": "1944-10-24T10:30",
+          "lat": 12.9,
+          "lng": 122.2
+        },
+        {
+          "date": "1944-10-24T17:15",
+          "lat": 12.75,
+          "lng": 122.9,
+          "note": "17:15 再度轉向聖貝納迪諾海峽"
+        },
+        {
+          "date": "1944-10-25T03:00",
+          "lat": 12.55,
+          "lng": 124.25,
+          "note": "穿過聖貝納迪諾海峽"
+        },
+        {
+          "date": "1944-10-25T09:07",
+          "lat": 11.5,
+          "lng": 126.2
+        },
+        {
+          "lat": 11.75,
+          "lng": 126.05
+        },
+        {
+          "date": "1944-10-26",
+          "lat": 11.6,
+          "lng": 120.4,
+          "status": "withdrawn",
+          "note": "經錫布延海撤退"
+        }
+      ]
+    },
+    {
+      "unit": "第三部隊（西村艦隊）",
+      "side": "japan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1944-10-22",
+          "lat": 5,
+          "lng": 115.1,
+          "note": "自汶萊出擊"
+        },
+        {
+          "lat": 6.8,
+          "lng": 118.5
+        },
+        {
+          "lat": 8.6,
+          "lng": 121.5
+        },
+        {
+          "lat": 9.2,
+          "lng": 123.4
+        },
+        {
+          "date": "1944-10-24T22:36",
+          "lat": 9.75,
+          "lng": 124.5
+        },
+        {
+          "date": "1944-10-25T03:00",
+          "lat": 10.15,
+          "lng": 125.4
+        },
+        {
+          "date": "1944-10-25T04:20",
+          "lat": 10.38,
+          "lng": 125.38,
+          "status": "destroyed",
+          "note": "山城沉沒，西村殉艦"
+        }
+      ]
+    },
+    {
+      "unit": "機動部隊本隊（小澤艦隊）",
+      "side": "japan",
+      "model": "carrier",
+      "points": [
+        {
+          "date": "1944-10-20",
+          "lat": 33,
+          "lng": 132.2
+        },
+        {
+          "lat": 28.5,
+          "lng": 130
+        },
+        {
+          "lat": 23.5,
+          "lng": 127.5
+        },
+        {
+          "lat": 21,
+          "lng": 126.3
+        },
+        {
+          "date": "1944-10-25T08:00",
+          "lat": 19.6,
+          "lng": 125.6,
+          "note": "遭第一波空襲"
+        },
+        {
+          "date": "1944-10-26",
+          "lat": 24,
+          "lng": 128,
+          "status": "withdrawn",
+          "note": "殘部北撤"
+        }
+      ]
+    },
+    {
+      "unit": "第77.4.3特遣分隊（Taffy 3）",
+      "side": "allies",
+      "model": "carrier",
+      "points": [
+        {
+          "date": "1944-10-25T06:37",
+          "lat": 11.85,
+          "lng": 126.25,
+          "note": "發現栗田艦隊"
+        },
+        {
+          "lat": 11.6,
+          "lng": 126.15
+        },
+        {
+          "date": "1944-10-25T09:07",
+          "lat": 11.5,
+          "lng": 126.2,
+          "note": "甘比爾灣號沉沒"
+        }
+      ]
+    },
+    {
+      "unit": "第34特遣艦隊",
+      "side": "allies",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1944-10-25T11:15",
+          "lat": 18.6,
+          "lng": 125.9,
+          "note": "奉命南返"
+        },
+        {
+          "lat": 16,
+          "lng": 125.7
+        },
+        {
+          "date": "1944-10-26",
+          "lat": 12.7,
+          "lng": 124.6,
+          "note": "趕到海峽時栗田已離開"
+        }
+      ]
+    }
+  ],
+  "revision": "2026-10-28T07:56:22Z"
 }
