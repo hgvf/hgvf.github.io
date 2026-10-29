@@ -166,6 +166,10 @@ path.zone-in{animation:fadein .8s ease both}
   transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;
   padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px)}
 .side.open{transform:none}
+.side-grip{position:absolute;z-index:2;left:-5px;top:0;bottom:0;width:10px;cursor:col-resize;touch-action:none}
+.side-grip::after{content:"";position:absolute;left:4px;top:50%;width:3px;height:44px;margin-top:-22px;border-radius:2px;background:var(--ink-3);opacity:.35;transition:opacity .15s,height .15s}
+.side-grip:hover::after,.side-grip.drag::after{opacity:.9;height:72px;margin-top:-36px;background:var(--accent)}
+body.side-drag{cursor:col-resize;user-select:none}
 .handle{display:none;width:100%;height:20px;border:0;background:none;cursor:pointer;padding:0}
 .handle::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--ink-3);opacity:.5;margin:8px auto 0}
 .side-head{padding:14px 18px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px;background:var(--paper)}
@@ -258,7 +262,8 @@ path.zone-in{animation:fadein .8s ease both}
 .wpn b{font-size:13.5px}
 .wpn code{display:block;font-family:var(--f-mono);font-size:11px;color:var(--accent-ink);margin:1px 0 2px;word-break:break-word}
 .wpn p{margin:0;font-size:12.5px;color:var(--ink-2)}
-.oob{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:12px}
+/* columns wrap instead of shrinking: four or five sides no longer squeeze into slivers */
+.oob{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:20px 16px;align-items:start}
 .oob-col{min-width:0;display:flex;flex-direction:column;gap:8px}
 .oob-head{display:flex;align-items:center;gap:7px;font-family:var(--f-display);font-weight:700;font-size:14px;padding-bottom:6px;border-bottom:3px solid var(--c)}
 .oob-head i{width:10px;height:10px;border-radius:50%;background:var(--c)}
@@ -290,7 +295,7 @@ path.zone-in{animation:fadein .8s ease both}
 .chev svg{width:16px;height:16px}
 .cat.open .chev{transform:rotate(180deg)}
 .cat-b{padding:2px 12px 12px;display:grid;gap:10px}
-.par{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:10px}
+.par{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:12px 10px}
 .par-col{min-width:0;display:grid;gap:6px;align-content:start}
 .par-h{font-size:11.5px;color:var(--c);font-weight:700;border-bottom:2px solid var(--c);padding-bottom:3px}
 .wcard{all:unset;box-sizing:border-box;display:block;width:100%;padding:7px 9px;border-radius:6px;border:1px solid var(--line);background:var(--paper-2);cursor:pointer}
@@ -309,7 +314,6 @@ path.zone-in{animation:fadein .8s ease both}
 .cmpw tbody th{color:var(--ink-3);font-weight:500;white-space:nowrap;width:1%;font-size:12px}
 .cmpw code{font-family:var(--f-mono);font-size:11px;color:var(--accent-ink)}
 .cmpw .role{color:var(--ink-2);font-size:12px}
-@media (max-width:560px){.oob{grid-template-columns:1fr}}
 
 .sig{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13px}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
@@ -475,6 +479,7 @@ body.has-battle .legend{display:none}
   .side{top:auto;height:var(--sheet);width:100vw;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;transform:translateY(105%);padding-left:env(safe-area-inset-left,0px);transition:transform .35s cubic-bezier(.2,.8,.2,1),height .3s ease}
   .side.open{transform:none}
   .handle{display:block}
+  .side-grip,#btnWide{display:none}
   body.sheet-mini{--sheet:178px}
   body.sheet-mini .side-body{display:none}
   .side h2{font-size:23px}
@@ -516,6 +521,7 @@ body.has-battle .legend{display:none}
 <div class="legend" id="legend"><b>圖例</b><span>點選地圖上的戰役標記查看詳情，下方時間軸可播放各階段推進。</span></div>
 
 <aside class="side" id="side" aria-label="戰役詳情">
+  <div class="side-grip" id="sideGrip" role="separator" aria-orientation="vertical" aria-label="拖曳調整詳情欄寬度" title="拖曳調整寬度，雙擊切換寬版" tabindex="0"></div>
   <button class="handle" id="handle" aria-label="展開或收合詳情"></button>
   <div class="side-head" id="sideHead"></div>
   <div class="side-body" id="sideBody"></div>
@@ -577,6 +583,7 @@ const ICON = {
   plus: P('<path d="M12 5v14M5 12h14"/>'),
   home: P('<path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/>'),
   close: P('<path d="M6 6l12 12M18 6L6 18"/>'),
+  widen: P('<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M3 12h18"/>'),
   play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>',
   pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg>',
   json: P('<path d="M8 4c-2 0-2 1.5-2 3s0 3-2 5c2 2 2 3.5 2 5s0 3 2 3M16 4c2 0 2 1.5 2 3s0 3 2 5c-2 2-2 3.5-2 5s0 3-2 3"/>'),
@@ -884,11 +891,36 @@ function closeSide(){
   clearPhase(); battleLayer.clearLayers(); $("#tl").hidden = true;
   renderOverview(true); renderList();
 }
+/* dossier width: drag the left edge or use the 寬版 button (desktop); remembered per browser */
+const SIDE_KEY = "war-atlas:side-w", SIDE_W = 540;
+const sideWidth = () => $("#side").getBoundingClientRect().width || SIDE_W;
+const clampSide = w => Math.round(Math.max(380, Math.min(w, Math.max(380, innerWidth - 240))));
+function setSideW(w, save){
+  document.documentElement.style.setProperty("--side-w", clampSide(w) + "px");
+  if (save) lsSet(SIDE_KEY, String(clampSide(w)));
+}
+function toggleWide(){ setSideW(sideWidth() < 760 ? Math.min(innerWidth * .62, 1040) : SIDE_W, true); }
+{
+  const saved = +lsGet(SIDE_KEY);
+  if (saved && innerWidth > 760) setSideW(saved);
+  const grip = $("#sideGrip");
+  grip.addEventListener("pointerdown", ev => {
+    ev.preventDefault(); grip.setPointerCapture(ev.pointerId);
+    grip.classList.add("drag"); document.body.classList.add("side-drag");
+    const move = e => setSideW(innerWidth - e.clientX);
+    const up = () => { grip.removeEventListener("pointermove", move); grip.classList.remove("drag"); document.body.classList.remove("side-drag"); lsSet(SIDE_KEY, String(Math.round(sideWidth()))); };
+    grip.addEventListener("pointermove", move);
+    grip.addEventListener("pointerup", up, { once:true }); grip.addEventListener("pointercancel", up, { once:true });
+  });
+  grip.addEventListener("dblclick", toggleWide);
+  grip.addEventListener("keydown", e => { const d = { ArrowLeft:40, ArrowRight:-40 }[e.key]; if (d) { e.preventDefault(); setSideW(sideWidth() + d, true); } });
+  addEventListener("resize", () => { if (innerWidth > 760 && +lsGet(SIDE_KEY)) setSideW(+lsGet(SIDE_KEY)); });
+}
 /* center a point inside the part of the map not covered by the dossier / sheet / timeline */
 function flyVis(ll, z, dur){
   if (V3.on) return fly3d(ll, z, dur);
   const W = innerWidth, H = innerHeight, mobile = W <= 760;
-  const side = document.body.classList.contains("has-side") ? (mobile ? 0 : Math.min(540, W)) : 0;
+  const side = document.body.classList.contains("has-side") ? (mobile ? 0 : sideWidth()) : 0;
   const sheet = mobile && document.body.classList.contains("has-side") ? $("#side").getBoundingClientRect().height : 0;
   const tl = $("#tl").hidden ? 0 : $("#tl").getBoundingClientRect().height + 12, top = mobile ? 70 : 0;
   const cx = (W - side) / 2, cy = top + (H - sheet - tl - top) / 2;
@@ -1265,7 +1297,7 @@ function buildPhase(pi){
 }
 function visibleBox(){
   const W = innerWidth, H = innerHeight, mobile = W <= 760;
-  const side = document.body.classList.contains("has-side") ? (mobile ? 0 : Math.min(540, W)) : 0;
+  const side = document.body.classList.contains("has-side") ? (mobile ? 0 : sideWidth()) : 0;
   const sheet = mobile && document.body.classList.contains("has-side") ? $("#side").getBoundingClientRect().height : 0;
   const tl = $("#tl").hidden ? 0 : $("#tl").getBoundingClientRect().height + 12, top = mobile ? 70 : 0;
   return { x0:40, y0:top + 40, x1:W - side - 40, y1:H - Math.max(sheet, tl) - 30 };
@@ -1751,7 +1783,7 @@ function paint3d(){
 /* what the camera should leave free: dossier on the right, bottom sheet / timeline at the bottom */
 function pad3d(){
   const W = innerWidth, H = innerHeight, mobile = W <= 760, has = document.body.classList.contains("has-side");
-  const side = has && !mobile ? Math.min(540, W) : 0, sheet = mobile && has ? $("#side").getBoundingClientRect().height : 0;
+  const side = has && !mobile ? sideWidth() : 0, sheet = mobile && has ? $("#side").getBoundingClientRect().height : 0;
   const tl = $("#tl").hidden ? 0 : $("#tl").getBoundingClientRect().height + 12;
   return { top:mobile ? 70 : 20, bottom:Math.min(H * .6, Math.max(sheet, tl)), left:0, right:side };
 }
@@ -2080,6 +2112,7 @@ function sideHead(b){
   const win = b.result?.winner, wc = b.sides.find(s => s.id === win)?.color;
   return `<div class="side-top"><span class="kind">${esc(KIND[b.kind]||b.kind)}</span><span class="sp"></span>
     <button class="iconbtn" id="btnJson" title="檢視／匯出這筆 JSON">${ICON.json}<span>JSON</span></button>
+    <button class="iconbtn" id="btnWide" title="切換寬版詳情欄" aria-label="切換寬版詳情欄">${ICON.widen}</button>
     <button class="iconbtn" id="btnFocus" title="回到戰役全圖" aria-label="回到戰役全圖">${ICON.focus}</button>
     <button class="iconbtn" id="btnClose" title="關閉" aria-label="關閉詳情">${ICON.close}</button></div>
     <h2>${esc(b.title)}</h2>
@@ -2206,6 +2239,7 @@ function renderSide(b){
   $("#sideBody").innerHTML = sideBody(b);
   $("#sideBody").scrollTop = 0;
   $("#btnClose").onclick = closeSide;
+  $("#btnWide").onclick = toggleWide;
   $("#btnFocus").onclick = () => { stop(); S.phase = -1; clearPhase(); evMarkers.forEach(m => setEvState(m, "")); $("#tlEv").innerHTML = ""; $("#tlTitle").textContent = "按播放，依序重現戰局"; $("#tlDate").textContent = `${(b.phases||[]).length} 個階段`; document.querySelectorAll(".ph").forEach(e => e.classList.remove("active")); document.querySelectorAll(".seg").forEach(e => { e.classList.remove("on","done"); e.querySelector(".prog").style.width = "0"; }); flyVis([b.location.lat, b.location.lng], b.location.zoom||8, .9); };
   $("#btnJson").onclick = () => openJson(b);
 }
