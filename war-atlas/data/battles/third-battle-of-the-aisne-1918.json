@@ -1,0 +1,1762 @@
+{
+  "schema_version": 1,
+  "id": "third-battle-of-the-aisne-1918",
+  "kind": "campaign",
+  "title": "第三次埃納河戰役（1918年）",
+  "title_en": "Third Battle of the Aisne",
+  "aliases": [
+    "布呂歇爾—約克作戰",
+    "Operation Blücher-Yorck",
+    "Battle of the Chemin des Dames (1918)",
+    "德軍春季攻勢第三階段"
+  ],
+  "wars": [
+    "wwi",
+    "western-front-wwi"
+  ],
+  "tags": [
+    "春季攻勢",
+    "颶風砲擊",
+    "突破",
+    "馬恩河",
+    "美軍初陣"
+  ],
+  "date": {
+    "start": "1918-05-27",
+    "end": "1918-06-06",
+    "label": "1918年5月27日–6月6日（部分來源記至6月3日或4日）",
+    "duration_days": 11
+  },
+  "location": {
+    "name": "法國 蘇瓦松至蘭斯之間的貴婦小徑，至馬恩河蒂耶里堡",
+    "country_then": "法國",
+    "country_now": "法國",
+    "lat": 49.25,
+    "lng": 3.55,
+    "zoom": 9
+  },
+  "result": {
+    "winner": "inconclusive",
+    "label": "德軍戰術大勝，但未能突破，最終止步馬恩河",
+    "detail": "德軍首日突破貴婦小徑、推進約15–20公里，數日內俘虜逾5萬人、繳獲800多門砲，兵鋒抵達距巴黎約56公里的馬恩河。但德軍補給線拉長、缺乏預備隊，協約國（含首次大規模參戰的美軍）在蒂耶里堡與貝洛森林擋住攻勢；雙方各損失十萬以上。"
+  },
+  "summary": "1918年5月27日凌晨，德軍在貴婦小徑發動「布呂歇爾—約克」作戰，原意是牽制協約國預備隊、為法蘭德斯攻勢鋪路。猛烈的砲擊與毒氣之後，17個師在6小時內攻抵埃納河並奪下完整的橋樑，擊潰守在山脊上的英國第9軍與法國第6集團軍。德軍順勢擴大戰果，28日攻佔蘇瓦松，30日抵達馬恩河；美國第3、第2師在蒂耶里堡與貝洛森林一帶協助法軍止住了德軍。",
+  "background": [
+    {
+      "title": "德軍春季攻勢",
+      "text": "俄國退出戰爭後，德軍趁美軍主力抵達前在西線發動一連串攻勢；此前的「米夏埃爾」與「喬治特」作戰都未能決勝。"
+    },
+    {
+      "title": "牽制性攻擊",
+      "text": "魯登道夫計畫以布呂歇爾—約克作戰把協約國預備隊吸到南方，再回頭在法蘭德斯發動「哈根」攻勢。"
+    },
+    {
+      "title": "被派去「休息」的英軍",
+      "text": "在米夏埃爾攻勢中損失慘重的英國第9軍被調到看似平靜的貴婦小徑休整，換出法軍北上。"
+    },
+    {
+      "title": "杜申的前沿部署",
+      "text": "法國第6集團軍司令杜申不願放棄山脊，違反貝當的縱深防禦指示，把部隊集中在前沿壕溝，正好成為砲兵的靶子。"
+    }
+  ],
+  "objectives": {
+    "germany": "以猛烈突擊打穿貴婦小徑，吸引協約國預備隊南下，戰果擴大後轉向馬恩河並威脅巴黎。",
+    "allies": "守住貴婦小徑與埃納河一線，失守後阻止德軍渡過馬恩河、保衛巴黎。"
+  },
+  "sides": [
+    {
+      "id": "germany",
+      "name": "德意志帝國",
+      "color": "#4d4d4d",
+      "belligerents": [
+        "德意志帝國"
+      ],
+      "commanders": [
+        {
+          "name": "埃里希·魯登道夫",
+          "role": "第一軍需總監，攻勢主要策劃者"
+        },
+        {
+          "name": "德意志皇儲威廉",
+          "role": "皇儲集團軍群司令"
+        },
+        {
+          "name": "馬克斯·馮·伯恩",
+          "role": "第7集團軍司令"
+        },
+        {
+          "name": "布魯諾·馮·穆德拉",
+          "role": "第1集團軍司令（HistoryOfWar.org）"
+        }
+      ],
+      "units": [
+        {
+          "name": "最高陸軍指揮部",
+          "echelon": "統帥部",
+          "branch": "army",
+          "commander": "魯登道夫",
+          "note": "原以本攻勢為牽制，5月30日後改為讓第7集團軍繼續推進。"
+        },
+        {
+          "name": "皇儲集團軍群",
+          "echelon": "集團軍群",
+          "branch": "army",
+          "commander": "皇儲威廉",
+          "note": "負責埃納河正面；德皇曾親赴前線。"
+        },
+        {
+          "name": "第7集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "伯恩",
+          "note": "主攻部隊；27日突破山脊、奪下埃納河橋樑，30日抵達馬恩河。"
+        },
+        {
+          "name": "第1集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "穆德拉",
+          "note": "蘭斯方向的左翼。"
+        },
+        {
+          "name": "突擊師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "首波17個師以突擊戰術攻擊，40公里正面在6小時內攻抵埃納河。"
+        },
+        {
+          "name": "攻擊砲兵",
+          "echelon": "砲兵",
+          "branch": "army",
+          "note": "4,000門以上（另說6,000門）火砲，約4小時內發射約200萬發砲彈並施放毒氣。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "41 個師（首波 17 個師）",
+        "formations": "第1、第7集團軍",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": 4000,
+        "note": "英文維基：4,000門以上火砲、17個突擊師；HistoryOfWar.org：41個師、多達6,000門火砲。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": 130000,
+        "total_label": "約 10 萬 – 13 萬",
+        "range": [
+          100000,
+          130000
+        ],
+        "note": "英文維基引 Marix Evans：德軍約13萬；HistoryOfWar.org：損失逾10萬人。蒂耶里堡之戰另有 5,328 之數（英文維基資訊框，未標明屬於何方）。",
+        "confidence": "medium"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "毛瑟 98 型步槍",
+          "model": "Gewehr 98",
+          "qty": "全軍制式",
+          "year": "1898",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "5 發",
+            "有效射程": "約 500 m",
+            "重量": "約 4.1 kg"
+          },
+          "note": "德軍步兵制式步槍。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "MG 08/15 輕機槍",
+          "model": "MG 08/15",
+          "qty": "不明",
+          "year": "1917",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "100 發彈帶",
+            "射速": "約 500 發/分",
+            "重量": "約 18 kg"
+          },
+          "note": "突擊部隊攜行的機槍火力。一般知識。"
+        },
+        {
+          "cat": "artillery",
+          "name": "7.7 公分野砲",
+          "model": "7.7 cm FK 16",
+          "qty": "火砲合計 4,000–6,000 門（含各型）",
+          "year": "1916",
+          "specs": {
+            "口徑": "77 mm",
+            "射程": "約 10.7 km",
+            "重量": "約 1.4 t"
+          },
+          "note": "颶風砲擊與徐進彈幕主力。型號為一般知識推定。"
+        },
+        {
+          "cat": "artillery",
+          "name": "15 公分重野戰榴彈砲",
+          "model": "15 cm sFH 13",
+          "qty": "不明",
+          "year": "1913",
+          "specs": {
+            "口徑": "149.7 mm",
+            "射程": "約 8.5 km",
+            "重量": "約 2.2 t"
+          },
+          "note": "壓制協約國砲兵與後方陣地。型號為一般知識推定。"
+        },
+        {
+          "cat": "chemical",
+          "name": "毒氣砲彈",
+          "model": "Gas shells（Gelbkreuz / Blaukreuz / Grünkreuz）",
+          "qty": "不明",
+          "year": "1917",
+          "specs": {
+            "口徑": "多種",
+            "射程": "隨砲而異"
+          },
+          "note": "砲擊中施放毒氣；毒氣種類為一般知識推定。"
+        }
+      ]
+    },
+    {
+      "id": "allies",
+      "name": "協約國（法、英、義）",
+      "color": "#2c4f9e",
+      "belligerents": [
+        "法國",
+        "英國",
+        "義大利"
+      ],
+      "commanders": [
+        {
+          "name": "德尼·杜申",
+          "role": "法國第6集團軍司令（戰後被撤換）"
+        },
+        {
+          "name": "讓·德古特",
+          "role": "接任第6集團軍司令"
+        },
+        {
+          "name": "菲利普·貝當",
+          "role": "法軍總司令"
+        },
+        {
+          "name": "亞歷山大·漢密爾頓—戈登",
+          "role": "英國第9軍軍長"
+        },
+        {
+          "name": "休伯特·里斯",
+          "role": "英國第150旅旅長",
+          "fate": "被俘"
+        },
+        {
+          "name": "安德森—莫斯黑德",
+          "role": "德文郡團第2營營長",
+          "fate": "陣亡"
+        }
+      ],
+      "units": [
+        {
+          "name": "法國第6集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "杜申",
+          "note": "防守蘇瓦松至蘭斯一線；前沿部署遭砲擊重創，8個協約國師被擊潰。"
+        },
+        {
+          "name": "英國第9軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "漢密爾頓—戈登",
+          "note": "自米夏埃爾攻勢後調來休整，在山脊東段幾乎被全殲。"
+        },
+        {
+          "name": "英國第8師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第9軍前線師之一。"
+        },
+        {
+          "name": "英國第21師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第9軍前線師之一。"
+        },
+        {
+          "name": "英國第50（諾森伯蘭）師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第9軍前線師之一；第150旅旅長里斯被俘，曾被德皇召見。"
+        },
+        {
+          "name": "英國第25師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第9軍預備師。"
+        },
+        {
+          "name": "英國第19（西部）師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第9軍所屬，後續投入。"
+        },
+        {
+          "name": "德文郡團第2營",
+          "echelon": "營",
+          "branch": "army",
+          "commander": "安德森—莫斯黑德",
+          "note": "在比特森林死守，29名軍官與552名士兵陣亡或被俘，僅40–80人渡過埃納河；1918年12月5日獲法國英勇十字勳章附棕櫚，是首個獲此殊榮的英國部隊。"
+        },
+        {
+          "name": "法國第10殖民師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "5月31日在蒂耶里堡北岸與美軍並肩，6月1日退過大橋後將其炸毀。"
+        },
+        {
+          "name": "協約國增援師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "5月28日至6月3日共有27個協約國師投入。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "初始 16 個師（含英軍 3–4 個師）",
+        "formations": "法國第6集團軍、英國第9軍",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "HistoryOfWar.org：初始16個師，5月28日至6月3日共投入27個師。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": 50000,
+        "total": 127000,
+        "total_label": "最多約 12.7 萬（被俘逾 5 萬）",
+        "range": [
+          100000,
+          127000
+        ],
+        "note": "英文維基：協約國最多約12.7萬；至5月30日逾5萬人被俘、800多門砲被奪；HistoryOfWar.org：協約國損失與德軍相近（逾10萬）。德文郡團第2營單營陣亡或被俘 581 人。",
+        "confidence": "medium"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "勒貝爾步槍",
+          "model": "Lebel Mle 1886",
+          "qty": "法軍制式",
+          "year": "1886",
+          "specs": {
+            "口徑": "8 mm",
+            "彈容": "8 發（管狀彈倉）",
+            "有效射程": "約 400 m",
+            "重量": "約 4.4 kg"
+          },
+          "note": "法軍步兵制式步槍。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "李—恩菲爾德短步槍",
+          "model": "SMLE Mk III",
+          "qty": "英軍制式",
+          "year": "1907",
+          "specs": {
+            "口徑": ".303 in（7.7 mm）",
+            "彈容": "10 發",
+            "有效射程": "約 550 m",
+            "重量": "約 4 kg"
+          },
+          "note": "英國第9軍步兵制式步槍。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "路易士輕機槍",
+          "model": "Lewis Mk I",
+          "qty": "不明",
+          "year": "1914",
+          "specs": {
+            "口徑": ".303 in（7.7 mm）",
+            "彈容": "47 發彈盤",
+            "射速": "約 500–600 發/分",
+            "重量": "約 13 kg"
+          },
+          "note": "英軍排級火力。"
+        },
+        {
+          "cat": "artillery",
+          "name": "75 毫米野砲",
+          "model": "Canon de 75 mle 1897",
+          "qty": "不明",
+          "year": "1897",
+          "specs": {
+            "口徑": "75 mm",
+            "射程": "約 8.5 km",
+            "重量": "約 1.5 t"
+          },
+          "note": "法軍野砲；大量火砲在首日被奪。"
+        },
+        {
+          "cat": "artillery",
+          "name": "18 磅野砲",
+          "model": "Ordnance QF 18-pounder",
+          "qty": "不明",
+          "year": "1904",
+          "specs": {
+            "口徑": "84 mm",
+            "射程": "約 6.5 km",
+            "重量": "約 1.3 t"
+          },
+          "note": "英國第9軍師屬野砲。"
+        }
+      ]
+    },
+    {
+      "id": "usa",
+      "name": "美國",
+      "color": "#3a6ea5",
+      "belligerents": [
+        "美國"
+      ],
+      "commanders": [
+        {
+          "name": "約翰·潘興",
+          "role": "美國遠征軍總司令"
+        },
+        {
+          "name": "約翰·比塞爾",
+          "role": "中尉，蒂耶里堡北岸機槍分隊"
+        }
+      ],
+      "units": [
+        {
+          "name": "美國遠征軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "潘興",
+          "note": "美軍師的編制約2萬人，約為英、法、德軍師的兩倍；本戰役是美軍首批大規模參戰之一。"
+        },
+        {
+          "name": "美國第3師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "5月31日佔領蒂耶里堡南岸大橋，以機槍掩護法軍撤退，守住馬恩河一線。"
+        },
+        {
+          "name": "比塞爾機槍分隊",
+          "echelon": "排",
+          "branch": "army",
+          "commander": "比塞爾",
+          "note": "6月1日大橋炸毀後仍在北岸，於美軍火力掩護下經第二座橋撤回。"
+        },
+        {
+          "name": "美國第2師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "6月6日攻擊蒂耶里堡西北的貝洛森林德軍陣地。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "2 個師（每師約 2 萬人）",
+        "formations": "第2、第3師",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "英文維基：美軍師滿編約2萬人。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": null,
+        "total_label": "不詳（蒂耶里堡之戰資訊框另有 1,908 之數）",
+        "range": null,
+        "note": "英文維基蒂耶里堡條目資訊框列 1,908 與 5,328 兩數，未標明各屬何方；本紀錄不採用。",
+        "confidence": "low"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "春田步槍",
+          "model": "M1903 Springfield",
+          "qty": "不明",
+          "year": "1903",
+          "specs": {
+            "口徑": ".30-06（7.62 mm）",
+            "彈容": "5 發",
+            "有效射程": "約 550 m",
+            "重量": "約 3.9 kg"
+          },
+          "note": "美軍步槍之一。一般知識。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "哈奇開斯機槍",
+          "model": "Hotchkiss Mle 1914",
+          "qty": "不明",
+          "year": "1914",
+          "specs": {
+            "口徑": "8 mm",
+            "彈容": "24–30 發彈板",
+            "射速": "約 450 發/分",
+            "重量": "約 24 kg（不含架）"
+          },
+          "note": "美軍機槍營使用法製機槍掩護蒂耶里堡大橋。型號為一般知識推定。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "紹沙輕機槍",
+          "model": "Chauchat Mle 1915",
+          "qty": "不明",
+          "year": "1915",
+          "specs": {
+            "口徑": "8 mm",
+            "彈容": "20 發彈匣",
+            "射速": "約 240 發/分",
+            "重量": "約 9 kg"
+          },
+          "note": "美軍步兵配發的法製輕機槍。一般知識。"
+        },
+        {
+          "cat": "artillery",
+          "name": "75 毫米野砲（美軍使用）",
+          "model": "Canon de 75 mle 1897",
+          "qty": "不明",
+          "year": "1897",
+          "specs": {
+            "口徑": "75 mm",
+            "射程": "約 8.5 km",
+            "重量": "約 1.5 t"
+          },
+          "note": "美軍砲兵採用法製75砲。一般知識。"
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "title": "5月27日：貴婦小徑崩潰",
+      "start": "1918-05-27",
+      "end": "1918-05-27",
+      "summary": "凌晨1時，德軍以4,000門以上火砲與毒氣展開颶風砲擊，約3時45分17個突擊師出擊。守軍擠在前沿壕溝裡被砲火撕碎，德軍在不到6小時內越過40公里正面攻抵埃納河，奪下完整的橋樑，入夜前推進約15–20公里，8個協約國師被擊潰。",
+      "view": {
+        "lat": 49.42,
+        "lng": 3.7,
+        "zoom": 10
+      },
+      "view_keys": [
+        {
+          "at": "1918-05-27T03:45",
+          "lat": 49.43,
+          "lng": 3.83,
+          "zoom": 12
+        },
+        {
+          "at": "1918-05-27T12:00",
+          "lat": 49.38,
+          "lng": 3.65,
+          "zoom": 10
+        }
+      ],
+      "events": [
+        {
+          "date": "1918-05-27T01:00",
+          "title": "颶風砲擊",
+          "text": "德軍以4,000門以上火砲與毒氣轟擊，約4小時內發射約200萬發砲彈。",
+          "lat": 49.445,
+          "lng": 3.65,
+          "type": "bombing",
+          "side": "germany"
+        },
+        {
+          "date": "1918-05-27T03:45",
+          "title": "突擊開始",
+          "text": "17個德軍突擊師在蘇瓦松至蘭斯之間出擊。",
+          "lat": 49.44,
+          "lng": 3.87,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1918-05-27T07:00",
+          "title": "比特森林被圍",
+          "text": "德文郡團第2營前沿各連幾乎全滅，全營被包圍；8時30分營部與預備連退到反斜面繼續抵抗。",
+          "lat": 49.42,
+          "lng": 3.84,
+          "type": "defense",
+          "side": "allies"
+        },
+        {
+          "date": "1918-05-27T09:30",
+          "title": "德軍自瑞旺庫爾湧來",
+          "text": "德軍部隊從瑞旺庫爾方向推進；德文郡團第2營營長安德森—莫斯黑德在最後的戰鬥中陣亡。",
+          "lat": 49.41,
+          "lng": 3.82,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1918-05-27",
+          "title": "攻抵埃納河",
+          "text": "德軍不到6小時就攻抵埃納河並奪得完整的橋樑，入夜前推進約15–20公里，是1914年以來最大的單日推進。",
+          "lat": 49.41,
+          "lng": 3.52,
+          "type": "breakthrough",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第7集團軍",
+          "unit": "第7集團軍",
+          "model": "infantry",
+          "start": "1918-05-27T03:45",
+          "end": "1918-05-27",
+          "path": [
+            [
+              49.564,
+              3.62
+            ],
+            [
+              49.445,
+              3.65
+            ],
+            [
+              49.41,
+              3.52
+            ],
+            [
+              49.33,
+              3.6
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "突擊師",
+          "unit": "突擊師",
+          "model": "infantry",
+          "start": "1918-05-27T03:45",
+          "end": "1918-05-27T09:30",
+          "path": [
+            [
+              49.44,
+              3.87
+            ],
+            [
+              49.42,
+              3.84
+            ],
+            [
+              49.41,
+              3.82
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "allies",
+          "kind": "retreat",
+          "label": "英國第9軍",
+          "unit": "英國第9軍",
+          "model": "infantry",
+          "start": "1918-05-27",
+          "end": "1918-05-28",
+          "path": [
+            [
+              49.443,
+              3.785
+            ],
+            [
+              49.36,
+              3.8
+            ],
+            [
+              49.308,
+              3.682
+            ]
+          ],
+          "outcome": "success"
+        }
+      ],
+      "zones": [
+        {
+          "side": "allies",
+          "kind": "front",
+          "key": "allied-line",
+          "label": "協約國戰線",
+          "line": [
+            [
+              49.45,
+              3.43
+            ],
+            [
+              49.445,
+              3.65
+            ],
+            [
+              49.443,
+              3.785
+            ],
+            [
+              49.4,
+              3.9
+            ],
+            [
+              49.258,
+              4.032
+            ]
+          ]
+        },
+        {
+          "side": "allies",
+          "kind": "hold",
+          "key": "chemin-des-dames",
+          "label": "貴婦小徑（協約國據守）",
+          "polygon": [
+            [
+              49.47,
+              3.42
+            ],
+            [
+              49.49,
+              3.56
+            ],
+            [
+              49.465,
+              3.8
+            ],
+            [
+              49.43,
+              3.8
+            ],
+            [
+              49.43,
+              3.56
+            ],
+            [
+              49.44,
+              3.42
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "越過韋勒河、攻佔蘇瓦松",
+      "start": "1918-05-28",
+      "end": "1918-05-29",
+      "summary": "德軍沒有停在埃納河，繼續向南湧過韋勒河。28日攻佔蘇瓦松；法方戰報承認德軍兵力佔優，雙方在韋勒河與埃納河之間激戰。協約國開始從各處調來援軍。",
+      "view": {
+        "lat": 49.3,
+        "lng": 3.6,
+        "zoom": 10
+      },
+      "events": [
+        {
+          "date": "1918-05-28",
+          "title": "韋勒河與埃納河之間",
+          "text": "戰鬥在韋勒河與埃納河之間激烈進行，英法軍隊面對兵力佔優的敵人。",
+          "lat": 49.308,
+          "lng": 3.682,
+          "type": "defense",
+          "side": "allies"
+        },
+        {
+          "date": "1918-05-28",
+          "title": "攻佔蘇瓦松",
+          "text": "德軍攻佔蘇瓦松（HistoryOfWar.org 記為28日；德方5月30日的戰報宣布此事）。",
+          "lat": 49.381,
+          "lng": 3.323,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1918-05-28",
+          "title": "協約國援軍投入",
+          "text": "5月28日至6月3日，協約國陸續投入共27個師。",
+          "lat": 49.25,
+          "lng": 3.09,
+          "type": "other",
+          "side": "allies"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第7集團軍",
+          "unit": "第7集團軍",
+          "model": "infantry",
+          "start": "1918-05-28",
+          "end": "1918-05-29",
+          "path": [
+            [
+              49.33,
+              3.6
+            ],
+            [
+              49.308,
+              3.682
+            ],
+            [
+              49.2,
+              3.52
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "突擊師",
+          "unit": "突擊師",
+          "model": "infantry",
+          "start": "1918-05-28",
+          "end": "1918-05-28",
+          "path": [
+            [
+              49.41,
+              3.52
+            ],
+            [
+              49.39,
+              3.4
+            ],
+            [
+              49.381,
+              3.323
+            ]
+          ],
+          "outcome": "success"
+        }
+      ],
+      "zones": [
+        {
+          "side": "allies",
+          "kind": "front",
+          "key": "allied-line",
+          "label": "協約國戰線",
+          "line": [
+            [
+              49.45,
+              3.43
+            ],
+            [
+              49.381,
+              3.323
+            ],
+            [
+              49.25,
+              3.4
+            ],
+            [
+              49.2,
+              3.52
+            ],
+            [
+              49.25,
+              3.8
+            ],
+            [
+              49.258,
+              4.032
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "兵臨馬恩河",
+      "start": "1918-05-30",
+      "end": "1918-06-01",
+      "summary": "5月30日德軍在若爾戈訥一帶渡過馬恩河、抵達蒂耶里堡，這是德軍離巴黎最近的時刻；至此已俘虜逾5萬人、奪砲800多門。魯登道夫把牽制攻勢改為擴張戰果。美國第3師趕到蒂耶里堡南岸，6月1日法軍退過大橋後將其炸毀。",
+      "view": {
+        "lat": 49.1,
+        "lng": 3.45,
+        "zoom": 10
+      },
+      "events": [
+        {
+          "date": "1918-05-30",
+          "title": "抵達馬恩河",
+          "text": "德軍在若爾戈訥附近渡過馬恩河並抵達蒂耶里堡，距巴黎約60公里；協約國至此已有逾5萬人被俘、800多門砲被奪。",
+          "lat": 49.083,
+          "lng": 3.53,
+          "type": "breakthrough",
+          "side": "germany"
+        },
+        {
+          "date": "1918-05-31",
+          "title": "美軍守住大橋",
+          "text": "美國第3師佔領蒂耶里堡南岸大橋，法國第10殖民師從北岸會合；美軍架設機槍掩護法軍撤退，法軍連夜在橋上裝設炸藥。",
+          "lat": 49.046,
+          "lng": 3.403,
+          "type": "defense",
+          "side": "usa"
+        },
+        {
+          "date": "1918-06-01",
+          "title": "炸毀蒂耶里堡大橋",
+          "text": "德軍從北面攻入蒂耶里堡，法軍退到大橋邊，在美軍機槍支援下守橋後將其炸毀；比塞爾分隊經第二座橋撤回南岸。",
+          "lat": 49.046,
+          "lng": 3.403,
+          "type": "defense",
+          "side": "allies"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第7集團軍",
+          "unit": "第7集團軍",
+          "model": "infantry",
+          "start": "1918-05-30",
+          "end": "1918-06-01",
+          "path": [
+            [
+              49.2,
+              3.52
+            ],
+            [
+              49.083,
+              3.53
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "突擊師",
+          "unit": "突擊師",
+          "model": "infantry",
+          "start": "1918-05-31",
+          "end": "1918-06-01",
+          "path": [
+            [
+              49.15,
+              3.38
+            ],
+            [
+              49.046,
+              3.403
+            ]
+          ],
+          "outcome": "stopped"
+        },
+        {
+          "side": "usa",
+          "kind": "reinforce",
+          "label": "美國第3師",
+          "unit": "美國第3師",
+          "model": "infantry",
+          "start": "1918-05-30",
+          "end": "1918-05-31",
+          "path": [
+            [
+              48.98,
+              3.3
+            ],
+            [
+              49.02,
+              3.38
+            ],
+            [
+              49.046,
+              3.403
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "allies",
+          "kind": "retreat",
+          "label": "法國第10殖民師",
+          "unit": "法國第10殖民師",
+          "model": "infantry",
+          "start": "1918-05-31",
+          "end": "1918-06-01",
+          "path": [
+            [
+              49.07,
+              3.4
+            ],
+            [
+              49.046,
+              3.403
+            ]
+          ],
+          "outcome": "success"
+        }
+      ],
+      "zones": [
+        {
+          "side": "allies",
+          "kind": "front",
+          "key": "allied-line",
+          "label": "協約國戰線",
+          "line": [
+            [
+              49.45,
+              3.43
+            ],
+            [
+              49.381,
+              3.323
+            ],
+            [
+              49.25,
+              3.09
+            ],
+            [
+              49.08,
+              3.29
+            ],
+            [
+              49.046,
+              3.403
+            ],
+            [
+              49.083,
+              3.53
+            ],
+            [
+              49.073,
+              3.64
+            ],
+            [
+              49.2,
+              3.86
+            ],
+            [
+              49.258,
+              4.032
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "止步馬恩河",
+      "start": "1918-06-02",
+      "end": "1918-06-06",
+      "summary": "德軍在北岸以重砲與狙擊手攻擊殘存的橋樑，傷亡上升後放棄。6月3日德軍抵達距巴黎約56公里處，美法軍隊在馬恩河會合並把渡河的德軍逐回北岸。德軍補給耗盡、缺乏預備隊，攻勢停止；6月6日美國第2師向貝洛森林發起攻擊。",
+      "view": {
+        "lat": 49.07,
+        "lng": 3.35,
+        "zoom": 11
+      },
+      "events": [
+        {
+          "date": "1918-06-02",
+          "title": "橋頭攻擊受挫",
+          "text": "德軍在北岸以重砲與狙擊火力企圖奪取剩下的橋樑，傷亡上升後停止攻擊。",
+          "lat": 49.046,
+          "lng": 3.403,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1918-06-03",
+          "title": "距巴黎56公里",
+          "text": "德軍推進到距巴黎約56公里；美軍與法軍在馬恩河會合，把德軍逐回對岸。",
+          "lat": 49.046,
+          "lng": 3.403,
+          "type": "defense",
+          "side": "usa"
+        },
+        {
+          "date": "1918-06-06",
+          "title": "貝洛森林攻擊",
+          "text": "美國第2師攻擊蒂耶里堡西北的貝洛森林德軍陣地，德軍攻勢在馬恩河止步。",
+          "lat": 49.08,
+          "lng": 3.29,
+          "type": "assault",
+          "side": "usa"
+        }
+      ],
+      "moves": [
+        {
+          "side": "usa",
+          "kind": "attack",
+          "label": "美國第2師",
+          "unit": "美國第2師",
+          "model": "infantry",
+          "start": "1918-06-06",
+          "end": "1918-06-06",
+          "path": [
+            [
+              49.04,
+              3.25
+            ],
+            [
+              49.08,
+              3.29
+            ]
+          ],
+          "outcome": "stopped"
+        },
+        {
+          "side": "usa",
+          "kind": "attack",
+          "label": "美國第3師",
+          "unit": "美國第3師",
+          "model": "infantry",
+          "start": "1918-06-03",
+          "end": "1918-06-03",
+          "path": [
+            [
+              49.046,
+              3.403
+            ],
+            [
+              49.07,
+              3.45
+            ]
+          ],
+          "outcome": "success"
+        }
+      ],
+      "zones": [
+        {
+          "side": "allies",
+          "kind": "front",
+          "key": "allied-line",
+          "label": "協約國戰線",
+          "line": [
+            [
+              49.45,
+              3.43
+            ],
+            [
+              49.381,
+              3.323
+            ],
+            [
+              49.25,
+              3.09
+            ],
+            [
+              49.08,
+              3.29
+            ],
+            [
+              49.046,
+              3.403
+            ],
+            [
+              49.083,
+              3.53
+            ],
+            [
+              49.073,
+              3.64
+            ],
+            [
+              49.2,
+              3.86
+            ],
+            [
+              49.258,
+              4.032
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "name": "貴婦小徑",
+      "lat": 49.445,
+      "lng": 3.65,
+      "kind": "ridge",
+      "note": "1917年法軍奪回的山脊，1918年5月27日一日之內失守。"
+    },
+    {
+      "name": "比特森林",
+      "lat": 49.42,
+      "lng": 3.84,
+      "kind": "wood",
+      "note": "德文郡團第2營死守之地。"
+    },
+    {
+      "name": "蘇瓦松",
+      "lat": 49.381,
+      "lng": 3.323,
+      "kind": "town",
+      "note": "5月28日被德軍攻佔。"
+    },
+    {
+      "name": "蒂耶里堡",
+      "lat": 49.046,
+      "lng": 3.403,
+      "kind": "town",
+      "note": "馬恩河上的城鎮，美國第3師在此守橋。"
+    },
+    {
+      "name": "貝洛森林",
+      "lat": 49.08,
+      "lng": 3.29,
+      "kind": "wood",
+      "note": "6月6日美國第2師發起攻擊。"
+    },
+    {
+      "name": "蘭斯",
+      "lat": 49.258,
+      "lng": 4.032,
+      "kind": "city",
+      "note": "德軍攻勢東翼的邊界。"
+    },
+    {
+      "name": "巴黎",
+      "lat": 48.857,
+      "lng": 2.352,
+      "kind": "city",
+      "note": "德軍最遠推進到距巴黎約56公里。"
+    }
+  ],
+  "civilian": {
+    "label": "不詳",
+    "note": "蘇瓦松、蒂耶里堡等城鎮淪為戰場，巴黎再度受到威脅；資料未給平民傷亡數字。"
+  },
+  "significance": [
+    "德軍取得1914年以來最大的單日推進，但補給線拉長、預備隊耗盡，突出部成為之後協約國反攻的弱點。",
+    "美軍在蒂耶里堡與貝洛森林首度大規模參戰並站穩腳跟，鼓舞了協約國士氣。",
+    "貝當撤換杜申，由德古特接掌第6集團軍。",
+    "魯登道夫受戰果鼓舞繼續發動攻勢，最終導致第二次馬恩河戰役與德軍的轉折。"
+  ],
+  "facts": [
+    {
+      "label": "4小時200萬發",
+      "text": "攻勢開始的颶風砲擊約4小時內發射了約200萬發砲彈。"
+    },
+    {
+      "label": "6小時到埃納河",
+      "text": "德軍在不到6小時內越過40公里正面攻抵埃納河，橋樑完好落入其手。"
+    },
+    {
+      "label": "第一個獲英勇十字勳章的英國團",
+      "text": "德文郡團第2營在比特森林死守，1918年12月獲法國英勇十字勳章附棕櫚。"
+    },
+    {
+      "label": "德皇見俘虜",
+      "text": "德皇親赴前線，接見了被俘的英國第150旅旅長、威爾斯人里斯准將。"
+    }
+  ],
+  "disputes": [
+    {
+      "topic": "戰役結束日",
+      "claims": [
+        {
+          "value": "6月6日",
+          "source": "英文維基資訊框、Long, Long Trail、NAM"
+        },
+        {
+          "value": "6月4日",
+          "source": "英文維基導言"
+        },
+        {
+          "value": "6月3日",
+          "source": "HistoryOfWar.org"
+        }
+      ]
+    },
+    {
+      "topic": "德軍火砲數",
+      "claims": [
+        {
+          "value": "4,000 門以上",
+          "source": "英文維基"
+        },
+        {
+          "value": "多達 6,000 門",
+          "source": "HistoryOfWar.org"
+        }
+      ]
+    },
+    {
+      "topic": "德國第1集團軍司令",
+      "claims": [
+        {
+          "value": "布魯諾·馮·穆德拉",
+          "source": "HistoryOfWar.org"
+        }
+      ]
+    },
+    {
+      "topic": "首日推進距離",
+      "claims": [
+        {
+          "value": "約 15 km",
+          "source": "英文維基"
+        },
+        {
+          "value": "約 13 英里（21 km）",
+          "source": "HistoryOfWar.org"
+        }
+      ]
+    }
+  ],
+  "voices": [
+    {
+      "phase": "p2",
+      "event": "韋勒河與埃納河之間",
+      "side": "allies",
+      "who": "法國官方戰報",
+      "role": "5月27–28日公報（紐西蘭《自治領報》1918年5月30日轉載）",
+      "quote": "戰鬥仍在韋勒河與埃納河之間激烈進行。英法部隊正面對兵力佔優的敵人。",
+      "original": "The battle continues to rage violently between the Rivers Vesle and Aisne … The Franco-British troops are facing an enemy who is numerically superior",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Dominion, 30 May 1918, p. 5 — Papers Past",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/DOM19180530.2.33.2"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1918年官方戰報（英譯），當年即刊於報紙，1931 年前出版",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "攻佔蘇瓦松",
+      "side": "germany",
+      "who": "德國官方戰報",
+      "role": "5月30日無線電公報（紐西蘭《泰哈佩日報》1918年6月1日轉載）",
+      "quote": "我軍已攻佔蘇瓦松。",
+      "original": "We captured Soissons.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Taihape Daily Times, 1 June 1918, p. 5 — Papers Past",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TAIDT19180601.2.18.1"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1918年官方戰報（英譯），當年即刊於報紙，1931 年前出版",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    },
+    {
+      "phase": "p3",
+      "event": "抵達馬恩河",
+      "side": "germany",
+      "who": "德國官方戰報",
+      "role": "無線電公報（紐西蘭《霍基蒂卡衛報》1918年6月4日轉載）",
+      "quote": "我軍已抵達馬恩河",
+      "original": "We have reached the Marne",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Hokitika Guardian, 4 June 1918, p. 2 — Papers Past",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/HOG19180604.2.15"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1918年官方戰報（英譯），當年即刊於報紙，1931 年前出版",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p4",
+      "event": "橋頭攻擊受挫",
+      "type": "image",
+      "title": "蒂耶里堡的砲擊間隙",
+      "caption": "美國陸軍戰地畫家喬治·哈丁上尉的官方素描〈蒂耶里堡的砲擊間隙〉，約1918年；1919年2月6日刊於《柯里爾》雜誌。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Between_shells_at_Chateau_Thierry_by_George_Harding.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Between_shells_at_Chateau_Thierry_by_George_Harding.jpg/500px-Between_shells_at_Chateau_Thierry_by_George_Harding.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Between_shells_at_Chateau_Thierry_by_George_Harding.jpg",
+      "credit": "George Matthews Harding（美國陸軍）；NARA 111-SC-20112",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國陸軍人員公務作品 PD-USGov-Military-Army）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Army"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p1",
+      "at": "1918-05-27T00:30",
+      "side": "allies",
+      "commander": "德尼·杜申",
+      "title": "死守前沿，還是縱深防禦？",
+      "situation": "法國第6集團軍據守1917年用鮮血換來的貴婦小徑山脊。總司令貝當指示各集團軍採縱深防禦，前沿只留輕兵力。",
+      "intel": [
+        "山脊是1917年才由芒然的部隊奪回的",
+        "英國第9軍是剛從米夏埃爾攻勢撤下休整的部隊",
+        "貝當要求縱深防禦"
+      ],
+      "options": [
+        {
+          "label": "把部隊集中在山脊前沿壕溝死守",
+          "detail": "不願放棄山脊"
+        },
+        {
+          "label": "依貝當指示採縱深防禦，前沿輕守"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "前沿擠滿的守軍成為德軍颶風砲擊的活靶，8個協約國師在首日被擊潰，德軍6小時內攻抵埃納河。",
+      "hindsight": "戰後貝當撤換杜申，由德古特接掌第6集團軍。",
+      "sources": [
+        {
+          "title": "Third Battle of the Aisne — English Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Third_Battle_of_the_Aisne"
+        }
+      ]
+    },
+    {
+      "phase": "p1",
+      "at": "1918-05-27T08:30",
+      "side": "allies",
+      "commander": "安德森—莫斯黑德中校",
+      "title": "被包圍的營",
+      "situation": "清晨7時，德文郡團第2營的前沿各連幾乎全滅，全營被德軍包圍在比特森林。",
+      "intel": [
+        "前沿連隊已覆滅",
+        "營部與預備連仍有戰力",
+        "德軍正從瑞旺庫爾方向推進"
+      ],
+      "options": [
+        {
+          "label": "退到反斜面繼續抵抗，拖住德軍"
+        },
+        {
+          "label": "放下武器投降"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "全營戰至最後，29名軍官與552名士兵陣亡或被俘，營長陣亡，只有40–80人渡過埃納河。",
+      "hindsight": "此舉大幅拖延了德軍推進，讓英法軍隊得以組織臨時防線；該團後獲法國英勇十字勳章附棕櫚。",
+      "sources": [
+        {
+          "title": "Bois des Buttes (Battle honour) — Wikiwand",
+          "url": "https://www.wikiwand.com/en/articles/Bois_des_Buttes_(Battle_honour)"
+        }
+      ]
+    },
+    {
+      "phase": "p3",
+      "at": "1918-05-30",
+      "side": "germany",
+      "commander": "埃里希·魯登道夫",
+      "title": "牽制攻擊要不要停？",
+      "situation": "原本只為吸引協約國預備隊的攻勢，戰果遠超預期：三天內俘虜逾5萬人、奪砲800多門，前鋒逼近馬恩河。法蘭德斯的「哈根」攻勢仍在等待。",
+      "intel": [
+        "協約國防線已被打穿",
+        "德軍已接近馬恩河",
+        "部隊疲憊、補給線拉長"
+      ],
+      "options": [
+        {
+          "label": "改變目標，讓第7集團軍繼續向馬恩河推進"
+        },
+        {
+          "label": "依原計畫停止，把重點轉回法蘭德斯"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "德軍抵達馬恩河、逼近巴黎約56公里，但補給、預備隊與兵力都難以為繼，6月初在蒂耶里堡與貝洛森林被擋下。",
+      "hindsight": "受戰果鼓舞，魯登道夫繼續發動攻勢，最終在第二次馬恩河戰役中轉為潰退。",
+      "sources": [
+        {
+          "title": "Third Battle of the Aisne — English Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Third_Battle_of_the_Aisne"
+        },
+        {
+          "title": "Third Battle of the Aisne — HistoryOfWar.org",
+          "url": "https://www.historyofwar.org/articles/battles_aisne3.html"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "第7集團軍",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-27",
+          "lat": 49.564,
+          "lng": 3.62,
+          "status": "active"
+        },
+        {
+          "lat": 49.445,
+          "lng": 3.65
+        },
+        {
+          "lat": 49.41,
+          "lng": 3.52
+        },
+        {
+          "date": "1918-05-29",
+          "lat": 49.2,
+          "lng": 3.52
+        },
+        {
+          "date": "1918-05-30",
+          "lat": 49.083,
+          "lng": 3.53,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "突擊師",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-27",
+          "lat": 49.44,
+          "lng": 3.87,
+          "status": "active"
+        },
+        {
+          "date": "1918-05-28",
+          "lat": 49.381,
+          "lng": 3.323
+        },
+        {
+          "date": "1918-06-02",
+          "lat": 49.046,
+          "lng": 3.403,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "德文郡團第2營",
+      "side": "allies",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-27",
+          "lat": 49.43,
+          "lng": 3.85,
+          "status": "active"
+        },
+        {
+          "date": "1918-05-27",
+          "lat": 49.42,
+          "lng": 3.84,
+          "status": "destroyed",
+          "note": "全營陣亡或被俘，僅40–80人脫出"
+        }
+      ]
+    },
+    {
+      "unit": "英國第9軍",
+      "side": "allies",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-27",
+          "lat": 49.443,
+          "lng": 3.785,
+          "status": "active"
+        },
+        {
+          "date": "1918-05-28",
+          "lat": 49.308,
+          "lng": 3.682,
+          "status": "withdrawn",
+          "note": "幾乎被全殲"
+        }
+      ]
+    },
+    {
+      "unit": "美國第3師",
+      "side": "usa",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-30",
+          "lat": 48.98,
+          "lng": 3.3,
+          "status": "active"
+        },
+        {
+          "date": "1918-05-31",
+          "lat": 49.046,
+          "lng": 3.403
+        },
+        {
+          "date": "1918-06-03",
+          "lat": 49.07,
+          "lng": 3.45,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "美國第2師",
+      "side": "usa",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-06-01",
+          "lat": 49.04,
+          "lng": 3.25,
+          "status": "active"
+        },
+        {
+          "date": "1918-06-06",
+          "lat": 49.08,
+          "lng": 3.29,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "法國第10殖民師",
+      "side": "allies",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1918-05-31",
+          "lat": 49.07,
+          "lng": 3.4,
+          "status": "active"
+        },
+        {
+          "date": "1918-06-01",
+          "lat": 49.046,
+          "lng": 3.403,
+          "status": "active"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Third Battle of the Aisne — English Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Third_Battle_of_the_Aisne",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "主要事實、砲擊、俘虜、傷亡（引 Marix Evans）與後果"
+    },
+    {
+      "title": "第三次埃納河戰役 — 中文維基百科（使用者提供）",
+      "url": "https://zh.wikipedia.org/zh-tw/%E7%AC%AC%E4%B8%89%E6%AC%A1%E5%9F%83%E7%B4%8D%E6%B2%B3%E6%88%B0%E5%BD%B9",
+      "type": "wiki",
+      "lang": "zh",
+      "accessed": "2026-10-30",
+      "note": "未直接查閱（該站點抓取常失敗）"
+    },
+    {
+      "title": "Third Battle of the Aisne, 27 May–3 June 1918 — HistoryOfWar.org",
+      "url": "https://www.historyofwar.org/articles/battles_aisne3.html",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "兵力、逐日進展、蘇瓦松與馬恩河"
+    },
+    {
+      "title": "The Battle of the Aisne, 1918 — The Long, Long Trail",
+      "url": "https://www.longlongtrail.co.uk/?p=1890",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "英國第9軍各師"
+    },
+    {
+      "title": "Bois des Buttes (Battle honour) — Wikiwand",
+      "url": "https://www.wikiwand.com/en/articles/Bois_des_Buttes_(Battle_honour)",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "德文郡團第2營時刻與損失"
+    },
+    {
+      "title": "Battle of Château-Thierry (1918) — English Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Battle_of_Ch%C3%A2teau-Thierry_(1918)",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "5月31日–6月3日蒂耶里堡守橋"
+    },
+    {
+      "title": "Third Battle of the Aisne — National Army Museum",
+      "url": "https://ww1.nam.ac.uk/timeline/third-battle-aisne/",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "日期交叉比對"
+    },
+    {
+      "title": "Dominion, 30 May 1918 — Papers Past",
+      "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/DOM19180530.2.33.2",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "轉載法國官方戰報"
+    },
+    {
+      "title": "Taihape Daily Times, 1 June 1918 — Papers Past",
+      "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TAIDT19180601.2.18.1",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "轉載德國官方戰報"
+    },
+    {
+      "title": "Hokitika Guardian, 4 June 1918 — Papers Past",
+      "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/HOG19180604.2.15",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "轉載德國官方戰報"
+    },
+    {
+      "title": "Marix Evans, M. 1918: The Year of Victories",
+      "url": "",
+      "type": "book",
+      "lang": "en",
+      "note": "經英文維基轉引，未直接查閱"
+    }
+  ],
+  "provenance": {
+    "extracted_by": "Claude (claude-opus-5-5)",
+    "extracted_at": "2026-10-30",
+    "confidence": {
+      "coordinates": "approx",
+      "strength": "medium",
+      "casualties": "medium",
+      "weapons": "medium"
+    },
+    "notes": "使用者提供的中文維基連結未直接查閱，改以英文維基為主，並以 HistoryOfWar.org、The Long, Long Trail、英國國家陸軍博物館、比特森林與蒂耶里堡條目及1918年紐西蘭報紙轉載的官方戰報交叉比對。英文維基本條目內容單薄，未寫出德國各集團軍司令、蘇瓦松陷落日與天候；德國第1集團軍司令依 HistoryOfWar.org 記為穆德拉。協約國方面的法、英、義三國合為一方（義大利軍在布利尼一帶參戰為一般知識，來源只在交戰方列出義大利）。武器型號、毒氣種類、規格為一般知識補充。座標依地名近似定位；協約國戰線、行軍箭頭與部隊軌跡皆為示意，第7集團軍5月29日的位置為階段日期。5月27日凌晨時刻（01:00 砲擊、約03:45 突擊、07:00、08:30、09:30）出自比特森林條目。天候：來源均未記載，故未填。沉浸素材：圖片僅1張（美國陸軍戰地畫家哈丁的官方素描，PD-USGov-Military-Army，約1918年，可能晚於本戰役）；德國聯邦檔案館的「德軍推進」照片年代約1916年、Commons 的蒂耶里堡照片缺美國公有領域標籤，均未收。引文3則：法國與德國官方戰報，出自1918年紐西蘭報紙英譯轉載；OCR 錯字（Vesle、Aisne、The）依上下文校正，德方「抵達馬恩河」一則因地名 OCR 難辨，只取前半句。決策3則（杜申前沿部署、德文郡團第2營營長、魯登道夫擴大戰果）。"
+  },
+  "revision": "2026-10-30T08:18:22.436Z"
+}

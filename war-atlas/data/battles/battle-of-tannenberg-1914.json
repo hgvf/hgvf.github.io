@@ -1,0 +1,1933 @@
+{
+  "schema_version": 1,
+  "id": "battle-of-tannenberg-1914",
+  "kind": "battle",
+  "title": "坦能堡戰役（1914年）",
+  "title_en": "Battle of Tannenberg (1914)",
+  "aliases": [
+    "第二次坦能堡戰役",
+    "薩姆索諾夫作戰（俄方史學）",
+    "興登堡作戰（俄方史學）",
+    "Schlacht bei Tannenberg"
+  ],
+  "wars": [
+    "wwi",
+    "eastern-front-wwi"
+  ],
+  "tags": [
+    "包圍殲滅戰",
+    "鐵路機動",
+    "無線電截收",
+    "東普魯士"
+  ],
+  "date": {
+    "start": "1914-08-26",
+    "end": "1914-08-30",
+    "label": "1914年8月26日–30日（前哨戰自8月23日）",
+    "duration_days": 5
+  },
+  "location": {
+    "name": "東普魯士 阿倫施泰因（今奧爾什丁）以南",
+    "country_then": "德意志帝國",
+    "country_now": "波蘭",
+    "lat": 53.5,
+    "lng": 20.35,
+    "zoom": 9
+  },
+  "result": {
+    "winner": "germany",
+    "label": "德軍決定性勝利",
+    "detail": "俄國第2集團軍中央兩個半軍被圍殲，司令薩姆索諾夫自殺；第1、第6軍潰退回波蘭。德軍隨後轉身對付俄國第1集團軍（第一次馬祖里湖戰役）。"
+  },
+  "summary": "1914年8月，俄國以兩個集團軍夾擊東普魯士。德國第8集團軍換上興登堡與魯登道夫後，藉鐵路把兵力南移，並截收俄軍以明碼發送的無線電命令，確知倫寧坎普夫不會南下支援。8月26日至30日，德軍從兩翼包抄薩姆索諾夫的第2集團軍，在霍恩施泰因—奈登堡之間合圍其中央部隊，俘虜約9萬人。這是一戰東線最著名的包圍戰，戰場其實在阿倫施泰因附近，卻刻意以1410年條頓騎士團戰敗之地「坦能堡」命名。",
+  "background": [
+    {
+      "title": "施里芬計畫與東線的薄弱兵力",
+      "text": "德國把絕大部分兵力投向法國，東普魯士只留第8集團軍，約占動員總兵力一成，計畫先守後攻。"
+    },
+    {
+      "title": "俄國對法國的承諾",
+      "text": "俄國答應法國在動員第15天入侵東普魯士，倉促出兵，鐵路多為單線、軌距與德國不同，補給只能靠馬車從邊境轉運。"
+    },
+    {
+      "title": "鉗形攻勢與馬祖里湖區",
+      "text": "西北方面軍（日林斯基）以第1集團軍（倫寧坎普夫）自東、第2集團軍（薩姆索諾夫）自南夾擊，但兩軍被馬祖里湖區隔開，無法互相支援。"
+    },
+    {
+      "title": "貢賓嫩之後的指揮更替",
+      "text": "8月20日德軍在貢賓嫩受挫，普里特維茨一度要退到維斯瓦河，8月22日被撤換，由興登堡任司令、魯登道夫任參謀長。"
+    },
+    {
+      "title": "明碼無線電",
+      "text": "俄軍電纜不足，只能用無線電聯絡；薩姆索諾夫沒有新密碼本，只好以明碼發送命令，德軍得以每天截收其行軍計畫。"
+    }
+  ],
+  "objectives": {
+    "germany": "先擋住並殲滅南面的俄國第2集團軍，再回頭對付東面的第1集團軍，保住東普魯士。",
+    "russia": "以兩個集團軍包夾德國第8集團軍，切斷其向維斯瓦河的退路並攻佔東普魯士，牽制德軍以支援法國。"
+  },
+  "sides": [
+    {
+      "id": "germany",
+      "name": "德意志帝國",
+      "color": "#4d4d4d",
+      "belligerents": [
+        "德意志帝國"
+      ],
+      "commanders": [
+        {
+          "name": "保羅·馮·興登堡",
+          "role": "第8集團軍司令（8月22日上任）"
+        },
+        {
+          "name": "埃里希·魯登道夫",
+          "role": "第8集團軍參謀長"
+        },
+        {
+          "name": "馬克斯·霍夫曼",
+          "role": "第8集團軍作戰參謀（中校）"
+        },
+        {
+          "name": "赫爾曼·馮·弗朗索瓦",
+          "role": "第1軍軍長"
+        },
+        {
+          "name": "奧古斯特·馮·馬肯森",
+          "role": "第17軍軍長"
+        },
+        {
+          "name": "弗里德里希·馮·肖爾茨",
+          "role": "第20軍軍長"
+        },
+        {
+          "name": "奧托·馮·貝洛",
+          "role": "第1預備軍軍長"
+        }
+      ],
+      "units": [
+        {
+          "name": "第8集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "興登堡",
+          "note": "東普魯士唯一的德國野戰集團軍，約15萬人。"
+        },
+        {
+          "name": "第1軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "弗朗索瓦",
+          "note": "從東線經150餘公里鐵路晝夜南運，每30分鐘一列車；8月27日奪烏斯道、28日奪索爾道並進向奈登堡，29日其騎兵抵維倫貝格完成合圍的南鉗。"
+        },
+        {
+          "name": "第1步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第1軍所屬，攻向澤本，29日控制奈登堡—維倫貝格公路。"
+        },
+        {
+          "name": "第2步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第1軍所屬，在第1步兵師南翼進攻。"
+        },
+        {
+          "name": "第20軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "肖爾茨",
+          "note": "多為東普魯士本地兵，8月23–24日在奧爾勞—弗蘭肯瑙一線擋住俄軍，後為合圍的樞軸。"
+        },
+        {
+          "name": "第37步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第20軍所屬，8月28日攻抵霍恩施泰因。"
+        },
+        {
+          "name": "第41步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第20軍所屬，在瓦普利茨湖一帶遭俄第15軍重創但守住陣地。"
+        },
+        {
+          "name": "第3預備師",
+          "echelon": "師",
+          "branch": "army",
+          "commander": "庫爾特·馮·莫根",
+          "note": "第20軍左翼，起初因顧慮側翼而停頓，28日向俄第15軍推進迫其後撤。"
+        },
+        {
+          "name": "第17軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "馬肯森",
+          "note": "自北面南下，在比紹夫斯堡擊潰俄第6軍，29日在耶德瓦布諾與第1軍巡邏隊會合，合圍完成。"
+        },
+        {
+          "name": "第35步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第17軍左翼，攻向比紹夫斯堡。"
+        },
+        {
+          "name": "第36步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第17軍右翼，攻向比紹夫斯堡。"
+        },
+        {
+          "name": "第1預備軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "奧托·馮·貝洛",
+          "note": "切斷比紹夫斯堡—瓦滕堡公路，側擊俄第16步兵師；28日在阿倫施泰因以西與俄第13軍交戰。"
+        },
+        {
+          "name": "第1騎兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "留在柯尼斯堡以南掩護，監視俄國第1集團軍。"
+        }
+      ],
+      "strength": {
+        "troops": 150000,
+        "troops_label": "約 15 萬",
+        "formations": "4 個軍、1 個預備師、1 個騎兵師及守備部隊",
+        "artillery": 728,
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "note": "英文維基資訊框：機槍 294 挺、火砲 728 門。"
+      },
+      "casualties": {
+        "killed": 1726,
+        "wounded": 7461,
+        "missing": 4686,
+        "captured": null,
+        "total": 13873,
+        "total_label": "約 1.2 萬 – 3 萬（官方 13,873）",
+        "range": [
+          12000,
+          30000
+        ],
+        "note": "德國《衛生報告》（1934）8月21–30日：陣亡 1,726、傷 7,461、失蹤 4,686，共 13,873；Hastings 2013 約 1.2 萬；Nelipovich 2023 引名冊為陣亡 1,888、傷 6,579、失蹤 4,588；另有估計約 3 萬死傷（均經英文維基轉引）。",
+        "confidence": "medium"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "毛瑟 98 型步槍",
+          "model": "Gewehr 98",
+          "qty": "全軍制式",
+          "year": "1898",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "5 發",
+            "有效射程": "約 500 m",
+            "重量": "約 4.1 kg"
+          },
+          "note": "德軍步兵制式步槍。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "MG 08 重機槍",
+          "model": "MG 08",
+          "qty": "294 挺",
+          "year": "1908",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "250 發彈鏈",
+            "射速": "約 450–500 發/分",
+            "重量": "約 26 kg（不含架）"
+          },
+          "note": "數量依英文維基資訊框；在29日攔截突圍俄軍時發揮重大作用。"
+        },
+        {
+          "cat": "artillery",
+          "name": "7.7 公分野砲",
+          "model": "7.7 cm FK 96 n.A.",
+          "qty": "火砲合計 728 門（含各型）",
+          "year": "1904",
+          "specs": {
+            "口徑": "77 mm",
+            "射程": "約 7.8 km",
+            "重量": "約 1 t"
+          },
+          "note": "德軍師屬野砲主力；第1軍27日在烏斯道的砲擊壓倒俄第1軍。"
+        },
+        {
+          "cat": "artillery",
+          "name": "10.5 公分輕野戰榴彈砲",
+          "model": "10.5 cm leFH 98/09",
+          "qty": "不明",
+          "year": "1909",
+          "specs": {
+            "口徑": "105 mm",
+            "射程": "約 6.3 km",
+            "重量": "約 1.2 t"
+          },
+          "note": "德軍師屬榴彈砲，曲射火力優於俄軍。"
+        },
+        {
+          "cat": "artillery",
+          "name": "15 公分重野戰榴彈砲",
+          "model": "15 cm sFH 02",
+          "qty": "不明",
+          "year": "1902",
+          "specs": {
+            "口徑": "149.7 mm",
+            "射程": "約 7.4 km",
+            "重量": "約 2 t"
+          },
+          "note": "軍屬重砲；29日對包圍圈內俄軍終日轟擊。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "鴿式偵察機",
+          "model": "Rumpler Taube",
+          "qty": "少量",
+          "year": "1910",
+          "specs": {
+            "類型": "偵察機",
+            "最大速度": "約 100 km/h",
+            "武裝": "無",
+            "航程": "約 140 km",
+            "乘員": "2"
+          },
+          "note": "德軍空中偵察看見俄第2集團軍縱隊越境，28日晨又回報倫寧坎普夫向後方移動，引發指揮部危機。機型為一般知識推定。"
+        }
+      ]
+    },
+    {
+      "id": "russia",
+      "name": "俄羅斯帝國",
+      "color": "#a33a3a",
+      "belligerents": [
+        "俄羅斯帝國"
+      ],
+      "commanders": [
+        {
+          "name": "亞歷山大·薩姆索諾夫",
+          "role": "第2集團軍司令",
+          "fate": "自殺"
+        },
+        {
+          "name": "雅科夫·日林斯基",
+          "role": "西北方面軍司令（未親臨戰場）"
+        },
+        {
+          "name": "保羅·馮·倫寧坎普夫",
+          "role": "第1集團軍司令（未參與此戰）"
+        },
+        {
+          "name": "尼古拉·馬爾托斯",
+          "role": "第15軍軍長",
+          "fate": "被俘"
+        },
+        {
+          "name": "尼古拉·克柳耶夫",
+          "role": "第13軍軍長",
+          "fate": "被俘"
+        },
+        {
+          "name": "亞歷山大·布拉戈維申斯基",
+          "role": "第6軍軍長"
+        }
+      ],
+      "units": [
+        {
+          "name": "西北方面軍",
+          "echelon": "方面軍",
+          "branch": "army",
+          "commander": "日林斯基",
+          "note": "統轄第1、第2集團軍，與薩姆索諾夫為進攻方向爭執不休，未能協調兩軍。"
+        },
+        {
+          "name": "第2集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "薩姆索諾夫",
+          "note": "又稱納雷夫集團軍；5 個軍、4 個騎兵師，自華沙軍區動員，8月21日越境。"
+        },
+        {
+          "name": "第1軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "左翼掩護，27日在烏斯道被德第1軍擊退，28日失索爾道後失去戰鬥力，退回波蘭。"
+        },
+        {
+          "name": "第6軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "布拉戈維申斯基",
+          "note": "依日林斯基要求單獨北上比紹夫斯堡，與主力相隔兩天半行程；26日被德第17軍與第1預備軍擊潰，退往奧爾特爾斯堡，未被包圍。"
+        },
+        {
+          "name": "第4步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第6軍所屬，在羅特弗利斯以北，損失慘重後退往奧爾特爾斯堡。"
+        },
+        {
+          "name": "第16步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第6軍所屬，佔領比紹夫斯堡，分兵增援時遭德第1預備軍側後夾擊而潰散。"
+        },
+        {
+          "name": "第4騎兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "第6軍方面，駐森斯堡。"
+        },
+        {
+          "name": "第13軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "克柳耶夫",
+          "note": "奉命進佔阿倫施泰因，28日奉令後撤往庫爾肯，終在包圍圈中投降。"
+        },
+        {
+          "name": "第15軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "馬爾托斯",
+          "note": "23日把德第20軍逐出拉赫納，在瓦普利茨重創德第41步兵師，最後在包圍圈中覆滅。"
+        },
+        {
+          "name": "第23軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "部分兵力參戰，27日被擊敗退往奈登堡，殘部被圍。"
+        },
+        {
+          "name": "第2步兵師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "屬第23軍，25日與德第20軍交戰，傷亡慘重後撤。"
+        },
+        {
+          "name": "第1集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "倫寧坎普夫",
+          "note": "貢賓嫩後停頓補給，向西緩慢推進柯尼斯堡，未南下援救第2集團軍。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "12.3 萬 – 18 萬（另有 23 萬之說）",
+        "formations": "5 個軍、4 個騎兵師",
+        "artillery": 612,
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "note": "英文維基資訊框：12.3–18 萬人、機槍 384 挺、火砲 612 門；該條目舊版作 23 萬。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": 92000,
+        "total": null,
+        "total_label": "7 萬 – 12 萬死傷被俘（被俘約 9.2 萬）",
+        "range": [
+          70000,
+          120219
+        ],
+        "note": "興登堡回憶錄與德國帝國檔案館：俘虜 9.2 萬；德國官方史估死傷約 5 萬；Oleynikov 認為總損失不超過 8 萬；Nelipovich 2023 依部隊報告統計 120,219（陣亡 5,522、傷 12,326、失蹤 75,435、未分類 26,936）；另一估計 3 萬死傷、13 名將領及 500 門砲被俘（均經英文維基轉引）。",
+        "confidence": "contested"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "莫辛—納甘步槍",
+          "model": "Mosin-Nagant M1891",
+          "qty": "全軍制式",
+          "year": "1891",
+          "specs": {
+            "口徑": "7.62 mm",
+            "彈容": "5 發",
+            "有效射程": "約 500 m",
+            "重量": "約 4.2 kg"
+          },
+          "note": "俄軍步兵制式步槍。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "馬克沁 1910 型重機槍",
+          "model": "Maxim M1910",
+          "qty": "384 挺",
+          "year": "1910",
+          "specs": {
+            "口徑": "7.62 mm",
+            "彈容": "250 發彈鏈",
+            "射速": "約 500–600 發/分",
+            "重量": "約 64 kg（含輪架）"
+          },
+          "note": "數量依英文維基資訊框。"
+        },
+        {
+          "cat": "artillery",
+          "name": "76 毫米野砲",
+          "model": "76 mm M1902",
+          "qty": "火砲合計 612 門（含各型）",
+          "year": "1902",
+          "specs": {
+            "口徑": "76.2 mm",
+            "射程": "約 8.5 km",
+            "重量": "約 1 t"
+          },
+          "note": "俄軍師屬野砲主力；俄軍整體砲兵與彈藥明顯不足。"
+        },
+        {
+          "cat": "artillery",
+          "name": "122 毫米榴彈砲",
+          "model": "122 mm M1909",
+          "qty": "不明",
+          "year": "1909",
+          "specs": {
+            "口徑": "122 mm",
+            "射程": "約 7.7 km",
+            "重量": "約 1.3 t"
+          },
+          "note": "俄軍輕榴彈砲，數量遠少於德軍同類火砲。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "法曼雙翼偵察機",
+          "model": "Farman HF.20",
+          "qty": "少量",
+          "year": "1913",
+          "specs": {
+            "類型": "偵察機",
+            "最大速度": "約 100 km/h",
+            "武裝": "無",
+            "航程": "約 300 km",
+            "乘員": "2"
+          },
+          "note": "俄軍空中偵察曾發現德第1軍抵達，但飛機與騎兵都不足以看清左翼德軍集結。機型為一般知識推定。"
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "title": "俄軍越境與德軍換帥",
+      "start": "1914-08-20",
+      "end": "1914-08-23",
+      "summary": "貢賓嫩受挫後，普里特維茨一度要撤到西普魯士，旋即被撤換。俄國第2集團軍8月21日越境，連下邊境城鎮；23日新司令興登堡與魯登道夫抵達馬林堡，第1軍改由鐵路南運。",
+      "view": {
+        "lat": 53.8,
+        "lng": 20.4,
+        "zoom": 8
+      },
+      "conditions": {
+        "weather": "酷熱",
+        "ground": "俄方邊境只有沙土小路，缺少碎石公路",
+        "note": "俄軍在酷暑中連續行軍六天、日均約24公里，補給已跟不上。",
+        "sources": [
+          {
+            "title": "Battle of Tannenberg — English Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1914-08-20T20:23",
+          "title": "第8集團軍電告撤退",
+          "text": "貢賓嫩戰況惡化，又截獲俄第2集團軍5個軍逼近的消息，第8集團軍20時23分電告最高統帥部將退往西普魯士。",
+          "lat": 54.036,
+          "lng": 19.03,
+          "type": "hq",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-21",
+          "title": "俄第2集團軍越境",
+          "text": "第6軍攻佔奧爾特爾斯堡，第1、第15軍推向索爾道與奈登堡。",
+          "lat": 53.36,
+          "lng": 20.425,
+          "type": "assault",
+          "side": "russia"
+        },
+        {
+          "date": "1914-08-22",
+          "title": "興登堡與魯登道夫受命",
+          "text": "毛奇撤換普里特維茨與瓦德西，第8集團軍下令轉向阻擊薩姆索諾夫；第1軍搭火車繞遠路南下。",
+          "lat": 53.596,
+          "lng": 19.568,
+          "type": "hq",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-23",
+          "title": "第15軍奪取拉赫納",
+          "text": "俄第15軍向霍恩施泰因推進，把德第20軍逐出拉赫納，德軍當夜退到奧爾勞—弗蘭肯瑙一線。",
+          "lat": 53.4,
+          "lng": 20.38,
+          "type": "assault",
+          "side": "russia"
+        }
+      ],
+      "moves": [
+        {
+          "side": "russia",
+          "kind": "attack",
+          "label": "第15軍",
+          "unit": "第15軍",
+          "model": "infantry",
+          "start": "1914-08-21",
+          "end": "1914-08-23",
+          "path": [
+            [
+              53.36,
+              20.425
+            ],
+            [
+              53.4,
+              20.38
+            ],
+            [
+              53.43,
+              20.3
+            ]
+          ]
+        },
+        {
+          "side": "russia",
+          "kind": "attack",
+          "label": "第6軍",
+          "unit": "第6軍",
+          "model": "infantry",
+          "start": "1914-08-21",
+          "end": "1914-08-23",
+          "path": [
+            [
+              53.3,
+              21
+            ],
+            [
+              53.563,
+              20.987
+            ]
+          ]
+        },
+        {
+          "side": "germany",
+          "kind": "reinforce",
+          "label": "第1軍（鐵路南運）",
+          "unit": "第1軍",
+          "model": "infantry",
+          "start": "1914-08-22",
+          "end": "1914-08-25",
+          "path": [
+            [
+              54.59,
+              22.2
+            ],
+            [
+              54.71,
+              20.51
+            ],
+            [
+              54.036,
+              19.03
+            ],
+            [
+              53.596,
+              19.568
+            ]
+          ]
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "front",
+          "key": "xx-corps-line",
+          "label": "第20軍防線",
+          "line": [
+            [
+              53.48,
+              20.1
+            ],
+            [
+              53.43,
+              20.3
+            ],
+            [
+              53.41,
+              20.33
+            ],
+            [
+              53.42,
+              20.45
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "布下陷阱",
+      "start": "1914-08-24",
+      "end": "1914-08-25",
+      "summary": "德軍將領巡視前線，靠截收的俄軍明碼電報與繳獲地圖確認倫寧坎普夫繼續西進、不會南援，決定以兩翼包抄。薩姆索諾夫則把主力轉向西北，只留第6軍北上，兩翼實際上都暴露在德軍集結之下。",
+      "view": {
+        "lat": 53.5,
+        "lng": 20.3,
+        "zoom": 9
+      },
+      "conditions": {
+        "weather": "酷熱",
+        "visibility": "燃燒村莊升起的煙柱",
+        "fx": [
+          "smoke"
+        ],
+        "note": "24日興登堡一行沿前線驅車，路上擠滿逃難平民，背景是被砲彈點燃的村莊冒出的煙柱。",
+        "sources": [
+          {
+            "title": "Battle of Tannenberg — English Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1914-08-24",
+          "title": "奧爾勞—弗蘭肯瑙之戰",
+          "text": "俄軍再攻，已部分構築戰壕的德第20軍暫時擋住，隨後為免被包圍而後撤；該軍參謀長甚至指揮砲火射向自己的住宅。",
+          "lat": 53.41,
+          "lng": 20.33,
+          "type": "defense",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-24",
+          "title": "途經坦能堡村",
+          "text": "興登堡、魯登道夫、霍夫曼驅車視察，途經坦能堡村，想起1410年條頓騎士團在此戰敗。",
+          "lat": 53.493,
+          "lng": 20.13,
+          "type": "hq",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-24",
+          "title": "截收俄軍命令",
+          "text": "霍夫曼收到新的截收電報：日林斯基令倫寧坎普夫繼續向西，而非轉向西南支援薩姆索諾夫。",
+          "lat": 53.43,
+          "lng": 20.03,
+          "type": "hq",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-25",
+          "title": "弗朗索瓦攻佔澤本",
+          "text": "第1軍第1步兵師攻向澤本並於午後攻下，把進攻烏斯道留待次日（英文維基作25日，部分史料作26日）。",
+          "lat": 53.33,
+          "lng": 20.04,
+          "type": "assault",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第1步兵師",
+          "unit": "第1步兵師",
+          "model": "infantry",
+          "start": "1914-08-25",
+          "end": "1914-08-25",
+          "path": [
+            [
+              53.596,
+              19.568
+            ],
+            [
+              53.43,
+              20.03
+            ],
+            [
+              53.33,
+              20.04
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "russia",
+          "kind": "attack",
+          "label": "第13軍",
+          "unit": "第13軍",
+          "model": "infantry",
+          "start": "1914-08-24",
+          "end": "1914-08-26",
+          "path": [
+            [
+              53.45,
+              20.55
+            ],
+            [
+              53.53,
+              20.42
+            ],
+            [
+              53.778,
+              20.48
+            ]
+          ]
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第17軍",
+          "unit": "第17軍",
+          "model": "infantry",
+          "start": "1914-08-23",
+          "end": "1914-08-25",
+          "path": [
+            [
+              54.25,
+              21.3
+            ],
+            [
+              54.05,
+              21.05
+            ],
+            [
+              53.92,
+              20.95
+            ]
+          ]
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "front",
+          "key": "xx-corps-line",
+          "label": "第20軍防線",
+          "line": [
+            [
+              53.5,
+              20.05
+            ],
+            [
+              53.47,
+              20.1
+            ],
+            [
+              53.53,
+              20.27
+            ],
+            [
+              53.58,
+              20.4
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "右翼崩潰：比紹夫斯堡",
+      "start": "1914-08-26",
+      "end": "1914-08-26",
+      "summary": "德第17軍與第1預備軍在比紹夫斯堡一帶擊潰孤立北上的俄第6軍，俄第4、第16步兵師相繼潰退。德軍司令部當晚卻對戰況所知甚少，又聽說倫寧坎普夫有一個軍經過安格堡，信心動搖，最後仍決定照原計畫包圍。",
+      "view": {
+        "lat": 53.8,
+        "lng": 20.8,
+        "zoom": 9
+      },
+      "conditions": {
+        "weather": "酷熱",
+        "note": "第17軍在悶熱天氣中長途行軍，仍有人騎著向平民徵用的自行車追擊。",
+        "sources": [
+          {
+            "title": "Battle of Tannenberg — English Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1914-08-26",
+          "title": "俄第4步兵師潰退",
+          "text": "馬肯森第35、36步兵師攻向比紹夫斯堡，俄第4步兵師損失慘重退往奧爾特爾斯堡。",
+          "lat": 53.865,
+          "lng": 20.957,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-26",
+          "title": "第1預備軍側擊",
+          "text": "布拉戈維申斯基分兵增援，第16步兵師卻在拉姆紹一帶遭貝洛第1預備軍側後夾擊，陷入混亂撤退。",
+          "lat": 53.85,
+          "lng": 20.8,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-26",
+          "title": "司令部的動搖",
+          "text": "傳來倫寧坎普夫一個軍行經安格堡的報告，第8集團軍內部疑慮四起；興登堡與魯登道夫晚餐後密談，決定繼續包圍。",
+          "lat": 54.08,
+          "lng": 21.78,
+          "type": "hq",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第17軍",
+          "unit": "第17軍",
+          "model": "infantry",
+          "start": "1914-08-26",
+          "end": "1914-08-26",
+          "path": [
+            [
+              53.92,
+              20.95
+            ],
+            [
+              53.865,
+              20.957
+            ],
+            [
+              53.7,
+              20.98
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第1預備軍",
+          "unit": "第1預備軍",
+          "model": "infantry",
+          "start": "1914-08-26",
+          "end": "1914-08-26",
+          "path": [
+            [
+              53.98,
+              20.7
+            ],
+            [
+              53.83,
+              20.69
+            ],
+            [
+              53.85,
+              20.8
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "russia",
+          "kind": "retreat",
+          "label": "第6軍",
+          "unit": "第6軍",
+          "model": "infantry",
+          "start": "1914-08-26",
+          "end": "1914-08-27",
+          "path": [
+            [
+              53.865,
+              20.957
+            ],
+            [
+              53.563,
+              20.987
+            ]
+          ]
+        }
+      ],
+      "zones": []
+    },
+    {
+      "id": "p4",
+      "title": "左翼突破：烏斯道與索爾道",
+      "start": "1914-08-27",
+      "end": "1914-08-28",
+      "summary": "弗朗索瓦以壓倒性砲火奪取烏斯道，次日拿下索爾道後直撲奈登堡，俄第1軍失去戰鬥力。28日晨德軍又因空中偵察回報倫寧坎普夫逼近而一度想中止作戰，興登堡堅持照原計畫進行。當天薩姆索諾夫下令中央各軍退往奈登堡。",
+      "view": {
+        "lat": 53.42,
+        "lng": 20.25,
+        "zoom": 10
+      },
+      "events": [
+        {
+          "date": "1914-08-27",
+          "title": "攻佔烏斯道",
+          "text": "第1軍猛烈砲擊後攻下要地烏斯道，俄第1軍被逐回索爾道。",
+          "lat": 53.29,
+          "lng": 20.07,
+          "type": "assault",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-27",
+          "title": "魯登道夫下令四面合擊",
+          "text": "當晚德軍向統帥部報告：俄第1、第6軍已被擊退，第13、15軍仍在霍恩施泰因—阿倫施泰因一帶，次日將盡可能從各方向進攻。",
+          "lat": 53.585,
+          "lng": 20.285,
+          "type": "hq",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-28",
+          "title": "瓦普利茨湖苦戰",
+          "text": "德第41步兵師遭俄第15軍重創，但守住陣地；第37步兵師當天攻抵霍恩施泰因。",
+          "lat": 53.53,
+          "lng": 20.27,
+          "type": "defense",
+          "side": "russia"
+        },
+        {
+          "date": "1914-08-28",
+          "title": "攻佔索爾道、進向奈登堡",
+          "text": "第1軍上午攻下索爾道，轉向奈登堡，俄第1軍退出戰鬥。",
+          "lat": 53.236,
+          "lng": 20.183,
+          "type": "breakthrough",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-28",
+          "title": "薩姆索諾夫下令撤退",
+          "text": "第3預備師向第15軍推進，薩姆索諾夫下令中央部隊退往奈登堡，命第13軍撤往庫爾肯。",
+          "lat": 53.53,
+          "lng": 20.42,
+          "type": "retreat",
+          "side": "russia"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第1軍",
+          "unit": "第1軍",
+          "model": "infantry",
+          "start": "1914-08-27",
+          "end": "1914-08-28",
+          "path": [
+            [
+              53.33,
+              20.04
+            ],
+            [
+              53.29,
+              20.07
+            ],
+            [
+              53.236,
+              20.183
+            ],
+            [
+              53.36,
+              20.425
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "russia",
+          "kind": "retreat",
+          "label": "第1軍",
+          "unit": "第1軍",
+          "model": "infantry",
+          "start": "1914-08-27",
+          "end": "1914-08-28",
+          "path": [
+            [
+              53.29,
+              20.07
+            ],
+            [
+              53.236,
+              20.183
+            ],
+            [
+              53.1,
+              20.2
+            ]
+          ]
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第37步兵師",
+          "unit": "第37步兵師",
+          "model": "infantry",
+          "start": "1914-08-28",
+          "end": "1914-08-28",
+          "path": [
+            [
+              53.5,
+              20.2
+            ],
+            [
+              53.585,
+              20.285
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "russia",
+          "kind": "retreat",
+          "label": "第13軍",
+          "unit": "第13軍",
+          "model": "infantry",
+          "start": "1914-08-28",
+          "end": "1914-08-29",
+          "path": [
+            [
+              53.778,
+              20.48
+            ],
+            [
+              53.53,
+              20.42
+            ],
+            [
+              53.585,
+              20.285
+            ]
+          ]
+        }
+      ],
+      "zones": [
+        {
+          "side": "russia",
+          "kind": "hold",
+          "key": "russian-centre",
+          "label": "俄第13、15軍",
+          "polygon": [
+            [
+              53.62,
+              20.15
+            ],
+            [
+              53.65,
+              20.45
+            ],
+            [
+              53.5,
+              20.55
+            ],
+            [
+              53.38,
+              20.42
+            ],
+            [
+              53.42,
+              20.15
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "title": "合圍與覆滅",
+      "start": "1914-08-29",
+      "end": "1914-08-31",
+      "summary": "29日弗朗索瓦的騎兵抵達維倫貝格，與馬肯森在耶德瓦布諾會師，包圍圈閉合。南撤的俄軍撞上德軍防線，在弗羅格瑙一帶的包圍圈內終日遭砲擊，大批投降。30日圈外俄軍解圍失敗，薩姆索諾夫當晚走入森林自殺。31日興登堡向德皇報捷，請以「坦能堡」命名此戰。",
+      "view": {
+        "lat": 53.45,
+        "lng": 20.4,
+        "zoom": 10
+      },
+      "conditions": {
+        "ground": "開闊田野，作物尚未收割",
+        "note": "想衝過長滿作物的開闊田地突圍的俄軍遭機槍掃倒。",
+        "sources": [
+          {
+            "title": "Battle of Tannenberg — English Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1914-08-29",
+          "title": "維倫貝格合圍",
+          "text": "第1軍騎兵團傍晚抵達維倫貝格，其巡邏隊與攻至耶德瓦布諾的第17軍會合，合圍完成。",
+          "lat": 53.4,
+          "lng": 20.8,
+          "type": "breakthrough",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-29",
+          "title": "弗羅格瑙包圍圈",
+          "text": "俄軍中央部隊被困在坦能堡以西的弗羅格瑙一帶，整日遭砲擊，大批投降，戰俘長列塞滿道路。",
+          "lat": 53.47,
+          "lng": 20.1,
+          "type": "siege",
+          "side": "germany"
+        },
+        {
+          "date": "1914-08-30",
+          "title": "解圍失敗、薩姆索諾夫自殺",
+          "text": "包圍圈外的俄軍試圖打開缺口未果；薩姆索諾夫不願向沙皇報告全軍覆沒，當夜走入維倫貝格附近森林自殺。",
+          "lat": 53.4,
+          "lng": 20.8,
+          "type": "retreat",
+          "side": "russia"
+        },
+        {
+          "date": "1914-08-31",
+          "title": "興登堡報捷",
+          "text": "興登堡向德皇正式報告俄第13、15、23軍被殲，第1、6軍重創後退回波蘭，並請求以坦能堡命名此戰。",
+          "lat": 53.778,
+          "lng": 20.48,
+          "type": "hq",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第1軍",
+          "unit": "第1軍",
+          "model": "cavalry",
+          "start": "1914-08-29",
+          "end": "1914-08-29",
+          "path": [
+            [
+              53.36,
+              20.425
+            ],
+            [
+              53.4,
+              20.8
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "第17軍",
+          "unit": "第17軍",
+          "model": "infantry",
+          "start": "1914-08-28",
+          "end": "1914-08-29",
+          "path": [
+            [
+              53.563,
+              20.987
+            ],
+            [
+              53.53,
+              20.75
+            ]
+          ],
+          "outcome": "success"
+        },
+        {
+          "side": "russia",
+          "kind": "retreat",
+          "label": "第15軍",
+          "unit": "第15軍",
+          "model": "infantry",
+          "start": "1914-08-29",
+          "end": "1914-08-30",
+          "path": [
+            [
+              53.585,
+              20.285
+            ],
+            [
+              53.45,
+              20.3
+            ],
+            [
+              53.4,
+              20.38
+            ]
+          ],
+          "outcome": "stopped"
+        }
+      ],
+      "zones": [
+        {
+          "side": "russia",
+          "kind": "hold",
+          "key": "russian-centre",
+          "label": "包圍圈",
+          "polygon": [
+            [
+              53.55,
+              20.1
+            ],
+            [
+              53.55,
+              20.4
+            ],
+            [
+              53.42,
+              20.45
+            ],
+            [
+              53.4,
+              20.2
+            ]
+          ]
+        },
+        {
+          "side": "germany",
+          "kind": "front",
+          "key": "encirclement-ring",
+          "label": "德軍合圍線",
+          "line": [
+            [
+              53.47,
+              20.1
+            ],
+            [
+              53.36,
+              20.425
+            ],
+            [
+              53.4,
+              20.8
+            ],
+            [
+              53.53,
+              20.75
+            ],
+            [
+              53.778,
+              20.48
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "name": "坦能堡（今斯坦巴克）",
+      "lat": 53.493,
+      "lng": 20.13,
+      "kind": "village",
+      "note": "1410年條頓騎士團戰敗之地，戰役以此命名；實際戰場在其東方。"
+    },
+    {
+      "name": "阿倫施泰因（今奧爾什丁）",
+      "lat": 53.778,
+      "lng": 20.48,
+      "kind": "town",
+      "note": "戰役實際所在地區的中心城市。"
+    },
+    {
+      "name": "霍恩施泰因（今奧爾什丁內克）",
+      "lat": 53.585,
+      "lng": 20.285,
+      "kind": "town",
+      "note": "俄第15軍進攻目標；1927年在此建成坦能堡紀念碑，1945年被德軍炸毀。"
+    },
+    {
+      "name": "奈登堡（今尼濟察）",
+      "lat": 53.36,
+      "lng": 20.425,
+      "kind": "town",
+      "note": "俄軍撤退路線上的樞紐，28日被德第1軍逼近。"
+    },
+    {
+      "name": "索爾道（今濟亞烏多沃）",
+      "lat": 53.236,
+      "lng": 20.183,
+      "kind": "town",
+      "note": "俄第1軍據點，28日失守。"
+    },
+    {
+      "name": "烏斯道（今烏茲多沃）",
+      "lat": 53.29,
+      "lng": 20.07,
+      "kind": "village",
+      "note": "27日德第1軍突破處。"
+    },
+    {
+      "name": "比紹夫斯堡（今比斯庫皮茨）",
+      "lat": 53.865,
+      "lng": 20.957,
+      "kind": "town",
+      "note": "26日俄第6軍潰敗處。"
+    },
+    {
+      "name": "維倫貝格（今維爾巴克）",
+      "lat": 53.4,
+      "lng": 20.8,
+      "kind": "village",
+      "note": "29日合圍閉合點，薩姆索諾夫在附近自殺。"
+    },
+    {
+      "name": "馬林堡（今馬爾堡）",
+      "lat": 54.036,
+      "lng": 19.03,
+      "kind": "hq",
+      "note": "8月23日新司令抵達第8集團軍司令部。"
+    }
+  ],
+  "civilian": {
+    "label": "傷亡不詳",
+    "note": "戰役期間大批東普魯士居民逃難，村莊被砲火點燃；資料未給平民傷亡數字。"
+  },
+  "significance": [
+    "俄國第2集團軍主力被殲，東普魯士轉危為安，德軍隨即轉向第1集團軍，發動第一次馬祖里湖戰役將其逐出東普魯士。",
+    "興登堡與魯登道夫一戰成名，「坦能堡英雄」的個人崇拜延續到戰後，興登堡後來當選德國總統。",
+    "俄軍明碼無線電成為通信保密失敗的經典案例，德軍鐵路機動與內線作戰則成為包圍戰教材。",
+    "俄方調查歸咎日林斯基未能協調兩個集團軍，將其撤職。",
+    "德軍高層因此對包圍戰過度自信，10–11月在華沙與羅茲試圖重演而失利。"
+  ],
+  "facts": [
+    {
+      "label": "名不副實",
+      "text": "戰場在阿倫施泰因附近，坦能堡在西方約30公里；取名是為「洗雪」1410年條頓騎士團的敗績，霍夫曼與魯登道夫都說是自己的主意。"
+    },
+    {
+      "label": "每半小時一列車",
+      "text": "德第1軍在150多公里鐵路上晝夜調動，每30分鐘發一列車，卸車只花25分鐘。"
+    },
+    {
+      "label": "60列火車",
+      "text": "繳獲的俄軍裝備需要60列火車才運回德國。"
+    },
+    {
+      "label": "遺體隔年才尋回",
+      "text": "薩姆索諾夫的遺體在1915年被發現，經紅十字會送回俄國。"
+    }
+  ],
+  "disputes": [
+    {
+      "topic": "俄軍損失",
+      "claims": [
+        {
+          "value": "俘虜 9.2 萬",
+          "source": "Hindenburg 回憶錄、Reichsarchiv 1929"
+        },
+        {
+          "value": "不超過 8 萬",
+          "source": "Oleynikov"
+        },
+        {
+          "value": "120,219",
+          "source": "Nelipovich 2023"
+        }
+      ]
+    },
+    {
+      "topic": "弗朗索瓦攻佔澤本的日期",
+      "claims": [
+        {
+          "value": "8月25日",
+          "source": "英文維基（Buttar 2016）"
+        },
+        {
+          "value": "8月26日",
+          "source": "其他敘述"
+        }
+      ]
+    }
+  ],
+  "voices": [
+    {
+      "phase": "p3",
+      "event": "司令部的動搖",
+      "side": "germany",
+      "who": "保羅·馮·興登堡",
+      "role": "第8集團軍司令",
+      "quote": "此時已很明顯，危險正從倫寧坎普夫那一側逼近。有報告說他的一個軍正行經安格堡。許多人心中充滿疑慮，堅定的決心開始讓位於搖擺，原本清晰的判斷被懷疑侵入——這難道令人意外嗎？我們克服了內心的危機，堅持原定意圖，全力以進攻去實現它。",
+      "original": "It was now apparent that danger was threatening from the side of Rennenkampf. It was reported that one of his corps was on the march through Angerburg. It is surprising that misgivings filled many a heart, that firm resolution began to yield to vacillation, and that doubts crept in where a clear vision had hitherto prevailed? We overcame the inward crisis, adhered to our original intention, and turned in full strength to effect its realization by attack.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Battle of Tannenberg — English Wikipedia（引 Hindenburg, Out of My Life, 1921, p.117）",
+        "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：興登堡回憶錄英譯本 1920–21 年出版（1931 年前），作者 1934 年去世",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    },
+    {
+      "phase": "p5",
+      "date": "1914-08-31",
+      "side": "germany",
+      "who": "保羅·馮·興登堡",
+      "role": "第8集團軍司令（致全軍感謝令）",
+      "quote": "第8集團軍的士兵們！在阿倫施泰因與奈登堡之間廣闊原野上連日的激烈戰鬥已經結束。你們對5個軍和3個騎兵師取得了殲滅性的勝利。超過9萬名俘虜、無數火砲與機槍、數面軍旗和大量戰利品已落入我們手中。逃出包圍的少數俄國納雷夫集團軍殘部正向南越境逃竄。",
+      "original": "Soldaten der 8. Armee! Die vieltägigen heißen Kämpfe auf den weiten Gefilden zwischen Allenstein und Neidenburg sind beendet. Ihr habt einen vernichtenden Sieg über 5 Armeekorps und 3 Kavalleriedivisionen errungen. Mehr als 90.000 Gefangene, ungezählte Geschütze und Maschinengewehre, mehrere Fahnen und viele sonstige Kriegsbeute sind in unseren Händen. Die geringen, der Einschließung entronnenen Trümmer der russischen Narew-Armee fliehen nach Süden über die Grenze.",
+      "lang": "de",
+      "translated": "本站",
+      "source": {
+        "title": "General Paul von Hindenburg, Dankerlass an die Soldaten der 8. Armee (31. August 1914) — German History in Documents and Images",
+        "url": "https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/general-paul-von-hindenburg-dankerlass-an-die-soldaten-der-8-armee-nach-der-schlacht-von-tannenberg-31-august-1914"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1914 年軍隊命令，當年即刊於各報（1931 年前出版），作者 1934 年去世",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-old-70"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p5",
+      "date": "1914-08-29",
+      "type": "image",
+      "title": "興登堡與參謀在坦能堡戰場",
+      "caption": "雨果·福格爾所繪：興登堡與其核心幕僚在坦能堡戰役中，1914年8月29日（約1917年作）。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Battle_of_Tannenberg_Hugo_Vogel.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Battle_of_Tannenberg_Hugo_Vogel.jpg",
+      "credit": "Hugo Vogel（1855–1934）；來源 Studiengruppe Naturalismus",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（作者逝世逾 80 年；1929 年前出版，美國公有領域）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    },
+    {
+      "phase": "p5",
+      "date": "1914-08-30",
+      "type": "image",
+      "title": "坦能堡戰役最後階段態勢圖",
+      "caption": "美國西點軍校戰史地圖：1914年8月30日坦能堡戰役最後階段的部署與合圍。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Tannenberg3008.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Tannenberg3008.jpg/960px-Tannenberg3008.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Tannenberg3008.jpg",
+      "credit": "US Army（West Point 戰史系，dean.usma.edu）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（美國陸軍公務作品 PD-USGov-Military-Army）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Army"
+      }
+    },
+    {
+      "phase": "p5",
+      "event": "興登堡報捷",
+      "type": "image",
+      "title": "坦能堡紀念絲帶（Vivat-Band）",
+      "caption": "1914年紀念絲帶，繪有德皇威廉二世與「坦能堡勝利者興登堡」，由 Amsler & Ruthardt 印製、為德國紅十字會募款。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Vivat-bander_-_1914_-_Hindenburg_Tanenburg_by_E.D.d.j.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Vivat-bander_-_1914_-_Hindenburg_Tanenburg_by_E.D.d.j.jpg",
+      "credit": "Emil Doepler d. J.（1855–1922）；上傳者自行掃描",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（作者 1922 年去世；1929 年前出版，美國公有領域）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-US-expired"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p2",
+      "at": "1914-08-24",
+      "side": "russia",
+      "commander": "亞歷山大·薩姆索諾夫",
+      "title": "主力往哪裡打？",
+      "situation": "第2集團軍已在酷暑中行軍多日、補給落後。方面軍司令日林斯基告訴他德軍正分別退向維斯瓦河與柯尼斯堡，催他猛追。他與日林斯基對進攻方向意見相左。",
+      "intel": [
+        "日林斯基轉述第1集團軍報告：德軍正倉皇撤退",
+        "就他所知，兩翼都沒有德軍",
+        "空中偵察發現德第1軍抵達",
+        "沒有足夠飛機與騎兵查明左翼"
+      ],
+      "options": [
+        {
+          "label": "主力轉向西北（阿倫施泰因—奧斯特羅德）",
+          "detail": "薩姆索諾夫的主張，切斷德軍西退之路"
+        },
+        {
+          "label": "主力向北（澤堡—阿倫施泰因）",
+          "detail": "日林斯基的主張，靠近第1集團軍"
+        },
+        {
+          "label": "折衷：主力西北，第6軍單獨北上比紹夫斯堡",
+          "detail": "日林斯基讓步的條件"
+        }
+      ],
+      "chosen": 2,
+      "outcome": "第6軍與主力相隔兩天半行程，26日在比紹夫斯堡被單獨擊潰；主力在中央被兩翼包抄。",
+      "hindsight": "雙方爭執與休整談判讓全軍25日幾乎原地不動，正好給德軍集結兩翼的時間。",
+      "sources": [
+        {
+          "title": "Battle of Tannenberg — English Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+        }
+      ]
+    },
+    {
+      "phase": "p3",
+      "at": "1914-08-26",
+      "side": "germany",
+      "commander": "興登堡與魯登道夫",
+      "title": "倫寧坎普夫來了嗎？",
+      "situation": "包圍首日成果有限，第20軍精疲力竭，司令部對左翼第17軍與第1預備軍的進展所知甚少。此時傳來倫寧坎普夫有一個軍行經安格堡的報告。",
+      "intel": [
+        "倫寧坎普夫的一個軍據報行經安格堡",
+        "截收電報顯示日林斯基命第1集團軍繼續向西",
+        "左翼兩個軍已投入戰鬥，詳情不明"
+      ],
+      "options": [
+        {
+          "label": "照原計畫繼續包圍第2集團軍",
+          "detail": "賭倫寧坎普夫來得太慢"
+        },
+        {
+          "label": "中止包圍、轉向防備第1集團軍"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "德軍翌日兩翼同時進攻，四天內合圍第2集團軍中央。",
+      "hindsight": "興登堡多年後才承認魯登道夫那晚曾陷入恐慌；第17軍其實當天已擊潰俄第6軍。",
+      "sources": [
+        {
+          "title": "Battle of Tannenberg — English Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+        }
+      ]
+    },
+    {
+      "phase": "p4",
+      "at": "1914-08-28",
+      "side": "germany",
+      "commander": "興登堡",
+      "title": "空中偵察的警報",
+      "situation": "28日晨，德軍將領沿前線驅車時接到空中觀察員報告：倫寧坎普夫的集團軍正向德軍後方移動。魯登道夫隨即宣布必須中止對第2集團軍的攻擊。",
+      "intel": [
+        "空中觀察員報告第1集團軍向德軍後方移動",
+        "第1軍已奪烏斯道，正攻索爾道"
+      ],
+      "options": [
+        {
+          "label": "照原計畫繼續作戰"
+        },
+        {
+          "label": "如魯登道夫所言中止攻擊"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "興登堡把魯登道夫帶到樹籬後談話，出來後平靜宣布照計畫進行；稍後截收的電報證實倫寧坎普夫仍緩緩向柯尼斯堡推進。",
+      "sources": [
+        {
+          "title": "Battle of Tannenberg — English Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "第1軍",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-22",
+          "lat": 54.59,
+          "lng": 22.2,
+          "status": "active",
+          "note": "鐵路南運起點（示意）"
+        },
+        {
+          "lat": 53.596,
+          "lng": 19.568
+        },
+        {
+          "date": "1914-08-25",
+          "lat": 53.33,
+          "lng": 20.04
+        },
+        {
+          "date": "1914-08-27",
+          "lat": 53.29,
+          "lng": 20.07
+        },
+        {
+          "date": "1914-08-28",
+          "lat": 53.36,
+          "lng": 20.425
+        },
+        {
+          "date": "1914-08-29",
+          "lat": 53.4,
+          "lng": 20.8,
+          "status": "active",
+          "note": "合圍閉合"
+        }
+      ]
+    },
+    {
+      "unit": "第17軍",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-23",
+          "lat": 54.25,
+          "lng": 21.3,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-26",
+          "lat": 53.865,
+          "lng": 20.957
+        },
+        {
+          "lat": 53.563,
+          "lng": 20.987
+        },
+        {
+          "date": "1914-08-29",
+          "lat": 53.53,
+          "lng": 20.75,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "第20軍",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-23",
+          "lat": 53.4,
+          "lng": 20.38,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-24",
+          "lat": 53.41,
+          "lng": 20.33
+        },
+        {
+          "lat": 53.53,
+          "lng": 20.27
+        },
+        {
+          "date": "1914-08-28",
+          "lat": 53.585,
+          "lng": 20.285,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "unit": "第15軍",
+      "side": "russia",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-21",
+          "lat": 53.36,
+          "lng": 20.425,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-23",
+          "lat": 53.4,
+          "lng": 20.38
+        },
+        {
+          "date": "1914-08-24",
+          "lat": 53.43,
+          "lng": 20.3
+        },
+        {
+          "date": "1914-08-28",
+          "lat": 53.53,
+          "lng": 20.27
+        },
+        {
+          "date": "1914-08-30",
+          "lat": 53.4,
+          "lng": 20.38,
+          "status": "destroyed",
+          "note": "在包圍圈中覆滅"
+        }
+      ]
+    },
+    {
+      "unit": "第13軍",
+      "side": "russia",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-24",
+          "lat": 53.45,
+          "lng": 20.55,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-26",
+          "lat": 53.778,
+          "lng": 20.48
+        },
+        {
+          "date": "1914-08-28",
+          "lat": 53.53,
+          "lng": 20.42
+        },
+        {
+          "date": "1914-08-30",
+          "lat": 53.585,
+          "lng": 20.285,
+          "status": "destroyed",
+          "note": "在包圍圈中投降"
+        }
+      ]
+    },
+    {
+      "unit": "第6軍",
+      "side": "russia",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-21",
+          "lat": 53.563,
+          "lng": 20.987,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-26",
+          "lat": 53.865,
+          "lng": 20.957
+        },
+        {
+          "date": "1914-08-27",
+          "lat": 53.563,
+          "lng": 20.987,
+          "status": "withdrawn",
+          "note": "退回波蘭"
+        }
+      ]
+    },
+    {
+      "unit": "第1軍",
+      "side": "russia",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1914-08-21",
+          "lat": 53.236,
+          "lng": 20.183,
+          "status": "active"
+        },
+        {
+          "date": "1914-08-27",
+          "lat": 53.29,
+          "lng": 20.07
+        },
+        {
+          "date": "1914-08-28",
+          "lat": 53.1,
+          "lng": 20.2,
+          "status": "withdrawn",
+          "note": "失去戰鬥力，退回波蘭"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Battle of Tannenberg — English Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Battle_of_Tannenberg",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "主要事實、日期、兵力與各方傷亡數字（引 Buttar、Showalter、Nelipovich 等）"
+    },
+    {
+      "title": "坦能堡戰役 (1914年) — 中文維基百科（使用者提供）",
+      "url": "https://zh.wikipedia.org/zh-tw/%E5%9D%A6%E8%83%BD%E5%A0%A1%E6%88%B0%E5%BD%B9_(1914%E5%B9%B4)",
+      "type": "wiki",
+      "lang": "zh",
+      "accessed": "2026-10-30",
+      "note": "抓取失敗（站點僅快取），未直接查閱"
+    },
+    {
+      "title": "Battle of Tannenberg — DBpedia",
+      "url": "https://dbpedia.org/page/Battle_of_Tannenberg",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "交叉比對兵力與傷亡（搜尋摘要）"
+    },
+    {
+      "title": "Battle of Tannenberg — Encyclopaedia Britannica",
+      "url": "https://www.britannica.com/EBchecked/topic/582679/Battle-of-Tannenberg",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "日期交叉比對（搜尋摘要）"
+    },
+    {
+      "title": "Battle of Tannenberg, 26-31 August 1914 — HistoryOfWar.org",
+      "url": "https://www.historyofwar.org/articles/battles_tannenberg.html",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-10-30",
+      "note": "奧爾勞—弗蘭肯瑙之戰（搜尋摘要）"
+    },
+    {
+      "title": "Hindenburg, Dankerlass an die Soldaten der 8. Armee (31.8.1914) — GHDI",
+      "url": "https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/general-paul-von-hindenburg-dankerlass-an-die-soldaten-der-8-armee-nach-der-schlacht-von-tannenberg-31-august-1914",
+      "type": "primary",
+      "lang": "de",
+      "accessed": "2026-10-30",
+      "note": "感謝令原文；德方傷亡 1.3 萬、俄方俘虜 9.2 萬之概述"
+    },
+    {
+      "title": "Hindenburg, P. von. Out of My Life (1921)",
+      "url": "",
+      "type": "book",
+      "lang": "en",
+      "note": "經英文維基轉引，未直接查閱"
+    },
+    {
+      "title": "Buttar, P. Collision of Empires (2016)",
+      "url": "",
+      "type": "book",
+      "lang": "en",
+      "note": "經英文維基轉引，未直接查閱"
+    },
+    {
+      "title": "Nelipovich, S. Два похода (2023)",
+      "url": "",
+      "type": "book",
+      "lang": "ru",
+      "note": "經英文維基轉引，未直接查閱"
+    }
+  ],
+  "provenance": {
+    "extracted_by": "Claude (claude-opus-5-5)",
+    "extracted_at": "2026-10-30",
+    "confidence": {
+      "coordinates": "approx",
+      "strength": "medium",
+      "casualties": "contested",
+      "weapons": "medium"
+    },
+    "notes": "使用者提供的中文維基連結無法抓取（僅快取站點），改以英文維基為主、GHDI 原始文件與其他網站摘要交叉比對。武器型號、規格與飛機機型為一般知識補充（英文維基只給兵力、機槍與火砲總數）。村莊座標（澤本、烏斯道、奧爾勞、弗蘭肯瑙、拉赫納、弗羅格瑙、庫爾肯、瓦普利茨、拉姆紹）依地名近似定位；行軍箭頭與部隊軌跡為示意，非精確路線，未註日期的中間點由網站插值。英文維基將弗朗索瓦攻佔澤本記於8月25日，其敘事日期在25–26日之間有混淆，比紹夫斯堡之戰本站依通說置於26日。沉浸素材：圖片 3 張皆經 Commons 檔案頁（透過鏡像頁讀取）確認為公有領域——Hugo Vogel 畫作（PD-old + PD-US-expired）、美國陸軍地圖（PD-USGov-Military-Army）、Emil Doepler 紀念絲帶（PD-old + PD-US-expired）；常見的「俄軍戰俘」照片（Ray Mentzer/gwpda）授權無法確認，未收錄。引文 2 則：興登堡1914年8月31日感謝令（GHDI 原文）與其回憶錄英譯（1920–21 年出版），均為公有領域；魯登道夫27日報告與弗朗索瓦語錄因英文譯本來源不明而未收。決策 3 則、天候 4 個階段，均出自英文維基。"
+  },
+  "revision": "2026-10-30T07:35:54.676Z"
+}

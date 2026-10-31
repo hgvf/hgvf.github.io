@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-30",
+ "generated_at": "2026-10-31",
  "battles": [
   {
    "id": "crimean-war-1853",
@@ -125,6 +125,41 @@
    ]
   },
   {
+   "id": "battle-of-tannenberg-1914",
+   "file": "battles/battle-of-tannenberg-1914.json",
+   "kind": "battle",
+   "title": "坦能堡戰役（1914年）",
+   "revision": "2026-10-30T07:35:54.676Z",
+   "title_en": "Battle of Tannenberg (1914)",
+   "wars": [
+    "wwi",
+    "eastern-front-wwi"
+   ],
+   "date": {
+    "start": "1914-08-26",
+    "end": "1914-08-30",
+    "label": "1914年8月26日–30日（前哨戰自8月23日）",
+    "duration_days": 5
+   },
+   "lat": 53.5,
+   "lng": 20.35,
+   "zoom": 9,
+   "summary": "1914年8月，俄國以兩個集團軍夾擊東普魯士。德國第8集團軍換上興登堡與魯登道夫後，藉鐵路把兵力南移，並截收俄軍以明碼發送的無線電命令，確知倫寧坎普夫不會南下支援。8月26日至30日，德軍從兩翼包抄薩姆索諾夫的第2集團軍，在霍恩施泰因—奈登堡之間合圍其中央部隊，俘虜約9萬人。這是",
+   "result": "德軍決定性勝利",
+   "sides": [
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    },
+    {
+     "id": "russia",
+     "name": "俄羅斯帝國",
+     "color": "#a33a3a"
+    }
+   ]
+  },
+  {
    "id": "first-battle-of-the-marne-1914",
    "file": "battles/first-battle-of-the-marne-1914.json",
    "kind": "battle",
@@ -151,6 +186,51 @@
      "id": "allies",
      "name": "法國、英國",
      "color": "#2c4f9e"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "race-to-the-sea-1914",
+   "file": "battles/race-to-the-sea-1914.json",
+   "kind": "campaign",
+   "title": "奔向大海（1914年）",
+   "revision": "2026-10-30T08:03:15.318Z",
+   "title_en": "Race to the Sea",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1914-09-17",
+    "end": "1914-10-19",
+    "label": "1914年9月17日–10月19日（史家起訖不一，常見 9/15–10/15、9/17–10/17）",
+    "duration_days": 33
+   },
+   "lat": 50.4,
+   "lng": 2.9,
+   "zoom": 7,
+   "summary": "馬恩河戰役後，德軍退守艾納河北岸挖壕固守。從9月中旬起，法、德兩軍反覆把部隊從戰線南段經鐵路調往北面，試圖繞過對方開放的北翼，在皮卡第、阿爾貝、阿拉斯一路向北打出一連串遭遇戰。英國遠征軍北移到法蘭德斯，比利時軍在安特衛普陷落後退守伊瑟河；10月中旬戰線伸抵北海，比利時人以開閘放水",
+   "result": "未分勝負：從北海到瑞士的連續戰線成形",
+   "sides": [
+    {
+     "id": "france",
+     "name": "法蘭西第三共和國",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "uk",
+     "name": "大英帝國",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "belgium",
+     "name": "比利時王國",
+     "color": "#b08a2e"
     },
     {
      "id": "germany",
@@ -321,6 +401,116 @@
      "id": "germany",
      "name": "德意志帝國",
      "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-arras-1917",
+   "file": "battles/battle-of-arras-1917.json",
+   "kind": "battle",
+   "title": "阿拉斯戰役（1917年）",
+   "revision": "2026-10-30T07:53:23.625Z",
+   "title_en": "Battle of Arras (1917)",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-04-09",
+    "end": "1917-05-16",
+    "label": "1917年4月9日–5月16日（英方於5月17日停止布勒庫爾攻擊）",
+    "duration_days": 38
+   },
+   "lat": 50.29,
+   "lng": 2.85,
+   "zoom": 10,
+   "summary": "1917年春，英國遠征軍在阿拉斯發動攻勢，以牽制德軍、配合法軍尼維爾攻勢。4月9日清晨5時30分，經空前猛烈的砲擊與徐進彈幕掩護，英國第3集團軍沿斯卡爾普河向東推進，加拿大軍則攻佔維米嶺，首兩日戰果以西線標準堪稱驚人。之後德軍以縱深防禦堵住突破口，英軍在斯卡爾普河、阿勒與布勒庫爾",
+   "result": "英軍戰術勝利，戰略上無決定性結果",
+   "sides": [
+    {
+     "id": "uk",
+     "name": "大英帝國",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "second-battle-of-the-aisne-1917",
+   "file": "battles/second-battle-of-the-aisne-1917.json",
+   "kind": "campaign",
+   "title": "第二次埃納河戰役（1917年）",
+   "revision": "2026-10-30T08:10:55.851Z",
+   "title_en": "Second Battle of the Aisne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-04-16",
+    "end": "1917-05-09",
+    "label": "1917年4月16日–5月9日（預備攻擊自4月初；10月23–26日拉瑪爾邁松之戰常併入本戰役）",
+    "duration_days": 24
+   },
+   "lat": 49.42,
+   "lng": 3.75,
+   "zoom": 9,
+   "summary": "1917年春，法軍總司令尼維爾在蘇瓦松至蘭斯之間發動大攻勢，配合英軍阿拉斯攻勢，企圖以猛烈砲擊與徐進彈幕在一兩天內突破德軍防線。4月16日清晨6時法軍出擊，迎面撞上德軍在貴婦小徑山脊上的縱深防禦，戰車首次參戰即損失慘重。法軍雖拿下部分高地與香檳群山，突破卻沒有實現；攻勢在5月9日",
+   "result": "未分勝負；法軍未能突破，引發大規模譁變",
+   "sides": [
+    {
+     "id": "france",
+     "name": "法蘭西第三共和國",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "third-battle-of-the-aisne-1918",
+   "file": "battles/third-battle-of-the-aisne-1918.json",
+   "kind": "campaign",
+   "title": "第三次埃納河戰役（1918年）",
+   "revision": "2026-10-30T08:18:22.436Z",
+   "title_en": "Third Battle of the Aisne",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1918-05-27",
+    "end": "1918-06-06",
+    "label": "1918年5月27日–6月6日（部分來源記至6月3日或4日）",
+    "duration_days": 11
+   },
+   "lat": 49.25,
+   "lng": 3.55,
+   "zoom": 9,
+   "summary": "1918年5月27日凌晨，德軍在貴婦小徑發動「布呂歇爾—約克」作戰，原意是牽制協約國預備隊、為法蘭德斯攻勢鋪路。猛烈的砲擊與毒氣之後，17個師在6小時內攻抵埃納河並奪下完整的橋樑，擊潰守在山脊上的英國第9軍與法國第6集團軍。德軍順勢擴大戰果，28日攻佔蘇瓦松，30日抵達馬恩河；美",
+   "result": "德軍戰術大勝，但未能突破，最終止步馬恩河",
+   "sides": [
+    {
+     "id": "germany",
+     "name": "德意志帝國",
+     "color": "#4d4d4d"
+    },
+    {
+     "id": "allies",
+     "name": "協約國（法、英、義）",
+     "color": "#2c4f9e"
+    },
+    {
+     "id": "usa",
+     "name": "美國",
+     "color": "#3a6ea5"
     }
    ]
   },

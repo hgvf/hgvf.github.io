@@ -92,6 +92,15 @@
       "color": "#8c3f5a",
       "id": "japanese-invasion-of-manchuria",
       "name": "九一八事變（日本侵佔東北）"
+    },
+    {
+      "id": "eastern-front-wwi",
+      "short": "東線",
+      "period": "1914–1918",
+      "color": "#4f6b7a",
+      "parent": "wwi",
+      "name_en": "Eastern Front (World War I)",
+      "name": "第一次世界大戰東方戰線"
     }
   ]
 }
