@@ -1,0 +1,1593 @@
+{
+  "schema_version": 1,
+  "id": "mongol-invasions-of-japan-1274",
+  "kind": "war",
+  "title": "元日戰爭（蒙古襲來）",
+  "title_en": "Mongol invasions of Japan",
+  "aliases": [
+    "元寇",
+    "蒙古襲來",
+    "文永之役",
+    "弘安之役",
+    "Bun'ei no eki",
+    "Kōan no eki"
+  ],
+  "wars": [
+    "mongol-invasions-of-japan"
+  ],
+  "tags": [
+    "兩棲登陸",
+    "颱風",
+    "海戰",
+    "防壘",
+    "神風"
+  ],
+  "date": {
+    "start": "1274-11-02",
+    "end": "1281-08-19",
+    "label": "1274 年（文永之役）、1281 年（弘安之役）",
+    "duration_days": null
+  },
+  "location": {
+    "name": "對馬、壹岐與九州北部博多灣、伊萬里灣",
+    "country_then": "日本（鎌倉幕府）",
+    "country_now": "日本",
+    "lat": 33.9,
+    "lng": 129.9,
+    "zoom": 7
+  },
+  "result": {
+    "winner": "japan",
+    "label": "日本擊退元軍",
+    "detail": "兩次渡海遠征都在博多灣受阻後遭暴風摧毀，元朝喪失大部分海軍力量，高麗的造船能力也大受打擊；日本雖守住國土，鎌倉幕府卻因無土地可賞賜御家人而威信受損。"
+  },
+  "summary": "忽必烈多次遣使要求日本臣服未果，1274 年派元麗聯軍約 3 萬人渡海，攻陷對馬、壹岐後在博多灣登陸，一日激戰後退回船上，歸途遇暴風，約 13,500 人未能返回。日本隨後斬殺元使，在博多灣築起石造防壘。1281 年元軍分東路軍與江南軍兩路再犯，被防壘擋在海上，8 月 15 日一場颱風摧毀聚泊在伊萬里灣鷹島一帶的艦隊，范文虎乘堅船逃離，十餘萬士卒被棄於岸上。",
+  "background": [
+    {
+      "title": "蒙古帝國的擴張",
+      "text": "忽必烈已降服高麗、正在攻滅南宋，希望把日本納入朝貢體系。"
+    },
+    {
+      "title": "國書與遣使",
+      "text": "1266 年 8 月忽必烈致書「日本國王」要求通好，並暗示若不從將用兵；鎌倉幕府執權北條時宗不予回覆。"
+    },
+    {
+      "title": "高麗被動員造船",
+      "text": "1274 年 4 月元朝下令動員 15,000 人，高麗金方慶率 30,500 名工匠趕造 300 艘大船、300 艘快船與 300 艘汲水小船，7 月 5 日完工；高麗元宗 7 月 23 日去世，出征延後。"
+    },
+    {
+      "title": "日本武士政權",
+      "text": "鎌倉幕府以九州御家人防衛，日本方面兵力遠少於元軍，戰法也以個人騎射為主。"
+    }
+  ],
+  "objectives": {
+    "yuan": "迫使日本臣服；1281 年東路軍與江南軍會師後攻取九州。",
+    "japan": "守住九州沿岸，拒絕臣服元朝。"
+  },
+  "sides": [
+    {
+      "id": "yuan",
+      "name": "元朝與高麗聯軍",
+      "color": "#3d6b8f",
+      "belligerents": [
+        "元朝（蒙古、漢、女真兵）",
+        "高麗",
+        "南宋降軍（1281 年江南軍）"
+      ],
+      "commanders": [
+        {
+          "name": "忽必烈",
+          "role": "元世祖，最高決策者"
+        },
+        {
+          "name": "忻都（Hindu）",
+          "role": "1274 年元軍統帥、1281 年東路軍統帥"
+        },
+        {
+          "name": "洪茶丘",
+          "role": "1274 年副帥、1281 年東路軍將領"
+        },
+        {
+          "name": "劉復亨",
+          "role": "1274 年將領，在博多被少貳景資射中面部"
+        },
+        {
+          "name": "金方慶",
+          "role": "高麗軍統帥"
+        },
+        {
+          "name": "范文虎",
+          "role": "1281 年江南軍統帥",
+          "fate": "颱風後棄軍撤離"
+        },
+        {
+          "name": "阿剌罕（Arakhan）",
+          "role": "1281 年遠征最高統帥"
+        }
+      ],
+      "units": [
+        {
+          "name": "文永元麗聯軍",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "忻都",
+          "note": "1274 年 15,000 名蒙古、漢與女真兵，加上 6,000–8,000 名高麗兵與 7,000 名高麗水手；約 13,500 人未能返回。"
+        },
+        {
+          "name": "蒙古兵",
+          "echelon": "其他",
+          "branch": "army",
+          "note": "1274 年主力的一部分，以騎射與集團戰術作戰。"
+        },
+        {
+          "name": "漢軍",
+          "echelon": "其他",
+          "branch": "army",
+          "note": "1274 年元軍主力的一部分。"
+        },
+        {
+          "name": "女真兵",
+          "echelon": "其他",
+          "branch": "army",
+          "note": "1274 年元軍的一部分。"
+        },
+        {
+          "name": "高麗軍",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "金方慶",
+          "note": "兩次遠征都出兵；1281 年東路軍中高麗人 26,989 人，7,592 人未歸。"
+        },
+        {
+          "name": "高麗水手",
+          "echelon": "其他",
+          "branch": "navy",
+          "note": "1274 年 7,000 名水手操作艦隊。"
+        },
+        {
+          "name": "東路軍",
+          "echelon": "其他",
+          "branch": "navy",
+          "commander": "忻都、洪茶丘、金方慶",
+          "note": "1281 年 900 艘船、據稱 4 萬人，5 月 22 日自高麗出發，攻對馬、壹岐、長門與博多灣。"
+        },
+        {
+          "name": "江南軍",
+          "echelon": "其他",
+          "branch": "navy",
+          "commander": "范文虎",
+          "note": "1281 年自中國南方出發，據稱 3,500 艘船、10 萬人；因補給延誤，7 月才與東路軍會合，颱風中大半覆滅。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "1274：約 3 萬人；1281：據稱約 14 萬人",
+        "formations": "1274 年元麗聯軍；1281 年東路軍與江南軍",
+        "aircraft": null,
+        "tanks": null,
+        "ships": 4400,
+        "artillery": null,
+        "note": "1274：300 艘大船、300 艘快船、300 艘小船（worldhistory.org 稱 800–900 艘、16,600–40,000 人）。1281：東路軍 900 艘、江南軍 3,500 艘，合計約 14.2 萬人（Conlan 引）；現代估計 Conlan 約 14,000、Rossabi 約 70,000，Turnbull 認為 14 萬誇大。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": null,
+        "total_label": "1274：約 13,500 人未歸；1281：六至九成",
+        "range": null,
+        "note": "1274：3 萬人中約 13,500 人未返回，約 200 艘船損失（Wikipedia）；worldhistory.org 稱暴風可能使三分之一人員喪生。1281：中國與蒙古史料稱傷亡率 60–90%；高麗史料東路軍高麗人 26,989 人中 7,592 人未歸；《元史》稱「十萬之眾得還者三人耳」（明顯誇大）；worldhistory.org 稱半數至三分之二喪生，滯留伊萬里灣海灘的數千人被處決，部分南宋人獲免。",
+        "confidence": "contested"
+      },
+      "weapons": [
+        {
+          "cat": "other",
+          "name": "震天雷（鐵炮）",
+          "model": "Tetsuhau / thunder crash bomb",
+          "qty": "不詳",
+          "year": "13 世紀",
+          "specs": {
+            "類型": "陶或鐵殼火藥炸彈",
+            "內容": "火藥與碎鐵（經考古證實）"
+          },
+          "note": "日方記載元軍以鐵炮的爆聲驚嚇人馬；鷹島沉船考古證實了填有火藥與碎鐵的實物。"
+        },
+        {
+          "cat": "other",
+          "name": "火筒",
+          "model": "Huo tong（fire tube）",
+          "qty": "不詳",
+          "year": "13 世紀",
+          "specs": {
+            "類型": "火器"
+          },
+          "note": "日方史料（含《八幡愚童訓》）記載元軍使用火筒與鐵砲。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "蒙古複合弓",
+          "model": "Mongol composite bow（依一般知識）",
+          "qty": "不詳",
+          "year": "—",
+          "specs": {
+            "類型": "複合反曲弓",
+            "有效射程": "約 150–200 m"
+          },
+          "note": "元軍以集團齊射對抗日本武士；1274 年博多一戰後元將以「矢盡」為由撤回船上。"
+        },
+        {
+          "cat": "ship",
+          "name": "遠征艦船",
+          "model": "Yuan / Goryeo war junks",
+          "qty": "1274：約 900 艘；1281：約 4,400 艘",
+          "year": "1274–1281",
+          "specs": {
+            "排水量": "不詳",
+            "火砲": "無（以弓弩、火器作戰）",
+            "航速": "不詳"
+          },
+          "note": "worldhistory.org 指出元軍船隻多屬河船設計、桅座薄弱，不適遠洋；1281 年為防夜襲以鏈條和木板連接，颱風時一同沉沒。"
+        }
+      ]
+    },
+    {
+      "id": "japan",
+      "name": "日本（鎌倉幕府）",
+      "color": "#b5452f",
+      "belligerents": [
+        "鎌倉幕府與九州御家人"
+      ],
+      "commanders": [
+        {
+          "name": "北條時宗",
+          "role": "鎌倉幕府執權"
+        },
+        {
+          "name": "少貳景資",
+          "role": "九州武士將領，1274 年射傷劉復亨"
+        },
+        {
+          "name": "宗資國",
+          "role": "對馬守護代",
+          "fate": "陣亡"
+        },
+        {
+          "name": "平景隆",
+          "role": "壹岐守護代",
+          "fate": "自殺"
+        },
+        {
+          "name": "竹崎季長",
+          "role": "肥後御家人，《蒙古襲來繪詞》委託者"
+        },
+        {
+          "name": "菊池武房",
+          "role": "肥後武士"
+        },
+        {
+          "name": "少貳資時",
+          "role": "壹岐守將（1281）",
+          "fate": "陣亡"
+        },
+        {
+          "name": "河野通有",
+          "role": "伊予水軍，1281 年白晝突襲負傷"
+        }
+      ],
+      "units": [
+        {
+          "name": "鎌倉幕府",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "北條時宗",
+          "note": "兩次斬殺元使，下令在九州沿岸修築防壘。"
+        },
+        {
+          "name": "九州御家人",
+          "echelon": "其他",
+          "branch": "army",
+          "note": "1274 年在博多約 4,000–6,000 人（現代估計）；Conlan 估博多雙方各約 3,000 人。"
+        },
+        {
+          "name": "宗資國部",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "宗資國",
+          "note": "1274 年在對馬以約 80 騎迎戰，入夜時全滅。"
+        },
+        {
+          "name": "平景隆部",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "平景隆",
+          "note": "1274 年在壹岐以 100 名武士守禦，最後率 36 人出擊後與家人自盡。"
+        },
+        {
+          "name": "少貳氏軍",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "少貳景資",
+          "note": "博多防衛主力；1281 年少貳資時在壹岐戰死。"
+        },
+        {
+          "name": "竹崎季長隊",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "竹崎季長",
+          "note": "1274 年違令搶先突擊負傷；1281 年 6 月 30 日再度負傷。"
+        },
+        {
+          "name": "菊池武房隊",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "菊池武房",
+          "note": "1274 年博多之戰。"
+        },
+        {
+          "name": "草野氏小船隊",
+          "echelon": "其他",
+          "branch": "navy",
+          "note": "1281 年草野次郎夜襲元船，取首 21 級並焚毀一船。"
+        },
+        {
+          "name": "河野水軍",
+          "echelon": "其他",
+          "branch": "navy",
+          "commander": "河野通有",
+          "note": "1281 年白晝以小船突襲元艦。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "1274：約 4,000–6,000 人（現代估計）",
+        "formations": "九州御家人，1281 年另有各地增援",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "《元史》稱日軍 102,000 人，明顯誇大；日方史料稱以寡擊眾至少十比一。1281 年日軍規模資料未載。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": null,
+        "total_label": "不詳",
+        "range": null,
+        "note": "所查資料未載日軍總傷亡；對馬守護代宗資國、壹岐守護代平景隆（1274）與少貳資時（1281）等將領戰死。",
+        "confidence": "low"
+      },
+      "weapons": [
+        {
+          "cat": "smallarm",
+          "name": "和弓",
+          "model": "Yumi（依一般知識）",
+          "qty": "不詳",
+          "year": "—",
+          "specs": {
+            "類型": "長弓（騎射）",
+            "有效射程": "約 100–200 m"
+          },
+          "note": "武士的主要兵器，騎射對抗元軍集團步兵。"
+        },
+        {
+          "cat": "other",
+          "name": "太刀",
+          "model": "Tachi",
+          "qty": "不詳",
+          "year": "—",
+          "specs": {
+            "類型": "長刀"
+          },
+          "note": "戰後刀匠（相州傳，含正宗）改造出更薄更長的太刀。"
+        },
+        {
+          "cat": "other",
+          "name": "大鎧",
+          "model": "Ō-yoroi",
+          "qty": "不詳",
+          "year": "—",
+          "specs": {
+            "類型": "騎射用重甲"
+          },
+          "note": "武士騎射用鎧甲，春日大社藏有國寶級實物。"
+        },
+        {
+          "cat": "other",
+          "name": "元寇防壘（石築地）",
+          "model": "Genkō bōrui",
+          "qty": "博多灣約 19–20 公里",
+          "year": "1276",
+          "specs": {
+            "高度": "約 2–2.8 m",
+            "構造": "外側陡直、內側斜坡"
+          },
+          "note": "1281 年元軍無法在博多灣建立灘頭，只能退到志賀島、能古島。"
+        },
+        {
+          "cat": "ship",
+          "name": "小船",
+          "model": "Kobaya small boats",
+          "qty": "不詳",
+          "year": "1281",
+          "specs": {
+            "排水量": "不詳",
+            "火砲": "無",
+            "航速": "不詳"
+          },
+          "note": "夜間以小船突襲停泊的元艦，迫使元軍以鏈條連接船隻。"
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "title": "國書、遣使與動員",
+      "start": "1266-08",
+      "end": "1274-11-01",
+      "summary": "1266 年 8 月忽必烈致書日本要求通好，鎌倉幕府置之不理。1274 年 4 月元朝下令動員，高麗趕造艦船，7 月完工，但高麗元宗去世使出征延後。",
+      "view": {
+        "lat": 34.5,
+        "lng": 130,
+        "zoom": 6
+      },
+      "events": [
+        {
+          "date": "1266-08",
+          "title": "忽必烈國書",
+          "text": "忽必烈以「大蒙古國皇帝」名義致書「日本國王」，要求通好，並暗示不從將用兵；日方未回覆。",
+          "lat": 35.32,
+          "lng": 139.55,
+          "type": "other",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-04",
+          "title": "下令動員",
+          "text": "元朝命忻都、洪茶丘動員 15,000 人，高麗金方慶率 30,500 人造船。",
+          "lat": 35.21,
+          "lng": 128.57,
+          "type": "hq",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-07-05",
+          "title": "艦隊完工",
+          "text": "300 艘大船、300 艘快船與 300 艘汲水小船完工；7 月 23 日高麗元宗去世，出征延後三個月。",
+          "lat": 35.21,
+          "lng": 128.57,
+          "type": "other",
+          "side": "yuan"
+        }
+      ],
+      "moves": [
+        {
+          "side": "yuan",
+          "kind": "reinforce",
+          "label": "高麗軍",
+          "unit": "高麗軍",
+          "path": [
+            [
+              37.5,
+              127
+            ],
+            [
+              36.3,
+              127.9
+            ],
+            [
+              35.21,
+              128.57
+            ]
+          ],
+          "model": "infantry"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "文永之役（1274）",
+      "start": "1274-11-02",
+      "end": "1274-11-21",
+      "summary": "元麗聯軍 11 月 2 日自合浦出發，4 日攻對馬、13 日攻壹岐，守將宗資國與平景隆相繼戰死。19 日在博多灣登陸，20 日激戰中日軍被逼退數公里，但元將以疲憊與怕遭伏擊為由當夜退回船上，歸途遇暴風，約 13,500 人未能返回。",
+      "view": {
+        "lat": 34.2,
+        "lng": 129.8,
+        "zoom": 8
+      },
+      "view_keys": [
+        {
+          "at": "1274-11-19",
+          "lat": 33.6,
+          "lng": 130.35,
+          "zoom": 11
+        }
+      ],
+      "conditions": {
+        "weather": "博多之戰後艦隊遇逆風與暴風",
+        "fx": [
+          "storm"
+        ],
+        "sources": [
+          {
+            "title": "Mongol invasions of Japan – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Mongol_invasions_of_Japan"
+          },
+          {
+            "title": "The Mongol Invasions of Japan, 1274 and 1281 – World History Encyclopedia",
+            "url": "https://www.worldhistory.org/article/1415/the-mongol-invasions-of-japan-1274-and-1281/"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1274-11-04",
+          "title": "攻陷對馬",
+          "text": "元軍在對馬小茂田濱登陸；守護代宗資國率約 80 騎迎戰，入夜時戰死。",
+          "lat": 34.27,
+          "lng": 129.22,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-11-13",
+          "title": "攻陷壹岐",
+          "text": "壹岐守護代平景隆以 100 名武士守禦，援軍未至，最後率 36 人出擊後與家人自盡。",
+          "lat": 33.78,
+          "lng": 129.72,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-11-19",
+          "title": "博多灣登陸",
+          "text": "元軍在博多灣登陸，日軍約 4,000–6,000 人迎戰。",
+          "lat": 33.6,
+          "lng": 130.37,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-11-20",
+          "title": "文永之戰",
+          "text": "日軍被逼退數公里；元軍以鐵炮爆聲驚擾人馬，竹崎季長違令突擊負傷，少貳景資射中元將劉復亨面部。",
+          "lat": 33.59,
+          "lng": 130.39,
+          "type": "assault",
+          "side": "yuan"
+        },
+        {
+          "date": "1274-11-20",
+          "title": "元軍夜退船上",
+          "text": "元將以疲憊與擔心遭伏擊為由，當夜全軍退回船上；隨後遇暴風，約 200 艘船損失，3 萬人中約 13,500 人未能返回。",
+          "lat": 33.65,
+          "lng": 130.3,
+          "type": "retreat",
+          "side": "yuan"
+        }
+      ],
+      "moves": [
+        {
+          "side": "yuan",
+          "kind": "naval",
+          "label": "文永元麗聯軍",
+          "unit": "文永元麗聯軍",
+          "start": "1274-11-02",
+          "end": "1274-11-19",
+          "outcome": "success",
+          "path": [
+            [
+              35.21,
+              128.57
+            ],
+            [
+              34.27,
+              129.22
+            ],
+            [
+              33.78,
+              129.72
+            ],
+            [
+              33.62,
+              130.3
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "yuan",
+          "kind": "retreat",
+          "label": "文永元麗聯軍",
+          "unit": "文永元麗聯軍",
+          "start": "1274-11-20",
+          "outcome": "stopped",
+          "path": [
+            [
+              33.62,
+              130.3
+            ],
+            [
+              34.3,
+              129.6
+            ],
+            [
+              35.21,
+              128.57
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "japan",
+          "kind": "attack",
+          "label": "九州御家人",
+          "unit": "九州御家人",
+          "start": "1274-11-20",
+          "path": [
+            [
+              33.52,
+              130.53
+            ],
+            [
+              33.56,
+              130.45
+            ],
+            [
+              33.59,
+              130.39
+            ]
+          ],
+          "model": "cavalry"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "斬使與築壘（1275–1281）",
+      "start": "1275-09",
+      "end": "1281-05-21",
+      "summary": "幕府決心不屈服：1275 年 9 月在鎌倉斬殺五名元使，1279 年 7 月 29 日又在博多斬殺五人。博多灣沿岸築起石造防壘，1276 年完工，河口與登陸點也打下木樁。",
+      "view": {
+        "lat": 33.62,
+        "lng": 130.35,
+        "zoom": 11
+      },
+      "events": [
+        {
+          "date": "1275-09",
+          "title": "鎌倉斬殺元使",
+          "text": "五名元使在鎌倉被斬首，墓在常立寺。",
+          "lat": 35.32,
+          "lng": 139.55,
+          "type": "other",
+          "side": "japan"
+        },
+        {
+          "date": "1276",
+          "title": "博多灣防壘完工",
+          "text": "高約 2–2.8 公尺、長約 19 公里的石造防壘完工，外側陡直、內側斜坡供騎射兵使用。",
+          "lat": 33.59,
+          "lng": 130.35,
+          "type": "defense",
+          "side": "japan"
+        },
+        {
+          "date": "1279-07-29",
+          "title": "博多斬殺元使",
+          "text": "又有五名元使在博多被斬首。",
+          "lat": 33.59,
+          "lng": 130.41,
+          "type": "other",
+          "side": "japan"
+        }
+      ],
+      "zones": [
+        {
+          "side": "japan",
+          "kind": "front",
+          "key": "hakata-wall",
+          "label": "元寇防壘（博多灣）",
+          "line": [
+            [
+              33.58,
+              130.25
+            ],
+            [
+              33.585,
+              130.32
+            ],
+            [
+              33.6,
+              130.4
+            ],
+            [
+              33.64,
+              130.43
+            ],
+            [
+              33.66,
+              130.43
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "弘安之役：東路軍受阻",
+      "start": "1281-05-22",
+      "end": "1281-07-15",
+      "summary": "東路軍 5 月 22 日自高麗出發，6 月 9 日攻對馬、14 日攻壹岐，23 日搶先進入博多灣，但被防壘擋住無法登陸，只能佔據志賀島、能古島；日軍以小船夜襲，6 月 30 日元軍退回壹岐等待江南軍。",
+      "view": {
+        "lat": 33.9,
+        "lng": 130,
+        "zoom": 8
+      },
+      "events": [
+        {
+          "date": "1281-06-09",
+          "title": "再攻對馬",
+          "text": "東路軍攻擊對馬。",
+          "lat": 34.27,
+          "lng": 129.22,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1281-06-14",
+          "title": "再攻壹岐",
+          "text": "東路軍攻擊壹岐，少貳資時與龍造寺季時率眾抵抗。",
+          "lat": 33.78,
+          "lng": 129.72,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1281-06-23",
+          "title": "博多灣登陸受阻",
+          "text": "洪茶丘、金方慶搶在預定時程前進入博多灣，在防壘前無法登陸，改佔志賀島與能古島；25 日 300 艘船攻擊長門被擊退。",
+          "lat": 33.66,
+          "lng": 130.3,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1281-06-30",
+          "title": "志賀島夜襲與元軍撤退",
+          "text": "草野次郎夜襲取首 21 級並焚一船，河野通有白晝突襲負傷；竹崎季長再度負傷。元軍自志賀島退回壹岐。",
+          "lat": 33.66,
+          "lng": 130.3,
+          "type": "naval",
+          "side": "japan"
+        }
+      ],
+      "moves": [
+        {
+          "side": "yuan",
+          "kind": "naval",
+          "label": "東路軍",
+          "unit": "東路軍",
+          "start": "1281-05-22",
+          "end": "1281-06-23",
+          "outcome": "stopped",
+          "path": [
+            [
+              35.21,
+              128.57
+            ],
+            [
+              34.27,
+              129.22
+            ],
+            [
+              33.78,
+              129.72
+            ],
+            [
+              33.66,
+              130.3
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "yuan",
+          "kind": "naval",
+          "label": "東路軍",
+          "unit": "東路軍",
+          "start": "1281-06-25",
+          "outcome": "repulsed",
+          "path": [
+            [
+              34,
+              130.3
+            ],
+            [
+              34.2,
+              130.8
+            ],
+            [
+              34.37,
+              131.18
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "japan",
+          "kind": "naval",
+          "label": "草野氏小船隊",
+          "unit": "草野氏小船隊",
+          "start": "1281-06-30",
+          "outcome": "success",
+          "path": [
+            [
+              33.6,
+              130.38
+            ],
+            [
+              33.63,
+              130.34
+            ],
+            [
+              33.66,
+              130.3
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "yuan",
+          "kind": "retreat",
+          "label": "東路軍",
+          "unit": "東路軍",
+          "start": "1281-06-30",
+          "path": [
+            [
+              33.66,
+              130.3
+            ],
+            [
+              33.72,
+              130
+            ],
+            [
+              33.78,
+              129.72
+            ]
+          ],
+          "model": "ship"
+        }
+      ],
+      "zones": [
+        {
+          "side": "japan",
+          "kind": "front",
+          "key": "hakata-wall",
+          "label": "元寇防壘（博多灣）",
+          "line": [
+            [
+              33.58,
+              130.25
+            ],
+            [
+              33.585,
+              130.32
+            ],
+            [
+              33.6,
+              130.4
+            ],
+            [
+              33.64,
+              130.43
+            ],
+            [
+              33.66,
+              130.43
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "title": "江南軍會師與颱風",
+      "start": "1281-07-16",
+      "end": "1281-08-19",
+      "summary": "江南軍延誤後終於抵達，與東路軍在平戶、鷹島一帶會合，與日軍對峙兩週；日軍小船整夜襲擾，元軍以鏈條木板連接船隻。8 月 15 日颱風自西方襲擊聚泊的艦隊，大半船隻沉沒，范文虎擇堅船撤離，十餘萬士卒被棄於岸上。",
+      "view": {
+        "lat": 33.45,
+        "lng": 129.75,
+        "zoom": 10
+      },
+      "conditions": {
+        "weather": "8 月 15 日颱風自西方襲擊停泊艦隊（日後稱為「神風」）",
+        "fx": [
+          "storm",
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Mongol invasions of Japan – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Mongol_invasions_of_Japan"
+          },
+          {
+            "title": "元史 卷208 日本傳 – 維基文庫",
+            "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1281-07-16",
+          "title": "壹岐之戰",
+          "text": "壹岐再度激戰，元軍退往平戶與江南軍會合。",
+          "lat": 33.78,
+          "lng": 129.72,
+          "type": "assault",
+          "side": "japan"
+        },
+        {
+          "date": "1281-07",
+          "title": "兩軍會師鷹島",
+          "text": "會合後的艦隊攻取鷹島並準備進攻博多，雙方對峙約兩週。",
+          "lat": 33.43,
+          "lng": 129.75,
+          "type": "landing",
+          "side": "yuan"
+        },
+        {
+          "date": "1281-08-12",
+          "title": "整夜小船襲擾",
+          "text": "日軍以小船整夜襲擾，元軍以鏈條與木板把船連成平台防禦。",
+          "lat": 33.42,
+          "lng": 129.78,
+          "type": "naval",
+          "side": "japan"
+        },
+        {
+          "date": "1281-08-15",
+          "title": "颱風摧毀艦隊",
+          "text": "颱風自西方襲來，高麗與江南船員試圖駛向伊萬里灣而喪失；worldhistory.org 記為 8 月 14 日。",
+          "lat": 33.4,
+          "lng": 129.8,
+          "type": "naval",
+          "side": "yuan"
+        },
+        {
+          "date": "1281-08-19",
+          "title": "范文虎棄軍撤離",
+          "text": "范文虎等將領擇堅好船撤走，棄士卒十餘萬於山下；滯留伊萬里灣的數千人遭日軍處決，部分南宋人獲免。",
+          "lat": 33.43,
+          "lng": 129.75,
+          "type": "retreat",
+          "side": "yuan"
+        }
+      ],
+      "moves": [
+        {
+          "side": "yuan",
+          "kind": "naval",
+          "label": "江南軍",
+          "unit": "江南軍",
+          "end": "1281-07",
+          "outcome": "stopped",
+          "path": [
+            [
+              29.87,
+              121.55
+            ],
+            [
+              31,
+              125
+            ],
+            [
+              33.37,
+              129.55
+            ],
+            [
+              33.43,
+              129.75
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "yuan",
+          "kind": "naval",
+          "label": "東路軍",
+          "unit": "東路軍",
+          "start": "1281-07-16",
+          "path": [
+            [
+              33.78,
+              129.72
+            ],
+            [
+              33.55,
+              129.6
+            ],
+            [
+              33.43,
+              129.75
+            ]
+          ],
+          "model": "ship"
+        },
+        {
+          "side": "yuan",
+          "kind": "retreat",
+          "label": "江南軍",
+          "unit": "江南軍",
+          "start": "1281-08-19",
+          "path": [
+            [
+              33.43,
+              129.75
+            ],
+            [
+              33,
+              128
+            ],
+            [
+              31,
+              124.5
+            ]
+          ],
+          "model": "ship"
+        }
+      ],
+      "zones": [
+        {
+          "side": "japan",
+          "kind": "front",
+          "key": "hakata-wall",
+          "label": "元寇防壘（博多灣）",
+          "line": [
+            [
+              33.58,
+              130.25
+            ],
+            [
+              33.585,
+              130.32
+            ],
+            [
+              33.6,
+              130.4
+            ],
+            [
+              33.64,
+              130.43
+            ],
+            [
+              33.66,
+              130.43
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "name": "合浦（今馬山）",
+      "lat": 35.21,
+      "lng": 128.57,
+      "kind": "port",
+      "note": "兩次遠征的高麗出發港"
+    },
+    {
+      "name": "對馬小茂田濱",
+      "lat": 34.27,
+      "lng": 129.22,
+      "kind": "beach",
+      "note": "1274 年元軍登陸處，宗資國戰死"
+    },
+    {
+      "name": "壹岐",
+      "lat": 33.78,
+      "lng": 129.72,
+      "kind": "island",
+      "note": "1274 年平景隆自盡；1281 年再度激戰"
+    },
+    {
+      "name": "博多",
+      "lat": 33.59,
+      "lng": 130.41,
+      "kind": "town",
+      "note": "兩次遠征的主要目標"
+    },
+    {
+      "name": "志賀島",
+      "lat": 33.66,
+      "lng": 130.3,
+      "kind": "island",
+      "note": "1281 年元軍據點，日軍夜襲之地"
+    },
+    {
+      "name": "鷹島",
+      "lat": 33.43,
+      "lng": 129.75,
+      "kind": "island",
+      "note": "1281 年颱風覆滅處，今有海底沉船遺址"
+    },
+    {
+      "name": "大宰府",
+      "lat": 33.52,
+      "lng": 130.53,
+      "kind": "town",
+      "note": "九州行政中心"
+    },
+    {
+      "name": "鎌倉",
+      "lat": 35.32,
+      "lng": 139.55,
+      "kind": "city",
+      "note": "幕府所在，1275 年斬殺元使"
+    },
+    {
+      "name": "慶元（寧波）",
+      "lat": 29.87,
+      "lng": 121.55,
+      "kind": "port",
+      "note": "江南軍出發地（依一般知識）"
+    }
+  ],
+  "civilian": {
+    "label": "對馬、壹岐居民受害",
+    "note": "元軍攻陷對馬與壹岐時當地守軍與家屬傷亡慘重（平景隆之女逃亡途中被殺）；所查資料未載平民傷亡總數。"
+  },
+  "significance": [
+    "元朝喪失大部分海軍力量，高麗造船能力也大受打擊，此後再無渡海征日。",
+    "鎌倉幕府無土地可賞賜參戰御家人，加上長期戒備的負擔，幕府權威下滑，終在 1333 年覆滅。",
+    "倭寇活動此後增加；明朝曾三度討論征日，但從未實行。",
+    "「神風」一詞首次用於這些颱風，二戰時被借用為自殺攻擊部隊之名。",
+    "日本刀的設計因此改變，相州傳刀匠（如正宗）打造出更薄更長的太刀。"
+  ],
+  "facts": [
+    {
+      "label": "最早的戰爭繪卷之一",
+      "text": "肥後御家人竹崎季長於 1293 年委託繪製《蒙古襲來繪詞》，為自己爭取恩賞，畫中可見元軍爆炸的鐵炮。"
+    },
+    {
+      "label": "海底的炸彈",
+      "text": "鷹島沖海底考古找到了填有火藥與碎鐵的陶製炸彈，證實了日方記載。"
+    },
+    {
+      "label": "防壘至今仍在",
+      "text": "博多灣的元寇防壘部分段落仍保存在福岡市內。"
+    }
+  ],
+  "disputes": [
+    {
+      "topic": "1281 年元軍兵力",
+      "claims": [
+        {
+          "value": "約 14.2 萬",
+          "source": "傳統數字（Conlan 引）"
+        },
+        {
+          "value": "約 7 萬",
+          "source": "Rossabi"
+        },
+        {
+          "value": "約 1.4 萬",
+          "source": "Conlan"
+        }
+      ]
+    },
+    {
+      "topic": "1281 年颱風日期",
+      "claims": [
+        {
+          "value": "8 月 15 日",
+          "source": "Wikipedia"
+        },
+        {
+          "value": "8 月 14 日",
+          "source": "worldhistory.org"
+        },
+        {
+          "value": "（至元十八年）八月一日",
+          "source": "《元史》（陰曆）"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p2",
+      "event": "元軍夜退船上",
+      "side": "yuan",
+      "commander": "忻都、洪茶丘、劉復亨",
+      "title": "博多一戰後：留在岸上，還是退回船上？",
+      "situation": "11 月 20 日元軍在博多灣逼退日軍數公里，但部隊疲憊、隊形不整，箭矢將盡，將領劉復亨面部中箭。",
+      "intel": [
+        "日軍退向內陸，可能埋伏",
+        "援軍與補給都要靠海上運補"
+      ],
+      "options": [
+        {
+          "label": "當夜全軍退回船上",
+          "detail": "避免夜間遭伏擊"
+        },
+        {
+          "label": "在岸上紮營，翌日繼續推進",
+          "detail": "擴大灘頭、追擊日軍"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "元軍退回船上後遇暴風，約 200 艘船損失，3 萬人中約 13,500 人未能返回，第一次遠征就此結束。",
+      "hindsight": "《元史》記「官軍不整，又矢盡」；撤退加上暴風使一場戰術勝利變成全面失敗。",
+      "sources": [
+        {
+          "title": "Mongol invasions of Japan – Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Mongol_invasions_of_Japan"
+        },
+        {
+          "title": "元史 卷208 日本傳 – 維基文庫",
+          "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+        }
+      ]
+    },
+    {
+      "phase": "p5",
+      "event": "范文虎棄軍撤離",
+      "side": "yuan",
+      "commander": "范文虎",
+      "title": "颱風過後：與士卒同留，還是擇船撤走？",
+      "situation": "8 月 15 日颱風摧毀聚泊在鷹島一帶的艦隊，大量船隻沉沒，十餘萬士卒困在岸上，船隻不足以全部撤回。",
+      "options": [
+        {
+          "label": "將領擇堅好船先行撤走",
+          "detail": "保存指揮官與殘存船隻"
+        },
+        {
+          "label": "留下整頓部隊、繼續作戰或分批撤退",
+          "detail": "與士卒共存亡"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "范文虎等將領乘堅船撤離，十餘萬士卒被棄於山下；滯留者多遭日軍殺害，部分南宋人獲免。中蒙史料稱傷亡率六至九成。",
+      "hindsight": "《元史》以「十萬之眾得還者三人耳」形容慘狀（顯係誇大），此後元朝再未渡海征日。",
+      "sources": [
+        {
+          "title": "元史 卷208 日本傳 – 維基文庫",
+          "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+        },
+        {
+          "title": "Mongol invasions of Japan – Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Mongol_invasions_of_Japan"
+        }
+      ]
+    }
+  ],
+  "voices": [
+    {
+      "phase": "p1",
+      "event": "忽必烈國書",
+      "side": "yuan",
+      "who": "忽必烈",
+      "role": "大蒙古國皇帝（《元史·日本傳》所載國書）",
+      "quote": "大蒙古國皇帝奉書日本國王。朕惟自古小國之君，境土相接，尚務講信修睦。",
+      "original": "大蒙古國皇帝奉書日本國王。朕惟自古小國之君，境土相接，尚務講信修睦。",
+      "lang": "zh",
+      "source": {
+        "title": "元史 卷208 日本傳 – 維基文庫",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1266 年國書，載於明初編纂之《元史》",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      }
+    },
+    {
+      "phase": "p1",
+      "event": "忽必烈國書",
+      "side": "yuan",
+      "who": "忽必烈",
+      "role": "大蒙古國皇帝（國書結語）",
+      "quote": "且聖人以四海為家，不相通好，豈一家之理哉？以至用兵，夫孰所好？",
+      "original": "且聖人以四海為家，不相通好，豈一家之理哉？以至用兵，夫孰所好？",
+      "lang": "zh",
+      "source": {
+        "title": "元史 卷208 日本傳 – 維基文庫",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：1266 年國書，載於明初編纂之《元史》",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "元軍夜退船上",
+      "side": "yuan",
+      "who": "《元史·日本傳》",
+      "role": "明初官修史書",
+      "quote": "冬十月，入其國，敗之。而官軍不整，又矢盡……",
+      "original": "冬十月，入其國，敗之。而官軍不整，又矢盡",
+      "lang": "zh",
+      "source": {
+        "title": "元史 卷208 日本傳 – 維基文庫",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：明初官修《元史》（1370 年成書）",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      }
+    },
+    {
+      "phase": "p5",
+      "event": "范文虎棄軍撤離",
+      "side": "yuan",
+      "who": "《元史·日本傳》",
+      "role": "明初官修史書",
+      "quote": "八月一日，風破舟。五日，文虎等諸將各自擇堅好船乘之，棄士卒十餘萬于山下。",
+      "original": "八月一日，風破舟。五日，文虎等諸將各自擇堅好船乘之，棄士卒十餘萬于山下。",
+      "lang": "zh",
+      "source": {
+        "title": "元史 卷208 日本傳 – 維基文庫",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：明初官修《元史》（1370 年成書）",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      }
+    },
+    {
+      "phase": "p5",
+      "event": "范文虎棄軍撤離",
+      "side": "yuan",
+      "who": "《元史·日本傳》",
+      "role": "明初官修史書",
+      "quote": "十萬之眾得還者三人耳。",
+      "original": "十萬之眾得還者三人耳。",
+      "lang": "zh",
+      "source": {
+        "title": "元史 卷208 日本傳 – 維基文庫",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：明初官修《元史》（1370 年成書）",
+        "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p1",
+      "event": "忽必烈國書",
+      "type": "image",
+      "title": "忽必烈致日本國書（1268 年抄本）",
+      "caption": "1266 年 8 月忽必烈致「日本國王」國書的 1268 年抄本，東大寺宗性抄錄，藏於奈良東大寺。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e2/LetterFromKhubilaiToJapan1266.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/LetterFromKhubilaiToJapan1266.jpg/500px-LetterFromKhubilaiToJapan1266.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:LetterFromKhubilaiToJapan1266.jpg",
+      "credit": "忽必烈國書，東大寺宗性抄錄；奈良東大寺藏",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-Art：13 世紀平面作品之忠實複製，美國亦屬公有領域）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-Art"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "文永之戰",
+      "type": "image",
+      "title": "竹崎季長衝入箭雨與爆炸",
+      "caption": "《蒙古襲來繪詞》前卷局部：1274 年文永之役中，竹崎季長策馬衝過箭矢、長槍與元軍鐵炮爆炸。原畫約 1293 年。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Samurai_Takezaki_Suenaga_detail_M%C5%8Dko_Sh%C5%ABrai_Ekotoba.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Samurai_Takezaki_Suenaga_detail_M%C5%8Dko_Sh%C5%ABrai_Ekotoba.jpg/500px-Samurai_Takezaki_Suenaga_detail_M%C5%8Dko_Sh%C5%ABrai_Ekotoba.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Samurai_Takezaki_Suenaga_detail_M%C5%8Dko_Sh%C5%ABrai_Ekotoba.jpg",
+      "credit": "土佐長隆等；《蒙古襲來合戰繪卷》，國立國會圖書館數位典藏",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-Art：13 世紀繪卷之忠實複製，美國亦屬公有領域）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-Art"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "博多灣登陸",
+      "type": "image",
+      "title": "蒙古襲來繪詞・文永之役",
+      "caption": "《蒙古襲來繪詞》前卷第 7 頁，描繪 1274 年文永之役。約 1293 年，竹崎季長委託繪製。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/M%C5%8Dko_Sh%C5%ABrai_Ekotoba_2.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/M%C5%8Dko_Sh%C5%ABrai_Ekotoba_2.jpg/500px-M%C5%8Dko_Sh%C5%ABrai_Ekotoba_2.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:M%C5%8Dko_Sh%C5%ABrai_Ekotoba_2.jpg",
+      "credit": "《蒙古襲來繪詞》（竹崎季長委託，約 1293 年）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-Art：13 世紀繪卷之忠實複製，美國亦屬公有領域）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-Art"
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "文永元麗聯軍",
+      "side": "yuan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1274-11-02",
+          "lat": 35.21,
+          "lng": 128.57,
+          "status": "active",
+          "note": "自合浦出發"
+        },
+        {
+          "date": "1274-11-04",
+          "lat": 34.27,
+          "lng": 129.22,
+          "note": "對馬"
+        },
+        {
+          "date": "1274-11-13",
+          "lat": 33.78,
+          "lng": 129.72,
+          "note": "壹岐"
+        },
+        {
+          "date": "1274-11-19",
+          "lat": 33.62,
+          "lng": 130.3,
+          "note": "博多灣"
+        },
+        {
+          "date": "1274-11-21",
+          "lat": 34.3,
+          "lng": 129.6,
+          "status": "withdrawn",
+          "note": "撤退途中遇暴風"
+        }
+      ]
+    },
+    {
+      "unit": "東路軍",
+      "side": "yuan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1281-05-22",
+          "lat": 35.21,
+          "lng": 128.57,
+          "status": "active"
+        },
+        {
+          "date": "1281-06-09",
+          "lat": 34.27,
+          "lng": 129.22
+        },
+        {
+          "date": "1281-06-14",
+          "lat": 33.78,
+          "lng": 129.72
+        },
+        {
+          "date": "1281-06-23",
+          "lat": 33.66,
+          "lng": 130.3,
+          "note": "志賀島"
+        },
+        {
+          "date": "1281-06-30",
+          "lat": 33.78,
+          "lng": 129.72,
+          "note": "退回壹岐"
+        },
+        {
+          "date": "1281-08-15",
+          "lat": 33.43,
+          "lng": 129.75,
+          "status": "destroyed",
+          "note": "鷹島颱風"
+        }
+      ]
+    },
+    {
+      "unit": "江南軍",
+      "side": "yuan",
+      "model": "ship",
+      "points": [
+        {
+          "date": "1281-06",
+          "lat": 29.87,
+          "lng": 121.55,
+          "status": "active",
+          "note": "自中國南方出發"
+        },
+        {
+          "lat": 33.37,
+          "lng": 129.55
+        },
+        {
+          "date": "1281-08-15",
+          "lat": 33.43,
+          "lng": 129.75,
+          "status": "destroyed",
+          "note": "颱風中大半覆滅"
+        }
+      ]
+    },
+    {
+      "unit": "竹崎季長隊",
+      "side": "japan",
+      "model": "cavalry",
+      "points": [
+        {
+          "date": "1274-11-20",
+          "lat": 33.59,
+          "lng": 130.39,
+          "status": "active",
+          "note": "博多違令突擊負傷"
+        },
+        {
+          "date": "1281-06-30",
+          "lat": 33.66,
+          "lng": 130.3,
+          "status": "active",
+          "note": "志賀島一帶再度負傷"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "元日戰爭 – 中文維基百科",
+      "url": "https://zh.wikipedia.org/zh-tw/%E5%85%83%E6%97%A5%E6%88%98%E4%BA%89",
+      "type": "wiki",
+      "lang": "zh",
+      "accessed": "2026-11-02",
+      "note": "使用者提供；抓取失敗，未能讀取內容"
+    },
+    {
+      "title": "Mongol invasions of Japan – Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Mongol_invasions_of_Japan",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "主要事實、日期、兵力與各家估計、武器、後續影響"
+    },
+    {
+      "title": "The Mongol Invasions of Japan, 1274 and 1281 – World History Encyclopedia",
+      "url": "https://www.worldhistory.org/article/1415/the-mongol-invasions-of-japan-1274-and-1281/",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "兵力、防壘尺寸、颱風、繪詞、對幕府的影響"
+    },
+    {
+      "title": "元史 卷208 日本傳 – 維基文庫",
+      "url": "https://zh.wikisource.org/wiki/%E5%85%83%E5%8F%B2/%E5%8D%B7208",
+      "type": "primary",
+      "lang": "zh",
+      "accessed": "2026-11-02",
+      "note": "國書原文與兩次戰役的元方記載"
+    }
+  ],
+  "provenance": {
+    "extracted_by": "Claude (claude-opus-5-5)",
+    "extracted_at": "2026-11-02",
+    "confidence": {
+      "coordinates": "approx",
+      "strength": "contested",
+      "casualties": "contested",
+      "weapons": "medium"
+    },
+    "notes": "使用者提供的中文維基頁抓取失敗；以英文維基與 World History Encyclopedia 為主，並以《元史·日本傳》（維基文庫）交叉核對。日期依英文維基（西曆換算）；《元史》用陰曆，1281 年「八月五日」范文虎撤離換算為 8 月 19 日係依「八月一日＝8 月 15 日」推算。蒙古複合弓、和弓的射程、江南軍出發港慶元（寧波）為一般知識補充。座標依地名估計；航線箭頭、防壘線與軌跡皆為示意，軌跡由本紀錄事件拼接，江南軍出發日期僅知月份。沉浸素材：3 張 Commons 圖像（《蒙古襲來繪詞》兩張與忽必烈國書抄本），皆為 PD-Art，頁面註明在美國亦屬公有領域，授權經 Commons 鏡像頁讀取；5 則引文取自《元史·日本傳》原文（中文原文即引文，未翻譯）。"
+  },
+  "revision": "2026-11-02T07:35:35.287Z"
+}

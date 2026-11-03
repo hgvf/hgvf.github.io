@@ -1,0 +1,1707 @@
+{
+  "schema_version": 1,
+  "id": "bloody-april-1917",
+  "kind": "campaign",
+  "title": "血腥四月",
+  "title_en": "Bloody April",
+  "aliases": [
+    "阿拉斯空戰",
+    "1917 年 4 月阿拉斯上空的空中戰役"
+  ],
+  "wars": [
+    "wwi",
+    "western-front-wwi"
+  ],
+  "tags": [
+    "空戰",
+    "制空權",
+    "王牌飛行員",
+    "偵察與砲兵觀測"
+  ],
+  "date": {
+    "start": "1917-04-01",
+    "end": "1917-04-30",
+    "label": "1917 年 4 月（配合阿拉斯戰役）",
+    "duration_days": 30
+  },
+  "location": {
+    "name": "法國北部阿拉斯至杜埃上空",
+    "country_then": "法國（德軍佔領區與英軍防區）",
+    "country_now": "法國",
+    "lat": 50.33,
+    "lng": 2.92,
+    "zoom": 10
+  },
+  "result": {
+    "winner": "germany",
+    "label": "德軍空中勝利",
+    "detail": "英國皇家飛行隊為支援阿拉斯攻勢付出 245–275 架飛機與 400 多名空勤人員的代價，德軍僅損失約 66 架；但英軍仍維持了地面作戰所需的偵察與砲兵觀測。"
+  },
+  "summary": "1917 年 4 月英軍發動阿拉斯攻勢，皇家飛行隊以約 365 架飛機對抗約 195 架德機，任務是把德機逐出戰場、保護偵察與砲兵觀測。德軍以性能較優的信天翁戰鬥機、經驗豐富的飛行員與無線電導引的戰鬥機中隊（Jasta）擇機迎擊，里希特霍芬的第11戰鬥機中隊單月擊落 89 架。英軍在這一個月損失約四分之一的戰力，戰後以新機型與新戰術扭轉劣勢。",
+  "background": [
+    {
+      "title": "英法春季聯合攻勢",
+      "text": "1917 年 1 月黑格與尼維爾議定英法聯合春季攻勢，英軍在阿拉斯發起牽制性攻擊，配合法軍在埃納河的主攻。"
+    },
+    {
+      "title": "砲兵戰需要空中之眼",
+      "text": "黑格在報告中指出，有效的砲擊只能在空中部隊協助下進行，因此英軍的空中活動隨著砲擊加劇而增加。"
+    },
+    {
+      "title": "德軍空中力量重組",
+      "text": "德軍把戰鬥機編成獨立的戰鬥機中隊（Jasta），以無線電與地面管制連絡，另設護航中隊保護砲兵觀測機，戰鬥機得以專心攔截。"
+    },
+    {
+      "title": "機種與訓練的落差",
+      "text": "英軍多數機種已落後信天翁 D.III；新進飛行員可能只有 35 小時飛行時數，德軍飛行員則有 90–100 小時。"
+    }
+  ],
+  "objectives": {
+    "british": "把德機逐出阿拉斯戰場上空，保護軍屬偵察與砲兵觀測機，並以轟炸迫使德軍防空砲撤離。",
+    "germany": "以戰鬥機中隊擇時擇地攔截英機，瓦解英軍偵察與砲兵觀測，同時保護己方觀測機。"
+  },
+  "sides": [
+    {
+      "id": "british",
+      "name": "大英帝國（皇家飛行隊）",
+      "color": "#2f5c8a",
+      "belligerents": [
+        "英國（皇家飛行隊、皇家海軍航空隊）"
+      ],
+      "commanders": [
+        {
+          "name": "休·特倫查德（Hugh Trenchard）",
+          "role": "皇家飛行隊司令"
+        },
+        {
+          "name": "道格拉斯·黑格（Douglas Haig）",
+          "role": "英國遠征軍總司令"
+        },
+        {
+          "name": "威廉·利夫-羅賓遜（William Leefe Robinson）",
+          "role": "第48中隊上尉、維多利亞十字勳章得主",
+          "fate": "被俘"
+        },
+        {
+          "name": "H. D. 哈維-凱利（H. D. Harvey-Kelly）",
+          "role": "第19中隊少校",
+          "fate": "被俘後傷重不治"
+        }
+      ],
+      "units": [
+        {
+          "name": "皇家飛行隊",
+          "echelon": "其他",
+          "branch": "air",
+          "commander": "特倫查德",
+          "note": "約 365 架可用飛機、25 個中隊，約三分之一為戰鬥機，分配給第1、第3、第5集團軍。"
+        },
+        {
+          "name": "第11中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "F.E.2b；4 月 14 日在第29中隊紐波特護航下完成德羅庫爾線偵察。"
+        },
+        {
+          "name": "第13中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "B.E.2 砲兵觀測機；4 月 2、11、16、28 日都有機被里希特霍芬擊落。"
+        },
+        {
+          "name": "第16中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "B.E.2 軍屬偵察機，在維米一帶損失。"
+        },
+        {
+          "name": "第25中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "F.E.2b/d；4 月 12 日與六架德軍單座機交戰損失三機，13 日在埃南-列塔爾轟炸時再損失。"
+        },
+        {
+          "name": "第43中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "索普威斯 1½ 支柱機，4 月 2、8 日在法爾比斯一帶被擊落。"
+        },
+        {
+          "name": "第48中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "布里斯托 F2A 新機種；4 月 5 日首戰六機出擊只兩機返航。"
+        },
+        {
+          "name": "第59中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "R.E.8；4 月 13 日六機無適當護航去拍攝德羅庫爾-凱昂線，全數被擊落。"
+        },
+        {
+          "name": "第60中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "紐波特 17；4 月 16 日損失四機，只擊落德機一架。"
+        },
+        {
+          "name": "第19中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "SPAD；4 月 29 日中隊長哈維-凱利被擊落。"
+        },
+        {
+          "name": "第100中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "夜間轟炸專門中隊，4 月 5 日夜襲杜埃損失一架 F.E.2b。"
+        },
+        {
+          "name": "皇家海軍航空隊第8中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "索普威斯三翼機；4 月 22 日達拉斯與卡林兩機與 14 架德機纏鬥 45 分鐘，擊落三架。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "25 個中隊",
+        "formations": "皇家飛行隊 25 個中隊，配屬第1、第3、第5集團軍",
+        "aircraft": 365,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "約 365 架可用飛機，約三分之一為戰鬥機（Wikipedia）。英軍在阿拉斯共出動近 20,000 架次（英聯邦戰爭公墓委員會）。"
+      },
+      "casualties": {
+        "killed": 207,
+        "wounded": null,
+        "missing": null,
+        "captured": 108,
+        "total": 421,
+        "total_label": "飛機 245–275 架；空勤人員約 319–421 人",
+        "range": [
+          319,
+          421
+        ],
+        "note": "Wikipedia 資訊框：損失 245–275 架飛機、空勤人員 421 人（其中 207 人陣亡）；正文：211 人陣亡或失蹤、108 人被俘；導言：400 多人陣亡或失蹤。英聯邦戰爭公墓委員會：至 4 月底損失 250 架飛機，約 400 名空勤人員傷亡。",
+        "confidence": "contested"
+      },
+      "weapons": [
+        {
+          "cat": "aircraft",
+          "name": "B.E.2 偵察機",
+          "model": "Royal Aircraft Factory B.E.2e/2d/2g",
+          "qty": "多個軍屬中隊",
+          "year": "1916",
+          "specs": {
+            "類型": "雙座偵察／砲兵觀測機",
+            "最大速度": "約 145 km/h",
+            "武裝": "1–2 挺路易斯機槍",
+            "航程": "約 3.5 小時續航",
+            "乘員": "2"
+          },
+          "note": "砲兵觀測的主力，也是損失最多的機種；4 月 28 日阿勒附近的攻擊中損失慘重。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "F.E.2b 推進式雙座機",
+          "model": "Royal Aircraft Factory F.E.2b",
+          "qty": "第11、第25、第100中隊等",
+          "year": "1915",
+          "specs": {
+            "類型": "雙座推進式戰鬥偵察機",
+            "最大速度": "約 147 km/h",
+            "武裝": "1–2 挺路易斯機槍",
+            "航程": "約 3 小時續航",
+            "乘員": "2"
+          },
+          "note": "擔任偵察、轟炸與夜襲；里希特霍芬本月擊落其中多架。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "R.E.8 偵察機",
+          "model": "Royal Aircraft Factory R.E.8",
+          "qty": "第59中隊等",
+          "year": "1916",
+          "specs": {
+            "類型": "雙座偵察機",
+            "最大速度": "約 164 km/h",
+            "武裝": "維克斯＋路易斯機槍",
+            "航程": "約 4 小時續航",
+            "乘員": "2"
+          },
+          "note": "4 月 13 日第59中隊六架全被擊落。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "索普威斯 1½ 支柱機",
+          "model": "Sopwith 1½ Strutter",
+          "qty": "第43中隊等",
+          "year": "1916",
+          "specs": {
+            "類型": "雙座戰鬥偵察機",
+            "最大速度": "約 160 km/h",
+            "武裝": "維克斯＋路易斯機槍",
+            "航程": "約 3.75 小時續航",
+            "乘員": "2"
+          },
+          "note": "性能已落後，4 月多次遭擊落。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "布里斯托 F2A 戰鬥機",
+          "model": "Bristol F.2A",
+          "qty": "第48中隊",
+          "year": "1917",
+          "specs": {
+            "類型": "雙座戰鬥機",
+            "最大速度": "約 175 km/h",
+            "武裝": "維克斯＋路易斯機槍",
+            "航程": "約 3 小時續航",
+            "乘員": "2"
+          },
+          "note": "特倫查德一度保留未用；4 月 5 日首戰以傳統雙座機戰術作戰，損失四架。改良的 F2B 後來成為名機。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "紐波特 17 戰鬥機",
+          "model": "Nieuport 17",
+          "qty": "第29、第60中隊等",
+          "year": "1916",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 175 km/h",
+            "武裝": "1 挺路易斯或維克斯機槍",
+            "航程": "約 2 小時續航",
+            "乘員": "1"
+          },
+          "note": "為偵察機護航，4 月 16 日第60中隊損失四架。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "索普威斯三翼機",
+          "model": "Sopwith Triplane",
+          "qty": "皇家海軍航空隊第8中隊等",
+          "year": "1916",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 187 km/h",
+            "武裝": "1 挺維克斯機槍",
+            "航程": "約 2.75 小時續航",
+            "乘員": "1"
+          },
+          "note": "少數能與信天翁抗衡的英方機種；4 月 29 日一架成為里希特霍芬第 52 次戰果。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "SPAD VII 戰鬥機",
+          "model": "SPAD S.VII",
+          "qty": "第19中隊等",
+          "year": "1916",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 192 km/h",
+            "武裝": "1 挺維克斯機槍",
+            "航程": "約 2.25 小時續航",
+            "乘員": "1"
+          },
+          "note": "4 月 29 日第19中隊的 SPAD 被擊落，中隊長哈維-凱利被俘不治。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "路易斯機槍（航空型）",
+          "model": "Lewis Gun",
+          "qty": "不詳",
+          "year": "1914",
+          "specs": {
+            "口徑": "7.7 mm（.303）",
+            "彈容": "47／97 發彈盤",
+            "射速": "約 500–600 發/分",
+            "重量": "約 12 kg"
+          },
+          "note": "雙座機後座與紐波特上翼的主要武器。"
+        }
+      ]
+    },
+    {
+      "id": "germany",
+      "name": "德意志帝國（帝國陸軍航空隊）",
+      "color": "#4d4d4d",
+      "belligerents": [
+        "德意志帝國"
+      ],
+      "commanders": [
+        {
+          "name": "恩斯特·馮·霍普納（Ernst von Hoeppner）",
+          "role": "帝國陸軍航空隊司令"
+        },
+        {
+          "name": "曼弗雷德·馮·里希特霍芬（Manfred von Richthofen）",
+          "role": "第11戰鬥機中隊隊長"
+        }
+      ],
+      "units": [
+        {
+          "name": "帝國陸軍航空隊",
+          "echelon": "其他",
+          "branch": "air",
+          "commander": "霍普納",
+          "note": "阿拉斯前線約 195 架飛機，約半數為戰鬥機；戰鬥機中隊以無線電與地面管制連絡。"
+        },
+        {
+          "name": "第11戰鬥機中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "commander": "里希特霍芬",
+          "note": "4 月宣稱擊落 89 架；里希特霍芬個人 21 架，戰果由 31 增至 52。"
+        },
+        {
+          "name": "第4戰鬥機中隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "與第11戰鬥機中隊同駐杜埃附近的魯庫爾。"
+        },
+        {
+          "name": "護航中隊（Schutzstaffeln）",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "近距護衛砲兵觀測機，讓戰鬥機中隊得以專心攔截英機。"
+        },
+        {
+          "name": "砲兵觀測飛行隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "為德軍砲兵觀測，是英軍戰鬥機的主要目標。"
+        },
+        {
+          "name": "防空砲兵",
+          "echelon": "其他",
+          "branch": "army",
+          "note": "另擊落 75 架英機（Corum 2022，經 Wikipedia 轉引）。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "約 195 架飛機",
+        "formations": "多個戰鬥機中隊、護航中隊與觀測飛行隊",
+        "aircraft": 195,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "約 195 架，約半數為戰鬥機（Wikipedia）。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": null,
+        "total_label": "約 66 架飛機（空勤人員數不詳）",
+        "range": null,
+        "note": "Hart（2005）、Levine（2009）：德軍損失 66 架（經 Wikipedia 轉引）。4 月 29 日英軍宣稱擊毀 11 架、另 21 架失控墜落，德方紀錄只損失 4 架與 1 具氣球。",
+        "confidence": "medium"
+      },
+      "weapons": [
+        {
+          "cat": "aircraft",
+          "name": "信天翁 D.III",
+          "model": "Albatros D.III",
+          "qty": "戰鬥機中隊主力",
+          "year": "1917",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 175 km/h",
+            "武裝": "2 挺 LMG 08/15 機槍",
+            "航程": "約 2 小時續航",
+            "乘員": "1"
+          },
+          "note": "支配阿拉斯上空的機種，雙機槍火力壓過多數英機。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "信天翁 D.II",
+          "model": "Albatros D.II",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 175 km/h",
+            "武裝": "2 挺 LMG 08/15 機槍",
+            "航程": "約 1.5 小時續航",
+            "乘員": "1"
+          },
+          "note": "與 D.III 混編。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "哈伯施塔特 D.II",
+          "model": "Halberstadt D.II",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 150 km/h",
+            "武裝": "1 挺 LMG 08/15 機槍",
+            "航程": "約 1.5 小時續航",
+            "乘員": "1"
+          },
+          "note": "較舊的單座機，仍在部分中隊服役。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "LMG 08/15 航空機槍",
+          "model": "LMG 08/15 'Spandau'",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "彈鏈供彈",
+            "射速": "約 500 發/分",
+            "重量": "約 12 kg"
+          },
+          "note": "同步射擊穿過螺旋槳，信天翁裝兩挺。"
+        },
+        {
+          "cat": "aa",
+          "name": "防空砲",
+          "model": "k-Flak（型號依一般知識）",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "口徑": "約 77–88 mm",
+            "射程": "不詳",
+            "重量": "不詳",
+            "射速": "不詳"
+          },
+          "note": "本月擊落英機 75 架；英軍轟炸未能迫使其撤離。"
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "title": "攻勢前的空中爭奪",
+      "start": "1917-04-01",
+      "end": "1917-04-08",
+      "summary": "砲擊加劇，英軍空中活動隨之增加，攻擊前幾天演變為爭奪局部制空權的激烈空戰。天候使大規模作戰拖到 4 月 5 日，當天布里斯托 F2A 首戰即在杜埃附近遭里希特霍芬伏擊，英軍轟炸行動也同步展開。",
+      "view": {
+        "lat": 50.34,
+        "lng": 2.95,
+        "zoom": 10
+      },
+      "conditions": {
+        "weather": "天候使行動延至 4 月 5 日才轉好；7 日天氣不佳",
+        "sources": [
+          {
+            "title": "Bloody April – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Bloody_April"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-04-02T08:35",
+          "title": "里希特霍芬擊落 B.E.2",
+          "text": "里希特霍芬在法爾比斯擊落第13中隊的 B.E.2d，為其第 32 次戰果；同日 11 時 15 分再於吉文希擊落第43中隊的 1½ 支柱機。",
+          "lat": 50.355,
+          "lng": 2.825,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-05T11:15",
+          "title": "布里斯托 F2A 首戰",
+          "text": "利夫-羅賓遜率第48中隊六架 F2A 在杜埃附近遭遇里希特霍芬，兩架被他擊落、兩架被其中隊擊落；利夫-羅賓遜被俘，只有兩架返航，一架重創。",
+          "lat": 50.341,
+          "lng": 3.165,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-05",
+          "title": "轟炸行動展開",
+          "text": "英軍轟炸伊爾松、聖康坦與馬爾寬；第100中隊夜襲杜埃損失一架 F.E.2b。",
+          "lat": 50.37,
+          "lng": 3.08,
+          "type": "bombing",
+          "side": "british"
+        },
+        {
+          "date": "1917-04-08T16:40",
+          "title": "維米上空擊落 B.E.2g",
+          "text": "里希特霍芬在維米擊落第16中隊的 B.E.2g，戰果達 39 架。",
+          "lat": 50.372,
+          "lng": 2.81,
+          "type": "air",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第48中隊",
+          "unit": "第48中隊",
+          "start": "1917-04-05",
+          "outcome": "repulsed",
+          "strength": 6,
+          "path": [
+            [
+              50.3,
+              2.7
+            ],
+            [
+              50.33,
+              2.95
+            ],
+            [
+              50.341,
+              3.165
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第100中隊",
+          "unit": "第100中隊",
+          "start": "1917-04-05",
+          "outcome": "success",
+          "path": [
+            [
+              50.3,
+              2.7
+            ],
+            [
+              50.35,
+              2.9
+            ],
+            [
+              50.37,
+              3.08
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "germany",
+          "kind": "air",
+          "label": "第11戰鬥機中隊",
+          "unit": "第11戰鬥機中隊",
+          "start": "1917-04-05",
+          "outcome": "success",
+          "path": [
+            [
+              50.37,
+              3.08
+            ],
+            [
+              50.355,
+              3.12
+            ],
+            [
+              50.341,
+              3.165
+            ]
+          ],
+          "model": "aircraft"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-line",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.42,
+              2.76
+            ],
+            [
+              50.36,
+              2.79
+            ],
+            [
+              50.29,
+              2.81
+            ],
+            [
+              50.23,
+              2.83
+            ],
+            [
+              50.17,
+              2.86
+            ],
+            [
+              50.17,
+              3.25
+            ],
+            [
+              50.42,
+              3.25
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "4 月 9 日前前線",
+          "line": [
+            [
+              50.42,
+              2.76
+            ],
+            [
+              50.36,
+              2.79
+            ],
+            [
+              50.29,
+              2.81
+            ],
+            [
+              50.23,
+              2.83
+            ],
+            [
+              50.17,
+              2.86
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "阿拉斯攻勢開打",
+      "start": "1917-04-09",
+      "end": "1917-04-12",
+      "summary": "4 月 9 日 5 時 30 分英軍在雪中發起阿拉斯攻勢，加拿大軍攻上維米嶺，空中觀測員追蹤地面推進；德方紀錄 9、10 日沒有損失飛機。12 日暴風雪限制飛行，第25中隊仍與德軍單座機交戰損失三機。",
+      "view": {
+        "lat": 50.32,
+        "lng": 2.85,
+        "zoom": 11
+      },
+      "conditions": {
+        "weather": "9 日低能見度與降雪，早上大陣雨，傍晚天氣轉壞，此後風雪交加；10 日天候多變；12 日暴風雪",
+        "visibility": "低能見度",
+        "fx": [
+          "snow"
+        ],
+        "sources": [
+          {
+            "title": "Bloody April – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Bloody_April"
+          },
+          {
+            "title": "Haig's despatch, London Gazette issue 30462",
+            "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-04-09T05:30",
+          "title": "地面攻勢發起",
+          "text": "英軍在有效的砲兵彈幕掩護下於低能見度與雪中發起攻擊，下午 2 時前拿下鐵路三角地帶。",
+          "lat": 50.3,
+          "lng": 2.82,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-04-09",
+          "title": "雙方戰報",
+          "text": "德方官方電訊宣稱週日擊落 17 架敵機與 2 具繫留氣球；英方報告則稱飛機與砲兵合作成效極佳。德方紀錄 9、10 日沒有損失飛機。",
+          "lat": 50.33,
+          "lng": 2.9,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-10T05:00",
+          "title": "攻佔蒙希-勒-普勒",
+          "text": "清晨 5 時拿下蒙希-勒-普勒，空中觀測員從上空注視戰況。",
+          "lat": 50.271,
+          "lng": 2.892,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-04-12",
+          "title": "第25中隊三機被擊落",
+          "text": "暴風雪中第25中隊與六架德軍單座機交戰，損失兩架 F.E.2b 與一架索普威斯。",
+          "lat": 50.4,
+          "lng": 2.87,
+          "type": "air",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "皇家飛行隊",
+          "unit": "皇家飛行隊",
+          "start": "1917-04-09T05:30",
+          "outcome": "success",
+          "path": [
+            [
+              50.3,
+              2.72
+            ],
+            [
+              50.3,
+              2.82
+            ],
+            [
+              50.28,
+              2.88
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第25中隊",
+          "unit": "第25中隊",
+          "start": "1917-04-12",
+          "outcome": "repulsed",
+          "path": [
+            [
+              50.38,
+              2.72
+            ],
+            [
+              50.39,
+              2.8
+            ],
+            [
+              50.4,
+              2.87
+            ]
+          ],
+          "model": "aircraft"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-line",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.42,
+              2.8
+            ],
+            [
+              50.36,
+              2.84
+            ],
+            [
+              50.3,
+              2.88
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ],
+            [
+              50.17,
+              3.25
+            ],
+            [
+              50.42,
+              3.25
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "4 月 12 日前線（維米嶺、蒙希一帶）",
+          "line": [
+            [
+              50.42,
+              2.8
+            ],
+            [
+              50.36,
+              2.84
+            ],
+            [
+              50.3,
+              2.88
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "黑暗的一週：無護航的偵察",
+      "start": "1917-04-13",
+      "end": "1917-04-16",
+      "summary": "13 日天氣轉好，第59中隊六架 R.E.8 在護航不足下去拍攝德羅庫爾-凱昂線，全被擊落；同日里希特霍芬一天擊落三架。14 日第11中隊在紐波特護航下完成偵察，16 日法軍尼維爾攻勢開始，第60中隊卻以四比一的比數慘敗。",
+      "view": {
+        "lat": 50.35,
+        "lng": 2.96,
+        "zoom": 10
+      },
+      "conditions": {
+        "weather": "13 日天氣良好，得以大規模出動",
+        "sources": [
+          {
+            "title": "Bloody April – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Bloody_April"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-04-13T08:58",
+          "title": "第59中隊全軍覆沒",
+          "text": "六架 R.E.8 未獲適當護航去拍攝德羅庫爾-凱昂線，在維特里與布雷比耶之間被擊落，多數機組陣亡；里希特霍芬擊落其中一架，為第 41 次戰果。",
+          "lat": 50.33,
+          "lng": 3,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-13T19:35",
+          "title": "埃南-列塔爾轟炸損失",
+          "text": "里希特霍芬的戰鬥機攻擊無護航的轟炸機，英軍損失三架 F.E.2b 與一架馬丁賽德；他當天第三架戰果落在諾耶勒-戈多。",
+          "lat": 50.418,
+          "lng": 2.993,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-14",
+          "title": "德羅庫爾線偵察完成",
+          "text": "第11中隊六架 F.E.2b 在第29中隊紐波特護航下完成任務，雙方各損失一架。",
+          "lat": 50.39,
+          "lng": 2.925,
+          "type": "air",
+          "side": "british"
+        },
+        {
+          "date": "1917-04-16",
+          "title": "第60中隊一日損失四機",
+          "text": "法軍攻勢未達預期；第60中隊四架紐波特被擊落，只擊落德機一架。",
+          "lat": 50.34,
+          "lng": 2.88,
+          "type": "air",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第59中隊",
+          "unit": "第59中隊",
+          "start": "1917-04-13",
+          "outcome": "repulsed",
+          "strength": 6,
+          "path": [
+            [
+              50.3,
+              2.72
+            ],
+            [
+              50.32,
+              2.87
+            ],
+            [
+              50.33,
+              3
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第11中隊",
+          "unit": "第11中隊",
+          "start": "1917-04-14",
+          "outcome": "success",
+          "strength": 6,
+          "path": [
+            [
+              50.3,
+              2.72
+            ],
+            [
+              50.35,
+              2.85
+            ],
+            [
+              50.39,
+              2.925
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "germany",
+          "kind": "air",
+          "label": "第11戰鬥機中隊",
+          "unit": "第11戰鬥機中隊",
+          "start": "1917-04-13",
+          "outcome": "success",
+          "path": [
+            [
+              50.37,
+              3.08
+            ],
+            [
+              50.35,
+              3.04
+            ],
+            [
+              50.33,
+              3
+            ]
+          ],
+          "model": "aircraft"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-line",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.42,
+              2.8
+            ],
+            [
+              50.36,
+              2.84
+            ],
+            [
+              50.3,
+              2.88
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ],
+            [
+              50.17,
+              3.25
+            ],
+            [
+              50.42,
+              3.25
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "4 月中旬前線",
+          "line": [
+            [
+              50.42,
+              2.8
+            ],
+            [
+              50.36,
+              2.84
+            ],
+            [
+              50.3,
+              2.88
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "四月下旬：直到 29 日的決戰",
+      "start": "1917-04-17",
+      "end": "1917-04-30",
+      "summary": "天候使飛行延至 20 日左右，21 日晴朗。22 日兩架三翼機與 14 架德機纏鬥 45 分鐘擊落三架；25–28 日低雲籠罩，28 日阿勒攻擊中 B.E.2 損失慘重。29 日天氣轉好爆發激烈空戰，里希特霍芬一天擊落四架，四月累計 21 架。",
+      "view": {
+        "lat": 50.33,
+        "lng": 2.93,
+        "zoom": 10
+      },
+      "conditions": {
+        "weather": "約 20 日前天候阻礙飛行；21 日晴空；25–28 日低雲；29 日好轉",
+        "sources": [
+          {
+            "title": "Bloody April – Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Bloody_April"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-04-22",
+          "title": "兩架三翼機對 14 架德機",
+          "text": "皇家海軍航空隊達拉斯中校與卡林少尉駕三翼機與 14 架德機纏鬥 45 分鐘，擊落三架。",
+          "lat": 50.37,
+          "lng": 2.95,
+          "type": "air",
+          "side": "british"
+        },
+        {
+          "date": "1917-04-28",
+          "title": "阿勒攻擊與 B.E.2 損失",
+          "text": "步兵在阿勒-昂-戈埃勒附近推進約 3.2 公里，英軍 B.E.2 損失慘重；里希特霍芬 9 時 30 分在佩爾韋以東擊落第13中隊一架。",
+          "lat": 50.364,
+          "lng": 2.873,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-29T12:05",
+          "title": "哈維-凱利被擊落",
+          "text": "第19中隊的 SPAD 在萊克呂斯附近被擊落，中隊長哈維-凱利被俘後傷重不治，為里希特霍芬第 49 次戰果。",
+          "lat": 50.276,
+          "lng": 3.044,
+          "type": "air",
+          "side": "germany"
+        },
+        {
+          "date": "1917-04-29T19:40",
+          "title": "里希特霍芬一日四勝",
+          "text": "他在維米上空擊落皇家海軍航空隊第8中隊的三翼機，為當天第四架、個人第 52 次戰果。英軍宣稱當天擊毀德機 11 架，德方紀錄只損失 4 架與 1 具氣球。",
+          "lat": 50.417,
+          "lng": 2.904,
+          "type": "air",
+          "side": "germany"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "第19中隊",
+          "unit": "第19中隊",
+          "start": "1917-04-29",
+          "outcome": "repulsed",
+          "path": [
+            [
+              50.25,
+              2.72
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.276,
+              3.044
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "british",
+          "kind": "air",
+          "label": "皇家海軍航空隊第8中隊",
+          "unit": "皇家海軍航空隊第8中隊",
+          "start": "1917-04-22",
+          "outcome": "success",
+          "path": [
+            [
+              50.4,
+              2.72
+            ],
+            [
+              50.38,
+              2.85
+            ],
+            [
+              50.37,
+              2.95
+            ]
+          ],
+          "model": "aircraft"
+        },
+        {
+          "side": "germany",
+          "kind": "air",
+          "label": "第11戰鬥機中隊",
+          "unit": "第11戰鬥機中隊",
+          "start": "1917-04-29",
+          "outcome": "success",
+          "path": [
+            [
+              50.37,
+              3.08
+            ],
+            [
+              50.3,
+              3.05
+            ],
+            [
+              50.296,
+              2.902
+            ],
+            [
+              50.417,
+              2.904
+            ]
+          ],
+          "model": "aircraft"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-line",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.42,
+              2.82
+            ],
+            [
+              50.36,
+              2.86
+            ],
+            [
+              50.3,
+              2.89
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ],
+            [
+              50.17,
+              3.25
+            ],
+            [
+              50.42,
+              3.25
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "4 月底前線（阿勒、羅厄一帶）",
+          "line": [
+            [
+              50.42,
+              2.82
+            ],
+            [
+              50.36,
+              2.86
+            ],
+            [
+              50.3,
+              2.89
+            ],
+            [
+              50.27,
+              2.9
+            ],
+            [
+              50.23,
+              2.88
+            ],
+            [
+              50.17,
+              2.86
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "name": "阿拉斯",
+      "lat": 50.291,
+      "lng": 2.777,
+      "kind": "town",
+      "note": "英軍攻勢中心；阿拉斯飛行部隊紀念碑紀念無墳可葬的空勤人員"
+    },
+    {
+      "name": "杜埃",
+      "lat": 50.37,
+      "lng": 3.08,
+      "kind": "town",
+      "note": "德軍戰鬥機中隊駐地附近；4 月 5 日夜襲目標"
+    },
+    {
+      "name": "魯庫爾機場",
+      "lat": 50.329,
+      "lng": 3.14,
+      "kind": "airfield",
+      "note": "第4、第11戰鬥機中隊駐地"
+    },
+    {
+      "name": "維米嶺",
+      "lat": 50.372,
+      "lng": 2.81,
+      "kind": "hill",
+      "note": "4 月 9 日加拿大軍攻佔；上空多次空戰"
+    },
+    {
+      "name": "蒙希-勒-普勒",
+      "lat": 50.271,
+      "lng": 2.892,
+      "kind": "village",
+      "note": "4 月 10 日攻佔"
+    },
+    {
+      "name": "德羅庫爾",
+      "lat": 50.39,
+      "lng": 2.925,
+      "kind": "village",
+      "note": "德羅庫爾-凱昂線北端，英軍偵察目標"
+    },
+    {
+      "name": "維特里-昂-阿圖瓦",
+      "lat": 50.326,
+      "lng": 2.982,
+      "kind": "village",
+      "note": "4 月 13 日第59中隊覆沒地點附近"
+    },
+    {
+      "name": "埃南-列塔爾",
+      "lat": 50.418,
+      "lng": 2.948,
+      "kind": "town",
+      "note": "4 月 13 日轟炸目標"
+    }
+  ],
+  "civilian": {
+    "label": "不適用",
+    "note": "此為空中戰役，所查資料未載平民傷亡。"
+  },
+  "significance": [
+    "皇家飛行隊單月損失約四分之一戰力，成為一戰英國空軍最慘重的時期；史家 Corum 評為「從空中角度看是徹底失敗」。",
+    "儘管損失慘重，英軍仍維持了阿拉斯地面戰所需的偵察與砲兵觀測。",
+    "英軍加速換裝索普威斯駱駝（1917 年 6 月）、S.E.5a 與改良的布里斯托戰鬥機，到 7 月多數中隊已換上高性能機種；並加強砲兵觀測機護航，以截收德軍無線電導引攔截。",
+    "德軍把戰鬥機中隊編成四個中隊一組的戰鬥機聯隊（Jagdgeschwader），並成立對地攻擊中隊。",
+    "里希特霍芬聲名大噪，「紅男爵」之名由此廣為人知。"
+  ],
+  "facts": [
+    {
+      "label": "35 小時",
+      "text": "部分英軍新飛行員上戰場前只有約 35 小時飛行時數，德軍飛行員約有 90–100 小時。"
+    },
+    {
+      "label": "一個月 21 架",
+      "text": "里希特霍芬 4 月擊落 21 架，戰果由 31 增至 52；29 日一天就擊落 4 架。"
+    },
+    {
+      "label": "地面也在擊落飛機",
+      "text": "除了戰鬥機中隊，德軍防空砲在這個月另擊落英機 75 架。"
+    },
+    {
+      "label": "兩萬架次",
+      "text": "英軍在阿拉斯出動近 20,000 架次，以維持對戰場的偵察。"
+    }
+  ],
+  "disputes": [
+    {
+      "topic": "英軍空勤人員損失",
+      "claims": [
+        {
+          "value": "421 人（207 人陣亡）",
+          "source": "Wikipedia 資訊框"
+        },
+        {
+          "value": "211 人陣亡或失蹤、108 人被俘",
+          "source": "Wikipedia 正文"
+        },
+        {
+          "value": "約 400 人",
+          "source": "英聯邦戰爭公墓委員會"
+        }
+      ]
+    },
+    {
+      "topic": "里希特霍芬 4 月戰果",
+      "claims": [
+        {
+          "value": "21 架",
+          "source": "List of aerial victories of Manfred von Richthofen – Wikipedia"
+        },
+        {
+          "value": "20 架",
+          "source": "英聯邦戰爭公墓委員會"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p1",
+      "event": "布里斯托 F2A 首戰",
+      "side": "british",
+      "commander": "休·特倫查德",
+      "title": "新的布里斯托 F2A 要保留，還是立即投入？",
+      "situation": "阿拉斯攻勢在即，皇家飛行隊多數機種已被信天翁 D.III 壓制。新的布里斯托 F2A 雙座戰鬥機剛到第48中隊。",
+      "intel": [
+        "英軍約 365 架可用飛機，德軍約 195 架但戰鬥機比例較高",
+        "攻擊前幾天空戰已達最高強度"
+      ],
+      "options": [
+        {
+          "label": "先保留 F2A，待攻勢時再投入",
+          "detail": "避免新機種過早曝光"
+        },
+        {
+          "label": "立即投入前線",
+          "detail": "盡快以新機爭奪制空權"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "F2A 直到 4 月 5 日才首戰，以傳統雙座機戰術編隊作戰，六機中四機被擊落，利夫-羅賓遜被俘。",
+      "hindsight": "後來飛行員改以前射機槍主動纏鬥，改良型 F2B 成為一戰最成功的雙座戰鬥機之一。",
+      "sources": [
+        {
+          "title": "Bloody April – Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Bloody_April"
+        }
+      ]
+    }
+  ],
+  "voices": [
+    {
+      "phase": "p1",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令（1917 年 12 月報告）",
+      "quote": "因此，我軍的空中活動隨著砲擊日益猛烈而增加。",
+      "original": "Our activity in the air, therefore, increased with the growing severity of our bombardment.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Haig's despatch, London Gazette issue 30462 (Jan 1918)",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "地面攻勢發起",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令（1917 年 12 月報告）",
+      "quote": "4 月 9 日的總攻擊於上午 5 時 30 分，在極為有效的砲兵彈幕掩護下發起。",
+      "original": "The general attack on the 9th April was launched at 5.30 a.m. under cover of a most effective artillery barrage.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Haig's despatch, London Gazette issue 30462 (Jan 1918)",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "雙方戰報",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令（1917 年 4 月 10 日戰報）",
+      "quote": "這些飛機與砲兵合作，成效極佳。",
+      "original": "The machines co-operated with the artillery with excellent results.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "THEY'RE OFF! – Taranaki Daily News, 11 April 1917（Papers Past）",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TDN19170411.2.25"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國官方戰報，1917 年刊於報紙（1931 年前出版）",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TDN19170411.2.25"
+      }
+    },
+    {
+      "phase": "p2",
+      "event": "雙方戰報",
+      "side": "germany",
+      "who": "德國官方電訊",
+      "role": "1917 年 4 月 9 日德方戰報（英譯，刊於 1917 年報紙）",
+      "quote": "週日擊落敵機十七架與繫留氣球兩具。",
+      "original": "Seventeen enemy aeroplanes and two captive balloons were downed on Sunday.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "THEY'RE OFF! – Taranaki Daily News, 11 April 1917（Papers Past）",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TDN19170411.2.25"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：德國政府官方戰報及其 1917 年報刊英譯（1931 年前出版）",
+        "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TDN19170411.2.25"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p3",
+      "date": "1917-04-14",
+      "type": "image",
+      "title": "斯卡爾普河上的浮橋渡口",
+      "caption": "1917 年 4 月 14 日，皇家工兵在聖洛朗-布朗日使用斯卡爾普河上未完工的臨時橋與浮橋渡船——空中偵察要守護的正是這樣的地面推進。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/The_Battle_of_Arras,_April-may_1917_Q5821.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/The_Battle_of_Arras,_April-may_1917_Q5821.jpg/500px-The_Battle_of_Arras,_April-may_1917_Q5821.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:The_Battle_of_Arras,_April-may_1917_Q5821.jpg",
+      "credit": "John Warwick Brooke；帝國戰爭博物館 Q 5821（英國新聞部一戰官方照片）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：1957 年前拍攝之英國政府照片，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    },
+    {
+      "phase": "p4",
+      "date": "1917-04-29",
+      "type": "image",
+      "title": "訊號站的盧卡斯燈",
+      "caption": "1917 年 4 月 29 日，皇家工兵訊號組在訥維爾-維塔斯以望遠鏡與盧卡斯訊號燈通訊；同一天阿拉斯上空爆發本月最激烈的空戰。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/56/The_Battle_of_Arras,_April-may_1917_Q5278.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/The_Battle_of_Arras,_April-may_1917_Q5278.jpg/500px-The_Battle_of_Arras,_April-may_1917_Q5278.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:The_Battle_of_Arras,_April-may_1917_Q5278.jpg",
+      "credit": "John Warwick Brooke；帝國戰爭博物館 Q 5278（英國新聞部一戰官方照片）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：1957 年前拍攝之英國政府照片，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "第11戰鬥機中隊",
+      "side": "germany",
+      "model": "aircraft",
+      "points": [
+        {
+          "date": "1917-04-02T08:35",
+          "lat": 50.355,
+          "lng": 2.825,
+          "status": "active",
+          "note": "法爾比斯，里希特霍芬第 32 勝"
+        },
+        {
+          "date": "1917-04-05T11:15",
+          "lat": 50.341,
+          "lng": 3.165,
+          "note": "伏擊布里斯托 F2A"
+        },
+        {
+          "date": "1917-04-08T16:40",
+          "lat": 50.372,
+          "lng": 2.81
+        },
+        {
+          "date": "1917-04-13T08:58",
+          "lat": 50.33,
+          "lng": 3,
+          "note": "擊落第59中隊 R.E.8"
+        },
+        {
+          "date": "1917-04-28",
+          "lat": 50.364,
+          "lng": 2.873
+        },
+        {
+          "date": "1917-04-29T19:40",
+          "lat": 50.417,
+          "lng": 2.904,
+          "status": "active",
+          "note": "里希特霍芬第 52 勝"
+        }
+      ]
+    },
+    {
+      "unit": "第11中隊",
+      "side": "british",
+      "model": "aircraft",
+      "points": [
+        {
+          "date": "1917-04-13",
+          "lat": 50.33,
+          "lng": 3,
+          "status": "active"
+        },
+        {
+          "date": "1917-04-14",
+          "lat": 50.39,
+          "lng": 2.925,
+          "status": "active",
+          "note": "完成德羅庫爾線偵察"
+        }
+      ]
+    },
+    {
+      "unit": "第25中隊",
+      "side": "british",
+      "model": "aircraft",
+      "points": [
+        {
+          "date": "1917-04-12",
+          "lat": 50.4,
+          "lng": 2.87,
+          "status": "active",
+          "note": "暴風雪中損失三機"
+        },
+        {
+          "date": "1917-04-13T19:35",
+          "lat": 50.418,
+          "lng": 2.993,
+          "status": "active",
+          "note": "埃南-列塔爾轟炸"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "血腥四月 – 中文維基百科",
+      "url": "https://zh.wikipedia.org/zh-tw/%E8%A1%80%E8%85%A5%E5%9B%9B%E6%9C%88",
+      "type": "wiki",
+      "lang": "zh",
+      "accessed": "2026-11-02",
+      "note": "使用者提供；抓取失敗，未能讀取內容"
+    },
+    {
+      "title": "Bloody April – Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Bloody_April",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "兵力、損失、每日事件、天候、戰術與後續影響"
+    },
+    {
+      "title": "List of aerial victories of Manfred von Richthofen – Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/List_of_aerial_victories_of_Manfred_von_Richthofen",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "4 月 21 次戰果的時刻、機種、中隊與地點"
+    },
+    {
+      "title": "Remembering Bloody April – Commonwealth War Graves Commission",
+      "url": "https://admin.cwgc.org/our-work/blog/remembering-bloody-april/",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "250 架飛機、約 400 空勤人員、近 20,000 架次"
+    },
+    {
+      "title": "Haig's despatch, London Gazette issue 30462 (Jan 1918)",
+      "url": "https://www.thegazette.co.uk/London/issue/30462/data.pdf",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "黑格 1917 年 12 月報告：空中活動、4 月 9 日攻擊時刻與天候"
+    },
+    {
+      "title": "THEY'RE OFF! – Taranaki Daily News, 11 April 1917（Papers Past）",
+      "url": "https://dynamic-rsnz.natlib.govt.nz/newspapers/TDN19170411.2.25",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "1917 年 4 月英德雙方官方戰報"
+    },
+    {
+      "title": "Why a Terrible Month For the Royal Flying Corps Became Known as Bloody April – History Hit",
+      "url": "https://www.historyhit.com/why-a-terrible-month-for-the-royal-flying-corps-became-known-as-bloody-april/",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "信天翁 D.III 的優勢"
+    }
+  ],
+  "provenance": {
+    "extracted_by": "Claude (claude-opus-5-5)",
+    "extracted_at": "2026-11-02",
+    "confidence": {
+      "coordinates": "approx",
+      "strength": "medium",
+      "casualties": "contested",
+      "weapons": "medium"
+    },
+    "notes": "使用者提供的中文維基頁抓取失敗；以英文維基「Bloody April」與里希特霍芬戰果表為主，並以英聯邦戰爭公墓委員會、黑格報告與 1917 年報紙戰報交叉核對。各機種性能、LMG 08/15 與德軍防空砲型號為一般知識補充。座標依地名估計；前線與德軍陣地多邊形取自阿拉斯戰役大致位置，為示意；空中出擊箭頭的起點（英軍機場）未見資料，以英軍後方示意；軌跡由本紀錄事件拼接。沉浸素材：2 張帝國戰爭博物館的阿拉斯戰役地面照片（PD-UKGov，HMSO 聲明全球適用，頁面無另附美國標籤），授權經 Commons 鏡像頁讀取；未找到授權可確認的四月空戰照片——historyofwar.org 上第4、第11戰鬥機中隊信天翁照（IWM Q 50328）找不到 Commons 頁面，Commons 上的 Q 69099 為 8 月照片，均未收錄。4 則引文取自黑格 1918 年刊於《倫敦憲報》的報告與 1917 年報紙所載英德官方戰報（公有領域）。"
+  },
+  "revision": "2026-11-02T07:19:39.660Z"
+}

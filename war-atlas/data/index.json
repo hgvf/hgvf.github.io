@@ -1,7 +1,41 @@
 {
  "schema_version": 1,
- "generated_at": "2026-10-31",
+ "generated_at": "2026-11-03",
  "battles": [
+  {
+   "id": "mongol-invasions-of-japan-1274",
+   "file": "battles/mongol-invasions-of-japan-1274.json",
+   "kind": "war",
+   "title": "元日戰爭（蒙古襲來）",
+   "revision": "2026-11-02T07:35:35.287Z",
+   "title_en": "Mongol invasions of Japan",
+   "wars": [
+    "mongol-invasions-of-japan"
+   ],
+   "date": {
+    "start": "1274-11-02",
+    "end": "1281-08-19",
+    "label": "1274 年（文永之役）、1281 年（弘安之役）",
+    "duration_days": null
+   },
+   "lat": 33.9,
+   "lng": 129.9,
+   "zoom": 7,
+   "summary": "忽必烈多次遣使要求日本臣服未果，1274 年派元麗聯軍約 3 萬人渡海，攻陷對馬、壹岐後在博多灣登陸，一日激戰後退回船上，歸途遇暴風，約 13,500 人未能返回。日本隨後斬殺元使，在博多灣築起石造防壘。1281 年元軍分東路軍與江南軍兩路再犯，被防壘擋在海上，8 月 15 日一",
+   "result": "日本擊退元軍",
+   "sides": [
+    {
+     "id": "yuan",
+     "name": "元朝與高麗聯軍",
+     "color": "#3d6b8f"
+    },
+    {
+     "id": "japan",
+     "name": "日本（鎌倉幕府）",
+     "color": "#b5452f"
+    }
+   ]
+  },
   {
    "id": "crimean-war-1853",
    "file": "battles/crimean-war-1853.json",
@@ -405,6 +439,41 @@
    ]
   },
   {
+   "id": "bloody-april-1917",
+   "file": "battles/bloody-april-1917.json",
+   "kind": "campaign",
+   "title": "血腥四月",
+   "revision": "2026-11-02T07:19:39.660Z",
+   "title_en": "Bloody April",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-04-01",
+    "end": "1917-04-30",
+    "label": "1917 年 4 月（配合阿拉斯戰役）",
+    "duration_days": 30
+   },
+   "lat": 50.33,
+   "lng": 2.92,
+   "zoom": 10,
+   "summary": "1917 年 4 月英軍發動阿拉斯攻勢，皇家飛行隊以約 365 架飛機對抗約 195 架德機，任務是把德機逐出戰場、保護偵察與砲兵觀測。德軍以性能較優的信天翁戰鬥機、經驗豐富的飛行員與無線電導引的戰鬥機中隊（Jasta）擇機迎擊，里希特霍芬的第11戰鬥機中隊單月擊落 89 架。英",
+   "result": "德軍空中勝利",
+   "sides": [
+    {
+     "id": "british",
+     "name": "大英帝國（皇家飛行隊）",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國（帝國陸軍航空隊）",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
    "id": "battle-of-arras-1917",
    "file": "battles/battle-of-arras-1917.json",
    "kind": "battle",
@@ -470,6 +539,111 @@
     {
      "id": "germany",
      "name": "德意志帝國",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-messines-1917",
+   "file": "battles/battle-of-messines-1917.json",
+   "kind": "battle",
+   "title": "梅西訥戰役",
+   "revision": "2026-11-02T07:03:21.646Z",
+   "title_en": "Battle of Messines (1917)",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-06-07",
+    "end": "1917-06-14",
+    "label": "1917 年 6 月 7 日 – 14 日（預備砲擊自 5 月 21 日起）",
+    "duration_days": 8
+   },
+   "lat": 50.785,
+   "lng": 2.895,
+   "zoom": 12,
+   "summary": "1917 年 6 月 7 日凌晨 3 時 10 分，英軍在梅西訥山脊下引爆 19 枚深層坑道地雷，隨即以約 2,200 門火砲的徐進彈幕掩護 9 個師衝上山脊。英國、愛爾蘭、澳洲與紐西蘭部隊當天上午拿下梅西訥與威特沙特，下午再攻佔山脊東坡的歐斯塔凡防線；德軍反擊師因遲到與砲擊而未",
+   "result": "英軍勝利",
+   "sides": [
+    {
+     "id": "british",
+     "name": "大英帝國（英國第二集團軍）",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國（第4集團軍威特沙特集群）",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-passchendaele-1917",
+   "file": "battles/battle-of-passchendaele-1917.json",
+   "kind": "campaign",
+   "title": "帕斯尚爾戰役（第三次伊珀爾戰役）",
+   "revision": "2026-11-02T07:12:07.371Z",
+   "title_en": "Battle of Passchendaele (Third Battle of Ypres)",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-07-31",
+    "end": "1917-11-10",
+    "label": "1917 年 7 月 31 日 – 11 月 10 日",
+    "duration_days": 103
+   },
+   "lat": 50.875,
+   "lng": 2.96,
+   "zoom": 11,
+   "summary": "梅西訥勝利後，黑格自伊珀爾突出部發動大攻勢，企圖奪取帕斯尚爾山脊並進一步掃蕩比利時海岸。7 月 31 日首日攻擊後連下四天大雨，8 月成為三十年來最濕的八月，高夫的第五集團軍在泥濘與德軍碉堡前進展有限。9 月天氣轉好，普盧默以短距、重砲、步步為營的攻擊連下梅寧路、多邊形林與布魯德",
+   "result": "協約國有限勝利（戰略目標未達成）",
+   "sides": [
+    {
+     "id": "british",
+     "name": "大英帝國與協約國",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國（第4集團軍）",
+     "color": "#4d4d4d"
+    }
+   ]
+  },
+  {
+   "id": "battle-of-cambrai-1917",
+   "file": "battles/battle-of-cambrai-1917.json",
+   "kind": "battle",
+   "title": "康布雷戰役（1917 年）",
+   "revision": "2026-11-02T07:25:32.517Z",
+   "title_en": "Battle of Cambrai (1917)",
+   "wars": [
+    "wwi",
+    "western-front-wwi"
+   ],
+   "date": {
+    "start": "1917-11-20",
+    "end": "1917-12-07",
+    "label": "1917 年 11 月 20 日 – 12 月 7 日",
+    "duration_days": 18
+   },
+   "lat": 50.11,
+   "lng": 3.15,
+   "zoom": 11,
+   "summary": "1917 年 11 月 20 日清晨 6 時 20 分，英國第三集團軍在沒有任何預備砲擊的情況下，以 476 輛戰車與 1,003 門採用預測射擊的火砲，突破康布雷西南的興登堡防線，消息傳回英國時教堂為此鳴鐘。然而弗萊斯基耶爾受阻、馬斯尼耶爾橋被戰車壓垮、騎兵未能擴張，英軍隨後陷",
+   "result": "不分勝負",
+   "sides": [
+    {
+     "id": "british",
+     "name": "大英帝國（英國第三集團軍）",
+     "color": "#2f5c8a"
+    },
+    {
+     "id": "germany",
+     "name": "德意志帝國（第2集團軍）",
      "color": "#4d4d4d"
     }
    ]

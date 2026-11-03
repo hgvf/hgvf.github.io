@@ -101,6 +101,14 @@
       "parent": "wwi",
       "name_en": "Eastern Front (World War I)",
       "name": "第一次世界大戰東方戰線"
+    },
+    {
+      "name": "元日戰爭（蒙古襲來）",
+      "color": "#5a7d4c",
+      "short": "元寇",
+      "period": "1274–1281",
+      "name_en": "Mongol invasions of Japan",
+      "id": "mongol-invasions-of-japan"
     }
   ]
 }

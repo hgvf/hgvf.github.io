@@ -1,0 +1,2425 @@
+{
+  "schema_version": 1,
+  "id": "battle-of-passchendaele-1917",
+  "kind": "campaign",
+  "title": "帕斯尚爾戰役（第三次伊珀爾戰役）",
+  "title_en": "Battle of Passchendaele (Third Battle of Ypres)",
+  "aliases": [
+    "第三次伊珀爾戰役",
+    "帕森達勒戰役",
+    "Third Ypres",
+    "Ypres 1917",
+    "Flandernschlacht 1917（法蘭德斯會戰）"
+  ],
+  "wars": [
+    "wwi",
+    "western-front-wwi"
+  ],
+  "tags": [
+    "泥濘",
+    "陣地戰",
+    "咬住不放",
+    "碉堡",
+    "消耗戰"
+  ],
+  "date": {
+    "start": "1917-07-31",
+    "end": "1917-11-10",
+    "label": "1917 年 7 月 31 日 – 11 月 10 日",
+    "duration_days": 103
+  },
+  "location": {
+    "name": "比利時西法蘭德斯，伊珀爾以東至帕斯尚爾（Passendale）山脊",
+    "country_then": "比利時（德軍佔領區）",
+    "country_now": "比利時",
+    "lat": 50.875,
+    "lng": 2.96,
+    "zoom": 11
+  },
+  "result": {
+    "winner": "british",
+    "label": "協約國有限勝利（戰略目標未達成）",
+    "detail": "英聯邦部隊以極高代價奪下伊珀爾以東的山脊與帕斯尚爾村，但突破至魯瑟拉勒、奪取比利時海岸的原定目標落空；戰役在韋斯特羅斯貝克以南停住，至今仍是一戰中爭議最大的攻勢之一。"
+  },
+  "summary": "梅西訥勝利後，黑格自伊珀爾突出部發動大攻勢，企圖奪取帕斯尚爾山脊並進一步掃蕩比利時海岸。7 月 31 日首日攻擊後連下四天大雨，8 月成為三十年來最濕的八月，高夫的第五集團軍在泥濘與德軍碉堡前進展有限。9 月天氣轉好，普盧默以短距、重砲、步步為營的攻擊連下梅寧路、多邊形林與布魯德賽恩德；10 月雨季再來，普爾卡佩勒與第一次帕斯尚爾攻擊在泥沼中失敗。最後加拿大軍於 10 月 26 日至 11 月 10 日分四階段拿下帕斯尚爾村與山脊。",
+  "background": [
+    {
+      "title": "法軍兵變與英軍挑大樑",
+      "text": "1917 年春尼維爾攻勢失敗、法軍兵變，英軍在西線承擔更大責任。"
+    },
+    {
+      "title": "北方作戰的構想",
+      "text": "黑格自 1916 年起計畫從伊珀爾推進，奪取帕斯尚爾山脊與魯瑟拉勒、托爾豪特鐵路樞紐，再配合沿岸作戰（Hush 行動）掃蕩比利時海岸至荷蘭邊界。"
+    },
+    {
+      "title": "梅西訥的前置勝利",
+      "text": "6 月 7–14 日梅西訥戰役拿下突出部南翼山脊，但其後停頓約六週，讓德軍有時間強化縱深防禦。"
+    },
+    {
+      "title": "德軍的縱深防禦",
+      "text": "德國第4集團軍在伊珀爾以東布設前線、Albrecht、Wilhelm 及 Flandern I–III 多道防線，以碉堡機槍與後方反擊（Eingreif）師構成彈性防禦。"
+    },
+    {
+      "title": "政府勉強同意",
+      "text": "勞合·喬治與福煦反對此攻勢，倫敦戰時內閣擔心過於野心與代價高昂，遲至 7 月才正式核准。"
+    }
+  ],
+  "objectives": {
+    "british": "奪取伊珀爾以東的格呂維爾高原與帕斯尚爾山脊，進逼魯瑟拉勒鐵路樞紐，最終配合沿岸登陸掃蕩比利時海岸的德軍潛艇基地。",
+    "germany": "以縱深防禦與反擊師守住法蘭德斯山脊，消耗英軍、避免全面撤退，保住比利時海岸。"
+  },
+  "sides": [
+    {
+      "id": "british",
+      "name": "大英帝國與協約國",
+      "color": "#2f5c8a",
+      "belligerents": [
+        "英國",
+        "澳大利亞",
+        "紐西蘭",
+        "加拿大",
+        "紐芬蘭",
+        "法國",
+        "比利時"
+      ],
+      "commanders": [
+        {
+          "name": "道格拉斯·黑格（Douglas Haig）",
+          "role": "英國遠征軍總司令"
+        },
+        {
+          "name": "休伯特·高夫（Hubert Gough）",
+          "role": "第五集團軍司令（8 月 25 日前主導攻勢）"
+        },
+        {
+          "name": "赫伯特·普盧默（Herbert Plumer）",
+          "role": "第二集團軍司令（8 月 25 日起主導攻勢）"
+        },
+        {
+          "name": "弗朗索瓦·安托萬（François Anthoine）",
+          "role": "法國第一集團軍司令"
+        },
+        {
+          "name": "路易·呂誇（Louis Ruquoy）",
+          "role": "比利時軍"
+        },
+        {
+          "name": "亞瑟·柯里（Arthur Currie）",
+          "role": "加拿大軍軍長"
+        }
+      ],
+      "units": [
+        {
+          "name": "第五集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "高夫",
+          "note": "6 月 10 日接管突出部北段，主攻 7 月 31 日至 8 月；成效不彰後主攻權交給第二集團軍。"
+        },
+        {
+          "name": "第二集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "普盧默",
+          "note": "8 月 25 日起負責梅寧路高地，以有限目標、短距推進與倍增砲兵發動 9 月三次攻擊。"
+        },
+        {
+          "name": "法國第一集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "安托萬",
+          "note": "於北翼參加皮爾克姆、朗厄馬克與普爾卡佩勒攻擊，7 月 31 日奪下比克斯舒特。"
+        },
+        {
+          "name": "第14軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "第五集團軍左翼，7 月 31 日推進 2,300–2,700 公尺，8 月 16 日攻下朗厄馬克。"
+        },
+        {
+          "name": "第2軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "第五集團軍右翼，梅寧路兩側的主要難點；8 月 10 日攻擊韋斯特胡克與格倫科斯林。"
+        },
+        {
+          "name": "第18軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "7 月 31 日在聖朱利安一帶推進約 3,700 公尺。"
+        },
+        {
+          "name": "第19軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "7 月 31 日推進後遭德軍反擊，三個旅退回黑線，損失約 70%。"
+        },
+        {
+          "name": "澳紐第一軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "9 月 20 日梅寧路、26 日多邊形林、10 月 4 日布魯德賽恩德的主力。"
+        },
+        {
+          "name": "澳紐第二軍",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "10 月 4 日奪格拉文斯塔費爾支脈；10 月 9、12 日在泥濘中攻擊帕斯尚爾失敗，18 日由加拿大軍接替。"
+        },
+        {
+          "name": "加拿大軍",
+          "echelon": "軍",
+          "branch": "army",
+          "commander": "柯里",
+          "note": "10 月 26 日至 11 月 10 日分四階段奪取帕斯尚爾村與山脊，傷亡 15,654 人。"
+        },
+        {
+          "name": "近衛師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "7 月 27 日搶渡伊瑟運河；10 月 9 日與法軍推進到侯特胡斯特森林邊緣。"
+        },
+        {
+          "name": "第15（蘇格蘭）師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "7 月 31 日攻下韋爾洛倫胡克與弗雷曾貝格。"
+        },
+        {
+          "name": "第55（西蘭開夏）師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "7 月 31 日攻佔波默恩堡壘。"
+        },
+        {
+          "name": "澳洲第1師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "9 月 20 日與第2師並肩攻下格倫科斯林與農訥博斯亨；10 月 4 日攻下布魯德賽恩德。"
+        },
+        {
+          "name": "澳洲第2師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "9 月 20 日、10 月 4 日參戰；10 月 9 日在泥濘中攻擊傷亡慘重。"
+        },
+        {
+          "name": "紐西蘭師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "10 月 4 日攻下格拉文斯塔費爾（約 500 人陣亡）；10 月 12 日貝勒維支脈攻擊失敗，843 人陣亡或重傷垂死。"
+        },
+        {
+          "name": "澳洲第3師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "10 月 12 日在第4師協助下攻擊帕斯尚爾村，奪得的陣地守不住而退回。"
+        },
+        {
+          "name": "加拿大第2師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "11 月 6 日與加拿大第1師攻佔帕斯尚爾村。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "英軍 50 個師、法軍 6 個師（輪番投入）",
+        "formations": "英國第五、第二集團軍，法國第一集團軍，比利時軍",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": 1295,
+        "note": "砲兵數為 9 月 20 日梅寧路攻擊所集中：中、重型砲 575 門與野戰砲 720 門，為皮爾克姆攻擊的兩倍以上。其他階段的兵力與戰車數資料未載。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": null,
+        "captured": null,
+        "total": 244897,
+        "total_label": "約 20 萬 – 44.9 萬人（英方官方史 244,897）",
+        "range": [
+          200000,
+          448614
+        ],
+        "note": "Edmonds（英國官方史 1948）244,897；Prior & Wilson（1997）275,000；Falls（1959）英軍 240,000、法軍 8,525；Cruttwell（1940）300,000；Taylor（1972）300,000；Wolff（1958）448,688；資訊框上限 448,614。單日：10 月 12 日協約國約 13,000 人，其中紐西蘭 2,735 人（紐西蘭歷史網：843 人陣亡）；澳洲 9 月下旬一週多內近 11,000 人；加拿大第二次帕斯尚爾戰役 15,654 人。",
+        "confidence": "contested"
+      },
+      "weapons": [
+        {
+          "cat": "artillery",
+          "name": "18 磅野戰砲",
+          "model": "QF 18-pounder",
+          "qty": "9 月 20 日野戰砲合計 720 門",
+          "year": "1904",
+          "specs": {
+            "口徑": "83.8 mm",
+            "射程": "約 6–9 km",
+            "重量": "約 1.3 t"
+          },
+          "note": "負責徐進彈幕；8 月泥濘中前推火砲極度困難，10 月 12 日因重砲無法前移，預備砲擊大多無效。"
+        },
+        {
+          "cat": "artillery",
+          "name": "12 吋鐵道榴彈砲",
+          "model": "BL 12-inch railway howitzer",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "口徑": "305 mm",
+            "射程": "約 10–13 km",
+            "重量": "約 76 t（含鐵道架）"
+          },
+          "note": "皇家駐防砲兵第104攻城砲連於伊珀爾北方救世角附近部署（8 月 3 日照片）。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "維克斯重機槍",
+          "model": "Vickers Mk I",
+          "qty": "不詳",
+          "year": "1912",
+          "specs": {
+            "口徑": "7.7 mm（.303）",
+            "彈容": "250 發帆布彈鏈",
+            "射速": "約 450–500 發/分",
+            "重量": "約 18 kg（槍身）"
+          },
+          "note": "梅寧路等攻擊中與砲兵共同構成機槍彈幕。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "路易斯輕機槍",
+          "model": "Lewis Gun",
+          "qty": "不詳",
+          "year": "1914",
+          "specs": {
+            "口徑": "7.7 mm（.303）",
+            "彈容": "47 發彈盤",
+            "射速": "約 500–600 發/分",
+            "重量": "約 13 kg"
+          },
+          "note": "排級小組攻擊碉堡的核心火力。"
+        },
+        {
+          "cat": "tank",
+          "name": "Mark IV 戰車",
+          "model": "Mark IV",
+          "qty": "不詳",
+          "year": "1917",
+          "specs": {
+            "重量": "約 27–28 t",
+            "主武裝": "雄型 2 門 6 磅砲＋機槍；雌型僅機槍",
+            "裝甲": "約 6–12 mm",
+            "速度": "約 6 km/h",
+            "乘員": "8"
+          },
+          "note": "黑格報告：泥濘使戰車大多無法使用，7 月 31 日少數抵達因弗內斯林與格倫科斯林，10 月 4 日協助攻擊普爾卡佩勒。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "S.E.5a 戰鬥機",
+          "model": "Royal Aircraft Factory S.E.5a",
+          "qty": "不詳",
+          "year": "1917",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 222 km/h",
+            "武裝": "維克斯＋路易斯機槍",
+            "航程": "約 2.5 小時續航",
+            "乘員": "1"
+          },
+          "note": "梅寧路後英軍系統性空中觀測德軍調動，並執行接觸巡邏與對地攻擊；雨天時觀測幾乎不可能。"
+        },
+        {
+          "cat": "other",
+          "name": "小盒式防毒面具",
+          "model": "Small Box Respirator",
+          "qty": "全員配發",
+          "year": "1916",
+          "specs": {
+            "類型": "防毒面具"
+          },
+          "note": "1917 年 9 月伊珀爾的澳洲步兵照片中可見；德軍視風向加強毒氣砲擊。"
+        }
+      ]
+    },
+    {
+      "id": "germany",
+      "name": "德意志帝國（第4集團軍）",
+      "color": "#4d4d4d",
+      "belligerents": [
+        "德意志帝國"
+      ],
+      "commanders": [
+        {
+          "name": "埃里希·魯登道夫（Erich Ludendorff）",
+          "role": "第一軍需總監"
+        },
+        {
+          "name": "魯普雷希特王儲（Kronprinz Rupprecht）",
+          "role": "集團軍群司令"
+        },
+        {
+          "name": "弗里德里希·西克斯特·馮·阿爾明（Friedrich Sixt von Armin）",
+          "role": "第4集團軍司令"
+        },
+        {
+          "name": "弗里茨·馮·羅斯貝格（Fritz von Loßberg）",
+          "role": "第4集團軍參謀長，否決撤退方案"
+        }
+      ],
+      "units": [
+        {
+          "name": "最高陸軍指揮部",
+          "echelon": "其他",
+          "branch": "army",
+          "commander": "魯登道夫",
+          "note": "陸續投入 77–83 個師（黑格報告稱 78 個師，其中 18 個二度或三度上陣）。"
+        },
+        {
+          "name": "魯普雷希特王儲集團軍群",
+          "echelon": "集團軍群",
+          "branch": "army",
+          "commander": "魯普雷希特王儲",
+          "note": "庫爾與魯普雷希特曾提撤退，被羅斯貝格否決；10 月 7 日開始規劃自伊珀爾突出部緩慢撤退。"
+        },
+        {
+          "name": "第4集團軍",
+          "echelon": "集團軍",
+          "branch": "army",
+          "commander": "西克斯特·馮·阿爾明",
+          "note": "防守 40 公里正面，分迪克斯梅德、伊珀爾、威特沙特三個集群。"
+        },
+        {
+          "name": "伊珀爾集群",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "防守主戰場梅寧路至帕斯尚爾山脊。"
+        },
+        {
+          "name": "威特沙特集群",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "防守南段，梅寧路以南的格呂維爾高原南坡。"
+        },
+        {
+          "name": "迪克斯梅德集群",
+          "echelon": "軍",
+          "branch": "army",
+          "note": "防守北段，對面為法軍與比軍。"
+        },
+        {
+          "name": "反擊（Eingreif）師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "部署在山脊後方，待英軍突入後立即反擊；8 月效果顯著，9 月面對普盧默的短距攻擊與砲兵屏障後屢遭重創。"
+        },
+        {
+          "name": "突擊團（Stoß-Regimenter）",
+          "echelon": "聯隊",
+          "branch": "army",
+          "note": "梅寧路之後前移至前線師後方，準備更快反擊；9 月 26 日至 10 月 3 日至少反擊 24 次。"
+        },
+        {
+          "name": "預備第45師",
+          "echelon": "師",
+          "branch": "army",
+          "note": "10 月 4 日參與「高地風暴」（Hohensturm）反擊作戰，正在集結時遭英軍布魯德賽恩德攻擊的彈幕擊中。"
+        },
+        {
+          "name": "第4集團軍航空部隊",
+          "echelon": "航空隊",
+          "branch": "air",
+          "note": "9 月中旬自他處調來三個戰鬥機中隊與四個其他航空單位。"
+        }
+      ],
+      "strength": {
+        "troops": null,
+        "troops_label": "77–83 個師（輪番投入）",
+        "formations": "第4集團軍三個集群，前線師與反擊師分層部署",
+        "aircraft": null,
+        "tanks": null,
+        "ships": null,
+        "artillery": null,
+        "note": "防線：前線、Albrecht、Wilhelm、Flandern I（帕斯尚爾山脊上）、Flandern II、Flandern III（構築中）。梅寧路後改以每 230 公尺 4–8 挺機槍構成機槍警戒網。"
+      },
+      "casualties": {
+        "killed": null,
+        "wounded": null,
+        "missing": 49000,
+        "captured": 24065,
+        "total": 217000,
+        "total_label": "約 21.7 萬 – 41 萬人（含 24,065 人被俘）",
+        "range": [
+          217000,
+          410000
+        ],
+        "note": "德國帝國檔案館《Der Weltkrieg》（1942）217,000（含失蹤 49,000）；Sheldon（2007）依衛生報告 217,194（6 月 1 日–11 月 10 日），加計 182,396 輕傷者為 399,590；Edmonds 估 400,000（加 30% 輕傷者）；Terraine 約 260,400；Falls 260,000；Wolff 270,713；Prior & Wilson 略低於 200,000。英方宣稱俘虜 24,065 人未受質疑（黑格報告另載繳獲火砲 74 門、機槍 941 挺、迫擊砲 138 門）。",
+        "confidence": "contested"
+      },
+      "weapons": [
+        {
+          "cat": "other",
+          "name": "混凝土碉堡",
+          "model": "MEBU（Mannschafts-Eisenbeton-Unterstände）",
+          "qty": "沿防線縱深分布",
+          "year": "1917",
+          "specs": {
+            "類型": "鋼筋混凝土機槍掩體",
+            "厚度": "常達數呎"
+          },
+          "note": "地下水位太高無法挖深掩體，德軍在農舍廢墟築碉堡；8 月 16 日阻滯英軍中段攻擊，是整個戰役的主要障礙。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "MG 08 重機槍",
+          "model": "MG 08",
+          "qty": "每 230 公尺 4–8 挺（梅寧路後）",
+          "year": "1908",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "250 發帆布彈鏈",
+            "射速": "約 450–500 發/分",
+            "重量": "約 26 kg（槍身）"
+          },
+          "note": "10 月 12 日自正面與側翼掃射貝勒維支脈，紐西蘭部隊被壓制在彈坑中。"
+        },
+        {
+          "cat": "smallarm",
+          "name": "MG 08/15 輕機槍",
+          "model": "MG 08/15",
+          "qty": "不詳",
+          "year": "1917",
+          "specs": {
+            "口徑": "7.92 mm",
+            "彈容": "100 發彈鏈",
+            "射速": "約 500 發/分",
+            "重量": "約 18 kg"
+          },
+          "note": "隨反擊部隊與突擊團機動作戰。"
+        },
+        {
+          "cat": "artillery",
+          "name": "10.5 公分輕型野戰榴彈砲",
+          "model": "10.5 cm leFH 16（型號依常見裝備推定）",
+          "qty": "不詳",
+          "year": "1916",
+          "specs": {
+            "口徑": "105 mm",
+            "射程": "約 9.2 km",
+            "重量": "約 1.5 t"
+          },
+          "note": "10 月 9 日冷溪近衛團在侯特胡斯特森林邊緣繳獲一門德軍榴彈砲。"
+        },
+        {
+          "cat": "artillery",
+          "name": "15 公分重型野戰榴彈砲",
+          "model": "15 cm sFH 13（型號依常見裝備推定）",
+          "qty": "不詳",
+          "year": "1913",
+          "specs": {
+            "口徑": "149.7 mm",
+            "射程": "約 8.8 km",
+            "重量": "約 2.2 t"
+          },
+          "note": "黑格報告記一個英軍榴彈砲連遭德軍 15 公分砲連側射，六門砲被毀四門。"
+        },
+        {
+          "cat": "chemical",
+          "name": "毒氣砲彈",
+          "model": "Gelbkreuz 芥子氣等（種類依一般知識）",
+          "qty": "不詳",
+          "year": "1917",
+          "specs": {
+            "類型": "砲射毒氣彈"
+          },
+          "note": "梅寧路後德軍決定在風向允許時加強毒氣砲擊；英軍砲兵長期處於毒氣與高爆彈轟擊下。"
+        },
+        {
+          "cat": "aircraft",
+          "name": "信天翁 D.V",
+          "model": "Albatros D.V",
+          "qty": "不詳",
+          "year": "1917",
+          "specs": {
+            "類型": "單座戰鬥機",
+            "最大速度": "約 186 km/h",
+            "武裝": "2 挺 LMG 08/15 機槍",
+            "航程": "約 2 小時續航",
+            "乘員": "1"
+          },
+          "note": "德軍 9 月中旬增派戰鬥機中隊爭奪法蘭德斯上空。"
+        }
+      ]
+    }
+  ],
+  "phases": [
+    {
+      "id": "p1",
+      "title": "皮爾克姆嶺：首日與大雨",
+      "start": "1917-07-31",
+      "end": "1917-08-02",
+      "summary": "7 月 31 日 3 時 50 分，英法聯軍在低雲下沿 24 公里正面進攻。北段第14軍與法軍推進 2,300–2,700 公尺，攻下皮爾克姆、聖朱利安並渡過斯滕貝克河；梅寧路兩側的格呂維爾高原卻寸步難行，德軍反擊將第19軍三個旅打回黑線。午後開始下雨，連續四天不停。",
+      "view": {
+        "lat": 50.87,
+        "lng": 2.92,
+        "zoom": 12
+      },
+      "conditions": {
+        "weather": "攻擊時低雲；午後開始下雨，整夜不停，此後連下四天",
+        "ground": "砲擊破壞排水系統，低窪黏土地轉為泥塘",
+        "fx": [
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+            "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html"
+          },
+          {
+            "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+            "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-07-31T03:50",
+          "title": "聯軍總攻開始",
+          "text": "英、法步兵在鋁熱劑與油桶投射後隨彈幕進入德軍陣地；德軍彈幕遲且弱，英軍初期傷亡輕微。",
+          "lat": 50.868,
+          "lng": 2.915,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-07-31T06:00",
+          "title": "攻下弗雷曾貝格",
+          "text": "第15（蘇格蘭）師攻下韋爾洛倫胡克，6 時抵達弗雷曾貝格，短暫激戰後拿下村落與周邊工事。",
+          "lat": 50.864,
+          "lng": 2.935,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-07-31T09:00",
+          "title": "攻佔第二目標與波默恩堡壘",
+          "text": "伊珀爾—魯瑟拉勒鐵路以北第二目標全部到手；一小時內第55師攻下波默恩堡壘，第39師隨後攻佔聖朱利安，法軍奪下比克斯舒特。",
+          "lat": 50.889,
+          "lng": 2.938,
+          "type": "breakthrough",
+          "side": "british"
+        },
+        {
+          "date": "1917-07-31",
+          "title": "梅寧路兩側受阻",
+          "text": "因弗內斯林、格倫科斯林前遭遇強烈抵抗；午後德軍自梅寧路以南至聖朱利安大舉反擊，第19軍三個旅退回黑線，損失約 70%。",
+          "lat": 50.848,
+          "lng": 2.955,
+          "type": "defense",
+          "side": "germany"
+        },
+        {
+          "date": "1917-07-31",
+          "title": "開始下雨",
+          "text": "午後戰鬥仍在進行時開始下雨並徹夜不停，隨後連續四天大雨；首日俘虜逾 6,100 人。",
+          "lat": 50.87,
+          "lng": 2.93,
+          "type": "other",
+          "side": "british"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "第14軍",
+          "unit": "第14軍",
+          "start": "1917-07-31T03:50",
+          "outcome": "success",
+          "path": [
+            [
+              50.893,
+              2.87
+            ],
+            [
+              50.895,
+              2.89
+            ],
+            [
+              50.9,
+              2.905
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "第18軍",
+          "unit": "第18軍",
+          "start": "1917-07-31T03:50",
+          "outcome": "success",
+          "path": [
+            [
+              50.872,
+              2.905
+            ],
+            [
+              50.882,
+              2.925
+            ],
+            [
+              50.889,
+              2.938
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "第2軍",
+          "unit": "第2軍",
+          "start": "1917-07-31T03:50",
+          "outcome": "stopped",
+          "path": [
+            [
+              50.845,
+              2.925
+            ],
+            [
+              50.847,
+              2.94
+            ],
+            [
+              50.848,
+              2.955
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "反擊（Eingreif）師",
+          "unit": "反擊（Eingreif）師",
+          "outcome": "success",
+          "path": [
+            [
+              50.88,
+              2.99
+            ],
+            [
+              50.875,
+              2.96
+            ],
+            [
+              50.872,
+              2.94
+            ]
+          ],
+          "model": "infantry"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-front",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.93,
+              2.84
+            ],
+            [
+              50.905,
+              2.88
+            ],
+            [
+              50.889,
+              2.935
+            ],
+            [
+              50.864,
+              2.935
+            ],
+            [
+              50.856,
+              2.94
+            ],
+            [
+              50.84,
+              2.945
+            ],
+            [
+              50.82,
+              2.95
+            ],
+            [
+              50.82,
+              3.1
+            ],
+            [
+              50.95,
+              3.1
+            ],
+            [
+              50.95,
+              2.84
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "8 月 2 日前線（斯滕貝克河—韋斯特胡克以西）",
+          "line": [
+            [
+              50.93,
+              2.84
+            ],
+            [
+              50.905,
+              2.88
+            ],
+            [
+              50.889,
+              2.935
+            ],
+            [
+              50.864,
+              2.935
+            ],
+            [
+              50.856,
+              2.94
+            ],
+            [
+              50.84,
+              2.945
+            ],
+            [
+              50.82,
+              2.95
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "八月泥沼：朗厄馬克與高原攻防",
+      "start": "1917-08-03",
+      "end": "1917-08-27",
+      "summary": "8 月降雨 127 毫米，英國官方史稱是 1915、1916 年同月平均的五倍。8 月 16 日朗厄馬克攻擊北段成功，中段卻被碉堡群與德軍反擊擋下；格呂維爾高原上的格倫科斯林、因弗內斯林多次易手。8 月 25 日黑格把主攻交給普盧默，27 日停止作戰。",
+      "view": {
+        "lat": 50.87,
+        "lng": 2.94,
+        "zoom": 12
+      },
+      "conditions": {
+        "weather": "8 月降雨 127 毫米（其中 84 毫米落在五天內），為多年來最濕的八月",
+        "ground": "低窪黏土被砲彈翻攪、雨水浸透，形成連綿泥塘；溪谷化為沼澤，只能走少數木板步道",
+        "fx": [
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+            "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html"
+          },
+          {
+            "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+            "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-08-03",
+          "title": "重新佔領聖朱利安",
+          "text": "德軍砲火曾迫使英軍暫時退出聖朱利安，8 月 3 日幾乎未遇抵抗即重新佔領。",
+          "lat": 50.889,
+          "lng": 2.938,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-08-10",
+          "title": "韋斯特胡克與格倫科斯林",
+          "text": "第2軍推進；第18師在格倫科斯林的所得被德軍奪回，第25師守住韋斯特胡克嶺，之後四天擊退七次反擊。",
+          "lat": 50.856,
+          "lng": 2.947,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-08-16T04:45",
+          "title": "朗厄馬克攻擊",
+          "text": "第20、第29師 8 時前攻下朗厄馬克，法軍清掃比克斯舒特半島；中段碉堡群與反擊迫使英軍退回，全日俘虜逾 2,100 人。",
+          "lat": 50.912,
+          "lng": 2.918,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-08-22",
+          "title": "因弗內斯林拉鋸",
+          "text": "第14師沿梅寧路兩側連續六天局部戰鬥，才在因弗內斯林西緣站穩；農訥博斯亨、格倫科斯林的攻擊代價高昂且失敗。",
+          "lat": 50.845,
+          "lng": 2.958,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-08-25",
+          "title": "主攻移交普盧默",
+          "text": "黑格把第二集團軍北界移近伊珀爾—魯瑟拉勒鐵路，梅寧路高地的攻擊整個交給普盧默；27 日停止作戰。",
+          "lat": 50.851,
+          "lng": 2.885,
+          "type": "hq",
+          "side": "british"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "第14軍",
+          "unit": "第14軍",
+          "start": "1917-08-16T04:45",
+          "end": "1917-08-16T08:00",
+          "outcome": "success",
+          "path": [
+            [
+              50.9,
+              2.905
+            ],
+            [
+              50.906,
+              2.912
+            ],
+            [
+              50.912,
+              2.918
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "第2軍",
+          "unit": "第2軍",
+          "start": "1917-08-10",
+          "outcome": "stopped",
+          "path": [
+            [
+              50.852,
+              2.938
+            ],
+            [
+              50.854,
+              2.948
+            ],
+            [
+              50.851,
+              2.958
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "反擊（Eingreif）師",
+          "unit": "反擊（Eingreif）師",
+          "start": "1917-08-16",
+          "outcome": "success",
+          "path": [
+            [
+              50.89,
+              2.98
+            ],
+            [
+              50.885,
+              2.96
+            ],
+            [
+              50.878,
+              2.945
+            ]
+          ],
+          "model": "infantry"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-front",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.93,
+              2.86
+            ],
+            [
+              50.915,
+              2.92
+            ],
+            [
+              50.895,
+              2.94
+            ],
+            [
+              50.866,
+              2.94
+            ],
+            [
+              50.855,
+              2.952
+            ],
+            [
+              50.84,
+              2.955
+            ],
+            [
+              50.82,
+              2.95
+            ],
+            [
+              50.82,
+              3.1
+            ],
+            [
+              50.95,
+              3.1
+            ],
+            [
+              50.95,
+              2.86
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "8 月底前線（朗厄馬克—韋斯特胡克）",
+          "line": [
+            [
+              50.93,
+              2.86
+            ],
+            [
+              50.915,
+              2.92
+            ],
+            [
+              50.895,
+              2.94
+            ],
+            [
+              50.866,
+              2.94
+            ],
+            [
+              50.855,
+              2.952
+            ],
+            [
+              50.84,
+              2.955
+            ],
+            [
+              50.82,
+              2.95
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "普盧默的步步進逼：梅寧路、多邊形林、布魯德賽恩德",
+      "start": "1917-09-20",
+      "end": "1917-10-04",
+      "summary": "9 月天氣轉好（降雨 40 毫米）。普盧默把攻擊縮短到約 1,400 公尺縱深、砲兵加倍，9 月 20 日梅寧路、26 日多邊形林、10 月 4 日布魯德賽恩德三戰皆拿下目標，德軍反擊在英軍砲兵屏障前一再受挫。布魯德賽恩德攻擊正好比德軍「高地風暴」反擊早十分鐘發起，重創集結中的德軍，德方高層開始質疑反擊戰術。",
+      "view": {
+        "lat": 50.86,
+        "lng": 2.975,
+        "zoom": 12
+      },
+      "view_keys": [
+        {
+          "at": "1917-09-20T05:40",
+          "lat": 50.85,
+          "lng": 2.96,
+          "zoom": 12
+        },
+        {
+          "at": "1917-10-04T06:00",
+          "lat": 50.875,
+          "lng": 2.99,
+          "zoom": 12
+        }
+      ],
+      "conditions": {
+        "weather": "9 月降雨 40 毫米；9 月 19/20 日夜下雨，20 日拂曉濃霧，上午逐漸散去；10 月 3 日晚西南強風與大雨",
+        "visibility": "9 月 20 日拂曉濃霧，無法觀測",
+        "fx": [
+          "fog",
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+            "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+          },
+          {
+            "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+            "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-09-20T05:40",
+          "title": "梅寧路嶺攻擊",
+          "text": "在 13 公里正面發起；澳洲第1、第2師 10 時前攻下格倫科斯林、農訥博斯亨與波利戈恩費爾德，第9師 8 時 45 分拿下最終目標，全日俘虜 3,243 人。",
+          "lat": 50.851,
+          "lng": 2.965,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-09-20",
+          "title": "十一次反擊皆告失敗",
+          "text": "20 日午後至傍晚德軍至少反擊十一次，另有多次集結在發起前即被英軍砲火打散。",
+          "lat": 50.85,
+          "lng": 2.985,
+          "type": "defense",
+          "side": "germany"
+        },
+        {
+          "date": "1917-09-26T05:50",
+          "title": "多邊形林攻擊",
+          "text": "澳洲第4、第5師拿下多邊形林其餘部分，第3師攻下宗訥貝克村與教堂；俘虜逾 1,600 人。",
+          "lat": 50.858,
+          "lng": 2.993,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-04T06:00",
+          "title": "布魯德賽恩德攻擊",
+          "text": "澳洲三個師攻下莫勒納雷爾斯特胡克與布魯德賽恩德，紐西蘭師拿下格拉文斯塔費爾；英軍彈幕打在正集結準備反擊的德軍三個新銳師上，俘虜逾 5,000 人。",
+          "lat": 50.874,
+          "lng": 3.006,
+          "type": "assault",
+          "side": "british"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "澳洲第1師",
+          "unit": "澳洲第1師",
+          "start": "1917-09-20T05:40",
+          "end": "1917-10-04",
+          "outcome": "success",
+          "path": [
+            [
+              50.848,
+              2.955
+            ],
+            [
+              50.855,
+              2.975
+            ],
+            [
+              50.866,
+              2.995
+            ],
+            [
+              50.874,
+              3.006
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "澳洲第2師",
+          "unit": "澳洲第2師",
+          "start": "1917-09-20T05:40",
+          "end": "1917-10-04",
+          "outcome": "success",
+          "path": [
+            [
+              50.855,
+              2.95
+            ],
+            [
+              50.86,
+              2.97
+            ],
+            [
+              50.87,
+              2.995
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "紐西蘭師",
+          "unit": "紐西蘭師",
+          "start": "1917-10-04T06:00",
+          "outcome": "success",
+          "path": [
+            [
+              50.88,
+              2.955
+            ],
+            [
+              50.885,
+              2.968
+            ],
+            [
+              50.889,
+              2.979
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "germany",
+          "kind": "attack",
+          "label": "預備第45師",
+          "unit": "預備第45師",
+          "start": "1917-10-04T06:00",
+          "outcome": "repulsed",
+          "path": [
+            [
+              50.885,
+              3.04
+            ],
+            [
+              50.88,
+              3.025
+            ],
+            [
+              50.876,
+              3.012
+            ]
+          ],
+          "model": "infantry"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-front",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.93,
+              2.93
+            ],
+            [
+              50.91,
+              2.955
+            ],
+            [
+              50.889,
+              2.982
+            ],
+            [
+              50.875,
+              3.008
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ],
+            [
+              50.82,
+              3.1
+            ],
+            [
+              50.95,
+              3.1
+            ],
+            [
+              50.95,
+              2.93
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "10 月 4 日前線（布魯德賽恩德—格拉文斯塔費爾）",
+          "line": [
+            [
+              50.93,
+              2.93
+            ],
+            [
+              50.91,
+              2.955
+            ],
+            [
+              50.889,
+              2.982
+            ],
+            [
+              50.875,
+              3.008
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "雨季回來：普爾卡佩勒與第一次帕斯尚爾",
+      "start": "1917-10-09",
+      "end": "1917-10-13",
+      "summary": "黑格決定趁勢續攻，但 10 月 7、8 日大雨，戰場化為泥沼，重砲無法前移。10 月 9 日普爾卡佩勒攻擊所得多被反擊奪回；12 日 5 時 25 分紐西蘭師與澳洲第3師攻擊帕斯尚爾，被未剪斷的鐵絲網與兩側機槍擋在貝勒維支脈下，協約國當日約 13,000 人傷亡。13 日黑格同意天氣好轉前暫停。",
+      "view": {
+        "lat": 50.895,
+        "lng": 2.98,
+        "zoom": 12
+      },
+      "conditions": {
+        "weather": "10 月 7 日整日大雨，8 日持續降雨，夜色極暗；11/12 日夜再度大雨並持續整天；10 月降雨 107 毫米（1914–16 年平均 44 毫米）",
+        "ground": "溪谷無法通行，濃泥使重砲無法前推或架穩，預備砲擊大多無效",
+        "fx": [
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+            "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+          },
+          {
+            "title": "New Zealand's blackest day at Passchendaele – NZHistory",
+            "url": "https://nzhistory.govt.nz/new-zealands-blackest-day-at-passchendaele"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-10-09T05:20",
+          "title": "普爾卡佩勒攻擊",
+          "text": "英法聯軍在 12 公里正面攻擊；北翼近衛師與法軍推進近 2.4 公里至侯特胡斯特森林邊緣，但布魯德賽恩德以北所得多在泥濘中被德軍反擊奪回，澳洲第2師傷亡慘重。",
+          "lat": 50.917,
+          "lng": 2.957,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-09",
+          "title": "繳獲侯特胡斯特森林外的榴彈砲",
+          "text": "冷溪近衛團第4營在侯特胡斯特森林外緣繳獲一門德軍榴彈砲。",
+          "lat": 50.94,
+          "lng": 2.935,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-12T05:25",
+          "title": "貝勒維支脈攻擊",
+          "text": "紐西蘭師無法穿越未剪斷的鐵絲網，遭正面與側翼機槍掃射而困在彈坑中；15 時的後續推進先延後後取消，倖存者退回接近出發線。",
+          "lat": 50.893,
+          "lng": 2.99,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-12",
+          "title": "澳軍攻入帕斯尚爾後撤退",
+          "text": "澳洲第3師在第4師協助下攻向帕斯尚爾村，奪得的陣地守不住而退回；全日協約國約 13,000 人傷亡，紐西蘭 2,735 人。",
+          "lat": 50.896,
+          "lng": 3.012,
+          "type": "retreat",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-13",
+          "title": "黑格同意暫停",
+          "text": "黑格同意在天氣好轉前停止攻擊；德軍方面，魯普雷希特自 10 月 7 日已開始規劃自突出部緩慢撤退。",
+          "lat": 50.851,
+          "lng": 2.885,
+          "type": "hq",
+          "side": "british"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "近衛師",
+          "unit": "近衛師",
+          "start": "1917-10-09T05:20",
+          "outcome": "success",
+          "path": [
+            [
+              50.92,
+              2.91
+            ],
+            [
+              50.93,
+              2.922
+            ],
+            [
+              50.94,
+              2.932
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "紐西蘭師",
+          "unit": "紐西蘭師",
+          "start": "1917-10-12T05:25",
+          "outcome": "repulsed",
+          "path": [
+            [
+              50.887,
+              2.975
+            ],
+            [
+              50.89,
+              2.983
+            ],
+            [
+              50.893,
+              2.99
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "澳洲第3師",
+          "unit": "澳洲第3師",
+          "start": "1917-10-12T05:25",
+          "outcome": "repulsed",
+          "path": [
+            [
+              50.878,
+              3
+            ],
+            [
+              50.888,
+              3.006
+            ],
+            [
+              50.896,
+              3.012
+            ]
+          ],
+          "model": "infantry"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-front",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.94,
+              2.925
+            ],
+            [
+              50.915,
+              2.958
+            ],
+            [
+              50.889,
+              2.982
+            ],
+            [
+              50.875,
+              3.008
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ],
+            [
+              50.82,
+              3.1
+            ],
+            [
+              50.95,
+              3.1
+            ],
+            [
+              50.95,
+              2.925
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "10 月 13 日前線",
+          "line": [
+            [
+              50.94,
+              2.925
+            ],
+            [
+              50.915,
+              2.958
+            ],
+            [
+              50.889,
+              2.982
+            ],
+            [
+              50.875,
+              3.008
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "title": "加拿大軍攻佔帕斯尚爾",
+      "start": "1917-10-26",
+      "end": "1917-11-10",
+      "summary": "加拿大軍 10 月 18 日接替澳紐第二軍，分四階段有限攻擊。10 月 26 日雨中攻上帕斯尚爾南側小丘與貝勒維支脈，30 日拿下克雷斯特農莊直逼村外，11 月 6 日加拿大第1、第2師攻佔帕斯尚爾村，10 日再奪村北高地。卡波雷托潰敗後英軍抽調師團馳援義大利，攻勢在韋斯特羅斯貝克以南停住。",
+      "view": {
+        "lat": 50.9,
+        "lng": 3.01,
+        "zoom": 13
+      },
+      "conditions": {
+        "weather": "10 月 26 日清晨起整日大雨；11 月 1–9 日僅降 7.5 毫米，10 日降 13.4 毫米，天氣極差",
+        "ground": "低窪地沼澤與積水阻斷推進，只能沿主山脊攻擊",
+        "fx": [
+          "rain"
+        ],
+        "sources": [
+          {
+            "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+            "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+          },
+          {
+            "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+            "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html"
+          }
+        ]
+      },
+      "events": [
+        {
+          "date": "1917-10-26T05:45",
+          "title": "第一階段：拉弗貝克溪兩岸",
+          "text": "加拿大第3、第4師沿流向帕斯尚爾西南的拉弗貝克溪兩岸攻擊，拿下村南小丘；貝勒維支脈下午再攻才攻下，第3師奪下狼林。",
+          "lat": 50.893,
+          "lng": 3,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-10-30T05:50",
+          "title": "第二階段：克雷斯特農莊",
+          "text": "加拿大軍攻抵帕斯尚爾外圍，拿下村西南小丘上的克雷斯特農莊及米切勒十字路口，擊退五次強力反擊。",
+          "lat": 50.896,
+          "lng": 3.016,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-11-06T06:00",
+          "title": "攻佔帕斯尚爾村",
+          "text": "加拿大第2、第1師攻下帕斯尚爾村及村北、西北高地；8 時 50 分擊退村北反擊，俘虜逾 400 人。",
+          "lat": 50.9,
+          "lng": 3.021,
+          "type": "assault",
+          "side": "british"
+        },
+        {
+          "date": "1917-11-10",
+          "title": "第四階段：52 號高地",
+          "text": "在極惡劣天氣下，英加部隊自帕斯尚爾與古德貝格向北攻擊，奪下主山脊上更多陣地，攻勢至此結束。",
+          "lat": 50.912,
+          "lng": 3.012,
+          "type": "assault",
+          "side": "british"
+        }
+      ],
+      "moves": [
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "加拿大軍",
+          "unit": "加拿大軍",
+          "start": "1917-10-26T05:45",
+          "end": "1917-10-30",
+          "outcome": "success",
+          "path": [
+            [
+              50.887,
+              2.985
+            ],
+            [
+              50.891,
+              3
+            ],
+            [
+              50.896,
+              3.016
+            ]
+          ],
+          "model": "infantry"
+        },
+        {
+          "side": "british",
+          "kind": "attack",
+          "label": "加拿大第2師",
+          "unit": "加拿大第2師",
+          "start": "1917-11-06T06:00",
+          "outcome": "success",
+          "path": [
+            [
+              50.893,
+              3.012
+            ],
+            [
+              50.897,
+              3.018
+            ],
+            [
+              50.9,
+              3.021
+            ]
+          ],
+          "model": "infantry"
+        }
+      ],
+      "zones": [
+        {
+          "side": "germany",
+          "kind": "hold",
+          "key": "german-front",
+          "label": "德軍陣地",
+          "polygon": [
+            [
+              50.94,
+              2.93
+            ],
+            [
+              50.912,
+              3.012
+            ],
+            [
+              50.905,
+              3.028
+            ],
+            [
+              50.896,
+              3.024
+            ],
+            [
+              50.875,
+              3.01
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ],
+            [
+              50.82,
+              3.1
+            ],
+            [
+              50.95,
+              3.1
+            ],
+            [
+              50.95,
+              2.93
+            ]
+          ]
+        },
+        {
+          "side": "british",
+          "kind": "front",
+          "key": "front-line",
+          "label": "11 月 10 日前線（帕斯尚爾山脊）",
+          "line": [
+            [
+              50.94,
+              2.93
+            ],
+            [
+              50.912,
+              3.012
+            ],
+            [
+              50.905,
+              3.028
+            ],
+            [
+              50.896,
+              3.024
+            ],
+            [
+              50.875,
+              3.01
+            ],
+            [
+              50.855,
+              2.998
+            ],
+            [
+              50.835,
+              2.97
+            ],
+            [
+              50.82,
+              2.95
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "name": "伊珀爾（Ieper）",
+      "lat": 50.851,
+      "lng": 2.885,
+      "kind": "town",
+      "note": "突出部核心"
+    },
+    {
+      "name": "帕斯尚爾（Passendale）",
+      "lat": 50.9,
+      "lng": 3.021,
+      "kind": "village",
+      "note": "戰役最後目標，11 月 6 日由加拿大軍攻佔"
+    },
+    {
+      "name": "朗厄馬克（Langemark）",
+      "lat": 50.912,
+      "lng": 2.918,
+      "kind": "village",
+      "note": "8 月 16 日攻佔"
+    },
+    {
+      "name": "聖朱利安（Sint-Juliaan）",
+      "lat": 50.889,
+      "lng": 2.938,
+      "kind": "village",
+      "note": "7 月 31 日攻佔後一度撤出"
+    },
+    {
+      "name": "多邊形林（Polygon Wood）",
+      "lat": 50.858,
+      "lng": 2.993,
+      "kind": "wood",
+      "note": "9 月 26 日澳軍攻佔"
+    },
+    {
+      "name": "布魯德賽恩德",
+      "lat": 50.874,
+      "lng": 3.006,
+      "kind": "village",
+      "note": "10 月 4 日澳軍攻佔，主山脊南端"
+    },
+    {
+      "name": "格拉文斯塔費爾",
+      "lat": 50.889,
+      "lng": 2.979,
+      "kind": "village",
+      "note": "10 月 4 日紐西蘭師攻佔"
+    },
+    {
+      "name": "貝勒維支脈",
+      "lat": 50.893,
+      "lng": 2.99,
+      "kind": "hill",
+      "note": "10 月 12 日紐西蘭師攻擊失敗，10 月 26 日加拿大軍攻下"
+    },
+    {
+      "name": "宗訥貝克（Zonnebeke）",
+      "lat": 50.872,
+      "lng": 2.987,
+      "kind": "village",
+      "note": "9 月 26 日攻佔"
+    },
+    {
+      "name": "普爾卡佩勒（Poelkapelle）",
+      "lat": 50.917,
+      "lng": 2.957,
+      "kind": "village",
+      "note": "10 月 4、9 日爭奪"
+    },
+    {
+      "name": "侯特胡斯特森林",
+      "lat": 50.95,
+      "lng": 2.93,
+      "kind": "wood",
+      "note": "10 月 9 日英法聯軍推進到森林邊緣"
+    },
+    {
+      "name": "胡格（Hooge）",
+      "lat": 50.846,
+      "lng": 2.944,
+      "kind": "village",
+      "note": "梅寧路上，7 月 31 日攻佔"
+    },
+    {
+      "name": "泰恩科特公墓",
+      "lat": 50.887,
+      "lng": 3,
+      "kind": "memorial",
+      "note": "今日英聯邦最大的戰爭公墓與失蹤者紀念牆"
+    }
+  ],
+  "civilian": {
+    "label": "平民傷亡資料未見",
+    "note": "戰區居民早已撤離，伊珀爾以東村落在砲擊中被夷平；所查資料未載平民傷亡數字。"
+  },
+  "significance": [
+    "英軍奪下伊珀爾以東山脊與帕斯尚爾村，但未能突破至魯瑟拉勒或海岸，沿岸作戰（Hush 行動）未實施；1918 年德軍春季攻勢中這些高地又大多被放棄。",
+    "雙方傷亡各約 20–40 萬人，數字至今仍有爭議；德軍總參謀部後來形容 1917 年法蘭德斯會戰使德國瀕臨毀滅，勞合·喬治則稱之為大戰最大的災難之一。",
+    "普盧默的有限目標、步步為營戰術證明在好天氣與充足砲兵下能擊敗德軍縱深防禦；德軍則被迫改回加強前沿防守。",
+    "對紐西蘭（10 月 12 日）、澳洲與加拿大而言是國家記憶中的重大創傷；泥濘中的戰鬥成為一戰的代表意象。",
+    "卡波雷托戰役後英法抽調部隊援義，加上康布雷戰役（11 月 20 日）即將開始，迫使黑格在韋斯特羅斯貝克以南結束攻勢。"
+  ],
+  "facts": [
+    {
+      "label": "五倍的雨量",
+      "text": "1917 年 8 月降雨 127 毫米，英國官方史稱是 1915、1916 年八月平均的五倍；10 月 107 毫米，遠高於 44 毫米的平均。"
+    },
+    {
+      "label": "紐西蘭最黑暗的一天",
+      "text": "10 月 12 日紐西蘭師在貝勒維支脈約 2,735 人傷亡，843 人陣亡或垂死，常被稱為紐西蘭史上單日最慘重的災難。"
+    },
+    {
+      "label": "早十分鐘",
+      "text": "10 月 4 日英軍布魯德賽恩德攻擊比德軍「高地風暴」反擊早十分鐘發起，彈幕正好落在集結中的德軍上。"
+    },
+    {
+      "label": "加拿大的代價",
+      "text": "加拿大軍兩週四次有限攻擊拿下帕斯尚爾，付出 15,654 人傷亡。"
+    }
+  ],
+  "disputes": [
+    {
+      "topic": "英軍傷亡",
+      "claims": [
+        {
+          "value": "244,897",
+          "source": "Edmonds 官方史（經 Wikipedia 轉引）"
+        },
+        {
+          "value": "275,000",
+          "source": "Prior & Wilson 1997"
+        },
+        {
+          "value": "448,688",
+          "source": "Wolff 1958"
+        }
+      ]
+    },
+    {
+      "topic": "德軍傷亡",
+      "claims": [
+        {
+          "value": "217,000",
+          "source": "Der Weltkrieg 1942"
+        },
+        {
+          "value": "399,590（含輕傷）",
+          "source": "Sheldon 2007"
+        },
+        {
+          "value": "400,000",
+          "source": "Edmonds（加 30%）"
+        }
+      ]
+    },
+    {
+      "topic": "10 月 12 日紐西蘭死亡人數",
+      "claims": [
+        {
+          "value": "843",
+          "source": "NZHistory「New Zealand's blackest day」"
+        },
+        {
+          "value": "845",
+          "source": "NZHistory 另一頁標題（搜尋結果）"
+        }
+      ]
+    },
+    {
+      "topic": "戰時內閣核准日期",
+      "claims": [
+        {
+          "value": "7 月 25 日",
+          "source": "Wikipedia 正文"
+        },
+        {
+          "value": "6 月 21 日",
+          "source": "Wikipedia 腳注"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "phase": "p2",
+      "at": "1917-08-25",
+      "side": "british",
+      "commander": "道格拉斯·黑格",
+      "title": "繼續讓高夫主攻，還是把梅寧路高地交給普盧默？",
+      "situation": "7 月 31 日以來高夫第五集團軍在梅寧路兩側屢攻不下，8 月 16 日朗厄馬克攻擊中段受挫；天候惡劣，八月多雨，地面泥濘。德軍以前線薄守、後方反擊師快速奪回的彈性防禦，配合地形與天氣，遏止了英軍推進。",
+      "intel": [
+        "德軍在梅寧路一帶的抵抗特別強",
+        "不宜再擴大第五集團軍已很寬的攻擊正面，也不宜讓兩個集團軍分管主山脊的攻擊",
+        "情報單位已掌握德軍改採彈性防禦的新戰法"
+      ],
+      "options": [
+        {
+          "label": "由普盧默第二集團軍單獨負責梅寧路高地",
+          "detail": "擴大第二集團軍左翼，配合調整砲兵戰術"
+        },
+        {
+          "label": "維持高夫主導，繼續原攻擊方式",
+          "detail": "以第五集團軍持續寬正面攻擊"
+        },
+        {
+          "label": "暫停攻勢",
+          "detail": "等待天候改善再議"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "普盧默以有限目標、短距推進與倍增砲兵，於 9 月 20 日、26 日與 10 月 4 日連續三次成功拿下目標，德軍反擊屢遭重創。",
+      "hindsight": "史家普遍認為 9 月的勝利證明此戰法有效，但也與天氣轉好密切相關；10 月雨季回來後同樣戰法即在泥濘中失靈。",
+      "sources": [
+        {
+          "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+          "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+        },
+        {
+          "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+          "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html"
+        }
+      ]
+    },
+    {
+      "phase": "p4",
+      "event": "普爾卡佩勒攻擊",
+      "side": "british",
+      "commander": "道格拉斯·黑格",
+      "title": "布魯德賽恩德之後：繼續攻擊還是就地過冬？",
+      "situation": "10 月 4 日已沿主山脊建立約 8 公里的戰線，格拉文斯塔費爾支脈可作為折回的防線。年底將至，天氣一直不利，雨與砲擊使地面移動極為困難，延誤讓德軍每次戰敗後都有時間增援重組。",
+      "intel": [
+        "德軍損失慘重：大量俘虜、戰場上遍布死者、反擊代價高昂，隊伍出現混亂與氣餒跡象",
+        "10 月 4 日繳獲的文件顯示德軍高層已承認反擊戰法失敗，正設法恢復重兵防守前沿",
+        "沒有理由預期十月會異常多雨",
+        "法軍預定 10 月 23 日在馬爾邁松發動攻擊，需要英軍在法蘭德斯持續施壓"
+      ],
+      "options": [
+        {
+          "label": "繼續攻擊，10 月 9 日再發動英法聯合攻擊",
+          "detail": "盡早在充分準備下恢復推進"
+        },
+        {
+          "label": "停在格拉文斯塔費爾支脈過冬",
+          "detail": "沿支脈折回戰線，鞏固已得陣地"
+        }
+      ],
+      "chosen": 0,
+      "outcome": "10 月 7、8 日連日大雨，9 日普爾卡佩勒與 12 日第一次帕斯尚爾攻擊在泥沼中失敗，紐西蘭與澳軍傷亡慘重；13 日黑格同意暫停，最終由加拿大軍在 11 月 6 日拿下帕斯尚爾。",
+      "hindsight": "此決定是整個戰役爭議的核心；黑格在報告中把進展受限歸於異常潮濕的天氣，批評者則認為在已知的地形與氣候條件下繼續進攻代價過高。",
+      "sources": [
+        {
+          "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+          "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+        },
+        {
+          "title": "New Zealand's blackest day at Passchendaele – NZHistory",
+          "url": "https://nzhistory.govt.nz/new-zealands-blackest-day-at-passchendaele"
+        }
+      ]
+    }
+  ],
+  "voices": [
+    {
+      "phase": "p1",
+      "event": "開始下雨",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令",
+      "quote": "午後，戰鬥仍在進行時，雨開始下了，整夜不停。此後四天大雨不止，之後好幾天天氣仍然風雨不定。",
+      "original": "During the afternoon, while fighting was still in progress, rain began, and fell steadily all night. Thereafter, for four days, the rain continued without cessation, and for several days afterwards the weather remained stormy and unsettled.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+        "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/supplement/429/data.pdf"
+      }
+    },
+    {
+      "phase": "p2",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令",
+      "quote": "離開這些步道就有溺死的危險；在隨後的戰鬥中，有好幾次人員和馱獸就這樣喪生。",
+      "original": "To leave these tracks was to risk death by drowning, and in the course of the subsequent fighting on several occasions both men and pack animals were lost in this way.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+        "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/supplement/429/data.pdf"
+      }
+    },
+    {
+      "phase": "p3",
+      "event": "布魯德賽恩德攻擊",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令",
+      "quote": "我軍的推進比這次攻擊早了十分鐘；當我軍砲兵彈幕打響時，德軍步兵正在集結準備突擊。",
+      "original": "Our advance anticipated this attack by ten minutes, and the German infantry were forming up for the assault when our artillery barrage opened.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+        "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/supplement/429/data.pdf"
+      }
+    },
+    {
+      "phase": "p4",
+      "event": "貝勒維支脈攻擊",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令",
+      "quote": "10 月 12 日上午 5 時 25 分在伊珀爾—魯瑟拉勒鐵路與侯特胡斯特森林之間發起的攻擊，沿支脈與高地有所進展；但從主山脊向西流的溪谷被發現無法通行。因此決定不再堅持攻擊，取消向較遠目標的推進。",
+      "original": "Our attack, launched at 5.25 a.m. on the 12th October between the Ypres-Roulers Railway and Houthulst Forest, made progress along the spurs and higher ground; but the valleys of the streams which run westward from the main ridge were found to be impassable. It was therefore determined not to persist in the attack, and the advance towards our more distant objectives was cancelled.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+        "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/supplement/429/data.pdf"
+      }
+    },
+    {
+      "phase": "p5",
+      "event": "攻佔帕斯尚爾村",
+      "side": "british",
+      "who": "道格拉斯·黑格",
+      "role": "英國遠征軍總司令",
+      "quote": "11 月 6 日上午 6 時，加拿大部隊（加拿大第2、第1師）再度發起攻擊，攻佔帕斯尚爾村及其北面、西北面緊鄰的高地。",
+      "original": "At 6.0 a.m. on the 6th November Canadian troops (2nd and 1st Canadian Divisions) renewed their attack and captured the village of Passchendaele, together with the high ground immediately to the north and north-west.",
+      "lang": "en",
+      "translated": "本站",
+      "source": {
+        "title": "Sir Douglas Haig's fourth Despatch – The Long, Long Trail",
+        "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/"
+      },
+      "license": {
+        "code": "pd",
+        "name": "公有領域：英國政府官方報告，1918 年刊於《倫敦憲報》（1931 年前出版，作者卒於 1928 年）",
+        "url": "https://www.thegazette.co.uk/London/issue/30462/supplement/429/data.pdf"
+      }
+    }
+  ],
+  "media": [
+    {
+      "phase": "p2",
+      "date": "1917-08-03",
+      "type": "image",
+      "title": "救世角附近的 12 吋鐵道榴彈砲",
+      "caption": "1917 年 8 月 3 日，皇家駐防砲兵第104攻城砲連的 12 吋鐵道榴彈砲，部署在伊珀爾北方救世角附近。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Battle_of_Passhendaele,_July-november_1917_Q7818.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Battle_of_Passhendaele,_July-november_1917_Q7818.jpg/500px-Battle_of_Passhendaele,_July-november_1917_Q7818.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Battle_of_Passhendaele,_July-november_1917_Q7818.jpg",
+      "credit": "John Warwick Brooke；帝國戰爭博物館 Q 7818（英國新聞部一戰官方照片）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：1957 年前拍攝之英國政府照片，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    },
+    {
+      "phase": "p3",
+      "date": "1917-09-20",
+      "type": "image",
+      "title": "降落傘卡在樹上的氣球觀測員",
+      "caption": "1917 年 9 月 20 日，齊勒貝克附近，一名從觀測氣球跳傘的軍官降落傘卡在高樹上，正設法盪向樹幹下來。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/The_Battle_of_Passchendaele,_July-november_1917_Q5982.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/The_Battle_of_Passchendaele,_July-november_1917_Q5982.jpg/500px-The_Battle_of_Passchendaele,_July-november_1917_Q5982.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:The_Battle_of_Passchendaele,_July-november_1917_Q5982.jpg",
+      "credit": "John Warwick Brooke；帝國戰爭博物館 Q 5982（英國新聞部一戰官方照片）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：1957 年前拍攝之英國政府照片，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    },
+    {
+      "phase": "p3",
+      "event": "梅寧路嶺攻擊",
+      "type": "image",
+      "title": "梅寧路嶺的維克斯機槍組",
+      "caption": "1917 年 9 月梅寧路嶺戰役中，英軍維克斯重機槍組在伊珀爾突出部作戰。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Vickers_machine_gun_in_the_Battle_of_Passchendaele_-_September_1917.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Vickers_machine_gun_in_the_Battle_of_Passchendaele_-_September_1917.jpg/500px-Vickers_machine_gun_in_the_Battle_of_Passchendaele_-_September_1917.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Vickers_machine_gun_in_the_Battle_of_Passchendaele_-_September_1917.jpg",
+      "credit": "英國政府（英國新聞部一戰官方照片），攝影者未具名",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：英國政府著作，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    },
+    {
+      "phase": "p4",
+      "date": "1917-10-09",
+      "type": "image",
+      "title": "冷溪近衛團與繳獲的德軍榴彈砲",
+      "caption": "1917 年 10 月 9 日普爾卡佩勒戰役中，冷溪近衛團第4營官兵在侯特胡斯特森林外緣檢視繳獲的德軍榴彈砲。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/13/The_Battle_of_Passchendaele,_July-november_1917_Q6047.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/The_Battle_of_Passchendaele,_July-november_1917_Q6047.jpg/500px-The_Battle_of_Passchendaele,_July-november_1917_Q6047.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:The_Battle_of_Passchendaele,_July-november_1917_Q6047.jpg",
+      "credit": "John Warwick Brooke；帝國戰爭博物館 Q 6047（英國新聞部一戰官方照片）",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（PD-UKGov：1957 年前拍攝之英國政府照片，HMSO 聲明皇家版權屆滿全球適用）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-UKGov"
+      }
+    },
+    {
+      "phase": "p4",
+      "date": "1917-10-12",
+      "type": "image",
+      "title": "帕斯尚爾的早晨",
+      "caption": "法蘭克·赫利拍攝：第一次帕斯尚爾攻擊後的早晨，宗訥貝克車站附近一座碉堡旁的澳洲傷兵。此照為合成影像，天空雲光為後製。",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Morning_a_Passchendaele._Frank_Hurley.jpg",
+      "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Morning_a_Passchendaele._Frank_Hurley.jpg/500px-Morning_a_Passchendaele._Frank_Hurley.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Morning_a_Passchendaele._Frank_Hurley.jpg",
+      "credit": "Frank Hurley；澳洲國家圖書館 la.pic-an24574133",
+      "license": {
+        "code": "pd",
+        "name": "公有領域（澳洲 1955 年前照片版權屆滿＋美國 PD-1923）",
+        "url": "https://commons.wikimedia.org/wiki/Template:PD-Australia"
+      },
+      "sensitive": true
+    }
+  ],
+  "tracks": [
+    {
+      "unit": "澳洲第1師",
+      "side": "british",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1917-09-20T05:40",
+          "lat": 50.848,
+          "lng": 2.955,
+          "status": "active",
+          "note": "梅寧路嶺攻擊"
+        },
+        {
+          "lat": 50.855,
+          "lng": 2.975
+        },
+        {
+          "lat": 50.866,
+          "lng": 2.995
+        },
+        {
+          "date": "1917-10-04",
+          "lat": 50.874,
+          "lng": 3.006,
+          "status": "active",
+          "note": "攻下布魯德賽恩德"
+        }
+      ]
+    },
+    {
+      "unit": "紐西蘭師",
+      "side": "british",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1917-10-04T06:00",
+          "lat": 50.88,
+          "lng": 2.955,
+          "status": "active"
+        },
+        {
+          "date": "1917-10-04",
+          "lat": 50.889,
+          "lng": 2.979,
+          "note": "攻下格拉文斯塔費爾"
+        },
+        {
+          "date": "1917-10-12T05:25",
+          "lat": 50.887,
+          "lng": 2.975,
+          "note": "向貝勒維支脈攻擊"
+        },
+        {
+          "date": "1917-10-12",
+          "lat": 50.893,
+          "lng": 2.99,
+          "status": "active",
+          "note": "被鐵絲網與機槍擋下，退回出發線附近"
+        }
+      ]
+    },
+    {
+      "unit": "第14軍",
+      "side": "british",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1917-07-31T03:50",
+          "lat": 50.893,
+          "lng": 2.87,
+          "status": "active"
+        },
+        {
+          "date": "1917-07-31",
+          "lat": 50.9,
+          "lng": 2.905
+        },
+        {
+          "date": "1917-08-16T08:00",
+          "lat": 50.912,
+          "lng": 2.918,
+          "status": "active",
+          "note": "攻下朗厄馬克"
+        }
+      ]
+    },
+    {
+      "unit": "加拿大軍",
+      "side": "british",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1917-10-26T05:45",
+          "lat": 50.887,
+          "lng": 2.985,
+          "status": "active"
+        },
+        {
+          "date": "1917-10-30",
+          "lat": 50.896,
+          "lng": 3.016,
+          "note": "克雷斯特農莊"
+        },
+        {
+          "date": "1917-11-06",
+          "lat": 50.9,
+          "lng": 3.021,
+          "note": "攻佔帕斯尚爾"
+        },
+        {
+          "date": "1917-11-10",
+          "lat": 50.912,
+          "lng": 3.012,
+          "status": "active",
+          "note": "52 號高地"
+        }
+      ]
+    },
+    {
+      "unit": "預備第45師",
+      "side": "germany",
+      "model": "infantry",
+      "points": [
+        {
+          "date": "1917-10-03",
+          "lat": 50.885,
+          "lng": 3.04,
+          "status": "active",
+          "note": "集結準備「高地風暴」反擊"
+        },
+        {
+          "date": "1917-10-04T06:00",
+          "lat": 50.876,
+          "lng": 3.012,
+          "status": "active",
+          "note": "集結中遭英軍彈幕擊中"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "帕斯尚爾戰役 – 中文維基百科",
+      "url": "https://zh.wikipedia.org/zh-tw/%E5%B8%95%E6%96%AF%E5%B0%9A%E7%88%BE%E6%88%B0%E5%BD%B9",
+      "type": "wiki",
+      "lang": "zh",
+      "accessed": "2026-11-02",
+      "note": "使用者提供；抓取失敗，未能讀取內容"
+    },
+    {
+      "title": "Battle of Passchendaele – Wikipedia（IPFS 鏡像）",
+      "url": "https://bafybeiemxf5abjwjbikoz4mc3a3dla6ual3jsgpdr4cjr3oz3evfyavhwq.ipfs.4everland.io/wiki/Third_Ypres.html",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "主要事實、各場戰鬥、雨量、德軍防禦、各家傷亡數字"
+    },
+    {
+      "title": "Second Battle of Passchendaele – Wikipedia（Kiwix 鏡像）",
+      "url": "https://kiwix.lema.org/wikipedia_en_all_mini_2024-02/A/Second_Battle_of_Passchendaele",
+      "type": "wiki",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "加拿大軍四階段、傷亡 15,654"
+    },
+    {
+      "title": "Sir Douglas Haig's fourth Despatch (Bullecourt, Messines, Third Ypres)",
+      "url": "https://www.longlongtrail.co.uk/battles/british-field-commanders-despatches/sir-douglas-haigs-fourth-despatch-bullecourt-messines-third-ypres/",
+      "type": "primary",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "黑格 1917-12-25 報告（1918 年刊於《倫敦憲報》）：各次攻擊時刻、俘虜數、天候與引文"
+    },
+    {
+      "title": "Battle of Passchendaele (Third Ypres) – Australian War Memorial",
+      "url": "https://awm.gov.au/articles/blog/battle-of-passchendaele-third-ypres",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "澳洲各師參戰與一週近 11,000 人傷亡"
+    },
+    {
+      "title": "New Zealand's blackest day at Passchendaele – NZHistory",
+      "url": "https://nzhistory.govt.nz/new-zealands-blackest-day-at-passchendaele",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "10 月 12 日 5 時 25 分、843 人陣亡、鐵絲網與泥濘"
+    },
+    {
+      "title": "Ypres 1917, 31 July to 10 November – Canada DND",
+      "url": "https://www.canada.ca/en/department-national-defence/services/military-history/history-heritage/casualty-identification-military/ypres-1917.html",
+      "type": "web",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "加拿大軍角色與地面積水"
+    },
+    {
+      "title": "Military Operations France and Belgium 1917, Vol. II（Edmonds, 1948）",
+      "url": "",
+      "type": "book",
+      "lang": "en",
+      "accessed": "2026-11-02",
+      "note": "經 Wikipedia 轉引，未直接查閱"
+    }
+  ],
+  "provenance": {
+    "extracted_by": "Claude (claude-opus-5-5)",
+    "extracted_at": "2026-11-02",
+    "confidence": {
+      "coordinates": "approx",
+      "strength": "medium",
+      "casualties": "contested",
+      "weapons": "medium"
+    },
+    "notes": "使用者提供的中文維基頁抓取失敗；英文維基原站不可達，改用 IPFS／Kiwix 鏡像，並以黑格報告、澳洲戰爭紀念館、紐西蘭歷史網、加拿大國防部交叉核對。攻擊時刻取自黑格報告（10 月 12 日 5 時 25 分與紐西蘭歷史網一致）。為簡化，法軍與比軍併入協約國一方。武器規格、12 吋鐵道砲與 MG 08/15、Albatros D.V、leFH 16、sFH 13 型號及芥子氣為一般知識補充。座標依地名估計；前線、德軍陣地多邊形、移動箭頭與軌跡皆為示意，軌跡由本紀錄事件與箭頭拼接，部分日期為階段日期。沉浸素材：5 張 Commons 照片（4 張帝國戰爭博物館照片為 PD-UKGov，HMSO 聲明全球適用，頁面無另附美國標籤；赫利照片為澳洲公有領域＋美國 PD-1923，為合成影像），授權經 Commons 鏡像頁讀取；5 則引文逐字取自黑格 1917 年報告（公有領域）。帕斯尚爾村前後空照因授權欄空白而未收錄。"
+  },
+  "revision": "2026-11-02T07:12:07.371Z"
+}
