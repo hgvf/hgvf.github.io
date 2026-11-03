@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-03T09:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-11-02", "end": "2026-11-02"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"optical communication": 1, "CPO": 1, "AI infrastructure": 1, "data center": 1, "semiconductor": 1},
+    "importance_distribution": {"high": 1},
+    "top_tickers": ["MRVL", "LITE"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261102-001",
+      "slug": "strategic-investment-mrvl-lite-optical-laser-acquisition",
+      "event_date": "2026-11-02",
+      "published_at": "2026-11-02",
+      "ingested_at": "2026-11-03T09:00:00+08:00",
+      "event_type": "strategic_investment",
+      "event_type_secondary": [],
+      "themes": ["optical communication", "CPO", "AI infrastructure", "data center", "semiconductor"],
+      "regions": ["US"],
+      "importance_score": 84,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "Marvell 以全股票方式併購 Lumentum，企業價值約 1,150 億美元，整合 DSP/交換器與雷射、光收發模組",
+      "title_original": "Marvell to Acquire Lumentum in All-Stock Transaction",
+      "summary_zh": "Marvell 宣布以 1 股 Lumentum 換 4.5 股 Marvell 的比例收購 Lumentum，隱含企業價值約 1,150 億美元（較 10/28 未受影響股價溢價約 23.9%）。合併後 Marvell 股東持股約 67%、Lumentum 約 33%，預計 2028 上半年完成，並預期年化成本綜效逾 10 億美元。",
+      "why_it_matters": "Marvell 取得 Lumentum 的 InP 化合物半導體產線、高速/高功率雷射、光收發模組與 OCS，等於把 AI 資料中心互連中最緊缺的雷射光源從外部採購變為內部垂直整合，可望提供 CPO 與 800G/1.6T 光學的預先驗證方案，並提升對 hyperscaler 的議價力。受影響的是其他光模組與 DSP 客戶／競爭者（如 Broadcom、Coherent 及依賴 Lumentum 雷射的模組廠）：Lumentum 的中立供應商地位改變，可能促使他們尋求第二來源雷射（如 Coherent、日系 InP 供應商）。交割要等到 2028 上半年且需監管核准，短期供應不變，但長期供應鏈結構將重組。",
+      "tickers": ["MRVL", "LITE"],
+      "companies": [
+        {"name": "Marvell Technology, Inc.", "ticker": "MRVL", "exchange": "NASDAQ", "country": "US", "role": "investor"},
+        {"name": "Lumentum Holdings Inc.", "ticker": "LITE", "exchange": "NASDAQ", "country": "US", "role": "investee"}
+      ],
+      "supply_chain": {
+        "upstream": ["indium phosphide (InP) wafers"],
+        "component": "high-speed lasers / optical transceivers / OCS",
+        "supplier": ["Lumentum Holdings Inc."],
+        "customer": ["Marvell Technology, Inc."],
+        "end_market": ["AI data center interconnect", "co-packaged optics"]
+      },
+      "products": ["laser", "optical transceiver", "optical circuit switch"],
+      "materials": ["InP"],
+      "change": {
+        "type": "vertical_integration_acquisition",
+        "before": "Marvell 專注電子/光 DSP、交換與客製矽，雷射與光模組由獨立供應商如 Lumentum 提供",
+        "after": "合併後 Marvell 擁有雷射、光模組與 OCS 的自有產能，提供端到端光互連方案（預計 2028H1 交割）"
+      },
+      "financial_data": {
+        "amount": 115000000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": 23.9,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": ["marvell", "mrvl", "lumentum", "lite", "marvell technology", "收購", "併購", "acquisition", "merger", "optical", "光通訊", "laser", "雷射", "transceiver", "光收發模組", "ocs", "optical circuit switch", "cpo", "共封裝光學", "inp", "磷化銦", "ai infrastructure", "data center", "資料中心", "strategic investment", "vertical integration"],
+      "sources": [
+        {"publisher": "Lumentum — SEC 8-K Ex.99.1 (joint press release)", "source_type": "primary", "url": "https://www.sec.gov/Archives/edgar/data/0001633978/000119312526442758/d163169dex991.htm", "is_primary": true, "accessed_at": "2026-11-03T08:50:00+08:00"},
+        {"publisher": "Yahoo Finance", "source_type": "wire", "url": "https://finance.yahoo.com/markets/stocks/articles/marvell-acquire-lumentum-115-billion-134153803.html", "is_primary": false, "accessed_at": "2026-11-03T08:52:00+08:00"}
+      ]
+    }
+  ]
+}
