@@ -42,6 +42,21 @@ export const PROJECTS = [
     tags: ['Vite', 'TypeScript', 'Canvas 2D', 'Vercel', 'Supabase'],
   },
   {
+    name: '大叔釣魚',
+    url: 'https://fish-craft.vercel.app/fishing/',
+    tagline: '大叔釣魚 - 像素療癒放置釣魚',
+    description: '坐在船首紅色塑膠椅上的大叔幫你釣魚：魚不常上鉤，適合開著分頁放著看，偶爾開船換漁場、賣魚升級裝備。',
+    features: [
+      '9,243 種真實魚類（臺灣 2,070 種＋世界 21 片海域）與 22 種神話生物，每種都有像素圖',
+      '108 個漁場：從桃園永安漁港、世界各海域到東海龍宮、冥河、銀河',
+      '18 支釣竿、21 艘船、25 種魚餌，從 HDMI 線到諾亞方舟、航空母艦',
+      '19 種買家與隨時間漲跌的動態市場，油價、魚的新鮮度都要算',
+      '颱風、聖嬰現象、軍事演習等事件影響出航與漁獲',
+      '書本式圖鑑、販賣紀錄與釣魚日誌',
+    ],
+    tags: ['Vite', 'Canvas 2D', 'Pixel Art', 'Idle Game', 'localStorage', 'Vercel'],
+  },
+  {
     name: 'War Atlas',
     url: 'war-atlas/index.html',
     internal: true,
