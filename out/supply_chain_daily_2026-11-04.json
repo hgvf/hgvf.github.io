@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-05T08:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude-sonnet-5-5"},
+  "event_window": {"start": "2026-11-03", "end": "2026-11-04"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"memory": 1, "semiconductor": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["2344.TW"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261103-001",
+      "slug": "capacity-2344-tw-winbond-kaohsiung-phase2-fab",
+      "event_date": "2026-11-03",
+      "published_at": "2026-11-04",
+      "ingested_at": "2026-11-05T08:00:00+08:00",
+      "event_type": "capacity",
+      "event_type_secondary": ["supply_agreement"],
+      "themes": ["memory", "semiconductor"],
+      "regions": ["TW"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "華邦電董事會核准約 NT$731 億高雄二期 12 吋廠擴建，並洽談 10 家客戶 2029–2032 長約",
+      "title_original": "Winbond approves US$2.2 billion fab expansion, seeks long-term deals with 10 customers",
+      "summary_zh": "華邦電董事會核准高雄 12 吋廠 Phase II Module B 資本支出約 NT$731.6 億（約 US$22 億），自 2026 年 11 月起分階段投入，資金來自自有現金與銀行借款；公司同時規劃遴選 10 家策略客戶簽訂涵蓋 2029–2032 年產能的長期協議。報導稱潔淨室面積約為現有高雄廠的兩倍，2029 年開始量產。",
+      "why_it_matters": "此案是華邦在利基型 DRAM/Flash 供給吃緊下首次以長約預鎖客戶來支撐新增產能：若 10 家客戶簽約，華邦 2029 年後的產能利用率與價格波動將獲得保護，並可能分食 Samsung、SK hynix、Micron 淘汰 DDR4/低容量產品後留下的利基市場；對下游車用、工控與網通 OEM 而言，則是 2029 年前仍難增加利基記憶體供給的訊號，議價力偏向供應商。惟新廠 2029 才量產，對現階段短缺無緩解效果。細節（產品組合、月產能）來自付費牆文章，尚未取得公司 MOPS 原文。",
+      "tickers": ["2344.TW"],
+      "companies": [
+        {"name": "Winbond Electronics Corp", "ticker": "2344.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"}
+      ],
+      "supply_chain": {
+        "upstream": ["12-inch wafer equipment"],
+        "component": "specialty DRAM / NOR Flash",
+        "supplier": ["Winbond Electronics Corp"],
+        "customer": ["automotive OEM", "industrial OEM", "networking OEM"],
+        "end_market": ["automotive", "industrial automation", "networking"]
+      },
+      "products": ["specialty DRAM", "NOR Flash"],
+      "materials": [],
+      "change": {
+        "type": "fab_expansion",
+        "before": "高雄廠 Phase I 12 吋產能規劃約 24,000 片/月",
+        "after": "新增 Phase II Module B（NT$731.6 億），2029 年量產，產能鎖定長約客戶（規劃中）"
+      },
+      "financial_data": {
+        "amount": 73163000000,
+        "currency": "TWD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-11-01"
+      },
+      "search_keywords": ["winbond", "華邦電", "華邦", "2344", "2344.tw", "memory", "記憶體", "dram", "nor flash", "specialty dram", "capacity", "擴產", "fab expansion", "kaohsiung", "高雄", "long-term agreement", "長約", "12-inch", "semiconductor", "capex"],
+      "sources": [
+        {"publisher": "Digitimes", "source_type": "trade", "url": "https://www.digitimes.com/news/a20261104PD242/winbond-fab-expansion-equipment-wafer.html", "is_primary": false, "accessed_at": "2026-11-05T07:55:00+08:00"},
+        {"publisher": "TokenPost (citing Winbond board resolution)", "source_type": "trade", "url": "https://www.tokenpost.com/news/business/47572", "is_primary": true, "accessed_at": "2026-11-05T07:56:00+08:00"}
+      ]
+    }
+  ]
+}
