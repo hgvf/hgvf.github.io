@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- M4 carbine silhouette, muzzle up-right -->
+  <rect x="0" y="0" width="128" height="128" rx="22" fill="#b8720f"/>
+  <g fill="#1c2827" transform="translate(64 66) rotate(-32) scale(1.14) translate(-60 -18)">
+    <path d="M2 14 L21 12 L23 12 L23 25 L21 27 L6 29 L2 27 Z"/>
+    <rect x="23" y="15" width="14" height="6"/>
+    <path d="M36 14 L63 14 L63 22 L41 22 L36 20 Z"/>
+    <rect x="36" y="8" width="31" height="7"/>
+    <rect x="40" y="5" width="23" height="3"/>
+    <rect x="40" y="2" width="5" height="3"/>
+    <path d="M42 22 L49 22 L46 34 L39 34 Z"/>
+    <path d="M49 22 L50 26.5 L57 26.5 L57 22 L55.5 22 L55.5 25 L51 25 L50.5 22 Z"/>
+    <path d="M56 22 L64 22 L68 34 L60 36.5 Z"/>
+    <rect x="66" y="8.5" width="26" height="10" rx="2"/>
+    <path d="M88 8.5 L91 0 L94 0 L94 8.5 Z"/>
+    <rect x="91" y="12" width="23" height="3.2"/>
+    <rect x="112" y="10.6" width="7" height="6" rx="1"/>
+  </g>
+  <g fill="#e3a54a" transform="translate(64 66) rotate(-32) scale(1.14) translate(-60 -18)">
+    <rect x="70" y="11" width="3" height="5" rx="1"/><rect x="76" y="11" width="3" height="5" rx="1"/><rect x="82" y="11" width="3" height="5" rx="1"/>
+  </g>
+</svg>
