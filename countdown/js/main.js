@@ -382,11 +382,34 @@ $('#dlgSettings').addEventListener('close', () => {
   if (!day.asked) { day.asked = true; saveDay(day); }
 });
 
+/* Static page text (settings + daily dialog labels, top bar, footer): remember each
+   node's original wording once, then re-derive it whenever the label changes. */
+const ORIGINAL = new WeakMap();
+function relabelStatic() {
+  for (const root of document.querySelectorAll('.bar, .foot, #dlgSettings, #dlgDaily, #stage')) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (n.parentElement.closest('[data-keep-label], datalist, #brandName')) continue;
+      if (!ORIGINAL.has(n)) ORIGINAL.set(n, n.nodeValue);
+      n.nodeValue = relabel(ORIGINAL.get(n));
+    }
+    for (const el of [root, ...root.querySelectorAll('[title], [aria-label]')]) {
+      for (const attr of ['title', 'aria-label']) {
+        if (!el.hasAttribute(attr)) continue;
+        const key = 'orig' + attr.replace('-', '');
+        if (!(key in el.dataset)) el.dataset[key] = el.getAttribute(attr);
+        el.setAttribute(attr, relabel(el.dataset[key]));
+      }
+    }
+  }
+}
+
 /** Push the countdown label into every DOM string that is not drawn on the canvas. */
 function applyLabel() {
   setLabel(settings.label);
   $('#brandName').textContent = relabel('下班倒數');
   $('#statsTitle').textContent = relabel('下班了！今日統計');
+  relabelStatic();
   offShown = null; subtitle = null;
   copy.choice = null;
 }
@@ -402,7 +425,7 @@ const ruleText = () => {
 function updateDailySum() {
   const probe = { ...day, punch: dform.start.value || settings.startTime, manualEnd: settings.rule.type === 'manual' ? dform.manualEnd.value : null };
   const S = computeSession(settings, probe, now());
-  $('#dailySum').innerHTML = `下班規則：<b>${ruleText()}</b><br>今天 <b>${timeStr(new Date(S.end))}</b> 下班`;
+  $('#dailySum').innerHTML = relabel(`下班規則：<b>${ruleText()}</b><br>今天 <b>${timeStr(new Date(S.end))}</b> 下班`);
 }
 function openDaily() {
   const T = new Date(now());
