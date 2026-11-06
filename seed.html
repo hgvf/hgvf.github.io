@@ -31,6 +31,7 @@
   <button id="btnCleanup" class="cleanup">Cleanup Zombies（清除孤兒資料）</button>
   <button id="btnReindex" class="reindex">Rebuild Event Index（重建 ticker 事件索引）</button>
   <button id="btnReindexDefense" class="reindex">Rebuild Defense Index（重建每日軍武索引）</button>
+  <button id="btnSnapshots" class="prices">Backfill Price Snapshots（補抓非 watchlist 個股快照）</button>
 
   <div class="purge-box">
     <h3>🗑 按日期清除舊資料（Purge before date）</h3>
@@ -89,6 +90,64 @@
         return false;
       }
     }
+
+    /* ── Backfill price snapshots ─────────────────────
+       Browser version of scripts/backfill_snapshots.py: collect every ticker
+       cited by supply_chain_news / supply_chain_events / earnings_calls and
+       send them to the Worker's POST /snapshot in batches of 25. The Worker
+       skips watchlist tickers and ones that already have a snapshot, so this
+       is safe to re-run (e.g. after fixing a ticker via ✎ alias). No sign-in
+       needed — the collections are public-read and the endpoint is public. */
+    const WORKER_URL = 'https://watchlist-worker.kwtang8618.workers.dev';
+    document.getElementById('btnSnapshots').addEventListener('click', async () => {
+      const btn = document.getElementById('btnSnapshots');
+      btn.disabled = true;
+      log.innerHTML = '';
+      try {
+        const syms = new Set();
+        // Corrected symbols (ticker_aliases) are snapshotted under the fixed form.
+        const aliases = {};
+        try { (await getDocs(collection(db, 'ticker_aliases'))).docs.forEach(d => { if (d.data().symbol) aliases[d.id] = d.data().symbol; }); } catch {}
+        const add = t => {
+          const raw = String((t && typeof t === 'object' ? t.symbol : t) || '').trim();
+          const s = String(aliases[raw] || raw).toUpperCase();
+          if (s) syms.add(s);
+        };
+        print('掃描報導 collection...');
+        for (const name of ['supply_chain_news', 'supply_chain_events', 'earnings_calls']) {
+          const snap = await getDocs(collection(db, name));
+          snap.docs.forEach(d => { const x = d.data(); (Array.isArray(x.tickers) ? x.tickers : []).forEach(add); if (x.ticker) add(x.ticker); });
+          print(`  ${name}: ${snap.size} docs`, 'ok');
+        }
+        const list = [...syms];
+        print(`共 ${list.length} 個 ticker，送往 Worker /snapshot（每批 25）...\n`);
+        let fetched = [], skipped = 0, failed = [], already = 0;
+        for (let i = 0; i < list.length; i += 25) {
+          const chunk = list.slice(i, i + 25);
+          try {
+            const res = await fetch(`${WORKER_URL}/snapshot`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ symbols: chunk }),
+            });
+            const j = await res.json();
+            if (!j.ok) throw new Error(j.error || `HTTP ${res.status}`);
+            fetched.push(...(j.fetched || []));
+            failed.push(...(j.failed || []));
+            skipped += (j.skipped || []).length;
+            already += chunk.length - (j.skipped || []).length - (j.fetched || []).length - (j.failed || []).length;
+            print(`  批次 ${i / 25 + 1}/${Math.ceil(list.length / 25)}：新抓 ${(j.fetched || []).length}`);
+          } catch (e) {
+            print(`  批次 ${i / 25 + 1} 失敗：${e.message}`, 'err');
+          }
+          await new Promise(r => setTimeout(r, 800));
+        }
+        print(`\n完成：新抓 ${fetched.length}、已有快照 ${already}、watchlist（略過）${skipped}、查無報價 ${failed.length}`, 'ok');
+        if (failed.length) print('查無報價（可在表格用 ✎ 修正代號後再按一次）：\n  ' + failed.join(', '), 'warn');
+      } catch (e) {
+        print('錯誤: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+    });
 
     /* ── Seed watchlist ────────────────────────────── */
     document.getElementById('btnWatchlist').addEventListener('click', async () => {
