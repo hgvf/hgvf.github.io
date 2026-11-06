@@ -193,3 +193,16 @@ python scripts/facts_push.py --file /tmp/facts_updates.json       # 先 --dry-ru
 
 - `facts_push.py` 是 **read-merge-write**：不覆蓋既有欄位、`(date,text)` 重複的更新會跳過，重跑安全。
 - 更新內容附來源與日期，並視證據推進狀態（待驗證→進展符合／落後預期／已驗證／已失效），寫入後網站即時反映。
+
+---
+
+## 非 watchlist 個股的股價快照（`price_snapshots`）
+
+新聞常提到 watchlist 以外的股票。「相關個股近期表現」表格的取值順序：
+
+1. `prices/{SYM}` — watchlist 個股，每日 cron 更新（最新行情）。
+2. `price_snapshots/{SYM}` — 非 watchlist 個股的**一次性快照**（股價、日/週/月/季/年 %、PE、市值），**永久保存、不每日更新**，表格上會標「快照 MM-DD」。
+3. 兩者都沒有 → 頁面自動呼叫 Worker `POST /snapshot` 補抓並存檔（舊新聞也會自動補齊），之後就直接讀 Firestore。
+
+`scripts/publish.py --type news / earnings / events` 發布完會自動對新文件的 tickers 呼叫 `/snapshot`（`refresh: true`，超過 12 小時的快照會以新聞發布當下價格重抓）；Worker 網址可用 `$PRICE_WORKER_URL` 覆寫。
+需部署一次 `firestore.rules`（新增 `price_snapshots` 公開讀）；Worker 由 `deploy_worker.yml` 在 merge 到 main 時自動部署。

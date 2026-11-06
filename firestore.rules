@@ -37,6 +37,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false;
     }
+    // One-off price snapshots for tickers outside the watchlist (cited by news).
+    // Written once by the Worker's /snapshot (service account, bypasses rules);
+    // never refreshed by the daily cron. Public read, no client writes.
+    match /price_snapshots/{symbol} {
+      allow read: if true;
+      allow write: if false;
+    }
     // Precomputed lookup indexes (e.g. indexes/ticker_events — symbol → latest
     // related supply/industry/earnings doc). Maintained server-side by
     // scripts/publish.py (Admin/REST, bypasses rules); public read so cards

@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8+diag+host-fallback-2026-08-19';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8+diag+host-fallback+snapshot-2026-11-06';
 
 export default {
   async fetch(request, env) {
@@ -46,6 +46,34 @@ export default {
         const session = await getYahooSession();
         const data = await fetchChartSeries(symbols, range, interval, session);
         return new Response(JSON.stringify({ ok: true, range, interval, data }), { headers: jsonHeaders() });
+      } catch (err) {
+        return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: jsonHeaders() });
+      }
+    }
+
+    // One-off price snapshots for tickers that are NOT in the watchlist (news
+    // items often cite companies outside it). POST /snapshot
+    //   body { symbols:[...], refresh?:bool }
+    // Symbols already covered by prices/ are skipped (the daily cron keeps
+    // those fresh). Missing ones are fetched once and stored permanently in
+    // price_snapshots/{SYM}; the cron never touches that collection. A plain
+    // call only fills gaps (write-once); refresh:true — sent by publish.py
+    // right after new news lands — re-captures snapshots older than 12h.
+    if (url.pathname === '/snapshot') {
+      if (request.method !== 'POST') {
+        return new Response('Method not allowed', { status: 405, headers: corsHeaders() });
+      }
+      let body = {};
+      try { body = await request.json(); } catch { /* empty body */ }
+      const symbols = [...new Set((Array.isArray(body.symbols) ? body.symbols : [])
+        .map(s => String(s || '').trim().toUpperCase())
+        .filter(s => SYMBOL_RE.test(s)))].slice(0, SNAPSHOT_MAX);
+      if (!symbols.length) {
+        return new Response(JSON.stringify({ ok: false, error: 'no symbols' }), { status: 400, headers: jsonHeaders() });
+      }
+      try {
+        const out = await snapshotPrices(env, symbols, !!body.refresh);
+        return new Response(JSON.stringify({ ok: true, ...out }), { headers: jsonHeaders() });
       } catch (err) {
         return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500, headers: jsonHeaders() });
       }
@@ -175,7 +203,7 @@ async function firestoreSet(token, projectId, docPath, fields) {
 
 // Batch-write docs via Firestore :commit. Each commit holds up to 500 writes
 // (Firestore hard limit), so chunk accordingly — 1 subrequest per 500 docs.
-async function firestoreBatchSet(token, projectId, writes) {
+async function firestoreBatchSet(token, projectId, writes, opts = {}) {
   if (writes.length === 0) return;
   const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:commit`;
   const CHUNK = 500;
@@ -192,7 +220,7 @@ async function firestoreBatchSet(token, projectId, writes) {
         // the Worker's own spark fetch comes back empty (Yahoo frequently blocks
         // the spark endpoint from Cloudflare IPs). The mask makes the write a
         // partial merge so those fields survive a manual price refresh.
-        updateMask: { fieldPaths: Object.keys(fields) },
+        ...(opts.replace ? {} : { updateMask: { fieldPaths: Object.keys(fields) } }),
       })),
     };
     const res = await fetch(url, {
@@ -305,6 +333,116 @@ async function fetchAndStorePrices(env) {
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ── One-off snapshots for non-watchlist tickers ─────────────── */
+const SYMBOL_RE      = /^[A-Z0-9^][A-Z0-9.\-=^]{0,19}$/;
+const SNAPSHOT_MAX   = 25;                 // keeps sub-requests well under 50
+const SNAPSHOT_TTL_MS = 12 * 3600 * 1000;  // refresh:true only re-captures older snapshots
+
+// Sub-request budget (25 symbols worst case): token 1 + batchGet 1 + session
+// 3 + quote ≤2 + spark 1 + per-symbol chart fallback ≤25 + commit 1 ≈ 34.
+async function snapshotPrices(env, symbols, refresh) {
+  const project = env.FIREBASE_PROJECT_ID;
+  const token = await getFirestoreToken(env);
+
+  // One batchGet tells us which symbols the watchlist already covers and which
+  // already have a stored snapshot.
+  const paths = symbols.flatMap(s => [`prices/${s}`, `price_snapshots/${s}`]);
+  const existing = await firestoreBatchGet(token, project, paths);
+  const inWatchlist = symbols.filter(s => existing[`prices/${s}`]);
+  const now = Date.now();
+  const stored = {};
+  const targets = [];
+  for (const s of symbols) {
+    if (existing[`prices/${s}`]) continue;
+    const snap = existing[`price_snapshots/${s}`];
+    if (snap) stored[s] = snap;
+    const age = snap ? now - Date.parse(snap.snapshot_at || 0) : Infinity;
+    if (!snap || (refresh && !(age < SNAPSHOT_TTL_MS))) targets.push(s);
+  }
+  if (!targets.length) return { data: stored, fetched: [], skipped: inWatchlist, failed: [] };
+
+  let session = await getYahooSession();
+  let quotes = await fetchAllQuoteData(targets, session);
+  if (Object.keys(quotes).length === 0) {
+    await sleep(400);
+    session = (await getYahooSession()) || session;
+    quotes = await fetchAllQuoteData(targets, session);
+  }
+
+  // Week/month/quarter/year %: spark first (one call), then per-symbol v8
+  // chart for anything spark missed (spark is often blocked for CF IPs).
+  const changes = await fetchSparkData(targets, session);
+  const charts = {};
+  for (const s of targets) {
+    if (changes[s] && (quotes[s] || !session)) continue;
+    const c = await fetchOneChart(s, '1y', '1d', session);
+    if (!c) continue;
+    charts[s] = c;
+    if (!changes[s]) changes[s] = changesFromCloses(c.series.map(p => p.close));
+  }
+
+  const nowIso = new Date().toISOString();
+  const writes = [];
+  const fetched = [];
+  for (const s of targets) {
+    let entry = quotes[s];
+    // Quote failed but the chart worked → fall back to the chart's last close.
+    if (!entry && charts[s]) {
+      const ser = charts[s].series;
+      const last = ser[ser.length - 1].close;
+      const prev = ser.length > 1 ? ser[ser.length - 2].close : null;
+      entry = {
+        name: charts[s].name || s,
+        last,
+        day_change_pct: prev ? (last - prev) / prev * 100 : null,
+      };
+      if (charts[s].currency) entry.market_cap_currency = charts[s].currency;
+    }
+    if (!entry) continue;
+    const fields = { ...entry, ...(changes[s] || {}), snapshot_at: nowIso, source: 'snapshot' };
+    writes.push({ docPath: `price_snapshots/${s}`, fields });
+    stored[s] = fields;
+    fetched.push(s);
+  }
+  // Full replace (no updateMask) — a re-capture shouldn't keep stale fields.
+  await firestoreBatchSet(token, project, writes, { replace: true });
+  const failed = targets.filter(s => !fetched.includes(s));
+  return { data: stored, fetched, skipped: inWatchlist, failed };
+}
+
+function changesFromCloses(closes) {
+  const c = closes.filter(v => v != null);
+  if (!c.length) return {};
+  const last = c[c.length - 1];
+  const pct = prev => (prev && last) ? ((last - prev) / prev * 100) : null;
+  return {
+    week_change_pct:    pct(c[c.length - 6]),
+    month_change_pct:   pct(c[c.length - 23]),
+    quarter_change_pct: pct(c[c.length - 64]),
+    year_change_pct:    pct(c[0]),
+  };
+}
+
+// Firestore :batchGet → { "coll/doc": data } for the docs that exist.
+async function firestoreBatchGet(token, projectId, docPaths) {
+  const root = `projects/${projectId}/databases/(default)/documents`;
+  const res = await fetch(`https://firestore.googleapis.com/v1/${root}:batchGet`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documents: docPaths.map(p => `${root}/${p}`) }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`Firestore batchGet failed (${res.status}): ${detail.slice(0, 200)}`);
+  }
+  const out = {};
+  for (const r of await res.json()) {
+    if (!r.found) continue;
+    out[r.found.name.slice(root.length + 1)] = fromFirestoreDoc(r.found);
+  }
+  return out;
+}
 
 /* ── Yahoo Finance ────────────────────────── */
 const YAHOO_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';

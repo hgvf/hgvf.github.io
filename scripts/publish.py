@@ -625,6 +625,41 @@ def update_event_index(session, base, token, entries, now_iso):
         print(f"Updated indexes/{INDEX_DOC}: {changed} entr(y/ies).")
 
 
+# Cloudflare Worker that stores one-off price snapshots (price_snapshots/{SYM})
+# for tickers outside the watchlist. Override with $PRICE_WORKER_URL.
+WORKER_URL = os.environ.get("PRICE_WORKER_URL",
+                            "https://watchlist-worker.kwtang8618.workers.dev")
+
+
+def snapshot_tickers(session, docs):
+    """Ask the Worker to capture prices for tickers in freshly published docs.
+    Watchlist tickers are skipped Worker-side (prices/ already covers them);
+    the rest get a permanent snapshot taken now. Best-effort: never fails the
+    publish (the pages also backfill missing snapshots lazily)."""
+    syms = []
+    for _, d in docs:
+        raw = d.get("tickers") or ([d["ticker"]] if d.get("ticker") else [])
+        for t in raw if isinstance(raw, list) else []:
+            t = (t.get("symbol") if isinstance(t, dict) else t) or ""
+            t = str(t).strip().upper()
+            if t and t not in syms:
+                syms.append(t)
+    if not syms:
+        return
+    fetched, failed = [], []
+    for i in range(0, len(syms), 25):
+        try:
+            r = session.post(f"{WORKER_URL}/snapshot", timeout=60,
+                             json={"symbols": syms[i:i + 25], "refresh": True})
+            j = r.json()
+            fetched += j.get("fetched", [])
+            failed += j.get("failed", [])
+        except Exception as e:  # noqa: BLE001 — best-effort
+            print(f"  snapshot request failed: {e}")
+    print(f"Price snapshots: {len(fetched)} captured"
+          + (f", no quote for {failed}" if failed else "") + ".")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Publish report data to Firestore")
     ap.add_argument("--type", required=True,
@@ -703,6 +738,7 @@ def main():
         if collection == "supply_chain_events":
             update_event_index(session, base, token,
                                list(index_entries("industry", docs)), now_iso)
+        snapshot_tickers(session, docs)
         return
 
 
@@ -748,9 +784,11 @@ def main():
     if args.type == "news":
         update_event_index(session, base, token,
                            list(index_entries("supply", docs)), now_iso)
+        snapshot_tickers(session, docs)
     elif args.type == "earnings":
         update_event_index(session, base, token,
                            list(index_entries("earnings", docs)), now_iso)
+        snapshot_tickers(session, docs)
     elif args.type == "defense":
         # Refresh the single-doc index the 每日軍武合約 page reads (1 read/load).
         rebuild_defense_index(session, base, token, now_iso)

@@ -1,7 +1,7 @@
 // reports.js — shared data + timeline rendering for the report pages
 // (supply-chain news, earnings calls). Read-only, public Firestore access.
 
-import { firebaseConfig } from "./config.js";
+import { firebaseConfig, WORKER_URL } from "./config.js";
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
@@ -255,18 +255,71 @@ export function chartUrl(symbol) {
 // Values are whatever Firestore currently holds — a one-off snapshot at view
 // time; nothing here fetches or writes. Load the map once per page via
 // loadPricesMap() (before mounting), then tickerTrendCard() reads it in-sync.
-let _pricesMap = null;
-export async function loadPricesMap() {
-  if (_pricesMap) return _pricesMap;
-  const map = {};
-  try {
-    const snap = await getDocs(collection(db(), "prices"));
-    snap.docs.forEach(d => { map[d.id] = d.data(); });
-  } catch { /* leave empty — cells fall back to N/A */ }
-  _pricesMap = map;
-  return map;
+let _pricesMap = null, _snapMap = null, _pricesPromise = null;
+export function loadPricesMap() {
+  if (!_pricesPromise) _pricesPromise = (async () => {
+    const map = {}, snaps = {};
+    const [pr, sn] = await Promise.allSettled([
+      getDocs(collection(db(), "prices")),
+      // One-off snapshots for tickers outside the watchlist (written by the
+      // Worker's /snapshot when news first cites them; never refreshed daily).
+      getDocs(collection(db(), "price_snapshots")),
+    ]);
+    if (pr.status === "fulfilled") pr.value.docs.forEach(d => { map[d.id] = d.data(); });
+    if (sn.status === "fulfilled") sn.value.docs.forEach(d => { snaps[d.id] = d.data(); });
+    _pricesMap = map; _snapMap = snaps;
+    return map;
+  })();
+  return _pricesPromise;
 }
 export function getPricesMapSync() { return _pricesMap || {}; }
+// Live watchlist price first, then the stored one-off snapshot.
+function _priceFor(sym) {
+  const up = String(sym || "").toUpperCase();
+  return (_pricesMap && (_pricesMap[sym] || _pricesMap[up])) || (_snapMap && (_snapMap[sym] || _snapMap[up])) || null;
+}
+
+// Lazy backfill: symbols with no price anywhere are sent (once per page) to the
+// Worker, which fetches + stores a permanent snapshot; pending table rows are
+// then repainted in place. Covers old news published before snapshots existed.
+const _snapRequested = new Set(), _snapDone = new Set();
+let _snapQueue = new Set(), _snapTimer = null;
+function _requestSnapshot(sym) {
+  if (_snapRequested.has(sym)) return;
+  _snapRequested.add(sym); _snapQueue.add(sym);
+  if (!_snapTimer) _snapTimer = setTimeout(_flushSnapshots, 50);   // coalesce cards into one call
+}
+function _repaintPending(syms) {
+  syms.forEach(sym => {
+    document.querySelectorAll(`tr[data-tt-pending="${CSS.escape(sym)}"]`).forEach(tr => {
+      tr.outerHTML = _ttRow(tr.dataset.ttRaw || sym);
+    });
+  });
+}
+async function _flushSnapshots() {
+  _snapTimer = null;
+  const queued = [..._snapQueue];
+  _snapQueue = new Set();
+  await loadPricesMap();   // a card may render before prices/ finished loading
+  const have = queued.filter(s => _priceFor(s));
+  have.forEach(s => _snapDone.add(s));
+  _repaintPending(have);
+  const batch = queued.filter(s => !_priceFor(s));
+  for (let i = 0; i < batch.length; i += 25) {
+    const chunk = batch.slice(i, i + 25);
+    try {
+      const res = await fetch(`${WORKER_URL}/snapshot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbols: chunk }),
+      });
+      const j = await res.json();
+      if (j && j.ok) Object.assign((_snapMap = _snapMap || {}), j.data || {});
+    } catch { /* network error — rows fall back to N/A */ }
+    chunk.forEach(s => _snapDone.add(s));
+    _repaintPending(chunk);
+  }
+}
 
 // Manual per-ticker corrections, loaded once per page and edited inline by
 // admins (writes straight back to Firestore):
@@ -479,37 +532,46 @@ function _price(p) {
   const cur = p.market_cap_currency ? `<span class="tt-cur">${esc(p.market_cap_currency)}</span>` : "";
   return `<td class="tt-num tt-price">${num}${cur}</td>`;
 }
+function _ttSymCell(raw, eff, p) {
+  const nm = _displayName(raw, eff, p);
+  const nameEdit = _ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(raw)}" title="修正名稱">✎</button>` : "";
+  const nameWrap = (p || _ttAdmin)
+    ? `<span class="tt-namewrap" data-sym="${esc(raw)}" data-name="${esc(nm)}"><span class="tt-name">${nm ? esc(nm) : '<i class="tt-noname">未命名</i>'}</span>${nameEdit}</span>`
+    : "";
+  const corrected = eff !== raw ? `<span class="tt-tk-note" title="已從 ${esc(raw)} 校正">↺</span>` : "";
+  const tkEdit = _ttAdmin ? `<button class="tt-editbtn tt-tk-edit" data-tk-edit="${esc(raw)}" title="修正代號（TW／TWO）">✎</button>` : "";
+  const snap = (p && p.snapshot_at)
+    ? `<span class="tt-snap" title="非 watchlist 個股：${esc(fmtDate(String(p.snapshot_at).slice(0, 10)))} 擷取的快照，不每日更新">快照 ${esc(String(p.snapshot_at).slice(5, 10))}</span>`
+    : "";
+  const tkWrap = `<span class="tt-tkwrap" data-raw="${esc(raw)}" data-eff="${esc(eff)}">` +
+    `<a class="tt-tklink" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener">${esc(eff)}</a>${corrected}${tkEdit}</span>`;
+  return `<td class="tt-sym">${tkWrap}${nameWrap}${snap}</td>`;
+}
+// One table row. Watchlist price → stored snapshot → (first view) pending row
+// that _requestSnapshots() repaints once the Worker answers → N/A.
+function _ttRow(raw) {
+  const eff = resolveSymbol(raw);
+  const p = _priceFor(eff);
+  const nameCell = _ttSymCell(raw, eff, p);
+  if (!p) {
+    if (!_snapDone.has(eff)) {
+      _requestSnapshot(eff);
+      return `<tr data-tt-pending="${esc(eff)}" data-tt-raw="${esc(raw)}">${nameCell}<td class="tt-num tt-na" colspan="8">抓取股價快照中…</td></tr>`;
+    }
+    return `<tr>${nameCell}<td class="tt-num tt-na" colspan="8">N/A（查無此代號價格）</td></tr>`;
+  }
+  const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
+    ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;
+  return `<tr>${nameCell}${_price(p)}${_pct(p.day_change_pct)}${_pct(p.week_change_pct)}${_pct(p.month_change_pct)}${_pct(p.quarter_change_pct)}${_pct(p.year_change_pct)}${pe}${_mktCap(p)}</tr>`;
+}
 // Render the snapshot table. `symbols` = the item's ticker list (or [ticker]).
 export function tickerTrendCard(symbols, title = "相關個股近期表現") {
   const syms = [...new Set((symbols || []).map(s => String(s || "").trim()).filter(Boolean))];
   if (!syms.length) return "";
   ensureTtEditWiring();
-  const prices = getPricesMapSync();
-  // Symbol cell: shows the corrected (alias-resolved) symbol as the chart link,
-  // an ✎ to edit it (admin), and the company-name wrap underneath.
-  const symCellFor = (raw, eff, p) => {
-    const nm = _displayName(raw, eff, p);
-    const nameEdit = _ttAdmin ? `<button class="tt-editbtn tt-edit" data-tt-edit="${esc(raw)}" title="修正名稱">✎</button>` : "";
-    const nameWrap = (p || _ttAdmin)
-      ? `<span class="tt-namewrap" data-sym="${esc(raw)}" data-name="${esc(nm)}"><span class="tt-name">${nm ? esc(nm) : '<i class="tt-noname">未命名</i>'}</span>${nameEdit}</span>`
-      : "";
-    const corrected = eff !== raw ? `<span class="tt-tk-note" title="已從 ${esc(raw)} 校正">↺</span>` : "";
-    const tkEdit = _ttAdmin ? `<button class="tt-editbtn tt-tk-edit" data-tk-edit="${esc(raw)}" title="修正代號（TW／TWO）">✎</button>` : "";
-    const tkWrap = `<span class="tt-tkwrap" data-raw="${esc(raw)}" data-eff="${esc(eff)}">` +
-      `<a class="tt-tklink" href="${esc(chartUrl(eff))}" target="_blank" rel="noopener">${esc(eff)}</a>${corrected}${tkEdit}</span>`;
-    return `<td class="tt-sym">${tkWrap}${nameWrap}</td>`;
-  };
-  const rows = syms.map(raw => {
-    const eff = resolveSymbol(raw);
-    const p = prices[eff];
-    const nameCell = symCellFor(raw, eff, p);
-    if (!p) return `<tr>${nameCell}<td class="tt-num tt-na" colspan="8">N/A（watchlist 無此代號價格）</td></tr>`;
-    const pe = (p.pe_ratio == null || p.pe_ratio === "" || isNaN(p.pe_ratio) || Number(p.pe_ratio) === 0)
-      ? `<td class="tt-num tt-na">N/A</td>` : `<td class="tt-num">${Number(p.pe_ratio).toFixed(2)}</td>`;
-    return `<tr>${nameCell}${_price(p)}${_pct(p.day_change_pct)}${_pct(p.week_change_pct)}${_pct(p.month_change_pct)}${_pct(p.quarter_change_pct)}${_pct(p.year_change_pct)}${pe}${_mktCap(p)}</tr>`;
-  }).join("");
+  const rows = syms.map(raw => _ttRow(raw)).join("");
   return `<div class="rp-subcard tt-card">
-    <div class="rp-subcard-head">📈 ${esc(title)}<span class="tt-note">· 擷取當下 watchlist 行情，不隨新聞更新</span></div>
+    <div class="rp-subcard-head">📈 ${esc(title)}<span class="tt-note">· watchlist 個股為最新行情；非 watchlist 個股為新聞擷取當下的快照</span></div>
     <div class="tt-wrap"><table class="tt-table">
       <thead><tr><th>Ticker</th><th>股價</th><th>日</th><th>週</th><th>月</th><th>季</th><th>年</th><th>PE</th><th>Market Cap</th></tr></thead>
       <tbody>${rows}</tbody>
