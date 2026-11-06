@@ -1,8 +1,9 @@
 name: Prune old news
 
-# Daily: delete 供應鏈瓶頸新聞 / 產業消息 (+ daily digest) older than 180 days,
-# keeping everything collected into 重點新聞 (highlight_collected), then rebuild
-# indexes/ticker_events so it drops entries pointing at deleted docs.
+# Daily: delete news older than 180 days — 供應鏈瓶頸新聞 / 產業消息 (+ daily
+# digest) / 每日軍武合約 / News·Military / News·Industry — keeping everything
+# collected into 重點新聞 (highlight_collected), then rebuild indexes/ticker_events
+# and indexes/mil_defense_daily so they drop entries pointing at deleted docs.
 # Earnings calls and price snapshots are never touched.
 #
 # Schedule: 23:41 UTC daily = 07:41 Taiwan (UTC+8), before reindex_events.yml.

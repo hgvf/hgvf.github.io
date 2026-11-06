@@ -209,7 +209,7 @@ python scripts/facts_push.py --file /tmp/facts_updates.json       # 先 --dry-ru
 
 ## 每日自動刪除舊新聞（`prune_news.yml`）
 
-每天台北 07:41 執行 `scripts/prune_news.py --days 180 --apply`：刪除**新聞日期**超過 180 天的 `supply_chain_news`、`supply_chain_events`、`supply_chain_daily_digest`，**有收藏到「重點新聞」的一律保留**；財報、股價快照不動。刪完自動 `publish.py --type reindex`。
+每天台北 07:41 執行 `scripts/prune_news.py --days 180 --apply`：刪除**新聞日期**超過 180 天的 `supply_chain_news`、`supply_chain_events`、`supply_chain_daily_digest`、`mil_defense_daily`（每日軍武合約）、`military_news`（News/Military）、`industry_news`（News/Industry），**有收藏到「重點新聞」的一律保留**；財報、股價快照不動。刪完自動 `publish.py --type reindex`（重建 ticker 與每日軍武索引）。`seed.html` 的手動「按日期清除」同樣會保留收藏。
 Actions 頁可手動執行並改天數或勾 dry run。本機預覽：`python scripts/prune_news.py`（不加 `--apply` 只列出不刪）。
 
 既有新聞的股價快照可用 `python scripts/backfill_snapshots.py` 一次補齊（可重跑，已有的會跳過）。
