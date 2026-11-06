@@ -12,7 +12,7 @@
 // Bump this whenever the price-fetch logic changes so the live deployment can be
 // verified by visiting /version. "batched-v7" = single batched Yahoo v7 quote
 // call + single Firestore commit (~8 subrequests total, well under the 50 limit).
-const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8+diag+host-fallback+snapshot-2026-11-06';
+const WORKER_VERSION = 'batched-v7+spark50+retry+paginate+chart-v8+diag+host-fallback+snapshot+variants-2026-11-06';
 
 export default {
   async fetch(request, env) {
@@ -370,13 +370,35 @@ async function snapshotPrices(env, symbols, refresh) {
     quotes = await fetchAllQuoteData(targets, session);
   }
 
+  // Symbols with no quote are often just written in a non-Yahoo form
+  // (600111.SH, an OTC stock tagged .TW, a bare 4-digit TW code, 03993.HK).
+  // One extra quote call over the plausible variants recovers most of them;
+  // the snapshot stays keyed by the raw symbol and records `resolved_symbol`.
+  const resolved = {};                              // raw → Yahoo symbol
+  targets.forEach(s => { if (quotes[s]) resolved[s] = s; });
+  const missing = targets.filter(s => !quotes[s]);
+  if (missing.length && session) {
+    const cand = {};
+    missing.forEach(s => { cand[s] = symbolVariants(s); });
+    const all = [...new Set(Object.values(cand).flat())].slice(0, 100);
+    const alt = {};
+    for (let i = 0; i < all.length; i += 50) Object.assign(alt, await fetchAllQuoteData(all.slice(i, i + 50), session));
+    for (const s of missing) {
+      const hit = cand[s].find(v => alt[v]);
+      if (hit) { quotes[s] = alt[hit]; resolved[s] = hit; }
+    }
+  }
+  missing.filter(s => !resolved[s]).forEach(s => { resolved[s] = s; });
+
   // Week/month/quarter/year %: spark first (one call), then per-symbol v8
   // chart for anything spark missed (spark is often blocked for CF IPs).
-  const changes = await fetchSparkData(targets, session);
+  const sparkRaw = await fetchSparkData(targets.map(s => resolved[s]), session);
+  const changes = {};
+  targets.forEach(s => { if (sparkRaw[resolved[s]]) changes[s] = sparkRaw[resolved[s]]; });
   const charts = {};
   for (const s of targets) {
     if (changes[s] && (quotes[s] || !session)) continue;
-    const c = await fetchOneChart(s, '1y', '1d', session);
+    const c = await fetchOneChart(resolved[s], '1y', '1d', session);
     if (!c) continue;
     charts[s] = c;
     if (!changes[s]) changes[s] = changesFromCloses(c.series.map(p => p.close));
@@ -401,6 +423,7 @@ async function snapshotPrices(env, symbols, refresh) {
     }
     if (!entry) continue;
     const fields = { ...entry, ...(changes[s] || {}), snapshot_at: nowIso, source: 'snapshot' };
+    if (resolved[s] !== s) fields.resolved_symbol = resolved[s];
     writes.push({ docPath: `price_snapshots/${s}`, fields });
     stored[s] = fields;
     fetched.push(s);
@@ -409,6 +432,24 @@ async function snapshotPrices(env, symbols, refresh) {
   await firestoreBatchSet(token, project, writes, { replace: true });
   const failed = targets.filter(s => !fetched.includes(s));
   return { data: stored, fetched, skipped: inWatchlist, failed };
+}
+
+// Plausible Yahoo spellings of a symbol written in another convention.
+function symbolVariants(sym) {
+  const out = [];
+  const m = sym.match(/^(.+?)\.([A-Z]+)$/);
+  const base = m ? m[1] : sym, ex = m ? m[2] : '';
+  const add = v => { if (v !== sym && !out.includes(v)) out.push(v); };
+  if (ex === 'SH') add(`${base}.SS`);
+  if (ex === 'TW') add(`${base}.TWO`);
+  if (ex === 'TWO') add(`${base}.TW`);
+  if (ex === 'TT') { add(`${base}.TW`); add(`${base}.TWO`); }
+  if (ex === 'JP') add(`${base}.T`);
+  if (ex === 'HK' && /^0\d{4}$/.test(base)) add(`${base.slice(1)}.HK`);
+  if (ex === 'HK' && /^\d{1,3}$/.test(base)) add(`${base.padStart(4, '0')}.HK`);
+  if (!ex && /^\d{4}$/.test(base)) { add(`${base}.TW`); add(`${base}.TWO`); }
+  if (!ex && /^\d{6}$/.test(base)) { add(`${base}.KS`); add(`${base}.SS`); add(`${base}.SZ`); }
+  return out;
 }
 
 function changesFromCloses(closes) {

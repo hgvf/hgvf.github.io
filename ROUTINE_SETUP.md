@@ -206,3 +206,10 @@ python scripts/facts_push.py --file /tmp/facts_updates.json       # 先 --dry-ru
 
 `scripts/publish.py --type news / earnings / events` 發布完會自動對新文件的 tickers 呼叫 `/snapshot`（`refresh: true`，超過 12 小時的快照會以新聞發布當下價格重抓）；Worker 網址可用 `$PRICE_WORKER_URL` 覆寫。
 需部署一次 `firestore.rules`（新增 `price_snapshots` 公開讀）；Worker 由 `deploy_worker.yml` 在 merge 到 main 時自動部署。
+
+## 每日自動刪除舊新聞（`prune_news.yml`）
+
+每天台北 07:41 執行 `scripts/prune_news.py --days 180 --apply`：刪除**新聞日期**超過 180 天的 `supply_chain_news`、`supply_chain_events`、`supply_chain_daily_digest`，**有收藏到「重點新聞」的一律保留**；財報、股價快照不動。刪完自動 `publish.py --type reindex`。
+Actions 頁可手動執行並改天數或勾 dry run。本機預覽：`python scripts/prune_news.py`（不加 `--apply` 只列出不刪）。
+
+既有新聞的股價快照可用 `python scripts/backfill_snapshots.py` 一次補齊（可重跑，已有的會跳過）。
