@@ -22,6 +22,28 @@ function cardMini(v) {
   c = outlined(cv); miniCache.set(v, c); return c;
 }
 
+/* Speech lines: each egg draws one per line-slot when it is created, so a replay
+   rarely says the same thing twice (「下班」 here also follows the custom label). */
+const LINES = {
+  duck: ['嘎！又少一小時', '翻好了，嘎', '又撐過一小時了', '進度更新！', '嘎嘎，繼續撐', '離下班更近了'],
+  bearDone: ['翻好了…', '好，再睡一下', '我只是路過', '呼…好累', '換你翻了'],
+  bearYawn: ['哈～欠', '呼嚕…', '再五分鐘…', '好睏喔', '幾點了…'],
+  dog: ['汪！', '汪汪！', '換新的了！', '我是好狗狗！', '快誇我！', '再丟一次！'],
+  cat: ['…', '喵。', '不是我推的', '我什麼都沒做', '哼。', '它自己掉的'],
+  gather: ['最後一小時！', '全員到齊！', '一起撐住！', '只剩一小時！', '準備下班隊形！'],
+  lunch: ['午休！', '吃飯時間！', '便當來了！', '開飯囉！', '先吃再說'],
+  sniff: ['嗅嗅', '好香…', '是排骨！', '可以吃嗎', '有雞腿！'],
+  tea: ['下午茶', '三點了！', '來杯珍奶', '續命時間', '半糖少冰'],
+  sip: ['啾～', '咕嚕咕嚕', '好喝！', '吸～', '珍珠好Q'],
+  deny: ['沒喝喔', '不是我喝的', '我只喝一口', '剛好路過', '你看錯了'],
+  cry: ['嗚嗚…', '嗚哇——', '說好的下班呢', '我不要加班…', '嘎…嗚…'],
+  overtime: ['+30 分鐘', '加班 30 分', '延長賽！', '再撐 30 分'],
+  ufoTake: ['借看一下', '地球人的時間？', '這是什麼', '研究一下', '收到，帶走'],
+  ufoBack: ['還你', '不好玩', '看不懂', '你們好辛苦', '下次再來'],
+  tail: ['尾巴別跑！', '抓到了！…沒有', '那是什麼！', '轉轉轉', '等等我！'],
+};
+const pick = k => { const a = LINES[k]; return a[(Math.random() * a.length) | 0]; };
+
 function bubble(g, x, y, text, col = C.ink) {
   const w = text.length * 12 + 10;
   rect(g, x - w / 2, y, w, 18, C.outline);
@@ -136,6 +158,7 @@ export function flipEgg(kind, from, to) {
 }
 
 function duckFlip(id, from, to) {
+  const say = pick('duck');
   return {
     id, dur: 8.5, from, to,
     run(g, t, S) {
@@ -143,13 +166,14 @@ function duckFlip(id, from, to) {
       S.card = { from, to, phase: clamp((t - 3.1) / 0.7) };
       if (t < 2.6) S.actor(g, 'duck', 'walk', fr(t), lerp(660, tx, ease(t / 2.6)), AY, true);
       else if (t < 3.9) S.actor(g, 'duck', 'peck', 0, tx - 4, AY + 2, true);
-      else if (t < 5.4) { S.actor(g, 'duck', 'flap', fr(t, 6), tx, AY - Math.abs(Math.sin(t * 9)) * 3, true); if (t > 4.2) g.drawImage(heart(), tx + 6, AY - 8 - (t - 4.2) * 8); }
+      else if (t < 5.4) { S.actor(g, 'duck', 'flap', fr(t, 6), tx, AY - Math.abs(Math.sin(t * 9)) * 3, true); if (t > 4.2) g.drawImage(heart(), tx + 6, AY - 8 - (t - 4.2) * 8); bubble(g, tx + 10, AY - 30, say); }
       else S.actor(g, 'duck', 'walk', fr(t), lerp(tx, 680, (t - 5.4) / 3), AY, false);
     },
   };
 }
 
 function bearFlip(id, from, to) {
+  const yawn = pick('bearYawn'), done = pick('bearDone');
   return {
     id, dur: 13, from, to,
     run(g, t, S) {
@@ -166,13 +190,15 @@ function bearFlip(id, from, to) {
         g.drawImage(mini, bx + 15, AY + 26 + (mini.height - mh) / 2, mini.width, mh);
         rect(g, bx + 12, AY + 32, 5, 5, C.brown); rect(g, bx + 33, AY + 32, 5, 5, C.brown);
         if (t < 6.3) for (let i = 0; i < 3; i++) { const k = ((t * 0.6 + i / 3) % 1); g.drawImage(zee(), Math.round(bx + 38 + k * 12), Math.round(AY + 6 - k * 22)); }
-        if (t > 6.3 && t < 7.8) drawText(g, '哈～欠', bx + 24, AY - 18, C.paper, { align: 'center', outline: C.ink });
+        if (t > 6.3 && t < 7.8) drawText(g, yawn, bx + 24, AY - 18, C.paper, { align: 'center', outline: C.ink });
+        if (t > 9 && t < 10) bubble(g, bx + 24, AY - 30, done);
       } else S.actor(g, 'bear', 'walk', fr(t, 6), lerp(bx, 680, (t - 10) / 3), AY, false);
     },
   };
 }
 
 function dogFlip(id, from, to) {
+  const say = pick('dog');
   return {
     id, dur: 10, from, to,
     run(g, t, S) {
@@ -190,13 +216,14 @@ function dogFlip(id, from, to) {
         g.drawImage(cardMini(to), Math.round(x + 38), AY + 18);
       } else if (t < 8) {
         S.actor(g, 'dog', 'wag', fr(t, 10), EASEL.x - 46, AY, false);
-        if (t < 7.2) drawText(g, '汪!', EASEL.x - 22, AY - 14, C.paper, { align: 'center', outline: C.ink });
+        if (t < 7.6) bubble(g, EASEL.x - 22, AY - 26, say);
       } else S.actor(g, 'dog', 'walk', fr(t, 14), lerp(EASEL.x - 46, -70, (t - 8) / 2), AY, true);
     },
   };
 }
 
 function catFlip(id, from, to) {
+  const say = pick('cat');
   return {
     id, dur: 11, from, to,
     run(g, t, S) {
@@ -211,7 +238,7 @@ function catFlip(id, from, to) {
       S.card = cs;
       if (t < 2.4) S.actor(g, 'cat', 'walk', fr(t), lerp(-60, cx, ease(t / 2.4)), AY, false);
       else if (t < 4) S.actor(g, 'cat', 'push', fr(t - 2.4, 5), cx, AY, false);
-      else if (t < 6.4) { S.actor(g, 'cat', 'sit', 0, cx, AY, false); if (t > 4.4) drawText(g, '…', cx + 24, AY - 12, C.paper, { align: 'center', outline: C.ink }); }
+      else if (t < 6.4) { S.actor(g, 'cat', 'sit', 0, cx, AY, false); if (t > 4.4) bubble(g, cx + 24, AY - 26, say); }
       else if (t < 7.6) S.actor(g, 'cat', 'push', fr(t - 6.4, 4), cx, AY, false);
       else if (t < 8.6) S.actor(g, 'cat', 'stand', 7, cx, AY, false);
       else S.actor(g, 'cat', 'walk', fr(t), lerp(cx, -70, (t - 8.6) / 2.4), AY, true);
@@ -221,6 +248,7 @@ function catFlip(id, from, to) {
 
 export function gatheringEgg(from, to) {
   const spots = { cat: EASEL.x - 150, duck: EASEL.x - 100, dog: EASEL.x - 50, bear: EASEL.x + 44 };
+  const say = pick('gather');
   return {
     id: 'gathering', dur: 14, from, to,
     run(g, t, S) {
@@ -240,7 +268,7 @@ export function gatheringEgg(from, to) {
         S.actor(g, a, pose, f, x, y, flip);
       });
       if (t > 6.4 && t < 10) {
-        drawText(g, '最後一小時！', EASEL.x - 60, AY - 34, C.yellow, { align: 'center', outline: C.ink, scale: 1 });
+        drawText(g, say, EASEL.x - 60, AY - 34, C.yellow, { align: 'center', outline: C.ink, scale: 1 });
         for (let i = 0; i < 5; i++) g.drawImage(heart(), EASEL.x - 140 + i * 40, Math.round(AY - 10 - ((t - 6.4) * 10 + i * 7) % 30));
       }
     },
@@ -248,6 +276,7 @@ export function gatheringEgg(from, to) {
 }
 
 export function lunchEgg() {
+  const say = pick('lunch'), sniff = pick('sniff');
   return {
     id: 'lunch', dur: 10,
     run(g, t, S) {
@@ -257,10 +286,10 @@ export function lunchEgg() {
       if (t > 1.1 && t < 1.4) by -= Math.sin((t - 1.1) / 0.3 * Math.PI) * 6;
       const carried = t > 7;
       if (!carried) g.drawImage(bento(), bx, Math.round(by));
-      if (t > 1.2 && t < 2.6) bubble(g, bx + 12, FEET - 50, '午休！');
+      if (t > 1.2 && t < 2.6) bubble(g, bx + 12, FEET - 50, say);
       if (t < 1.8) return;
       if (t < 3.4) S.actor(g, 'dog', 'walk', fr(t, 12), lerp(670, bx + 24, ease((t - 1.8) / 1.6)), AY, true);
-      else if (t < 5.6) { S.actor(g, 'dog', 'sniff', fr(t, 4), bx + 20, AY, true); if (t > 4.5) drawText(g, '嗅嗅', bx + 44, AY - 6, C.paper, { outline: C.ink }); }
+      else if (t < 5.6) { S.actor(g, 'dog', 'sniff', fr(t, 4), bx + 20, AY, true); if (t > 4.5) drawText(g, sniff, bx + 44, AY - 6, C.paper, { outline: C.ink }); }
       else if (t < 7) { S.actor(g, 'dog', 'wag', fr(t, 10), bx + 20, AY, true); g.drawImage(heart(), bx + 30, Math.round(AY - (t - 5.6) * 12)); }
       else { const x = lerp(bx + 20, 680, (t - 7) / 3); S.actor(g, 'dog', 'carry', fr(t, 14), x, AY, false); g.drawImage(bento(), Math.round(x + 34), AY + 22); }
     },
@@ -268,6 +297,7 @@ export function lunchEgg() {
 }
 
 export function teaEgg() {
+  const say = pick('tea'), sip = pick('sip'), deny = pick('deny');
   return {
     id: 'tea', dur: 11,
     run(g, t, S) {
@@ -277,14 +307,14 @@ export function teaEgg() {
       const bx = cx + 10;
       const sipping = t > 4 && t < 7;
       if (!sipping) g.drawImage(bubbleTea(), Math.round(cupX), FEET - 26);
-      if (t > 0.6 && t < 2.6) bubble(g, cx + 7, FEET - 60, '下午茶');
+      if (t > 0.6 && t < 2.6) bubble(g, cx + 7, FEET - 60, say);
       if (t < 2) return;
       if (t < 4) S.actor(g, 'bear', 'walk', fr(t, 6), lerp(680, bx, ease((t - 2) / 2)), AY, true);
       else if (sipping) {
         S.actor(g, 'bear', 'sip', 0, bx, AY, false);
         g.drawImage(bubbleTea(), bx + 17, AY + 20);
-        drawText(g, '啾～', bx + 44, AY + 4, C.paper, { outline: C.ink });
-      } else if (t < 8.2) { S.actor(g, 'bear', 'stand', 0, bx, AY, false); g.drawImage(sweat(), bx + 40, AY + 4); drawText(g, '沒喝喔', bx + 24, AY - 16, C.paper, { align: 'center', outline: C.ink }); }
+        drawText(g, sip, bx + 44, AY + 4, C.paper, { outline: C.ink });
+      } else if (t < 8.2) { S.actor(g, 'bear', 'stand', 0, bx, AY, false); g.drawImage(sweat(), bx + 40, AY + 4); bubble(g, bx + 24, AY - 28, deny); }
       else S.actor(g, 'bear', 'walk', fr(t, 8), lerp(bx, 690, (t - 8.2) / 2.8), AY, false);
     },
   };
@@ -330,6 +360,7 @@ export function alertEgg() {
 }
 
 export function overtimeEgg(from, to) {
+  const cry = pick('cry'), note = pick('overtime');
   return {
     id: 'overtime', dur: 12, from, to,
     run(g, t, S) {
@@ -344,14 +375,15 @@ export function overtimeEgg(from, to) {
           const side = i % 2 ? 1 : -1;
           g.drawImage(tear(), Math.round(tx + 18 + side * (4 + k * 10)), Math.round(AY + 14 + k * 26));
         }
-        if (((t * 2) | 0) % 2) drawText(g, '嗚嗚…', tx + 20, AY - 16, C.lightsky, { align: 'center', outline: C.ink });
-        if (t < 5) bubble(g, EASEL.x - 40, AY - 22, '+30 分鐘', C.red);
+        if (((t * 2) | 0) % 2) drawText(g, cry, tx + 20, AY - 16, C.lightsky, { align: 'center', outline: C.ink });
+        if (t < 5) bubble(g, EASEL.x - 40, AY - 22, note, C.red);
       } else S.actor(g, 'duck', 'walk', fr(t, 4), lerp(tx, 680, (t - 9.6) / 2.4), AY, false);
     },
   };
 }
 
 export function ufoEgg(value) {
+  const take = pick('ufoTake'), back = pick('ufoBack');
   return {
     id: 'ufo', dur: 13,
     run(g, t, S) {
@@ -377,13 +409,14 @@ export function ufoEgg(value) {
       S.card = cs;
       if (t >= 4.4 && t < 7.8) g.drawImage(cardMini(value), Math.round(ux - 9), Math.round(uy + 16));
       g.drawImage(ufo(fr(t, 6)), Math.round(ux - 24), Math.round(uy));
-      if (t > 4.6 && t < 6.4) bubble(g, ux, uy - 26, '借看一下', C.purple);
-      if (t > 9.6 && t < 10.6) bubble(g, ux, uy - 26, '還你', C.purple);
+      if (t > 4.6 && t < 6.4) bubble(g, ux, uy - 26, take, C.purple);
+      if (t > 9.6 && t < 10.6) bubble(g, ux, uy - 26, back, C.purple);
     },
   };
 }
 
 export function tailEgg() {
+  const say = pick('tail');
   return {
     id: 'tail', dur: 9,
     run(g, t, S) {
@@ -393,7 +426,7 @@ export function tailEgg() {
         const a = (t - 1.6) * 9;
         const flip = Math.floor((t - 1.6) / 0.18) % 2 === 0;
         S.actor(g, 'dog', 'walk', fr(t, 16), cx + Math.cos(a) * 12, AY + Math.sin(a) * 2, flip);
-        if (t > 3) drawText(g, '尾巴別跑！', cx + 24, AY - 18, C.paper, { align: 'center', outline: C.ink });
+        if (t > 3) drawText(g, say, cx + 24, AY - 18, C.paper, { align: 'center', outline: C.ink });
       } else if (t < 7) {
         S.actor(g, 'dog', 'stand', 0, cx, AY, true);
         for (let i = 0; i < 3; i++) { const a = t * 6 + i * 2.1; px(g, cx + 34 + Math.cos(a) * 8, AY + 8 + Math.sin(a) * 3, C.yellow); }
