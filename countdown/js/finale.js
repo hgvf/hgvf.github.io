@@ -16,7 +16,17 @@ export const ACTS = [
   { id: 3, name: '衝刺', from: 60, to: 10 },
   { id: 4, name: '倒數', from: 10, to: 0 },
 ];
-const SLOGANS = ['收東西！', '關電腦！', '準備打卡！', '別跟主管對到眼！', '外套穿起來！', '衝啊！！'];
+/* Last-minute slogans: a fresh shuffle every day, a new line every 4 s.
+   The first few always set up, the last few always land. */
+const SLOGAN_OPEN = ['全員注意：最後一分鐘！', '收東西！', '關電腦！'];
+const SLOGAN_MID = [
+  '不要看手機！', '實行無線電靜默！', '別跟主管對到眼！', '外套穿起來！', '保持低姿態！',
+  '假裝很忙！', '耳機戴上！', '別回任何訊息！', '鍵盤離手！', '不要接電話！', '視線保持在螢幕上！',
+  '水杯帶走！', '充電線拔起來！', '悄悄把椅子推進去！', '不要在群組說話！', '別讓任何人看到你在笑！',
+  '腳尖朝向門口！', '電梯已經在路上了！', '準備打卡！', '包包背好！', '別問「還有什麼要幫忙的嗎」！',
+  '靜音模式開啟！', '不要點開那封信！', '燈號轉綠前不准動！', '撤退路線確認！',
+];
+const SLOGAN_CLOSE = ['倒數十秒！', '衝啊！！'];
 
 export function actFor(remainingMs) {
   const s = remainingMs / 1000;
@@ -110,6 +120,15 @@ export class Finale {
   slogan(remainingMs) {
     const s = remainingMs / 1000;
     if (s > 60 || s <= 0) return null;
-    return SLOGANS[Math.min(SLOGANS.length - 1, Math.floor((60 - s) / 10))];
+    if (s <= 10) return SLOGAN_CLOSE[s > 5 ? 0 : 1];
+    if (!this._slogans || this._sloganDay !== new Date().toDateString()) {
+      this._sloganDay = new Date().toDateString();
+      const mid = SLOGAN_MID.slice();
+      let h = 0; for (const ch of this._sloganDay) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+      for (let i = mid.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); [mid[i], mid[j]] = [mid[j], mid[i]]; }
+      this._slogans = [...SLOGAN_OPEN, ...mid];
+    }
+    const i = Math.floor((60 - s) / 4);               // 60→10 s = 12–13 lines
+    return this._slogans[Math.min(this._slogans.length - 1, i)];
   }
 }
