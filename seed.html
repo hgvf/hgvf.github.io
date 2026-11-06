@@ -40,6 +40,7 @@
       供應鏈新聞 <code>supply_chain_news</code>、產業事件 <code>supply_chain_events</code> 與其日摘要、
       產業動態 <code>industry_news</code>、財報電話 <code>earnings_calls</code>。</p>
     <p class="warn">⚠ 此操作<b>不可復原</b>。無法判斷日期的文件會被保留（不刪除），並在下方列出。</p>
+    <p>🔖 已收藏到「重點新聞」（<code>highlight_collected</code>）的項目<b>一律保留</b>，不會被刪除。</p>
     <div class="purge-row">
       <label>刪除此日期之前：<input type="date" id="purgeDate" /></label>
       <label><input type="checkbox" id="purgeDryRun" checked /> 先試算（Dry run，不實際刪除）</label>
@@ -450,26 +451,43 @@
       if (!(await ensureSignedIn())) { btn.disabled = false; return; }
       print((dryRun ? '【試算模式】' : '【實際刪除】') + '刪除 ' + cutoff + ' 之前的資料\n');
 
-      let grandDel = 0, grandKeepUndated = 0;
+      let grandDel = 0, grandKeepUndated = 0, grandKeepFav = 0;
       try {
+        // Collected (重點新聞) items are protected. Their doc id == the source
+        // doc id; a doc is also kept if any event it embeds (data / events[])
+        // has a collected id — e.g. an industry_news daily payload.
+        const keep = new Set();
+        const favSnap = await getDocs(collection(db, 'highlight_collected'));
+        favSnap.docs.forEach(d => { keep.add(d.id); const it = d.data().item; if (it && it.id) keep.add(String(it.id)); });
+        const norm = x => String(x).replace(/\//g, '_');
+        const isFav = (id, d) => {
+          const ids = [id];
+          [d, d && d.data].forEach(o => { if (o && typeof o === 'object') ['event_id', 'id'].forEach(k => { if (o[k]) ids.push(String(o[k])); }); });
+          (Array.isArray(d && d.events) ? d.events : []).forEach(ev => { if (ev && (ev.event_id || ev.id)) ids.push(String(ev.event_id || ev.id)); });
+          return ids.some(x => keep.has(x) || keep.has(norm(x)));
+        };
+        print(`收藏保護：${keep.size} 個 id\n`);
         for (const t of PURGE_TARGETS) {
           let snap;
           try { snap = await getDocs(collection(db, t.col)); }
           catch (e) { print(`  ${t.label} <${t.col}>：讀取失敗 ${e.message}`, 'err'); continue; }
           if (snap.empty) { print(`  ${t.label} <${t.col}>：空或不存在，略過`); continue; }
 
-          let toDelete = [], undated = 0;
+          let toDelete = [], undated = 0, fav = 0;
           snap.docs.forEach(dref => {
             const dt = docDate(dref.id, dref.data());
             if (dt == null) { undated++; return; }
-            if (dt < cutoff) toDelete.push(dref);
+            if (dt >= cutoff) return;
+            if (isFav(dref.id, dref.data())) { fav++; return; }
+            toDelete.push(dref);
           });
 
           if (!dryRun) { for (const dref of toDelete) await deleteDoc(dref.ref); }
-          grandDel += toDelete.length; grandKeepUndated += undated;
+          grandDel += toDelete.length; grandKeepUndated += undated; grandKeepFav += fav;
           const verb = dryRun ? '將刪除' : '已刪除';
           print(`  ${t.label} <${t.col}>：${snap.size} 筆，${verb} ${toDelete.length} 筆` +
-                (undated ? `，保留 ${undated} 筆無日期` : ''), toDelete.length ? 'ok' : '');
+                (undated ? `，保留 ${undated} 筆無日期` : '') +
+                (fav ? `，保留 ${fav} 筆收藏` : ''), toDelete.length ? 'ok' : '');
 
           // Prune the single-doc read index in place so pages stop showing removed rows.
           if (!dryRun && t.index && toDelete.length) {
@@ -479,7 +497,7 @@
               if (isnap.exists() && Array.isArray(isnap.data().events)) {
                 const kept = isnap.data().events.filter(ev => {
                   const dt = docDate(ev.id || '', ev);
-                  return dt == null || dt >= cutoff;
+                  return dt == null || dt >= cutoff || isFav(ev.id || '', ev);
                 });
                 await setDoc(iref, { updated_at: new Date().toISOString(), count: kept.length, events: kept });
                 print(`    indexes/${t.col} 已同步：保留 ${kept.length} 筆`, 'ok');
@@ -488,7 +506,8 @@
           }
         }
         print(`\n${dryRun ? '試算完成' : '清除完成'}：共 ${grandDel} 筆${dryRun ? '將' : '已'}刪除` +
-              (grandKeepUndated ? `，${grandKeepUndated} 筆無日期保留` : '') + '。', 'ok');
+              (grandKeepUndated ? `，${grandKeepUndated} 筆無日期保留` : '') +
+              (grandKeepFav ? `，${grandKeepFav} 筆收藏保留` : '') + '。', 'ok');
         if (dryRun) print('取消勾選「先試算」後再次執行即會實際刪除。', 'warn');
       } catch (e) {
         print('錯誤: ' + e.message, 'err');
