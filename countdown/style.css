@@ -119,6 +119,9 @@ body {
 .demo-btns { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
 .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
 
+.daily-sum { margin: 12px 0 0; padding: 8px 10px; background: var(--deepblue); box-shadow: 0 0 0 2px var(--outline); color: var(--cream); }
+.daily-sum b { color: var(--yellow); font-weight: normal; }
+
 /* dex */
 .dex-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .dex-head h2 { margin: 0; }

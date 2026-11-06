@@ -42,7 +42,7 @@ export function loadDay(t) {
   if (!d || !d.date || (d.date < today && !d.pinned)) return freshDay(today);
   return d;
 }
-export const freshDay = date => ({ date, punch: null, manualEnd: null, extraMinutes: 0, working: false, pinned: false });
+export const freshDay = date => ({ date, punch: null, manualEnd: null, extraMinutes: 0, working: false, pinned: false, asked: false });
 export const saveDay = d => save('day', d);
 
 export function isWorkday(settings, date) {

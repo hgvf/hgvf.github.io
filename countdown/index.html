@@ -128,6 +128,23 @@
   </form>
 </dialog>
 
+<!-- 每天一次：今天幾點上班 -->
+<dialog id="dlgDaily" class="px-dialog">
+  <form method="dialog" id="formDaily">
+    <h2>早安！今天幾點打卡？</h2>
+    <p class="hint">每天只問這一次，填完今天就不會再出現。</p>
+    <label>上班時間
+      <span class="inline"><input type="time" name="start" required><button type="button" class="px-btn small" id="dailyPunch">我剛打卡</button></span>
+    </label>
+    <label id="dailyManualRow" hidden>今天幾點下班<input type="datetime-local" name="manualEnd"></label>
+    <p class="daily-sum" id="dailySum"></p>
+    <div class="actions">
+      <button type="button" class="px-btn" id="dailyMore">改下班規則</button>
+      <button type="submit" class="px-btn primary" value="ok">開始倒數</button>
+    </div>
+  </form>
+</dialog>
+
 <!-- 圖鑑 -->
 <dialog id="dlgDex" class="px-dialog wide">
   <div class="dex-head">

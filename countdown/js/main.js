@@ -374,6 +374,62 @@ $('#btnPunch').addEventListener('click', () => {
   form.date.value = dateStr(d);
 });
 $('#btnCancel').addEventListener('click', () => $('#dlgSettings').close());
+// closing the first-run / settings dialog without saving still counts as today's answer
+$('#dlgSettings').addEventListener('close', () => {
+  if (!settings.configured) { settings = { ...settings, configured: true }; saveSettings(settings); }   // keep the default: 打卡 + 9 小時
+  if (!day.asked) { day.asked = true; saveDay(day); }
+});
+
+/* ---------- once-a-day prompt: just today's punch time (rule is remembered) ---------- */
+const dform = $('#formDaily');
+const ruleText = () => {
+  const r = settings.rule || { type: 'offset', hours: 9 };
+  if (r.type === 'fixed') return `固定 ${settings.fixedTime} 下班`;
+  if (r.type === 'manual') return '今天手動指定';
+  return `打卡 + ${r.hours || 9} 小時${settings.lunch.counted ? '' : `（另加午休 ${settings.lunch.minutes} 分）`}`;
+};
+function updateDailySum() {
+  const probe = { ...day, punch: dform.start.value || settings.startTime, manualEnd: settings.rule.type === 'manual' ? dform.manualEnd.value : null };
+  const S = computeSession(settings, probe, now());
+  $('#dailySum').innerHTML = `下班規則：<b>${ruleText()}</b><br>今天 <b>${timeStr(new Date(S.end))}</b> 下班`;
+}
+function openDaily() {
+  const T = new Date(now());
+  const usual = at(day.date, settings.startTime);
+  const nearUsual = T.getTime() > usual - 2 * HOUR && T.getTime() < usual + 4 * HOUR;
+  dform.start.value = nearUsual ? timeStr(T) : settings.startTime;
+  const manual = settings.rule.type === 'manual';
+  $('#dailyManualRow').hidden = !manual;
+  if (manual) dform.manualEnd.value = day.manualEnd || `${day.date}T${timeStr(new Date(computeSession(settings, { ...day, punch: dform.start.value }, now()).end))}`;
+  updateDailySum();
+  $('#dlgDaily').showModal();
+}
+dform.addEventListener('input', updateDailySum);
+$('#dailyPunch').addEventListener('click', () => { dform.start.value = timeStr(new Date(now())); updateDailySum(); });
+$('#dailyMore').addEventListener('click', () => { $('#dlgDaily').close(); openSettings(); });
+$('#dlgDaily').addEventListener('close', () => { if (!day.asked) { day.asked = true; saveDay(day); } });
+dform.addEventListener('submit', e => {
+  e.preventDefault();
+  day = { ...day, punch: dform.start.value || settings.startTime, asked: true, working: true,
+    manualEnd: settings.rule.type === 'manual' ? dform.manualEnd.value : day.manualEnd };
+  settings = { ...settings, startTime: day.punch };       // remember as tomorrow's default
+  saveDay(day); saveSettings(settings);
+  endT = -1; prevState = null; offShown = null;
+  $('#dlgDaily').close();
+  requestWake();
+  const S = session();
+  toast('開始倒數', `${timeStr(new Date(S.end))} 下班，還有 ${zhDuration(Math.max(0, S.end - now()))}`);
+});
+
+/** Ask once per working day (also when the tab stays open past midnight). */
+function maybeAskToday() {
+  if (demo || !settings.configured || day.asked || day.punch) return;
+  if (document.querySelector('dialog[open]')) return;
+  if (day.date !== todayStr(now())) return;
+  if (computeSession(settings, day, now()).state === 'weekend') return;
+  openDaily();
+}
+setInterval(maybeAskToday, 5000);
 form.addEventListener('submit', e => {
   e.preventDefault();
   const startVal = form.start.value || settings.startTime;
@@ -399,6 +455,7 @@ form.addEventListener('submit', e => {
     manualEnd: form.rule.value === 'manual' ? form.manualEnd.value : null,
     pinned: date !== todayStr(now()),
     working: true,
+    asked: true,
   };
   saveSettings(settings); saveDay(day);
   demo = null; setWarp(1); $('#demoChip').hidden = true;
@@ -540,6 +597,7 @@ async function boot() {
   if (params.get('theme')) { settings.theme = params.get('theme'); }
   requestAnimationFrame(t => { lastFrame = t; frame(t); });
   if (!settings.configured && !params.get('demo')) openSettings();
+  else maybeAskToday();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 boot();
