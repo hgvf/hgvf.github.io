@@ -2,7 +2,7 @@
    off as p rises; the sky turns from noon to dusk. End: ignition and lift-off. */
 
 import { C } from '../palette.js';
-import { rect, px, disc, line, poly, ditherDisc, drawText, clamp, lerp, ease } from '../pixel.js';
+import { rect, px, disc, line, poly, ditherDisc, drawText, labelChars, clamp, lerp, ease } from '../pixel.js';
 import { bands, grass, cloud } from './common.js';
 
 const CHECKS = ['燃料加注', '引擎檢查', '導航校正', '天氣確認', '打卡紀錄', '心理準備'];
@@ -32,8 +32,7 @@ function drawRocket(g, x, y, t, flame = 0) {
   disc(g, x, y - 66, 7, C.darkgray); disc(g, x, y - 66, 5, C.lightsky); px(g, x - 2, y - 68, C.white);
   poly(g, [[x - 12, y - 30], [x - 24, y + 2], [x - 12, y - 6]], C.red);
   poly(g, [[x + 12, y - 30], [x + 24, y + 2], [x + 12, y - 6]], C.darkred);
-  drawText(g, '下', x - 6, y - 56, C.blue);
-  drawText(g, '班', x - 6, y - 44, C.blue);
+  labelChars(3).forEach((ch, i) => drawText(g, ch, x - 6, y - 62 + i * 12, C.blue));
   rect(g, x - 8, y, 16, 4, C.gray);
 }
 
@@ -43,7 +42,7 @@ function drawTower(g, p, t) {
   rect(g, tx + 10, 150, 4, BASE - 150, C.rust);
   for (let y = 156; y < BASE; y += 14) { line(g, tx - 12, y, tx + 12, y + 12, C.rust); line(g, tx + 12, y, tx - 12, y + 12, C.rust); }
   rect(g, tx - 16, 146, 32, 6, C.darkgray);
-  if ((t * 1.5 | 0) % 2) disc(g, tx, 143, 2, C.red);
+  disc(g, tx, 143, 2, Math.sin(t * 1.2) > 0 ? C.red : C.darkred);
   // fuel arm + gauge
   rect(g, tx + 14, 220, RX - tx - 26, 3, C.gray);
   rect(g, tx - 40, 170, 14, 100, C.ink);

@@ -297,5 +297,7 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 | `countdown/js/themes/*.js` | 每個主題實作 `render(g, p, dt, st)` 與 `renderEnd()`，新增主題只要加檔案並登記在 `themes/index.js` |
 | `countdown/js/sprites.js` | 鴨子、熊熊、狗、貓與道具，程式繪製的像素 sprite（32 色調色盤、自動描邊） |
 
+主題共 15 個（`countdown/js/themes/`，七段顯示器共用 `segments.js`）。設定頁「倒數的目標」可把畫面上所有「下班」換成別的詞（放假、發薪日…），由 `pixel.js` 的 `relabel()` 統一替換，分頁標題與 DOM 文字也一起換。
+
 字型為俐方體 11 號（`countdown/assets/Cubic_11.woff2`，授權見同目錄 OFL 檔）。試玩：設定 → 試玩預覽，或網址加 `?demo=last15`、`?demo=flip-bear`、`?demo=day` 等。
 

@@ -3,7 +3,7 @@
    finale overlay → idle cat. Time always comes from clock.now(). */
 
 import { C } from './palette.js';
-import { W, H, rect, dither, drawDigits, drawText, measureDigits, setFontReady, FONT, clamp, ease } from './pixel.js';
+import { W, H, rect, dither, drawDigits, drawText, measureDigits, setFontReady, FONT, clamp, ease, setLabel, relabel } from './pixel.js';
 import { now, setWarp, progress, hms, zhDuration } from './clock.js';
 import { loadSettings, saveSettings, loadDay, saveDay, freshDay, computeSession, nextWorkStart, todayStr, timeStr, dateStr, at } from './schedule.js';
 import { Scheduler } from './events.js';
@@ -14,10 +14,11 @@ import { Stage, flipEgg, gatheringEgg, lunchEgg, teaEgg, halfEgg, alertEgg, over
 import { THEMES, themeFor, byId } from './themes/index.js';
 import { drawOffScene } from './offscene.js';
 import { ANIMALS, ANIMAL_NAMES, SKIN_NAMES } from './sprites.js';
-import { renderDex, toast, thumb, badgeArt, drawStatsArt, composeShare, shareBlob, drawBrand } from './ui.js';
+import { renderDex, toast as rawToast, thumb, badgeArt, drawStatsArt, composeShare, shareBlob, drawBrand } from './ui.js';
 import { load, save } from './storage.js';
 
 const $ = s => document.querySelector(s);
+const toast = (t, sub, art) => rawToast(relabel(t), relabel(sub || ''), art);
 const HOUR = 3600e3;
 
 /* ---------- state ---------- */
@@ -115,7 +116,7 @@ function drawHud(remaining, p, t, act, label = '距離下班') {
     const frac = (remaining / 1000) % 1;
     if (frac > 0.85 && motion() !== 'reduced') { yo = -1; col = C.white; }
   }
-  if (act >= 3) { col = ((t * 2) | 0) % 2 ? C.orange : C.yellow; hi = C.cream; }
+  if (act >= 3) { col = C.orange; hi = C.yellow; }
   if (stage.alert && act === 0) { col = C.amber; hi = C.yellow; }
   drawDigits(g, str, 320, 12 + yo, s, col, { align: 'center', hi, shadow: C.darkred, outline: C.outline });
   if (p != null) {
@@ -160,12 +161,12 @@ function frame(ts) {
     const idleMs = Date.now() - lastInput;
     if (stage.idle.state === 'leave') idleDemo = false;
     if (eggOn('idle-cat') && (idleMs > settings.idleMinutes * 60e3 || idleDemo) && !stage.busy && act === 0) {
-      stage.idleStart(theme.hud === 'none' ? { x: 320, y: theme.id === 'digital' ? 126 : 240 } : { x: 320, y: 58 });
+      stage.idleStart(theme.catSpot || (theme.hud === 'none' ? { x: 320, y: theme.id === 'digital' ? 126 : 240 } : { x: 320, y: 58 }));
     }
     if (stage.catAsleep && !stage._catRecorded) { stage._catRecorded = true; recordSimple('idle-cat'); }
     if (!stage.catAsleep && stage.idle.state === 'off') stage._catRecorded = false;
 
-    const shake = act === 3 && !reduced && !lowkey ? [((t * 30) | 0) % 2 ? 1 : -1, ((t * 23) | 0) % 2 ? 1 : 0] : [0, 0];
+    const shake = act === 3 && !reduced && !lowkey ? [Math.round(Math.sin(t * 9)), Math.round(Math.sin(t * 7) * 0.6)] : [0, 0];
     g.setTransform(1, 0, 0, 1, shake[0], shake[1]);
     theme.render(g, p, dt, st);
     stage.draw(g);
@@ -236,7 +237,7 @@ function setSubtitle(text, big = false) {
   if (text === subtitle) return;
   subtitle = text;
   const el = $('#copy');
-  el.textContent = text;
+  el.textContent = relabel(text);
   el.classList.toggle('big', big);
 }
 
@@ -255,8 +256,8 @@ function showOff(on, S) {
     before: ['還沒上班', '倒數會在上班時間自動開始。'],
   };
   const [h, p] = titles[S.state] || titles.after;
-  $('#offTitle').textContent = h;
-  $('#offSub').textContent = p;
+  $('#offTitle').textContent = relabel(h);
+  $('#offSub').textContent = relabel(p);
   $('#offReverse').textContent = reverse ? '關掉反向倒數' : '反向倒數到下一個上班日';
   $('#offReverse').hidden = S.state === 'before';
 }
@@ -264,10 +265,10 @@ function showOff(on, S) {
 /* ---------- notifications / title / wake lock ---------- */
 function notifyEnd() {
   if (!document.hidden) return;
-  try { if ('Notification' in window && Notification.permission === 'granted') new Notification('下班了！', { body: '倒數結束，可以走了。', icon: 'assets/icon-192.png' }); } catch { /* ignore */ }
+  try { if ('Notification' in window && Notification.permission === 'granted') new Notification(relabel('下班了！'), { body: '倒數結束，可以走了。', icon: 'assets/icon-192.png' }); } catch { /* ignore */ }
   clearInterval(titleBlink);
   let on = false;
-  titleBlink = setInterval(() => { on = !on; document.title = on ? '★ 下班了！★' : '下班倒數計時器'; }, 900);
+  titleBlink = setInterval(() => { on = !on; document.title = relabel(on ? '★ 下班了！★' : '下班倒數計時器'); }, 900);
 }
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) { clearInterval(titleBlink); titleBlink = null; requestWake(); lastInput = Date.now(); }
@@ -277,8 +278,8 @@ setInterval(() => {
   const S = session();
   if (document.hidden) checkTransition(S);
   if (titleBlink) return;
-  if (S.state === 'working') document.title = `${hms(S.end - now())} · 下班倒數`;
-  else document.title = '下班倒數計時器';
+  if (S.state === 'working') document.title = relabel(`${hms(S.end - now())} · 下班倒數`);
+  else document.title = relabel('下班倒數計時器');
 }, 1000);
 
 let wakeLock = null;
@@ -353,6 +354,7 @@ function fillForm() {
   const T = now();
   const S = computeSession(settings, day, T);
   form.date.value = day.date;
+  form.label.value = settings.label || '下班';
   form.start.value = day.punch || settings.startTime;
   form.rule.value = settings.rule.type;
   form.hours.value = settings.rule.hours || 9;
@@ -379,6 +381,15 @@ $('#dlgSettings').addEventListener('close', () => {
   if (!settings.configured) { settings = { ...settings, configured: true }; saveSettings(settings); }   // keep the default: 打卡 + 9 小時
   if (!day.asked) { day.asked = true; saveDay(day); }
 });
+
+/** Push the countdown label into every DOM string that is not drawn on the canvas. */
+function applyLabel() {
+  setLabel(settings.label);
+  $('#brandName').textContent = relabel('下班倒數');
+  $('#statsTitle').textContent = relabel('下班了！今日統計');
+  offShown = null; subtitle = null;
+  copy.choice = null;
+}
 
 /* ---------- once-a-day prompt: just today's punch time (rule is remembered) ---------- */
 const dform = $('#formDaily');
@@ -436,6 +447,7 @@ form.addEventListener('submit', e => {
   settings = {
     ...settings,
     configured: true,
+    label: (form.label.value || '').trim().slice(0, 8) || '下班',
     startTime: startVal,
     rule: { type: form.rule.value, hours: Number(form.hours.value) || 9 },
     fixedTime: form.fixedTime.value || '18:00',
@@ -458,6 +470,7 @@ form.addEventListener('submit', e => {
     asked: true,
   };
   saveSettings(settings); saveDay(day);
+  applyLabel();
   demo = null; setWarp(1); $('#demoChip').hidden = true;
   endT = -1; prevState = null; offShown = null;
   $('#dlgSettings').close();
@@ -555,6 +568,7 @@ function openStats() {
     `本日新解鎖成就：<b>${unlocked.length ? unlocked.join('、') : '沒有，明天再來'}</b>`,
     demo ? '<span style="color:#8a8b94">（預覽模式，不列入紀錄）</span>' : `連續上班：<b>${ach.streak()}</b> 天`,
   ].map(s => `<li>${s}</li>`).join('');
+  $('#statsList').querySelectorAll('li').forEach(li => { li.innerHTML = relabel(li.innerHTML); });
   $('#dlgStats').showModal();
 }
 $('#statsClose').addEventListener('click', () => { $('#dlgStats').close(); endT = -1; });
@@ -588,6 +602,7 @@ window.__offwork = { stage, finale, ach, get settings() { return settings; }, ge
 /* ---------- boot ---------- */
 async function boot() {
   drawBrand($('#brandIcon'));
+  applyLabel();
   if (!settings.configured && window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) settings.motion = 'reduced';
   try { await Promise.race([document.fonts.load(`12px ${FONT}`), new Promise(r => setTimeout(r, 2500))]); } catch { /* fallback font */ }
   if (document.fonts && document.fonts.check(`12px ${FONT}`)) setFontReady();

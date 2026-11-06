@@ -17,7 +17,7 @@
   <header class="bar">
     <a class="brand" href="../index.html#side-project" title="回到 hgvf.github.io">
       <canvas id="brandIcon" width="16" height="16" aria-hidden="true"></canvas>
-      <span>下班倒數</span>
+      <span id="brandName">下班倒數</span>
     </a>
     <div class="bar-actions">
       <button type="button" class="px-btn warn" id="btnOvertime" title="臨時加班：下班時間 +30 分鐘">+30 分</button>
@@ -50,6 +50,11 @@
   <form method="dialog" id="formSettings">
     <h2>上班設定</h2>
     <p class="hint">填一次就好，之後每天自動套用。所有資料只存在你的瀏覽器。</p>
+
+    <label>倒數的目標（畫面上所有「下班」都會換成這個詞）
+      <input type="text" name="label" maxlength="8" placeholder="下班" list="labelIdeas">
+      <datalist id="labelIdeas"><option value="下班"><option value="放假"><option value="發薪日"><option value="週末"><option value="出國"><option value="生日"><option value="畢業"><option value="退休"></datalist>
+    </label>
 
     <div class="row two">
       <label>上班日期<input type="date" name="date" required></label>
@@ -162,7 +167,7 @@
 
 <!-- 今日統計卡 -->
 <dialog id="dlgStats" class="px-dialog">
-  <h2>下班了！今日統計</h2>
+  <h2 id="statsTitle">下班了！今日統計</h2>
   <canvas id="statsArt" width="320" height="80"></canvas>
   <ul class="stats" id="statsList"></ul>
   <div class="actions">

@@ -225,6 +225,15 @@ export function drawDigits(g, str, x, y, s, col, opts = {}) {
 /* ---------- pixel text (Cubic 11, thresholded so no anti-aliasing survives) ---------- */
 
 export const FONT = 'Cubic11';
+
+/* What is being counted down to. Every on-screen string goes through relabel(),
+   so 「下班」 in any theme / egg / finale becomes the user's own word. */
+let LABEL = '下班';
+export function setLabel(s) { LABEL = (s || '').trim().slice(0, 8) || '下班'; textCache.clear(); }
+export const getLabel = () => LABEL;
+export const relabel = s => (LABEL === '下班' ? String(s) : String(s).split('下班').join(LABEL));
+/** The label split into single characters, for text written vertically. */
+export const labelChars = (max = 3) => [...LABEL].slice(0, max);
 const textCache = new Map();
 let fontReady = false;
 export function setFontReady() { fontReady = true; textCache.clear(); }
@@ -232,6 +241,7 @@ export function setFontReady() { fontReady = true; textCache.clear(); }
 /** Render a string to a crisp sprite. size 12 = native Cubic 11 grid. */
 export function textSprite(str, col, opts = {}) {
   const size = opts.size || 12;
+  str = relabel(str);
   const key = `${str}|${col}|${size}|${opts.outline || ''}|${fontReady}`;
   let c = textCache.get(key);
   if (c) return c;

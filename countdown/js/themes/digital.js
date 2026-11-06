@@ -89,7 +89,7 @@ export default {
     const col = RAMP[Math.min(RAMP.length - 1, Math.floor(p * RAMP.length))];
     housing(g, st.t, st.alert ? '警戒模式 · 最後一小時' : `下班倒數 · 已完成 ${Math.floor(p * 100)}%`, st.alert ? C.orange : C.sand);
     sevenSeg(g, hms(st.remaining), 117, 124, col);
-    if (st.alert && ((st.t * 2) | 0) % 2) rect(g, 40, 92, 560, 2, C.red);
+    if (st.alert) rect(g, 40, 92, 560, 2, C.darkred);
   },
   renderEnd(g, t, st) {
     const blink = ((t * 2.5) | 0) % 2 === 1;

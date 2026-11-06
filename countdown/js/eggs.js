@@ -323,7 +323,7 @@ export function alertEgg() {
   return {
     id: 'alert', dur: 6,
     run(g, t, S) {
-      const on = S.getOpts().reduced ? true : ((t * 4) | 0) % 2;
+      const on = t < 3;
       banner(g, S, t, 6, on ? '警戒模式啟動' : '最後一小時', C.darkred, '所有單位注意：準備下班');
     },
   };

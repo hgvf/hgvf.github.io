@@ -2,12 +2,12 @@
    and share-image composition. */
 
 import { C } from './palette.js';
-import { makeCanvas, rect, disc, ring, drawText, silhouette } from './pixel.js';
+import { makeCanvas, rect, disc, ring, drawText, silhouette, relabel } from './pixel.js';
 import { animal, ufo, ANIMALS, ANIMAL_NAMES, SKIN_NAMES } from './sprites.js';
 import { EGGS, BADGES, SKIN_AT } from './achievements.js';
 
 const $ = s => document.querySelector(s);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const esc = s => relabel(String(s ?? '')).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtDate = ms => { const d = new Date(ms); return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`; };
 
 function spriteFor(thumb, opts = {}) {
@@ -139,7 +139,7 @@ export function composeShare(stage, caption, footer = 'hgvf.github.io/countdown'
 export async function shareBlob(blob, name = 'offwork.png') {
   try {
     const file = new File([blob], name, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: '下班倒數' }); return 'shared'; }
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: relabel('下班倒數') }); return 'shared'; }
   } catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = name;
