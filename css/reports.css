@@ -137,6 +137,10 @@
 .tt-num.neu { color: var(--neutral); }
 .tt-num.tt-na { color: var(--text-muted); font-style: italic; }
 .tt-price { color: var(--text-primary); font-weight: 600; }
+.tt-snap {
+  align-self: flex-start; font-size: 0.6rem; font-family: var(--font-mono); color: var(--text-muted);
+  border: 1px dashed rgba(120,113,108,0.45); border-radius: 4px; padding: 0 0.3rem; cursor: help;
+}
 .tt-cur { margin-left: 0.25rem; font-size: 0.66rem; font-weight: 400; color: var(--text-muted); }
 .rp-chain { background: rgba(46,139,133,0.09); border-color: rgba(46,139,133,0.38); }
 .rp-chain .rp-subcard-head { color: #2E8B85; }
