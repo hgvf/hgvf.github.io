@@ -1,9 +1,9 @@
 /* sw.js — offline cache for 下班倒數. Network-first for pages/scripts so updates
    land immediately when online; cache fallback when offline. Bump VERSION to purge. */
-const VERSION = 'offwork-v1';
+const VERSION = 'offwork-v2';
 const CORE = [
   './', 'index.html', 'style.css', 'manifest.webmanifest',
-  'assets/Cubic_11.woff2', 'assets/icon-192.png', 'assets/icon-512.png',
+  'assets/Cubic_11.woff2', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/favicon-clock-32.png',
   'js/main.js', 'js/palette.js', 'js/pixel.js', 'js/sprites.js', 'js/storage.js', 'js/clock.js',
   'js/schedule.js', 'js/events.js', 'js/eggs.js', 'js/copy.js', 'js/finale.js', 'js/fx.js',
   'js/achievements.js', 'js/ui.js', 'js/offscene.js',
