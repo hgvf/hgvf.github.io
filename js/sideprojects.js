@@ -57,6 +57,21 @@ export const PROJECTS = [
     tags: ['Vite', 'Canvas 2D', 'Pixel Art', 'Idle Game', 'localStorage', 'Vercel'],
   },
   {
+    name: '下班倒數',
+    url: 'countdown/index.html',
+    internal: true,
+    tagline: '下班倒數計時器 - 上班時間的劇場',
+    description: '不只告訴你還剩多久：像素世界會隨時間演進，鴨子、熊熊、狗、貓輪流來翻時間牌，最後五分鐘是跨年等級的像素煙火秀。',
+    features: [
+      '7 個主題：隕石墜落、火箭升空、沙漏、電子鐘、末日鐘、指揮部、植物生長',
+      '四隻動物翻牌彩蛋、便當、下午茶、UFO 等時間軸事件',
+      '荒謬時間換算文案：「3 小時夠你從台北飛到東京了」',
+      '最後 5 分鐘四幕像素煙火高潮，全程無音效',
+      '彩蛋圖鑑、成就徽章與動物造型解鎖，可截圖分享',
+    ],
+    tags: ['Canvas 2D', 'Pixel Art', 'ES Modules', 'PWA', 'localStorage', 'GitHub Pages'],
+  },
+  {
     name: 'War Atlas',
     url: 'war-atlas/index.html',
     internal: true,

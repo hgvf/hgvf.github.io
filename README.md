@@ -280,3 +280,22 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 | `.github/workflows/sync_war_atlas.yml` | 每日 00:30 UTC 把 Firestore 的戰役拉回 `war-atlas/data/`、build、commit（可手動觸發） |
 
 ⚠️ 新增了 `war_atlas_*` 兩個 collection 的 rules，需重新部署 `firebase deploy --only firestore:rules`。
+
+---
+
+## 11. 下班倒數計時器（`countdown/`）
+
+純前端靜態子網站，網址 `/countdown/`，Side Projects 頁卡片與側邊欄 Side Project 資料夾連過去（`js/sideprojects.js`，`internal: true`）。不需 build：原生 ES modules，直接由 GitHub Pages 提供。
+
+| 檔案 | 說明 |
+|---|---|
+| `countdown/js/clock.js` | 唯一時間來源，每幀用 `target - now()` 重算進度（背景分頁不漂移） |
+| `countdown/js/schedule.js` | 下班規則（固定時長 / 固定時刻 / 手動指定）→ 目標時間 |
+| `countdown/js/events.js` / `eggs.js` | 彩蛋排程（整點翻牌、12:00、15:00、50%、最後一小時、稀有事件）與動畫 |
+| `countdown/js/copy.js` | 荒謬時間換算文案（活動資料庫 + 模板，時長為估計值） |
+| `countdown/js/finale.js` / `fx.js` | 最後 5 分鐘四幕像素煙火 |
+| `countdown/js/themes/*.js` | 每個主題實作 `render(g, p, dt, st)` 與 `renderEnd()`，新增主題只要加檔案並登記在 `themes/index.js` |
+| `countdown/js/sprites.js` | 鴨子、熊熊、狗、貓與道具，程式繪製的像素 sprite（32 色調色盤、自動描邊） |
+
+字型為俐方體 11 號（`countdown/assets/Cubic_11.woff2`，授權見同目錄 OFL 檔）。試玩：設定 → 試玩預覽，或網址加 `?demo=last15`、`?demo=flip-bear`、`?demo=day` 等。
+

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>下班倒數計時器</title>
+<meta name="description" content="上班時間的劇場：會隨時間演進的像素世界、動物翻牌彩蛋、荒謬時間換算文案，最後五分鐘像素煙火秀。">
+<meta name="theme-color" content="#0b0b16">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preload" href="assets/Cubic_11.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="bar">
+    <a class="brand" href="../index.html#side-project" title="回到 hgvf.github.io">
+      <canvas id="brandIcon" width="16" height="16" aria-hidden="true"></canvas>
+      <span>下班倒數</span>
+    </a>
+    <div class="bar-actions">
+      <button type="button" class="px-btn warn" id="btnOvertime" title="臨時加班：下班時間 +30 分鐘">+30 分</button>
+      <button type="button" class="px-btn" id="btnDex" title="彩蛋圖鑑與成就">圖鑑</button>
+      <button type="button" class="px-btn" id="btnShare" title="把現在的畫面和文案截成圖">分享</button>
+      <button type="button" class="px-btn" id="btnFull" title="全螢幕">全螢幕</button>
+      <button type="button" class="px-btn primary" id="btnSettings">設定</button>
+    </div>
+  </header>
+
+  <main class="stage-wrap" id="stageWrap">
+    <canvas id="stage" width="640" height="360" aria-label="下班倒數動畫"></canvas>
+    <div class="demo-chip" id="demoChip" hidden><span id="demoLabel">預覽模式</span><button type="button" id="demoExit">結束預覽</button></div>
+    <section class="off-panel" id="offPanel" hidden>
+      <h2 id="offTitle">你已經下班了，為什麼還開著</h2>
+      <p id="offSub">關掉分頁吧。真的。</p>
+      <div class="off-actions">
+        <button type="button" class="px-btn primary" id="offReverse">反向倒數到下一個上班日</button>
+        <button type="button" class="px-btn" id="offPunch">我今天要上班（現在打卡）</button>
+      </div>
+    </section>
+  </main>
+
+  <p class="subtitle" id="copy" aria-live="polite">正在計算你還要撐多久……</p>
+  <p class="foot">細緻像素風 · 全程無音效 · 設定只存在這台瀏覽器 · <a href="../index.html#side-project">hgvf.github.io</a></p>
+</div>
+
+<!-- 設定 -->
+<dialog id="dlgSettings" class="px-dialog">
+  <form method="dialog" id="formSettings">
+    <h2>上班設定</h2>
+    <p class="hint">填一次就好，之後每天自動套用。所有資料只存在你的瀏覽器。</p>
+
+    <div class="row two">
+      <label>上班日期<input type="date" name="date" required></label>
+      <label>上班時間
+        <span class="inline"><input type="time" name="start" required><button type="button" class="px-btn small" id="btnPunch">我剛打卡</button></span>
+      </label>
+    </div>
+
+    <fieldset>
+      <legend>下班規則</legend>
+      <label class="radio"><input type="radio" name="rule" value="offset" checked> 固定時長：打卡 +
+        <input type="number" name="hours" min="1" max="16" step="0.5" value="9" class="num"> 小時</label>
+      <label class="radio"><input type="radio" name="rule" value="fixed"> 固定時刻：
+        <input type="time" name="fixedTime" value="18:00"></label>
+      <label class="radio"><input type="radio" name="rule" value="manual"> 今天手動指定：
+        <input type="datetime-local" name="manualEnd"></label>
+      <label class="check"><input type="checkbox" name="lunchCounted" checked> 固定時長已含午休（不勾 = 另外加
+        <input type="number" name="lunchMinutes" min="0" max="180" step="5" value="60" class="num"> 分鐘）</label>
+    </fieldset>
+
+    <div class="row two">
+      <label>主題<select name="theme" id="themeSelect"></select></label>
+      <label>動態強度
+        <select name="motion">
+          <option value="full">完整</option>
+          <option value="lowkey">低調（上班偷看用）</option>
+          <option value="reduced">減少動態</option>
+        </select>
+      </label>
+    </div>
+
+    <fieldset>
+      <legend>工作日</legend>
+      <div class="days" id="workdays"></div>
+    </fieldset>
+
+    <details>
+      <summary>彩蛋開關</summary>
+      <div class="egg-toggles" id="eggToggles"></div>
+      <label>沒動滑鼠幾分鐘後貓會來睡在數字上
+        <input type="number" name="idleMinutes" min="1" max="60" value="5" class="num"></label>
+    </details>
+
+    <details>
+      <summary>試玩預覽（不會影響今天的紀錄）</summary>
+      <div class="demo-btns">
+        <button type="button" class="px-btn small" data-demo="flip-duck">鴨子翻牌</button>
+        <button type="button" class="px-btn small" data-demo="flip-bear">熊熊翻牌</button>
+        <button type="button" class="px-btn small" data-demo="flip-dog">狗翻牌</button>
+        <button type="button" class="px-btn small" data-demo="flip-cat">貓翻牌</button>
+        <button type="button" class="px-btn small" data-demo="gathering">最後一小時集合</button>
+        <button type="button" class="px-btn small" data-demo="lunch">便當</button>
+        <button type="button" class="px-btn small" data-demo="tea">下午茶</button>
+        <button type="button" class="px-btn small" data-demo="ufo">UFO</button>
+        <button type="button" class="px-btn small" data-demo="tail">狗追尾巴</button>
+        <button type="button" class="px-btn small" data-demo="idle">掛機貓</button>
+        <button type="button" class="px-btn small" data-demo="day">快轉整天 ×600</button>
+        <button type="button" class="px-btn small" data-demo="last5">最後 5 分鐘</button>
+        <button type="button" class="px-btn small" data-demo="last15">最後 15 秒</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>資料</summary>
+      <div class="demo-btns">
+        <button type="button" class="px-btn small" id="btnExport">匯出成就 JSON</button>
+        <label class="px-btn small file">匯入成就 JSON<input type="file" id="fileImport" accept="application/json,.json" hidden></label>
+        <button type="button" class="px-btn small warn" id="btnResetDay">重設今天</button>
+      </div>
+    </details>
+
+    <div class="actions">
+      <button type="button" class="px-btn" id="btnCancel">取消</button>
+      <button type="submit" class="px-btn primary" value="ok">開始倒數</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 每天一次：今天幾點上班 -->
+<dialog id="dlgDaily" class="px-dialog">
+  <form method="dialog" id="formDaily">
+    <h2>早安！今天幾點打卡？</h2>
+    <p class="hint">每天只問這一次，填完今天就不會再出現。</p>
+    <label>上班時間
+      <span class="inline"><input type="time" name="start" required><button type="button" class="px-btn small" id="dailyPunch">我剛打卡</button></span>
+    </label>
+    <label id="dailyManualRow" hidden>今天幾點下班<input type="datetime-local" name="manualEnd"></label>
+    <p class="daily-sum" id="dailySum"></p>
+    <div class="actions">
+      <button type="button" class="px-btn" id="dailyMore">改下班規則</button>
+      <button type="submit" class="px-btn primary" value="ok">開始倒數</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 圖鑑 -->
+<dialog id="dlgDex" class="px-dialog wide">
+  <div class="dex-head">
+    <h2>圖鑑</h2>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab on" data-tab="eggs">彩蛋</button>
+      <button type="button" class="tab" data-tab="badges">成就</button>
+      <button type="button" class="tab" data-tab="animals">動物</button>
+    </div>
+    <button type="button" class="px-btn small" id="dexClose">關閉</button>
+  </div>
+  <p class="hint" id="dexSummary"></p>
+  <div class="dex-grid" id="dexGrid"></div>
+</dialog>
+
+<!-- 今日統計卡 -->
+<dialog id="dlgStats" class="px-dialog">
+  <h2>下班了！今日統計</h2>
+  <canvas id="statsArt" width="320" height="80"></canvas>
+  <ul class="stats" id="statsList"></ul>
+  <div class="actions">
+    <button type="button" class="px-btn" id="statsShare">截圖分享</button>
+    <button type="button" class="px-btn primary" id="statsClose">回家</button>
+  </div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

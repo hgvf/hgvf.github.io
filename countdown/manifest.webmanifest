@@ -1,0 +1,15 @@
+{
+  "name": "下班倒數計時器",
+  "short_name": "下班倒數",
+  "description": "上班時間的劇場：像素世界、動物翻牌彩蛋、荒謬換算文案與下班煙火秀。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0b16",
+  "theme_color": "#0b0b16",
+  "lang": "zh-Hant-TW",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
