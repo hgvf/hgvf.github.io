@@ -1,0 +1,53 @@
+name: Prune old news
+
+# Daily: delete 供應鏈瓶頸新聞 / 產業消息 (+ daily digest) older than 180 days,
+# keeping everything collected into 重點新聞 (highlight_collected), then rebuild
+# indexes/ticker_events so it drops entries pointing at deleted docs.
+# Earnings calls and price snapshots are never touched.
+#
+# Schedule: 23:41 UTC daily = 07:41 Taiwan (UTC+8), before reindex_events.yml.
+# Manual run (Actions tab → Run workflow) can override the retention days or do
+# a dry run first.
+#
+# Required repo secret: FIREBASE_SERVICE_ACCOUNT (same as the other Firestore
+# workflows).
+
+on:
+  schedule:
+    - cron: '41 23 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Keep news newer than N days'
+        default: '180'
+      dry_run:
+        description: 'Dry run (list only, delete nothing)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install google-auth requests
+      - name: Write service account credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+      - name: Delete old news
+        run: |
+          python scripts/prune_news.py \
+            --days "${{ github.event.inputs.days || '180' }}" \
+            --credentials "$RUNNER_TEMP/sa.json" \
+            ${{ github.event.inputs.dry_run == 'true' && ' ' || '--apply' }}
+      - name: Rebuild lookup indexes
+        if: github.event.inputs.dry_run != 'true'
+        run: python scripts/publish.py --type reindex --credentials "$RUNNER_TEMP/sa.json"
