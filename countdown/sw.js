@@ -1,6 +1,6 @@
 /* sw.js — offline cache for 下班倒數. Network-first for pages/scripts so updates
    land immediately when online; cache fallback when offline. Bump VERSION to purge. */
-const VERSION = 'offwork-v2';
+const VERSION = 'offwork-v3';
 const CORE = [
   './', 'index.html', 'style.css', 'manifest.webmanifest',
   'assets/Cubic_11.woff2', 'assets/icon-192.png', 'assets/icon-512.png', 'assets/favicon-clock-32.png',
@@ -9,7 +9,9 @@ const CORE = [
   'js/achievements.js', 'js/ui.js', 'js/offscene.js',
   'js/themes/index.js', 'js/themes/common.js', 'js/themes/meteor.js', 'js/themes/rocket.js',
   'js/themes/hourglass.js', 'js/themes/digital.js', 'js/themes/doomsday.js', 'js/themes/command.js',
-  'js/themes/plant.js',
+  'js/themes/plant.js', 'js/themes/segments.js', 'js/themes/train.js', 'js/themes/bomb.js',
+  'js/themes/wrist.js', 'js/themes/kitchen.js', 'js/themes/stopwatch.js', 'js/themes/mom.js',
+  'js/themes/ultimatum.js', 'js/themes/launch.js',
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

@@ -6,6 +6,7 @@ import { load, save } from './storage.js';
 
 export const DEFAULT_SETTINGS = {
   configured: false,
+  label: '下班',
   startTime: '09:00',
   rule: { type: 'offset', hours: 9 },
   fixedTime: '18:00',

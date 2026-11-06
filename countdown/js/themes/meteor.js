@@ -42,7 +42,7 @@ function drawMeteor(g, x, y, r, heat, t) {
     const cols = [C.darkred, C.red, C.red, C.orange, C.orange, C.amber, C.yellow, C.cream, C.white];
     for (let i = N - 1; i >= 0; i--) {
       const k = i / (N - 1);
-      const j = Math.sin(t * 23 + i * 1.7) * r * 0.12;
+      const j = Math.sin(t * 3 + i * 0.9) * r * 0.06;
       const cx = x + dirx * len * k + diry * j, cy = y + diry * len * k - dirx * j;
       disc(g, cx, cy, Math.max(1, r * (1.15 - k * 0.85)), cols[N - 1 - i]);
     }
@@ -79,7 +79,7 @@ function drawCity(g, p, t, glow) {
 }
 
 function drawBuilding(g, p, t) {
-  const shake = p > 0.88 ? (((t * 28) | 0) % 2 ? 1 : -1) * Math.ceil((p - 0.88) * 12) : 0;
+  const shake = p > 0.95 ? Math.round(Math.sin(t * 4)) : 0;          // slow, 1px sway
   const x = BX + shake;
   rect(g, x, BTOP, BW, ROAD - BTOP, C.lightgray);
   rect(g, x + BW - 10, BTOP, 10, ROAD - BTOP, C.gray);
@@ -89,17 +89,16 @@ function drawBuilding(g, p, t) {
   rect(g, x + 16, BTOP - 18, 40, 14, C.navy);
   drawText(g, '公司', x + 36, BTOP - 18, C.yellow, { align: 'center' });
   line(g, x + 64, BTOP, x + 64, BTOP - 26, C.gray);
-  if (((t * 2) | 0) % 2) disc(g, x + 64, BTOP - 27, 1, C.red);
+  disc(g, x + 64, BTOP - 27, 1, Math.sin(t * 1.2) > 0 ? C.red : C.darkred);
   // windows
   const panic = clamp((p - 0.82) / 0.18);
   const r = rng(3);
   for (let wy = BTOP + 8, row = 0; wy < ROAD - 18; wy += 12, row++) {
     for (let wx = x + 6, col = 0; wx < x + BW - 14; wx += 11, col++) {
       const lit = r() < 0.7;
-      const flick = panic > 0 && Math.sin(t * 17 + row * 3 + col) > 1 - panic * 1.4;
-      rect(g, wx, wy, 7, 8, lit && !flick ? C.yellow : C.deepblue);
+      rect(g, wx, wy, 7, 8, lit ? C.yellow : C.deepblue);
       rect(g, wx, wy + 8, 7, 1, C.gray);
-      if (lit && !flick && r() < 0.35) {             // a tiny colleague at the window
+      if (lit && r() < 0.35) {             // a tiny colleague at the window
         const look = p > 0.55;
         rect(g, wx + 2, wy + 3, 3, 3, C.peach);
         if (look) px(g, wx + 3, wy + 3, C.ink);
@@ -132,7 +131,7 @@ function drawWorkers(g, p, t, party = 0) {
     else if (isPanic) { x += Math.sin(t * 3.2 + w.ph) * 26; frame = (t * 14 | 0) + i; }
     else if (look < 0.5 || i % 2) { x += Math.sin(t * 0.25 * (w.speed / 8) + w.ph) * 14; frame = (t * 5 | 0) + i; }
     g.drawImage(worker(w.col, frame, isPanic || !!party), Math.round(x), y);
-    if (isPanic && !party && ((t * 3 + i) | 0) % 2) g.drawImage(sweat(), Math.round(x) + 7, y - 3);
+    if (isPanic && !party && i % 2 === 0) g.drawImage(sweat(), Math.round(x) + 7, y - 3);
     if (!party && look >= 0.5 && !isPanic && i % 2 === 0) drawText(g, '?', x + 1, y - 13, C.paper);
     if (isPanic && !party && i % 3 === 0) drawText(g, '!', x + 2, y - 14, C.yellow);
   });
@@ -198,7 +197,7 @@ export default {
     poly(g, [[244, ROAD], [262, 306], [290, 298], [318, 308], [334, ROAD]], C.gray);
     for (let i = 0; i < 14; i++) {
       const ex = 246 + (i * 37) % 96, ey = 304 + (i * 13) % 22;
-      if (Math.sin(st.t * 6 + i) > 0) px(g, ex, ey, i % 2 ? C.orange : C.yellow);
+      px(g, ex, ey, Math.sin(st.t * 1.5 + i) > 0 ? C.orange : C.rust);
     }
     rect(g, 256, 312, 10, 6, C.lightgray); rect(g, 300, 316, 12, 5, C.lightgray); rect(g, 280, 318, 8, 4, C.paper);
     // sign rises from the rubble
@@ -212,7 +211,7 @@ export default {
       drawText(g, '下班', 289, sy + 5, C.paper, { align: 'center', scale: 2 });
       if (s >= 1) for (let i = 0; i < 6; i++) {
         const a = st.t * 1.5 + i * 1.05, sx = 289 + Math.cos(a) * 52, sy2 = sy + 18 + Math.sin(a) * 30;
-        if ((st.t * 4 + i | 0) % 2) { px(g, sx, sy2, C.yellow); px(g, sx - 1, sy2, C.cream); px(g, sx + 1, sy2, C.cream); px(g, sx, sy2 - 1, C.cream); px(g, sx, sy2 + 1, C.cream); }
+        if (i % 2 === 0) { px(g, sx, sy2, C.yellow); px(g, sx - 1, sy2, C.cream); px(g, sx + 1, sy2, C.cream); px(g, sx, sy2 - 1, C.cream); px(g, sx, sy2 + 1, C.cream); }
       }
     }
     // dust cloud (fades)

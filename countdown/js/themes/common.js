@@ -31,14 +31,13 @@ export function stars(g, seed, n, t, yMax = 260, dim = 0) {
     starCache.set(seed + ':' + n, list);
   }
   for (const s of list) {
-    const tw = Math.sin(t * (1 + s.b * 2) + s.ph);
     if (s.b < dim) continue;
-    if (s.b > 0.92) {
-      g.fillStyle = tw > 0.3 ? C.white : C.lightsky;
-      g.fillRect(s.x, s.y, 1, 1);
-      if (tw > 0.6) { g.fillStyle = C.lightsky; g.fillRect(s.x - 1, s.y, 3, 1); g.fillRect(s.x, s.y - 1, 1, 3); }
+    if (s.b > 0.92) {                                  // a few bright stars breathe slowly
+      const tw = Math.sin(t * 0.35 + s.ph);
+      g.fillStyle = C.white; g.fillRect(s.x, s.y, 1, 1);
+      if (tw > 0.5) { g.fillStyle = C.lightsky; g.fillRect(s.x - 1, s.y, 3, 1); g.fillRect(s.x, s.y - 1, 1, 3); g.fillStyle = C.white; g.fillRect(s.x, s.y, 1, 1); }
     } else {
-      g.fillStyle = tw > -0.2 ? (s.b > 0.6 ? C.lightgray : C.gray) : C.darkgray;
+      g.fillStyle = s.b > 0.6 ? C.lightgray : C.gray;  // the rest hold still
       g.fillRect(s.x, s.y, 1, 1);
     }
   }

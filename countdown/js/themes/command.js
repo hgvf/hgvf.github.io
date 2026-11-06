@@ -15,7 +15,7 @@ function room(g, t, alert) {
   const r = rng(5);
   for (let i = 0; i < 40; i++) {
     const x = 20 + i * 15, y = 284 + (i % 2) * 7;
-    const on = Math.sin(t * (1 + r() * 3) + i) > 0.2;
+    const on = Math.sin(t * (0.2 + r() * 0.4) + i) > 0.2;
     rect(g, x, y, 6, 4, on ? [C.lime, C.amber, C.cyan, C.red][i % 4] : C.darkgray);
   }
 }
@@ -30,7 +30,7 @@ function monitor(g, x, y, w, h, title, col = C.teal) {
 
 function beacon(g, t, green) {
   rect(g, 18, 14, 28, 6, C.darkgray);
-  const on = ((t * 3) | 0) % 2;
+  const on = Math.sin(t * 1.5) > 0;
   disc(g, 32, 10, 9, green ? C.darkgreen : C.darkred);
   disc(g, 32, 10, 7, on ? (green ? C.lime : C.red) : (green ? C.green : C.darkred));
   if (on) { px(g, 29, 7, C.white); }
@@ -104,7 +104,7 @@ export default {
     rect(g, 90, 232, 460, 42, C.outline); rect(g, 92, 234, 456, 38, C.ink);
     drawText(g, '無線電', 100, 236, C.red);
     drawText(g, '目標距離下班', 100, 252, C.cyan);
-    drawDigits(g, hms(st.remaining), 186, 240, 4, ((st.t * 2) | 0) % 2 && st.alert ? C.red : C.cyan, { hi: C.white, outline: C.outline });
+    drawDigits(g, hms(st.remaining), 186, 240, 4, st.alert ? C.orange : C.cyan, { hi: C.white, outline: C.outline });
     drawDigits(g, `${Math.floor(p * 100)}%`, 540, 250, 2, C.teal, { align: 'right' });
   },
   renderEnd(g, t, st) {
