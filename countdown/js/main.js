@@ -16,6 +16,7 @@ import { drawOffScene } from './offscene.js';
 import { ANIMALS, ANIMAL_NAMES, SKIN_NAMES } from './sprites.js';
 import { renderDex, toast as rawToast, thumb, badgeArt, drawStatsArt, composeShare, shareBlob, drawBrand } from './ui.js';
 import { load, save } from './storage.js';
+import { bleed } from './blood.js';
 
 const $ = s => document.querySelector(s);
 const toast = (t, sub, art) => rawToast(relabel(t), relabel(sub || ''), art);
@@ -441,6 +442,14 @@ function openDaily() {
 dform.addEventListener('input', updateDailySum);
 $('#dailyPunch').addEventListener('click', () => { dform.start.value = timeStr(new Date(now())); updateDailySum(); });
 $('#dailyMore').addEventListener('click', () => { $('#dlgDaily').close(); openSettings(); });
+$('#dailySkip').addEventListener('click', () => {
+  day = { ...day, asked: true, off: true, punch: null, working: false };
+  saveDay(day);
+  endT = -1; prevState = null; offShown = null;
+  $('#dlgDaily').close();
+  recordSimple('skipday');
+  bleed({ reduced: motion() === 'reduced' });
+});
 $('#dlgDaily').addEventListener('close', () => { if (!day.asked) { day.asked = true; saveDay(day); } });
 dform.addEventListener('submit', e => {
   e.preventDefault();
