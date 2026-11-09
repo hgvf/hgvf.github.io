@@ -20,6 +20,7 @@ export const EGGS = [
   { id: 'tail', name: '狗追自己的尾巴', hint: '稀有：有隻狗很無聊', thumb: ['dog', 'walk'] },
   { id: 'shake', name: '搖一搖沙漏', hint: '某個主題裡，沙好像卡住了', thumb: ['cat', 'sit'] },
   { id: 'finale', name: '下班煙火秀', hint: '撐到最後一秒', thumb: ['bear', 'stand'] },
+  { id: 'skipday', name: '不上班還點進來', hint: '某天你其實不用上班…', thumb: ['cat', 'sit'] },
 ];
 export const EGG_BY_ID = Object.fromEntries(EGGS.map(e => [e.id, e]));
 

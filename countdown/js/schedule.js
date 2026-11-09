@@ -67,7 +67,7 @@ export function computeSession(settings, day, t) {
   }
   end += (day.extraMinutes || 0) * 60e3;
 
-  const workday = isWorkday(settings, day.date) || day.working || !!day.punch;
+  const workday = !day.off && (isWorkday(settings, day.date) || day.working || !!day.punch);
   let state;
   if (!workday) state = 'weekend';
   else if (t < start) state = 'before';

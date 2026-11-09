@@ -122,6 +122,21 @@ body {
 .daily-sum { margin: 12px 0 0; padding: 8px 10px; background: var(--deepblue); box-shadow: 0 0 0 2px var(--outline); color: var(--cream); }
 .daily-sum b { color: var(--yellow); font-weight: normal; }
 
+/* 「我今天不用上班！」 + its punishment */
+.px-btn.skip-day { display: block; width: 100%; margin-top: 14px; font-size: 20px; padding: 12px; background: var(--red); color: var(--cream); }
+.px-btn.skip-day:hover { background: #e0434d; }
+.blood { position: fixed; inset: 0; z-index: 50; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.blood canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.blood-text { position: relative; padding: 0 16px; text-align: center; font-size: clamp(28px, 6vw, 60px); color: #e0303c; text-shadow: 3px 3px 0 #2b0008, 0 0 18px rgba(200, 30, 40, .55); opacity: 0; }
+.blood-text.in { animation: bloodIn 1.1s steps(6) forwards, bloodShake .12s steps(2) 1.1s infinite; }
+.blood.calm .blood-text.in { animation: bloodIn 1.1s steps(6) forwards; }
+.blood-hint { position: relative; font-size: 16px; color: #c2c3c7; opacity: 0; transition: opacity .6s; }
+.blood-hint.show { opacity: 1; }
+.blood.out { animation: bloodOut .7s steps(5) forwards; }
+@keyframes bloodIn { from { opacity: 0; letter-spacing: .4em; } to { opacity: 1; letter-spacing: .05em; } }
+@keyframes bloodShake { 0% { transform: translate(1px, 0); } 100% { transform: translate(-1px, 1px); } }
+@keyframes bloodOut { to { opacity: 0; } }
+
 /* dex */
 .dex-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .dex-head h2 { margin: 0; }
