@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-10T08:30:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": null},
+  "event_window": {"start": "2026-11-09", "end": "2026-11-09"},
+  "event_count": 3,
+  "digest": {
+    "themes_distribution": {"rare earth": 1, "permanent magnet": 1, "critical minerals": 1, "semiconductor": 1, "data center": 1, "AI infrastructure": 1, "power grid": 1},
+    "importance_distribution": {"critical": 0, "high": 2, "relevant": 1},
+    "top_tickers": ["4183.T", "MP", "LYC.AX"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261109-001",
+      "slug": "trade-policy-china-rare-earth-export-control-suspension-extended",
+      "event_date": "2026-11-09",
+      "published_at": "2026-11-09",
+      "ingested_at": "2026-11-10T08:30:00+08:00",
+      "event_type": "trade_policy",
+      "event_type_secondary": [],
+      "themes": ["rare earth", "permanent magnet", "critical minerals"],
+      "regions": ["CN", "US"],
+      "importance_score": 84,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "中國商務部將 2025 年 10 月稀土等出口管制擴大措施之暫停延長兩個月至 2027-01-10，並同步延長對美 24% 加徵關稅與港口費暫停",
+      "title_original": "China extends suspension of new rare earth controls until January; extends suspension of 24% tariff on US goods and port fees for two months",
+      "summary_zh": "原定 2026-11-10 到期的 2025 年 10 月稀土出口管制擴大措施（含部分工業鑽石、鋰電池技術）暫停，中國商務部 11/9 宣布延長兩個月至 2027-01-10。同日國務院關稅稅則委員會宣布對美 24% 加徵關稅續暫停兩個月（10% 維持），交通部亦將美籍船舶特別港口費暫停延至 1/10。延長僅兩個月，與 APEC 深圳川習會談判掛鉤。",
+      "why_it_matters": "若未延長，11/10 起含微量中國稀土的海外磁鐵與元件將適用域外許可要求，日本、歐洲、美國的 NdFeB 磁鐵、伺服馬達、國防與機器人供應鏈將立即面臨出貨審批延宕。延長避免了斷崖，但只給兩個月緩衝，下游 OEM 仍需維持安全庫存與非中國來源雙供，MP Materials、Lynas 等非中國稀土/磁鐵供應商的長約議價力不會因此減弱；同時 1/10 成為新的懸崖日期，談判破局風險將集中於 2026 年 12 月至 2027 年 1 月。",
+      "tickers": ["MP", "LYC.AX"],
+      "companies": [
+        {"name": "Ministry of Commerce of the People's Republic of China (MOFCOM)", "ticker": null, "exchange": null, "country": "CN", "role": "regulator"},
+        {"name": "Customs Tariff Commission of the State Council", "ticker": null, "exchange": null, "country": "CN", "role": "regulator"},
+        {"name": "MP Materials Corp", "ticker": "MP", "exchange": "NYSE", "country": "US", "role": "affected_party"},
+        {"name": "Lynas Rare Earths", "ticker": "LYC.AX", "exchange": "ASX", "country": "AU", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["rare earth oxides", "NdPr", "Dy", "Tb"],
+        "component": "NdFeB permanent magnet / rare-earth-containing components",
+        "supplier": ["Chinese rare earth refiners and magnet makers"],
+        "customer": ["US, EU, Japan OEMs"],
+        "end_market": ["EV traction motors", "robotics", "defense", "industrial automation"]
+      },
+      "products": ["NdFeB permanent magnet", "lithium battery technology", "industrial diamond"],
+      "materials": ["rare earth", "NdPr", "Dy", "Tb"],
+      "change": {
+        "type": "export_control_suspension_extension",
+        "before": "2025 年 10 月擴大之稀土出口管制暫停至 2026-11-10 到期，屆時恢復生效；對美 24% 加徵關稅暫停亦同步到期",
+        "after": "暫停延至 2027-01-10；對美 24% 加徵關稅續暫停兩個月（10% 維持），美籍船舶特別港口費暫停延至 2027-01-10"
+      },
+      "financial_data": {"amount": null, "currency": null, "capacity_change_pct": null, "price_change_pct": null, "revenue_exposure_pct": null, "contract_duration_years": null, "effective_date": "2026-11-10"},
+      "search_keywords": ["rare earth", "稀土", "export control", "出口管制", "mofcom", "商務部", "china", "中國", "tariff", "關稅", "24%", "port fees", "港口費", "ndfeb", "永磁", "permanent magnet", "critical minerals", "trade_policy", "mp", "mp materials", "lyc.ax", "lyc", "lynas", "lithium battery", "apec", "川習會"],
+      "sources": [
+        {"publisher": "Reuters (via The Star)", "source_type": "wire", "url": "https://www.thestar.com.my/aseanplus/aseanplus-news/2026/11/09/china-extends-suspension-of-rare-earth-export-controls-until-january", "is_primary": false, "accessed_at": "2026-11-10T08:10:00+08:00"},
+        {"publisher": "Reuters (via Investing.com)", "source_type": "wire", "url": "https://www.investing.com/news/commodities-news/china-extends-suspension-of-new-rare-earth-controls-until-january-5010878", "is_primary": false, "accessed_at": "2026-11-10T08:10:00+08:00"},
+        {"publisher": "Gov.cn (State Council)", "source_type": "primary", "url": "https://english.www.gov.cn/news/202611/09/content_WS6af18d6bc6d00ca5f9a0e308.html", "is_primary": true, "accessed_at": "2026-11-10T08:12:00+08:00"},
+        {"publisher": "BusinessWorld (Reuters)", "source_type": "wire", "url": "https://bworldonline.com/world/2026/11/09/792445/china-extends-suspensions-of-24-tariff-on-us-goods-port-fees-on-us-ships-for-two-months/", "is_primary": false, "accessed_at": "2026-11-10T08:12:00+08:00"}
+      ]
+    },
+    {
+      "event_id": "SC-20261109-002",
+      "slug": "strategic-investment-4183-mitsui-chemicals-jsr-photoresist",
+      "event_date": "2026-11-09",
+      "published_at": "2026-11-09",
+      "ingested_at": "2026-11-10T08:30:00+08:00",
+      "event_type": "strategic_investment",
+      "event_type_secondary": [],
+      "themes": ["semiconductor"],
+      "regions": ["JP"],
+      "importance_score": 81,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "三井化學與日本政策投資銀行（DBJ）以 1.84 兆日圓自 JIC 收購光阻劑大廠 JSR，整合光罩保護膜與光阻成日本最大半導體材料商",
+      "title_original": "Mitsui Chemicals, DBJ to buy JSR for $11.6 billion, filing shows",
+      "summary_zh": "三井化學 11/9 公告與 DBJ 向政府系基金 JIC 收購 JSR 全部股權，對價 1.84 兆日圓（約 116 億美元），以 1.64 兆日圓過渡貸款、DBJ 2,000 億日圓無表決權特別股及最多 1,500 億日圓增資支應。合併後以營收計為日本最大半導體材料供應商，目標 2035 年前每年增加約 400 億日圓營業利益；交易後淨負債/核心獲利暫超過 4 倍。三井化學股價盤中重挫 15%。",
+      "why_it_matters": "JSR 為 EUV/ArF 光阻主要供應商（客戶含 TSMC、Intel、Samsung），與三井化學的 EUV pellicle（光罩保護膜）同屬微影關鍵耗材；整合後形成「光阻＋pellicle＋（Inpria 金屬氧化物光阻）」的一站式微影材料平台，對 TOK、信越化學、住友化學等日系光阻同業形成組合銷售與研發規模壓力。日本政府資金（JIC 退場、DBJ 接手）延續將光阻視為戰略物資、確保不外流的政策意圖；但高槓桿可能限制 JSR 未來的擴產 capex，晶圓廠在 2nm 以下製程光阻的雙供策略值得觀察。",
+      "tickers": ["4183.T", "2330.TW", "TSM", "INTC", "005930.KS", "4186.T", "4063.T"],
+      "companies": [
+        {"name": "Mitsui Chemicals, Inc.", "ticker": "4183.T", "exchange": "TSE", "country": "JP", "role": "investor"},
+        {"name": "Development Bank of Japan (DBJ)", "ticker": null, "exchange": null, "country": "JP", "role": "investor"},
+        {"name": "JSR Corporation", "ticker": null, "exchange": null, "country": "JP", "role": "investee"},
+        {"name": "Japan Investment Corporation (JIC)", "ticker": null, "exchange": null, "country": "JP", "role": "affected_party"},
+        {"name": "Taiwan Semiconductor Manufacturing Co. (TSMC)", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "customer"},
+        {"name": "Taiwan Semiconductor Manufacturing Co. (TSMC) ADR", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "customer"},
+        {"name": "Intel Corporation", "ticker": "INTC", "exchange": "NASDAQ", "country": "US", "role": "customer"},
+        {"name": "Samsung Electronics", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "customer"},
+        {"name": "Tokyo Ohka Kogyo (TOK)", "ticker": "4186.T", "exchange": "TSE", "country": "JP", "role": "affected_party"},
+        {"name": "Shin-Etsu Chemical", "ticker": "4063.T", "exchange": "TSE", "country": "JP", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["specialty monomers", "photoacid generators"],
+        "component": "photoresist (EUV/ArF) & EUV pellicle",
+        "supplier": ["JSR Corporation", "Mitsui Chemicals, Inc."],
+        "customer": ["TSMC", "Intel", "Samsung Electronics"],
+        "end_market": ["advanced logic", "memory", "AI accelerators"]
+      },
+      "products": ["photoresist", "EUV photoresist", "EUV pellicle", "metal oxide resist"],
+      "materials": ["photoresist"],
+      "change": {
+        "type": "acquisition_vertical_integration",
+        "before": "JSR 由 JIC 私有化持有（2024 年下市）；光阻與 pellicle 分屬不同集團",
+        "after": "三井化學（DBJ 參與）取得 JSR 100%，光阻與 pellicle 整合為日本營收最大半導體材料商"
+      },
+      "financial_data": {"amount": 1840000000000, "currency": "JPY", "capacity_change_pct": null, "price_change_pct": null, "revenue_exposure_pct": null, "contract_duration_years": null, "effective_date": null},
+      "search_keywords": ["mitsui chemicals", "三井化學", "4183.t", "4183", "jsr", "photoresist", "光阻", "光阻劑", "euv", "pellicle", "光罩保護膜", "dbj", "日本政策投資銀行", "jic", "acquisition", "併購", "semiconductor materials", "半導體材料", "tsmc", "台積電", "2330.tw", "2330", "tsm", "intel", "samsung", "strategic_investment", "semiconductor", "inpria"],
+      "sources": [
+        {"publisher": "Reuters", "source_type": "wire", "url": "https://www.reuters.com/world/asia-pacific/mitsui-chemicals-dbj-buy-jsr-116-billion-filing-shows-2026-11-09/", "is_primary": true, "accessed_at": "2026-11-10T08:15:00+08:00"},
+        {"publisher": "經濟日報 (udn)", "source_type": "trade", "url": "https://money.udn.com/money/story/5599/9866384", "is_primary": false, "accessed_at": "2026-11-10T08:15:00+08:00"},
+        {"publisher": "鉅亨網 (cnyes)", "source_type": "trade", "url": "https://news.cnyes.com/news/id/6653644", "is_primary": false, "accessed_at": "2026-11-10T08:15:00+08:00"}
+      ]
+    },
+    {
+      "event_id": "SC-20261109-003",
+      "slug": "permit-regulatory-statnett-norway-data-centre-grid-pause",
+      "event_date": "2026-11-09",
+      "published_at": "2026-11-09",
+      "ingested_at": "2026-11-10T08:30:00+08:00",
+      "event_type": "permit_regulatory",
+      "event_type_secondary": ["capacity"],
+      "themes": ["data center", "AI infrastructure", "power grid"],
+      "regions": ["NO"],
+      "importance_score": 74,
+      "importance_tier": "relevant",
+      "evidence_level": "reported",
+      "title_zh": "挪威電網營運商 Statnett 暫停受理資料中心新電網容量預留，最長至 2027-08-01，待政府發照制度上路",
+      "title_original": "Norway's Statnett pauses new grid capacity for data centres to protect power system",
+      "summary_zh": "Statnett 11/9 宣布暫停資料中心新電網容量預留、部分技術審批與 420 kV 直連申請，最晚至 2027-08-01，期間將制定故障穿越、負載擺動與電網振盪等技術要求，並銜接政府資料中心發照制度。現況：已併網約 800 MW、已預留 4,200 MW、排隊 9,100 MW，另有 18,000 MW 申請，對比全國尖峰負載約 25,000 MW。已預留與接近完工專案不受影響。",
+      "why_it_matters": "北歐是歐洲 AI 資料中心的低電價、綠電首選地，排隊中的 9.1 GW 已超過全國尖峰負載三分之一；凍結新預留等於鎖定未來 2–3 年的挪威新增 AI 容量上限，已握有 4.2 GW 預留的開發商（稀缺電力權）價值上升，尚在排隊的 hyperscaler 與 neocloud 專案將轉向瑞典、芬蘭或歐陸，加劇當地電網與變壓器、GIS 設備需求。繼丹麥 Energinet 之後，北歐第二個電網營運商卡關，顯示歐洲 AI 算力的瓶頸已由 GPU 轉為電網接入。",
+      "tickers": [],
+      "companies": [
+        {"name": "Statnett SF", "ticker": null, "exchange": null, "country": "NO", "role": "regulator"}
+      ],
+      "supply_chain": {
+        "upstream": ["grid transmission capacity"],
+        "component": "data centre grid connection (420 kV / regional grid)",
+        "supplier": ["Statnett SF"],
+        "customer": ["data centre developers", "hyperscalers"],
+        "end_market": ["AI infrastructure", "cloud computing"]
+      },
+      "products": ["grid connection capacity"],
+      "materials": [],
+      "change": {
+        "type": "grid_connection_moratorium",
+        "before": "資料中心可持續向 Statnett 申請新增電網容量預留（排隊 9,100 MW）",
+        "after": "新預留凍結至最晚 2027-08-01，改由政府發照制度分配稀缺電力；既有 800 MW 併網與 4,200 MW 預留不受影響"
+      },
+      "financial_data": {"amount": null, "currency": null, "capacity_change_pct": null, "price_change_pct": null, "revenue_exposure_pct": null, "contract_duration_years": null, "effective_date": "2026-11-09"},
+      "search_keywords": ["statnett", "norway", "挪威", "data center", "data centre", "資料中心", "grid connection", "電網", "併網", "moratorium", "暫停", "power grid", "ai infrastructure", "nordic", "北歐", "permit_regulatory", "capacity", "420 kv", "licensing", "發照"],
+      "sources": [
+        {"publisher": "Reuters", "source_type": "wire", "url": "https://www.reuters.com/business/energy/norways-statnett-pauses-new-grid-capacity-data-centres-protect-power-system-2026-11-09/", "is_primary": true, "accessed_at": "2026-11-10T08:20:00+08:00"},
+        {"publisher": "Nordisk Post", "source_type": "trade", "url": "https://www.nordiskpost.com/2026/11/10/norway-data-centres-grid-reservations-pause/", "is_primary": false, "accessed_at": "2026-11-10T08:20:00+08:00"},
+        {"publisher": "Energynews.pro", "source_type": "trade", "url": "https://energynews.pro/en/statnett-suspends-new-grid-capacity-reservations-for-data-centers", "is_primary": false, "accessed_at": "2026-11-10T08:20:00+08:00"}
+      ]
+    }
+  ]
+}
