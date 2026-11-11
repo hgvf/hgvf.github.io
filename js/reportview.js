@@ -118,7 +118,9 @@ export async function mountReportView(opts) {
   }
   function chipBtn(it) {
     const s = sent(sentimentOf(it));
-    return `<button class="rv-cal-chip ${s.cls}" data-id="${esc(it.id)}" title="${esc(nodeTitle(it))}">${esc(chip(it))}</button>`;
+    // Cells are narrow — drop the Taiwan market suffix (1560.TW → 1560); the day panel keeps the full symbol.
+    const label = String(chip(it)).replace(/\.TWO?$/i, "");
+    return `<button class="rv-cal-chip ${s.cls}" data-id="${esc(it.id)}" title="${esc(nodeTitle(it))}">${esc(label)}</button>`;
   }
 
   function dayPanelHTML(key, its) {
