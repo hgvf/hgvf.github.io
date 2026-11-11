@@ -70,13 +70,40 @@ export function sharesOf(exp, id = '') {
   return out;
 }
 
-/** Per-member totals. net > 0 → others owe them; net < 0 → they owe. */
-export function balances(table) {
+/* ── Multi-currency ──────────────────────────────────────────────
+   Each expense carries its own `cur` (falls back to the table's main
+   currency). Balances are kept per currency; to settle in one go the
+   user enters rates (`table.rates[cur]` = main-currency units per 1 unit
+   of `cur`) and everything is converted into the main currency. */
+export const curOf = (e, t) => (e?.cur && CURRENCIES[e.cur] ? e.cur : (t.currency || 'TWD'));
+
+/** Currencies used by the table, main currency first. */
+export function usedCurrencies(t) {
+  const set = new Set([t.currency || 'TWD']);
+  Object.values(t.expenses || {}).forEach(e => { if (e && e.amount > 0) set.add(curOf(e, t)); });
+  return [...set];
+}
+export function rateOf(t, c) {
+  if (c === (t.currency || 'TWD')) return 1;
+  const r = Number(t.rates?.[c]);
+  return r > 0 && Number.isFinite(r) ? r : null;
+}
+/** minor units of `c` → minor units of the main currency (null if no rate). */
+export function toBase(t, minor, c) {
+  const r = rateOf(t, c);
+  if (r == null) return null;
+  return Math.round(minor / 10 ** cur(c).dec * r * 10 ** cur(t.currency).dec);
+}
+
+const zero = () => ({ paid: 0, share: 0, sent: 0, recv: 0, net: 0 });
+
+/** Per-member totals in one currency. net > 0 → others owe them; net < 0 → they owe. */
+export function balances(table, c = table.currency || 'TWD') {
   const res = {};
-  (table.members || []).forEach(m => { res[m.id] = { paid: 0, share: 0, sent: 0, recv: 0, net: 0 }; });
-  const get = id => (res[id] ||= { paid: 0, share: 0, sent: 0, recv: 0, net: 0 });
+  (table.members || []).forEach(m => { res[m.id] = zero(); });
+  const get = id => (res[id] ||= zero());
   Object.entries(table.expenses || {}).forEach(([id, e]) => {
-    if (!e || !(e.amount > 0)) return;
+    if (!e || !(e.amount > 0) || curOf(e, table) !== c) return;
     if (e.kind === 'transfer') {
       get(e.payer).sent += e.amount;
       get(e.to).recv += e.amount;
@@ -87,6 +114,35 @@ export function balances(table) {
   });
   Object.values(res).forEach(r => { r.net = r.paid - r.share + r.sent - r.recv; });
   return res;
+}
+
+/** { cur: balances } for every used currency. */
+export function balancesByCur(table) {
+  return Object.fromEntries(usedCurrencies(table).map(c => [c, balances(table, c)]));
+}
+
+/** Everything converted into the main currency with the table's rates.
+    Currencies without a rate are listed in `missing` and left out.
+    Rounding residue is pushed onto the largest balance so nets sum to 0. */
+export function combined(table) {
+  const by = balancesByCur(table);
+  const missing = [];
+  const bal = {};
+  (table.members || []).forEach(m => { bal[m.id] = zero(); });
+  Object.entries(by).forEach(([c, b]) => {
+    if (rateOf(table, c) == null) { missing.push(c); return; }
+    Object.entries(b).forEach(([m, r]) => {
+      const o = (bal[m] ||= zero());
+      ['paid', 'share', 'sent', 'recv', 'net'].forEach(k => { o[k] += toBase(table, r[k], c); });
+    });
+  });
+  const ids = Object.keys(bal);
+  const residue = ids.reduce((s, m) => s + bal[m].net, 0);
+  if (residue && ids.length) {
+    const top = ids.slice().sort((a, b) => Math.abs(bal[b].net) - Math.abs(bal[a].net) || (a < b ? -1 : 1))[0];
+    bal[top].net -= residue;
+  }
+  return { bal, missing, complete: !missing.length, by };
 }
 
 /** Greedy settle-up: biggest debtor pays biggest creditor until all zero.
@@ -111,18 +167,24 @@ export function settle(bal) {
   return out;
 }
 
-/** Totals for the summary tab. */
+/** Totals for the summary tab. `totals` is per currency; `total`, `byCat`
+    and `byDay` are in the main currency (currencies in `missing` excluded). */
 export function stats(table) {
   const exps = Object.entries(table.expenses || {})
     .filter(([, e]) => e && e.kind !== 'transfer' && e.amount > 0);
-  const total = exps.reduce((s, [, e]) => s + e.amount, 0);
-  const byCat = {}, byDay = {};
+  const totals = {}, byCat = {}, byDay = {}, missing = new Set();
+  let total = 0;
   exps.forEach(([, e]) => {
-    byCat[e.cat || 'other'] = (byCat[e.cat || 'other'] || 0) + e.amount;
+    const c = curOf(e, table);
+    totals[c] = (totals[c] || 0) + e.amount;
+    const v = toBase(table, e.amount, c);
+    if (v == null) { missing.add(c); return; }
+    total += v;
+    byCat[e.cat || 'other'] = (byCat[e.cat || 'other'] || 0) + v;
     const d = dayKey(e.ts, e.tz);
-    byDay[d] = (byDay[d] || 0) + e.amount;
+    byDay[d] = (byDay[d] || 0) + v;
   });
-  return { total, count: exps.length, byCat, byDay };
+  return { total, totals, count: exps.length, byCat, byDay, missing: [...missing] };
 }
 
 /* ── Time zones ──────────────────────────────────────────────────
@@ -147,7 +209,8 @@ function partsIn(ts, tz) {
     _fmtCache.set(tz, f);
   }
   const o = {};
-  f.formatToParts(new Date(ts)).forEach(p => { o[p.type] = p.value; });
+  const d = new Date(ts);
+  f.formatToParts(Number.isFinite(d.getTime()) ? d : new Date(0)).forEach(p => { o[p.type] = p.value; });
   return { y: +o.year, m: +o.month, d: +o.day, h: +o.hour % 24, mi: +o.minute, s: +o.second };
 }
 /** Minutes east of UTC for `tz` at instant `ts` (Asia/Taipei → 480). */

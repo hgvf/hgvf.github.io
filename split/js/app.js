@@ -11,7 +11,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, doc, query, where, onSnapshot, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp,
+  collection, doc, query, where, onSnapshot, setDoc, updateDoc, deleteDoc, deleteField, serverTimestamp, arrayUnion,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { firebaseConfig } from '../../js/config.js';
 import * as L from './ledger.js';
@@ -37,6 +37,8 @@ const S = {
   filter: '',             // member filter on 明細
   openMembers: new Set(), // expanded member cards on 統整
   settleShown: false,
+  settleMode: 'merge',  // multi-currency: 'merge' (convert with rates) | 'split'
+  pendingJoin: null,    // table id we just joined via invite link
   settleAnim: false,
 };
 
@@ -113,8 +115,21 @@ function show(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === view));
 }
 
+const JOIN_RE = /^#join=([\w-]+)\.([a-z0-9]+)$/;
+
+function paintGate() {
+  const inv = JOIN_RE.test(location.hash);
+  $('gateText').innerHTML = inv
+    ? '你收到一張分帳表的邀請 ✉️<br>用 Google 登入後就會自動加入。'
+    : '這個工具只開放給登入的使用者。<br>登入後就能建立分帳表、邀請旅伴一起記帳。';
+  $('btnGateLogin').textContent = inv ? '登入並加入分帳表' : '使用 Google 登入';
+  show('vGate');
+}
+
 function route() {
-  if (!S.user) return;
+  if (!S.user) { if (S.authResolved) paintGate(); return; }
+  const j = location.hash.match(JOIN_RE);
+  if (j) { joinTable(j[1], j[2]); return; }
   const m = location.hash.match(/^#t=([\w-]+)/);
   if (!m) { S.cur = null; show('vList'); renderList(); return; }
   if (!S.loaded) return;                         // wait for the first snapshot
@@ -134,6 +149,39 @@ function route() {
   $('tScroll').scrollTop = 0;
 }
 addEventListener('popstate', route);
+
+/* ── Invite link ──────────────────────────────────────────────────
+   Link: split/#join=<tableId>.<inviteCode>. A non-member can't read the
+   table, so joining is a blind update that appends their own email to
+   `access` and echoes the code in `joinWith`; firestore.rules only allows
+   it when that code equals the table's current `inviteCode`. The list
+   listener then picks the table up (S.pendingJoin). */
+async function joinTable(id, code) {
+  if (S.tables.has(id)) {                           // already a member
+    history.replaceState(null, '', `#t=${id}`); route(); return;
+  }
+  if (!S.loaded || S.pendingJoin === id) return;    // wait for first snapshot / in flight
+  S.pendingJoin = id;
+  show('vBoot');
+  try {
+    await updateDoc(doc(db, COLL, id), { access: arrayUnion(S.user.email), joinWith: code, updatedAt: serverTimestamp() });
+    // Usually the snapshot handler finishes the job; this covers a cached
+    // listener that already saw the update before we got here.
+    setTimeout(() => {
+      if (S.pendingJoin !== id) return;
+      if (S.tables.has(id)) { S.pendingJoin = null; history.replaceState(null, '', `#t=${id}`); route(); }
+    }, 4000);
+  } catch (err) {
+    console.error(err);
+    S.pendingJoin = null;
+    history.replaceState(null, '', location.pathname);
+    toast(err.code === 'permission-denied' || err.code === 'not-found'
+      ? '邀請連結無效或已被重設，請向建立者要新的連結' : '加入失敗：' + (err.code || err.message));
+    route();
+  }
+}
+const inviteUrl = t => `${location.origin}${location.pathname}#join=${t.id}.${t.inviteCode}`;
+const newInviteCode = () => Array.from(crypto.getRandomValues(new Uint8Array(15)), b => (b % 36).toString(36)).join('') + Date.now().toString(36).slice(-3);
 
 function openTable(id) {
   history.pushState({ fromList: 1 }, '', `#t=${id}`);
@@ -160,15 +208,16 @@ $('btnGateLogin').addEventListener('click', login);
 
 onAuthStateChanged(auth, user => {
   S.user = user;
+  S.authResolved = true;
   S.unsub?.(); S.unsub = null;
   S.tables.clear(); S.loaded = false;
-  if (!user) { show('vGate'); return; }
+  if (!user) { paintGate(); return; }
 
   $('btnMe').innerHTML = user.photoURL
     ? `<img src="${esc(user.photoURL)}" alt="" referrerpolicy="no-referrer">`
     : esc([...(user.displayName || user.email || '?')][0]);
   $('hello').textContent = `嗨，${user.displayName || user.email}`;
-  show(location.hash.startsWith('#t=') ? 'vBoot' : 'vList');
+  show(/^#(t|join)=/.test(location.hash) ? 'vBoot' : 'vList');
   renderList();
 
   S.unsub = onSnapshot(
@@ -178,6 +227,15 @@ onAuthStateChanged(auth, user => {
       snap.docs.forEach(d => S.tables.set(d.id, { id: d.id, ...d.data() }));
       const first = !S.loaded;
       S.loaded = true;
+      if (S.pendingJoin && S.tables.has(S.pendingJoin)) {
+        const id = S.pendingJoin; S.pendingJoin = null;
+        history.replaceState(null, '', `#t=${id}`);
+        route();
+        confetti({ n: 120 }); buzz([15, 40, 15]);
+        const t = S.tables.get(id);
+        if (!myMember(t)) setTimeout(() => pickMeSheet(t, { joined: true }), 450);
+        return;
+      }
       if (first) route();
       else if (S.cur) {
         if (S.tables.has(S.cur)) renderTable();
@@ -250,7 +308,6 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && sheetWrap.classList
 })();
 
 /* ── List view ────────────────────────────────────────────────── */
-function tableTotal(t) { return L.stats(t).total; }
 function tableRange(t) {
   const ex = Object.values(t.expenses || {}).filter(e => e?.ts).sort((a, b) => a.ts - b.ts);
   if (!ex.length) return '還沒有任何紀錄';
@@ -275,7 +332,8 @@ function renderList() {
     return;
   }
   box.innerHTML = list.map((t, i) => {
-    const total = tableTotal(t);
+    const st = L.stats(t);
+    const total = st.missing.length ? fmtTotals(st.totals) : (Object.keys(st.totals).length > 1 ? '≈ ' : '') + L.fmt(st.total, t.currency);
     const mine = t.owner === S.user.uid;
     return `<button type="button" class="tcard" data-id="${esc(t.id)}" style="--i:${i}">
       <span class="tcard-emoji">${esc(t.emoji || '✈️')}</span>
@@ -284,7 +342,7 @@ function renderList() {
         <span class="tcard-meta">${esc(tableRange(t))} · ${t.members?.length || 0} 人${mine ? '' : ' · 共用'}</span>
         <span class="av-stack">${(t.members || []).slice(0, 6).map(m => avatar(m, 'sm')).join('')}</span>
       </span>
-      <span class="tcard-total">${esc(L.fmt(total, t.currency))}</span>
+      <span class="tcard-total">${esc(total || L.fmt(0, t.currency))}</span>
     </button>`;
   }).join('');
   box.querySelectorAll('.tcard').forEach(b => b.addEventListener('click', () => openTable(b.dataset.id)));
@@ -301,7 +359,7 @@ $('btnNewTable').addEventListener('click', () => {
     <div class="field"><span>圖示</span>
       <div class="emoji-row" id="cEmoji">${EMOJIS.map((e, i) =>
         `<button type="button" class="emoji-opt${i ? '' : ' on'}" data-e="${e}">${e}</button>`).join('')}</div></div>
-    <label class="field"><span>幣別</span>
+    <label class="field"><span>主要幣別 <em>結算時換算成這個；每筆款項仍可選別的幣別</em></span>
       <select id="cCur">${Object.entries(L.CURRENCIES).map(([k, v]) =>
         `<option value="${k}">${v.label}（${k}）</option>`).join('')}</select></label>
     <div class="field"><span>人數</span>
@@ -372,33 +430,56 @@ function parseEmails(text) {
 }
 
 /* ── Table view ───────────────────────────────────────────────── */
+// "NT$1,200 + ¥3,000" for a { cur: minor } map (zero entries skipped).
+function fmtTotals(map, { signed = false } = {}) {
+  const parts = Object.entries(map).filter(([, v]) => v).map(([c, v]) =>
+    (signed ? (v > 0 ? '+' : '−') : '') + L.fmt(Math.abs(v), c));
+  return parts.length ? parts.join(signed ? '　' : ' + ') : '';
+}
+const netsOf = (K, mid) => Object.fromEntries(Object.entries(K.by).map(([c, b]) => [c, b[mid]?.net || 0]));
+
 function renderTable() {
   const t = curTable(); if (!t) return;
   const st = L.stats(t);
-  const bal = L.balances(t);
+  const K = L.combined(t);
   const c = t.currency;
+  const multi = Object.keys(st.totals).length > 1;
   $('tTitle').innerHTML = `<span class="tt-emoji">${esc(t.emoji || '✈️')}</span>${esc(t.name)}`;
-  countUp($('heroTotal'), st.total, v => L.fmt(v, c));
+
+  const heroTotal = $('heroTotal');
+  heroTotal.classList.toggle('multi', !K.complete);
+  if (K.complete) countUp(heroTotal, st.total, v => (multi ? '≈ ' : '') + L.fmt(v, c));
+  else { heroTotal.dataset.v = '0'; heroTotal.textContent = fmtTotals(st.totals); }
   const n = t.members?.length || 1;
-  $('heroSub').textContent = `${st.count} 筆 · 人均 ${L.fmt(Math.round(st.total / n), c)}`;
+  $('heroSub').textContent = `${st.count} 筆` +
+    (K.complete ? ` · 人均 ${L.fmt(Math.round(st.total / n), c)}` : '') +
+    (multi ? (K.complete ? ` · 依匯率換算成 ${c}` : ' · 到「結算」填匯率即可合併') : '');
 
   const me = myMember(t);
   if (me) {
-    const net = bal[me.id]?.net || 0;
-    $('heroMe').innerHTML = net > 0
-      ? `${avatar(me, 'xs')} 你可以收回 <b class="pos">${esc(L.fmt(net, c))}</b>`
-      : net < 0
-        ? `${avatar(me, 'xs')} 你還需要付 <b class="neg">${esc(L.fmt(-net, c))}</b>`
-        : `${avatar(me, 'xs')} 你目前收支平衡 👌`;
+    if (K.complete) {
+      const net = K.bal[me.id]?.net || 0;
+      $('heroMe').innerHTML = net > 0
+        ? `${avatar(me, 'xs')} 你可以收回 <b class="pos">${esc(L.fmt(net, c))}</b>`
+        : net < 0
+          ? `${avatar(me, 'xs')} 你還需要付 <b class="neg">${esc(L.fmt(-net, c))}</b>`
+          : `${avatar(me, 'xs')} 你目前收支平衡 👌`;
+    } else {
+      const s = fmtTotals(netsOf(K, me.id), { signed: true });
+      $('heroMe').innerHTML = `${avatar(me, 'xs')} ${s ? `你的收支 <b>${esc(s)}</b>` : '你目前收支平衡 👌'}`;
+    }
   } else {
     $('heroMe').innerHTML = `<button type="button" class="chip-btn" id="pickMe">我是誰？點這裡設定</button>`;
     $('pickMe').addEventListener('click', () => pickMeSheet(t));
   }
   $('heroMembers').innerHTML = (t.members || []).map(m => {
-    const net = bal[m.id]?.net || 0;
+    // Combined net when every rate is known; otherwise the main-currency net
+    // with a "+外幣" hint if they also have foreign-currency balances.
+    const net = K.complete ? (K.bal[m.id]?.net || 0) : (K.by[c]?.[m.id]?.net || 0);
+    const foreign = !K.complete && Object.entries(K.by).some(([cc, b]) => cc !== c && b[m.id]?.net);
     return `<span class="hm${me?.id === m.id ? ' me' : ''}">${avatar(m)}
       <span class="hm-name">${esc(m.name)}</span>
-      <span class="hm-net ${net > 0 ? 'pos' : net < 0 ? 'neg' : ''}">${net > 0 ? '+' : net < 0 ? '−' : ''}${esc(L.fmtNum(Math.abs(net), c))}</span></span>`;
+      <span class="hm-net ${net > 0 ? 'pos' : net < 0 ? 'neg' : ''}">${net > 0 ? '+' : net < 0 ? '−' : ''}${esc(L.fmtNum(Math.abs(net), c))}${foreign ? '<i>+外幣</i>' : ''}</span></span>`;
   }).join('');
 
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === S.tab));
@@ -407,8 +488,8 @@ function renderTable() {
   $('btnAdd').classList.toggle('hide', S.tab === 'settle');
 
   renderListPanel(t);
-  renderSummaryPanel(t, bal, st);
-  renderSettlePanel(t, bal);
+  renderSummaryPanel(t, K, st);
+  renderSettlePanel(t);
 }
 
 function moveInk() {
@@ -423,20 +504,35 @@ document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () =>
   S.tab = b.dataset.tab; buzz(5); renderTable();
 }));
 
-function pickMeSheet(t) {
+// `joined` → shown right after accepting an invite: also offers "I'm not on the list".
+function pickMeSheet(t, { joined = false } = {}) {
+  const myName = (S.user.displayName || S.user.email.split('@')[0]).split(' ')[0].slice(0, 16);
+  const taken = t.members.some(m => m.name === myName);
   openSheet(`
-    <h2 class="sheet-title">你是哪一位？</h2>
-    <p class="muted">只存在這台裝置，用來顯示「你還需要付多少」。</p>
+    <h2 class="sheet-title">${joined ? `🎉 已加入「${esc(t.name)}」` : '你是哪一位？'}</h2>
+    <p class="muted">${joined ? '選一下你是哪一位，' : ''}只存在這台裝置，用來顯示「你還需要付多少」。</p>
     <div class="pick-grid">${t.members.map(m =>
-      `<button type="button" class="pick" data-id="${esc(m.id)}">${avatar(m, 'lg')}<span>${esc(m.name)}</span></button>`).join('')}</div>`,
-  body => body.querySelectorAll('.pick').forEach(b => b.addEventListener('click', () => {
-    store.set(meKey(t.id), b.dataset.id); closeSheet(); buzz(10); renderTable();
-  })));
+      `<button type="button" class="pick" data-id="${esc(m.id)}">${avatar(m, 'lg')}<span>${esc(m.name)}</span></button>`).join('')}
+      ${taken ? '' : `<button type="button" class="pick pick-add" id="pickAdd"><span class="av lg" style="--c:#B9A58F">＋</span><span>我不在名單上<br><small>加入「${esc(myName)}」</small></span></button>`}
+    </div>`,
+  body => {
+    body.querySelectorAll('.pick[data-id]').forEach(b => b.addEventListener('click', () => {
+      store.set(meKey(t.id), b.dataset.id); closeSheet(); buzz(10); renderTable();
+    }));
+    body.querySelector('#pickAdd')?.addEventListener('click', async e => {
+      e.currentTarget.disabled = true;
+      const usedColors = new Set(t.members.map(m => m.color));
+      const m = { id: uid('m'), name: myName, color: PALETTE.find(p => !usedColors.has(p)) || PALETTE[t.members.length % PALETTE.length] };
+      try {
+        await updateDoc(doc(db, COLL, t.id), { members: [...t.members, m], updatedAt: serverTimestamp() });
+        store.set(meKey(t.id), m.id); closeSheet(); buzz(10); toast(`已把「${myName}」加進成員`);
+      } catch (err) { toast('加入失敗：' + (err.code || err.message)); e.currentTarget.disabled = false; }
+    });
+  });
 }
 
 /* 明細 */
 function renderListPanel(t) {
-  const c = t.currency;
   const entries = Object.entries(t.expenses || {})
     .filter(([, e]) => e && e.amount > 0)
     .filter(([id, e]) => !S.filter || e.payer === S.filter || e.to === S.filter
@@ -460,9 +556,10 @@ function renderListPanel(t) {
       groups.get(k).push(en);
     });
     html += [...groups].map(([k, rows]) => {
-      const sum = rows.reduce((s, [, e]) => s + (e.kind === 'transfer' ? 0 : e.amount), 0);
+      const sums = {};
+      rows.forEach(([, e]) => { if (e.kind !== 'transfer') { const cc = L.curOf(e, t); sums[cc] = (sums[cc] || 0) + e.amount; } });
       return `<div class="day">
-        <div class="day-head"><span>${dayLabel(k)}</span><span>${esc(L.fmt(sum, c))}</span></div>
+        <div class="day-head"><span>${dayLabel(k)}</span><span>${esc(fmtTotals(sums))}</span></div>
         ${rows.map(([id, e]) => rowHtml(t, id, e)).join('')}
       </div>`;
     }).join('');
@@ -473,8 +570,14 @@ function renderListPanel(t) {
   p.querySelectorAll('.row').forEach(r => r.addEventListener('click', () => expenseSheet(t, r.dataset.id)));
 }
 
+// Amount in its own currency; foreign ones also show "≈ NT$x" when a rate is set.
+function amtHtml(t, e) {
+  const cc = L.curOf(e, t);
+  const conv = cc !== t.currency ? L.toBase(t, e.amount, cc) : null;
+  return `<span class="row-amt">${esc(L.fmt(e.amount, cc))}${conv != null ? `<small>≈ ${esc(L.fmt(conv, t.currency))}</small>` : ''}</span>`;
+}
+
 function rowHtml(t, id, e) {
-  const c = t.currency;
   const payer = memberOf(t, e.payer);
   if (e.kind === 'transfer') {
     const to = memberOf(t, e.to);
@@ -482,7 +585,7 @@ function rowHtml(t, id, e) {
       <span class="row-ic">💸</span>
       <span class="row-main"><span class="row-title">${esc(payer.name)} 還給 ${esc(to.name)}</span>
       <span class="row-sub">${timeOf(e)} · 還款紀錄</span></span>
-      <span class="row-amt">${esc(L.fmt(e.amount, c))}</span></button>`;
+      ${amtHtml(t, e)}</button>`;
   }
   const cat = L.catOf(e.cat);
   const sh = Object.keys(L.sharesOf(e, id));
@@ -491,50 +594,69 @@ function rowHtml(t, id, e) {
     <span class="row-ic">${cat.emoji}</span>
     <span class="row-main"><span class="row-title">${esc(e.title || cat.label)}</span>
     <span class="row-sub">${timeOf(e)} · ${avatar(payer, 'xs')} ${esc(payer.name)} 付 · 分給 ${esc(who)}${e.custom ? '（自訂）' : ''}</span></span>
-    <span class="row-amt">${esc(L.fmt(e.amount, c))}</span></button>`;
+    ${amtHtml(t, e)}</button>`;
 }
 
 /* 統整 */
-function renderSummaryPanel(t, bal, st) {
+function renderSummaryPanel(t, K, st) {
   const c = t.currency;
   const p = $('pSummary');
   if (!st.count) { p.innerHTML = `<div class="empty"><div class="empty-art">📊</div><p class="muted">有紀錄之後，這裡會整理每個人付了什麼。</p></div>`; return; }
-  const maxAbs = Math.max(1, ...Object.values(bal).map(b => Math.abs(b.net)));
+  const curs = Object.keys(K.by);
+  const multi = curs.length > 1;
   const exps = Object.entries(t.expenses || {}).filter(([, e]) => e && e.kind !== 'transfer' && e.amount > 0)
     .sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
+  // Net bar: combined when possible, else main currency only.
+  const netFor = mid => (K.complete ? K.bal[mid]?.net : K.by[c]?.[mid]?.net) || 0;
+  const maxAbs = Math.max(1, ...t.members.map(m => Math.abs(netFor(m.id))));
 
   const people = t.members.map(m => {
-    const b = bal[m.id] || { paid: 0, share: 0, net: 0, sent: 0, recv: 0 };
+    const pick = k => Object.fromEntries(curs.map(cc => [cc, K.by[cc][m.id]?.[k] || 0]));
+    const paid = pick('paid'), share = pick('share'), sent = pick('sent'), recv = pick('recv');
     const paidList = exps.filter(([, e]) => e.payer === m.id);
-    const w = Math.abs(b.net) / maxAbs * 50;
+    const net = netFor(m.id);
+    const w = Math.abs(net) / maxAbs * 50;
     const open = S.openMembers.has(m.id);
+    const netText = K.complete
+      ? `${net > 0 ? '應收 ' : net < 0 ? '應付 ' : '已平衡 '}${net ? esc(L.fmt(Math.abs(net), c)) : ''}${multi ? '<small>（合併換算）</small>' : ''}`
+      : (fmtTotals(netsOf(K, m.id), { signed: true }) ? `收支 ${esc(fmtTotals(netsOf(K, m.id), { signed: true }))}` : '已平衡');
+    const xfer = [fmtTotals(sent) && '付出 ' + fmtTotals(sent), fmtTotals(recv) && '收到 ' + fmtTotals(recv)].filter(Boolean).join('、');
     return `<div class="pcard${open ? ' open' : ''}" data-id="${esc(m.id)}">
       <button type="button" class="pcard-head">
         ${avatar(m)}
         <span class="pcard-name">${esc(m.name)}<small>付了 ${paidList.length} 筆</small></span>
         <span class="pcard-nums">
-          <span>已付 <b>${esc(L.fmt(b.paid, c))}</b></span>
-          <span>應分攤 <b>${esc(L.fmt(b.share, c))}</b></span>
+          <span>已付 <b>${esc(fmtTotals(paid) || L.fmt(0, c))}</b></span>
+          <span>應分攤 <b>${esc(fmtTotals(share) || L.fmt(0, c))}</b></span>
         </span>
       </button>
       <div class="netbar"><span class="netbar-mid"></span>
-        <span class="netbar-fill ${b.net >= 0 ? 'pos' : 'neg'}" style="--w:${w}%"></span></div>
-      <div class="pcard-net ${b.net > 0 ? 'pos' : b.net < 0 ? 'neg' : ''}">${b.net > 0 ? '應收 ' : b.net < 0 ? '應付 ' : '已平衡 '}${b.net ? esc(L.fmt(Math.abs(b.net), c)) : ''}
-        ${b.sent || b.recv ? `<small>（含還款 ${b.sent ? '付出 ' + esc(L.fmt(b.sent, c)) : ''}${b.sent && b.recv ? '、' : ''}${b.recv ? '收到 ' + esc(L.fmt(b.recv, c)) : ''}）</small>` : ''}</div>
+        <span class="netbar-fill ${net >= 0 ? 'pos' : 'neg'}" style="--w:${w}%"></span></div>
+      <div class="pcard-net ${K.complete ? (net > 0 ? 'pos' : net < 0 ? 'neg' : '') : ''}">${netText}
+        ${xfer ? `<small>（含還款 ${esc(xfer)}）</small>` : ''}</div>
       <div class="pcard-body"><div>
         ${paidList.length ? paidList.map(([, e]) => `<div class="mini">
           <span>${L.catOf(e.cat).emoji} ${esc(e.title || L.catOf(e.cat).label)}</span>
           <span class="muted">${dayLabel(L.dayKey(e.ts, e.tz))}</span>
-          <b>${esc(L.fmt(e.amount, c))}</b></div>`).join('') : '<p class="muted">還沒有付過錢 😇</p>'}
+          <b>${esc(L.fmt(e.amount, L.curOf(e, t)))}</b></div>`).join('') : '<p class="muted">還沒有付過錢 😇</p>'}
       </div></div>
     </div>`;
   }).join('');
+
+  const missNote = st.missing.length
+    ? `<p class="note">⚠️ ${esc(st.missing.join('、'))} 還沒有匯率，以下未計入（到「結算」填入）</p>` : '';
+  const conv = multi && !st.missing.length ? `<p class="note">已依匯率換算成 ${esc(c)}</p>` : '';
+  const curCard = multi ? `<h3 class="sec">各幣別支出</h3><div class="card">${Object.entries(st.totals).map(([cc, v]) => {
+    const b = L.toBase(t, v, cc);
+    return `<div class="cat-li"><i style="background:var(--accent)"></i><span>${esc(L.cur(cc).label)}（${cc}）</span>
+      <span class="muted">${cc !== c && b != null ? '≈ ' + esc(L.fmt(b, c)) : ''}</span><b>${esc(L.fmt(v, cc))}</b></div>`;
+  }).join('')}</div>` : '';
 
   const cats = Object.entries(st.byCat).sort((a, b) => b[1] - a[1]);
   const catColors = { food: '#D9644A', traffic: '#4F7FB8', stay: '#8E6BBF', ticket: '#E8A33D', shop: '#C2577F', drink: '#3A9C9C', other: '#9B7E68' };
   const catBar = cats.map(([k, v]) => `<span style="flex:${v};background:${catColors[k] || '#999'}" title="${esc(L.catOf(k).label)}"></span>`).join('');
   const catList = cats.map(([k, v]) => `<div class="cat-li"><i style="background:${catColors[k] || '#999'}"></i>
-    <span>${L.catOf(k).emoji} ${L.catOf(k).label}</span><span class="muted">${Math.round(v / st.total * 100)}%</span><b>${esc(L.fmt(v, c))}</b></div>`).join('');
+    <span>${L.catOf(k).emoji} ${L.catOf(k).label}</span><span class="muted">${Math.round(v / (st.total || 1) * 100)}%</span><b>${esc(L.fmt(v, c))}</b></div>`).join('');
 
   const days = Object.entries(st.byDay).sort((a, b) => a[0].localeCompare(b[0]));
   const maxDay = Math.max(1, ...days.map(d => d[1]));
@@ -544,10 +666,11 @@ function renderSummaryPanel(t, bal, st) {
   p.innerHTML = `
     <h3 class="sec">每個人 <small>點開看誰付了哪些</small></h3>
     <div class="people">${people}</div>
-    <h3 class="sec">花在哪裡</h3>
-    <div class="card"><div class="catbar">${catBar}</div>${catList}</div>
-    <h3 class="sec">每日花費</h3>
-    <div class="card"><div class="dbars">${dayBars}</div></div>`;
+    ${curCard}
+    <h3 class="sec">花在哪裡</h3>${missNote || conv}
+    <div class="card">${cats.length ? `<div class="catbar">${catBar}</div>${catList}` : '<p class="muted">填入匯率後顯示</p>'}</div>
+    <h3 class="sec">每日花費 <small>${esc(c)}</small></h3>
+    <div class="card">${days.length ? `<div class="dbars">${dayBars}</div>` : '<p class="muted">填入匯率後顯示</p>'}</div>`;
   p.querySelectorAll('.pcard-head').forEach(h => h.addEventListener('click', () => {
     const card = h.closest('.pcard'); const id = card.dataset.id;
     if (S.openMembers.has(id)) S.openMembers.delete(id); else S.openMembers.add(id);
@@ -555,40 +678,115 @@ function renderSummaryPanel(t, bal, st) {
   }));
 }
 
-/* 結算 */
-function renderSettlePanel(t, bal) {
+/* 結算
+   Single currency → one plan. Several currencies → the user types rates
+   (shared on the table doc) and picks:
+     merge — convert everything into the main currency, one plan;
+     split — settle each currency on its own (no rates needed). */
+function settlePlan(t, mode) {
+  if (mode === 'split') {
+    return Object.entries(L.balancesByCur(t)).flatMap(([cc, b]) => L.settle(b).map(x => ({ ...x, cur: cc })));
+  }
+  const K = L.combined(t);
+  return K.complete ? L.settle(K.bal).map(x => ({ ...x, cur: t.currency })) : null;
+}
+
+function ratesCard(t, curs) {
+  const c = t.currency;
+  const foreign = curs.filter(cc => cc !== c);
+  return `<div class="card rates">
+    <div class="rates-head"><b>💱 匯率</b><small>大家共用，改了會同步。可用刷卡帳單上的實際匯率，或搜尋「${esc(foreign[0])} ${esc(c)}」。</small></div>
+    ${foreign.map(cc => {
+      const r = L.rateOf(t, cc);
+      const tot = L.stats(t).totals[cc] || 0;
+      return `<label class="rate-row">
+        <span class="rate-l">1 ${esc(cc)} =</span>
+        <input class="rate-in" data-c="${esc(cc)}" inputmode="decimal" placeholder="例如 ${esc(RATE_HINT[cc]?.[c] ?? '')}" value="${r != null ? esc(String(r)) : ''}">
+        <span class="rate-r">${esc(c)}</span>
+        <span class="rate-p ${r == null ? 'miss' : ''}" data-p="${esc(cc)}">${r == null ? '尚未填入' : `${esc(L.fmt(tot, cc))} ≈ ${esc(L.fmt(L.toBase(t, tot, cc), c))}`}</span>
+      </label>`;
+    }).join('')}
+  </div>`;
+}
+// Ballpark placeholders only (not used in any maths).
+const RATE_HINT = { JPY: { TWD: '0.21' }, KRW: { TWD: '0.023' }, USD: { TWD: '32' }, EUR: { TWD: '35' }, HKD: { TWD: '4.1' }, THB: { TWD: '0.95' }, CNY: { TWD: '4.5' } };
+
+function renderSettlePanel(t) {
   const c = t.currency;
   const p = $('pSettle');
   const st = L.stats(t);
   if (!st.count) { p.innerHTML = `<div class="empty"><div class="empty-art">🧮</div><p class="muted">先記幾筆帳，再來結算。</p></div>`; return; }
-  const plan = L.settle(bal);
+  const curs = L.usedCurrencies(t).filter(cc => st.totals[cc] || cc === c);
+  const multi = curs.length > 1;
+  const mode = multi ? (S.settleMode || 'merge') : 'merge';
+  const plan = settlePlan(t, mode);
+
+  const head = multi ? `${ratesCard(t, curs)}
+    <div class="mode-row"><span class="seg seg-lg" id="sMode">
+      <button type="button" data-m="merge" class="${mode === 'merge' ? 'on' : ''}">合併成 ${esc(c)} 結算</button>
+      <button type="button" data-m="split" class="${mode === 'split' ? 'on' : ''}">各幣別分開結算</button></span></div>` : '';
+
+  const wire = () => {
+    p.querySelectorAll('.rate-in').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const v = Number(inp.value.replace(/,/g, ''));
+        const pv = p.querySelector(`[data-p="${inp.dataset.c}"]`);
+        const tot = st.totals[inp.dataset.c] || 0;
+        if (v > 0) { pv.classList.remove('miss'); pv.textContent = `${L.fmt(tot, inp.dataset.c)} ≈ ${L.fmt(Math.round(tot / 10 ** L.cur(inp.dataset.c).dec * v * 10 ** L.cur(c).dec), c)}`; }
+        else { pv.classList.add('miss'); pv.textContent = inp.value ? '請輸入大於 0 的數字' : '尚未填入'; }
+      });
+      inp.addEventListener('change', async () => {
+        const raw = inp.value.replace(/,/g, '').trim();
+        const v = Number(raw);
+        if (raw && !(v > 0)) { toast('匯率要是大於 0 的數字'); return; }
+        const rates = { ...(t.rates || {}) };
+        if (raw) rates[inp.dataset.c] = v; else delete rates[inp.dataset.c];
+        try { await updateDoc(doc(db, COLL, t.id), { rates, updatedAt: serverTimestamp() }); toast(`已更新 ${inp.dataset.c} 匯率`); buzz(8); }
+        catch (err) { toast('儲存失敗：' + (err.code || err.message)); }
+      });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+    });
+    p.querySelector('#sMode')?.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b || b.dataset.m === mode) return;
+      S.settleMode = b.dataset.m; buzz(5); renderSettlePanel(curTable());
+    });
+  };
+
+  if (plan === null) {
+    const K = L.combined(t);
+    p.innerHTML = head + `<div class="empty small"><div class="empty-art">💱</div>
+      <p>填入 <b>${esc(K.missing.join('、'))}</b> 的匯率，<br>就能把所有幣別合併成 ${esc(c)} 一次結清。</p>
+      <p class="muted">或改用「各幣別分開結算」，不用匯率。</p></div>`;
+    wire(); return;
+  }
   if (!plan.length) {
-    p.innerHTML = `<div class="done-card"><div class="done-art">🎉</div><h3>全員結清！</h3>
+    p.innerHTML = head + `<div class="done-card"><div class="done-art">🎉</div><h3>全員結清！</h3>
       <p class="muted">沒有人欠誰，可以安心規劃下一趟旅行了。</p>
       <button type="button" class="btn btn-ghost" id="btnParty">再放一次彩帶</button></div>`;
     p.querySelector('#btnParty').addEventListener('click', () => { confetti(); buzz(30); });
-    return;
+    wire(); return;
   }
   if (!S.settleShown) {
-    p.innerHTML = `<div class="settle-start">
+    p.innerHTML = head + `<div class="settle-start">
       <div class="ss-stack" aria-hidden="true">${t.members.slice(0, 5).map((m, i) => `<span style="--i:${i}">${avatar(m, 'lg')}</span>`).join('')}</div>
       <p>${t.members.length} 個人、${st.count} 筆帳<br>最少只要 <b>${plan.length}</b> 筆轉帳就能結清</p>
       <button type="button" class="btn btn-primary btn-lg btn-settle" id="btnSettle"><span class="bs-ic">🧮</span> 開始結算</button></div>`;
     p.querySelector('#btnSettle').addEventListener('click', e => {
       e.currentTarget.classList.add('spin');
       buzz([10, 40, 10]);
-      setTimeout(() => { S.settleShown = true; S.settleAnim = true; renderSettlePanel(curTable(), L.balances(curTable())); }, 650);
+      setTimeout(() => { S.settleShown = true; S.settleAnim = true; renderSettlePanel(curTable()); }, 650);
     });
-    return;
+    wire(); return;
   }
   const anim = S.settleAnim; S.settleAnim = false;
-  p.innerHTML = `
-    <p class="settle-hint">照下面轉帳就能結清。付完按「已付款」，結果會即時同步給大家。</p>
+  const hasXfer = Object.values(t.expenses || {}).some(e => e?.kind === 'transfer');
+  p.innerHTML = head + `
+    <p class="settle-hint">照下面轉帳就能結清。付完按「已付款」，結果會即時同步給大家。${multi && hasXfer ? '<br>⚠️ 已有還款紀錄時切換結算方式，金額會依新方式重算。' : ''}</p>
     <div class="transfers">${plan.map((x, i) => {
       const f = memberOf(t, x.from), to = memberOf(t, x.to);
       return `<div class="xfer${anim ? ' in' : ''}" style="--i:${i}" data-i="${i}">
         <div class="xfer-who"><span class="xa">${avatar(f, 'lg')}<b>${esc(f.name)}</b></span>
-          <span class="xfer-arrow"><span class="xfer-amt">${esc(L.fmt(x.amount, c))}</span><span class="xfer-line"><i>🪙</i></span></span>
+          <span class="xfer-arrow"><span class="xfer-amt">${esc(L.fmt(x.amount, x.cur))}</span><span class="xfer-line"><i>🪙</i></span></span>
           <span class="xb">${avatar(to, 'lg')}<b>${esc(to.name)}</b></span></div>
         <button type="button" class="btn btn-primary btn-paid">✓ 已付款</button>
       </div>`;
@@ -597,8 +795,11 @@ function renderSettlePanel(t, bal) {
       <button type="button" class="btn btn-ghost" id="btnCopy">📋 複製結算結果</button>
       ${navigator.share ? '<button type="button" class="btn btn-ghost" id="btnShare">📤 分享</button>' : ''}
     </div>`;
-  const text = () => `【${t.emoji || ''}${t.name}】分帳結算\n總支出 ${L.fmt(st.total, c)}\n` +
-    plan.map(x => `${memberOf(t, x.from).name} → ${memberOf(t, x.to).name}  ${L.fmt(x.amount, c)}`).join('\n');
+  wire();
+  const rateLine = multi && mode === 'merge'
+    ? '匯率：' + curs.filter(cc => cc !== c).map(cc => `1 ${cc} = ${L.rateOf(t, cc)} ${c}`).join('、') + '\n' : '';
+  const text = () => `【${t.emoji || ''}${t.name}】分帳結算\n總支出 ${multi && mode === 'merge' ? '≈ ' + L.fmt(st.total, c) + '（' + fmtTotals(st.totals) + '）' : fmtTotals(st.totals)}\n${rateLine}` +
+    plan.map(x => `${memberOf(t, x.from).name} → ${memberOf(t, x.to).name}  ${L.fmt(x.amount, x.cur)}`).join('\n');
   p.querySelector('#btnCopy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(text()); toast('已複製，貼到群組吧'); buzz(10); }
     catch { toast('複製失敗，請手動選取'); }
@@ -611,9 +812,9 @@ function renderSettlePanel(t, bal) {
     await coins(card.querySelector('.xa .av'), card.querySelector('.xb .av'), { n: 7 });
     card.classList.add('out');
     try {
-      await writeExpense(t.id, uid('x'), { kind: 'transfer', amount: x.amount, payer: x.from, to: x.to, ts: Date.now(), tz: DEVICE_TZ });
-      const left = L.settle(L.balances(curTable()));
-      if (!left.length) { confetti({ n: 220 }); buzz([20, 60, 20, 60, 40]); }
+      await writeExpense(t.id, uid('x'), { kind: 'transfer', amount: x.amount, cur: x.cur, payer: x.from, to: x.to, ts: Date.now(), tz: DEVICE_TZ });
+      const left = settlePlan(curTable(), mode);
+      if (left && !left.length) { confetti({ n: 220 }); buzz([20, 60, 20, 60, 40]); }
     } catch (err) { toast('寫入失敗：' + (err.code || err.message)); card.classList.remove('out'); ev.currentTarget.disabled = false; }
   }));
 }
@@ -637,14 +838,24 @@ addEventListener('keydown', e => {
   const t = S.cur && curTable(); if (t) { e.preventDefault(); expenseSheet(t, null); }
 });
 
+// Currency options: ones already used in this table first, then the rest.
+function curOptions(t, sel) {
+  const used = L.usedCurrencies(t);
+  const rest = Object.keys(L.CURRENCIES).filter(k => !used.includes(k));
+  const o = k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${esc(L.cur(k).sym)} ${k} ${esc(L.cur(k).label)}</option>`;
+  return `<optgroup label="這張表用過">${used.map(o).join('')}</optgroup><optgroup label="其他">${rest.map(o).join('')}</optgroup>`;
+}
+
 function expenseSheet(t, id) {
   const old = id ? t.expenses[id] : null;
-  const c = t.currency, dec = L.cur(c).dec;
+  // Currency: editing keeps the record's; new entries reuse this table's last pick.
+  const lastCur = store.get(`split_cur_${t.id}`);
+  let ec = old ? L.curOf(old, t) : (L.CURRENCIES[lastCur] ? lastCur : t.currency);
   if (old?.kind === 'transfer') {
     const f = memberOf(t, old.payer), to = memberOf(t, old.to);
     openSheet(`<h2 class="sheet-title">還款紀錄</h2>
       <div class="xfer-who static"><span class="xa">${avatar(f, 'lg')}<b>${esc(f.name)}</b></span>
-        <span class="xfer-arrow"><span class="xfer-amt">${esc(L.fmt(old.amount, c))}</span><span class="xfer-line"></span></span>
+        <span class="xfer-arrow"><span class="xfer-amt">${esc(L.fmt(old.amount, ec))}</span><span class="xfer-line"></span></span>
         <span class="xb">${avatar(to, 'lg')}<b>${esc(to.name)}</b></span></div>
       <p class="muted center">${esc(new Date(old.ts).toLocaleString('zh-TW', { timeZone: L.validTz(old.tz) ? old.tz : DEVICE_TZ }))}（${esc(L.tzName(L.validTz(old.tz) ? old.tz : DEVICE_TZ))}）</p>
       <div class="sheet-actions"><button type="button" class="btn btn-ghost" data-close>關閉</button>
@@ -672,8 +883,10 @@ function expenseSheet(t, id) {
 
   openSheet(`
     <h2 class="sheet-title">${old ? '編輯這筆' : '記一筆'}</h2>
-    <div class="amount-in"><span class="cur-sym">${esc(L.cur(c).sym)}</span>
-      <input id="eAmt" inputmode="decimal" autocomplete="off" placeholder="0" value="${old ? esc(L.fmtNum(old.amount, c).replace(/,/g, '')) : ''}"></div>
+    <div class="amount-in">
+      <label class="cur-pick" title="換幣別"><span class="cur-sym" id="eSym">${esc(L.cur(ec).sym)}<small>${ec} ▾</small></span>
+        <select id="eCur" aria-label="幣別">${curOptions(t, ec)}</select></label>
+      <input id="eAmt" inputmode="decimal" autocomplete="off" placeholder="0" value="${old ? esc(L.fmtNum(old.amount, ec).replace(/,/g, '')) : ''}"></div>
     <label class="field"><span>款項</span>
       <input id="eTitle" maxlength="40" placeholder="例如：一蘭拉麵、計程車" value="${esc(old?.title || '')}" autocomplete="off"></label>
     <div class="cat-row" id="eCat">${L.CATEGORIES.map(k =>
@@ -698,7 +911,7 @@ function expenseSheet(t, id) {
       <button type="button" class="btn btn-primary" id="eSave">${old ? '儲存' : '記下來'}</button>
     </div>`, body => {
     const amtIn = body.querySelector('#eAmt'), titleIn = body.querySelector('#eTitle');
-    const amount = () => L.toMinor(amtIn.value, c);
+    const amount = () => L.toMinor(amtIn.value, ec);
 
     const paint = () => {
       body.querySelectorAll('#eCat .cat-opt').forEach(b => b.classList.toggle('on', b.dataset.c === st.cat));
@@ -709,27 +922,32 @@ function expenseSheet(t, id) {
       if (st.custom) {
         const prev = Object.fromEntries([...box.querySelectorAll('input')].map(i => [i.dataset.id, i.value]));
         box.innerHTML = t.members.filter(m => st.among.has(m.id)).map(m => `<label class="cu">${avatar(m, 'sm')}<span>${esc(m.name)}</span>
-          <input inputmode="decimal" data-id="${esc(m.id)}" placeholder="0" value="${esc(prev[m.id] ?? (customVals[m.id] != null ? L.fmtNum(customVals[m.id], c).replace(/,/g, '') : ''))}"></label>`).join('');
+          <input inputmode="decimal" data-id="${esc(m.id)}" placeholder="0" value="${esc(prev[m.id] ?? (customVals[m.id] != null ? L.fmtNum(customVals[m.id], ec).replace(/,/g, '') : ''))}"></label>`).join('');
         box.querySelectorAll('input').forEach(i => i.addEventListener('input', preview));
       } else box.innerHTML = '';
       preview();
     };
-    const customSum = () => [...body.querySelectorAll('#eCustom input')].reduce((s, i) => s + (L.toMinor(i.value || '0', c) || 0), 0);
+    const customSum = () => [...body.querySelectorAll('#eCustom input')].reduce((s, i) => s + (L.toMinor(i.value || '0', ec) || 0), 0);
     const preview = () => {
       const a = amount(), n = st.among.size, pv = body.querySelector('#ePrev');
       if (!(a > 0) || !n) { pv.textContent = n ? '' : '至少選一個人'; pv.className = 'split-preview' + (n ? '' : ' warn'); return; }
       if (st.custom) {
         const diff = a - customSum();
         pv.className = 'split-preview' + (diff ? ' warn' : ' ok');
-        pv.textContent = diff ? (diff > 0 ? `還差 ${L.fmt(diff, c)}` : `超出 ${L.fmt(-diff, c)}`) : '金額剛好 ✓';
+        pv.textContent = diff ? (diff > 0 ? `還差 ${L.fmt(diff, ec)}` : `超出 ${L.fmt(-diff, ec)}`) : '金額剛好 ✓';
       } else {
         pv.className = 'split-preview';
         const each = a / n;
-        pv.textContent = `每人約 ${L.cur(c).sym}${(each / 10 ** dec).toLocaleString('en-US', { maximumFractionDigits: dec })}`;
+        pv.textContent = `每人約 ${L.cur(ec).sym}${(each / 10 ** L.cur(ec).dec).toLocaleString('en-US', { maximumFractionDigits: L.cur(ec).dec })}`;
+        const conv = ec !== t.currency ? L.toBase(t, a, ec) : null;
+        if (conv != null) pv.textContent += `　·　總額 ≈ ${L.fmt(conv, t.currency)}`;
       }
     };
 
     amtIn.addEventListener('input', preview);
+    body.querySelector('#eCur').addEventListener('change', e => {
+      ec = e.target.value; body.querySelector('#eSym').innerHTML = `${esc(L.cur(ec).sym)}<small>${ec} ▾</small>`; buzz(5); paint();
+    });
     titleIn.addEventListener('input', () => {
       if (st.catTouched) return;
       st.cat = guessCat(titleIn.value); paint();
@@ -778,11 +996,11 @@ function expenseSheet(t, id) {
       const ts = Number.isFinite(wall) ? wall : Date.now();
       const rec = {
         kind: 'expense', amount: a, title: titleIn.value.trim(), cat: st.cat || 'other',
-        ts, tz: effTz(), payer: st.payer, among: t.members.filter(m => st.among.has(m.id)).map(m => m.id),
+        ts, tz: effTz(), cur: ec, payer: st.payer, among: t.members.filter(m => st.among.has(m.id)).map(m => m.id),
       };
       if (st.custom) {
         const cu = {};
-        body.querySelectorAll('#eCustom input').forEach(i => { const v = L.toMinor(i.value || '0', c) || 0; if (v > 0) cu[i.dataset.id] = v; });
+        body.querySelectorAll('#eCustom input').forEach(i => { const v = L.toMinor(i.value || '0', ec) || 0; if (v > 0) cu[i.dataset.id] = v; });
         if (Object.values(cu).reduce((s, v) => s + v, 0) !== a) { toast('自訂金額加總要等於總金額'); return; }
         rec.custom = cu;
         rec.among = Object.keys(cu);
@@ -790,6 +1008,7 @@ function expenseSheet(t, id) {
       e.currentTarget.disabled = true;
       store.set(`split_last_${t.id}`, st.payer);
       if (!old) store.set(tzPrefKey(t.id), tzSel);
+      if (!old) store.set(`split_cur_${t.id}`, ec);
       const fab = $('btnAdd');
       closeSheet();
       try {
@@ -797,7 +1016,7 @@ function expenseSheet(t, id) {
         buzz(15);
         if (!old) coins(fab, $('heroTotal'), { n: 6 });
         await p;
-        if (!old) toast(`已記下 ${L.fmt(a, c)} 🪙`);
+        if (!old) toast(`已記下 ${L.fmt(a, ec)} 🪙`);
       } catch (err) { console.error(err); toast('儲存失敗：' + (err.code || err.message)); }
     });
   });
@@ -837,7 +1056,7 @@ function settingsSheet(t) {
     <label class="field"><span>名稱</span><input id="sName" maxlength="40" value="${esc(t.name)}"></label>
     <div class="field"><span>圖示</span><div class="emoji-row" id="sEmoji">${EMOJIS.map(e =>
       `<button type="button" class="emoji-opt${e === emoji ? ' on' : ''}" data-e="${e}">${e}</button>`).join('')}</div></div>
-    <label class="field"><span>幣別 ${hasExp ? '<em>已有紀錄，不能更改</em>' : ''}</span>
+    <label class="field"><span>主要幣別 ${hasExp ? '<em>已有紀錄，不能更改</em>' : '<em>結算時換算成這個</em>'}</span>
       <select id="sCur" ${hasExp ? 'disabled' : ''}>${Object.entries(L.CURRENCIES).map(([k, v]) =>
         `<option value="${k}" ${k === t.currency ? 'selected' : ''}>${v.label}（${k}）</option>`).join('')}</select></label>
     <div class="field"><span>我是誰 <em>只存在這台裝置</em></span>
@@ -846,6 +1065,8 @@ function settingsSheet(t) {
       <div class="add-row"><input id="sNew" maxlength="16" placeholder="新增成員名字"><button type="button" class="btn btn-ghost" id="sAdd">加入</button></div></div>
     <label class="field"><span>共同編輯者 Gmail ${isOwner ? '' : '<em>只有建立者能修改</em>'}</span>
       <textarea id="sShare" rows="2" ${isOwner ? '' : 'disabled'} placeholder="friend@gmail.com">${esc((t.access || []).filter(x => x !== S.user.email || !isOwner).join(', '))}</textarea></label>
+    ${isOwner ? `<div class="field"><span>邀請連結 <em>拿到連結的人登入後就能加入</em></span>
+      <div class="invite" id="sInvite"></div></div>` : ''}
     <p class="muted small">建立者：${esc(t.ownerName || '')}</p>
     <div class="sheet-actions">
       <button type="button" class="btn btn-ghost" data-close>取消</button>
@@ -876,6 +1097,39 @@ function settingsSheet(t) {
       body.querySelectorAll('#sEmoji .emoji-opt').forEach(x => x.classList.toggle('on', x === b)); emoji = b.dataset.e;
     });
     body.querySelector('#sMe').addEventListener('click', () => pickMeSheet(t));
+
+    const inv = body.querySelector('#sInvite');
+    const drawInvite = code => {
+      if (!inv) return;
+      if (!code) {
+        inv.innerHTML = `<button type="button" class="btn btn-ghost" id="iMake">🔗 建立邀請連結</button>`;
+        inv.querySelector('#iMake').addEventListener('click', () => setInvite(newInviteCode()));
+        return;
+      }
+      const url = inviteUrl({ id: t.id, inviteCode: code });
+      inv.innerHTML = `<input readonly value="${esc(url)}" id="iUrl">
+        <div class="invite-btns">
+          <button type="button" class="btn btn-primary" id="iCopy">📋 複製</button>
+          ${navigator.share ? '<button type="button" class="btn btn-ghost" id="iShare">📤 分享</button>' : ''}
+          <button type="button" class="btn btn-ghost" id="iReset" title="舊連結會失效">🔄 重設</button>
+          <button type="button" class="btn btn-danger-ghost" id="iOff">關閉</button>
+        </div>`;
+      inv.querySelector('#iUrl').addEventListener('focus', e => e.target.select());
+      inv.querySelector('#iCopy').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(url); toast('已複製邀請連結'); buzz(10); } catch { toast('複製失敗，請手動選取'); }
+      });
+      inv.querySelector('#iShare')?.addEventListener('click', () =>
+        navigator.share({ title: t.name, text: `一起記帳：${t.emoji || ''}${t.name}`, url }).catch(() => {}));
+      inv.querySelector('#iReset').addEventListener('click', () => setInvite(newInviteCode(), '已重設，舊連結失效'));
+      inv.querySelector('#iOff').addEventListener('click', () => setInvite(null, '已關閉邀請連結'));
+    };
+    const setInvite = async (code, msg) => {
+      try {
+        await updateDoc(doc(db, COLL, t.id), { inviteCode: code ?? deleteField(), updatedAt: serverTimestamp() });
+        t.inviteCode = code; drawInvite(code); if (msg) toast(msg); buzz(8);
+      } catch (err) { toast('失敗：' + (err.code || err.message)); }
+    };
+    drawInvite(t.inviteCode);
 
     body.querySelector('#sSave').addEventListener('click', async e => {
       const name = body.querySelector('#sName').value.trim();

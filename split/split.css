@@ -390,6 +390,36 @@ a { color: inherit; text-decoration: none; }
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* ── Multi-currency ──────────────────────────────────────── */
+.hero-total.multi { font-size: 1.45rem; line-height: 1.3; margin-top: 0.3rem; }
+.hm-net i { display: block; font-style: normal; font-size: 0.58rem; font-weight: 600; opacity: 0.8; text-align: center; }
+.row-amt { display: flex; flex-direction: column; align-items: flex-end; }
+.row-amt small { font-size: 0.68rem; font-weight: 500; color: var(--muted); }
+.note { font-size: 0.78rem; color: var(--muted); margin: -0.3rem 0.2rem 0.5rem; }
+.cur-pick { position: relative; display: flex; align-items: baseline; flex-shrink: 0; cursor: pointer; padding: 0.25rem 0.5rem; margin-left: -0.4rem; border-radius: 12px; transition: background 0.2s; }
+.cur-pick:hover, .cur-pick:focus-within { background: var(--accent-soft); }
+.cur-pick select { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.cur-sym small { display: block; font-size: 0.62rem; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; margin-top: -0.1rem; }
+.rates { margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.55rem; }
+.rates-head { display: flex; flex-direction: column; gap: 0.15rem; }
+.rates-head small { color: var(--muted); font-size: 0.75rem; line-height: 1.5; }
+.rate-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.45rem; font-weight: 600; }
+.rate-in { min-height: 42px; padding: 0.45rem 0.7rem; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; font-size: 16px; font-weight: 700; text-align: right; outline: none; width: 100%; font-variant-numeric: tabular-nums; }
+.rate-in:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.rate-p { grid-column: 1 / -1; font-size: 0.75rem; font-weight: 500; color: var(--pos); margin-top: -0.25rem; }
+.rate-p.miss { color: var(--neg); }
+.mode-row { display: flex; justify-content: center; margin: 0.2rem 0 0.9rem; }
+.seg.seg-lg { margin: 0; padding: 3px; }
+.seg.seg-lg button { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
+
+/* ── Invite link ─────────────────────────────────────────── */
+.invite { display: flex; flex-direction: column; gap: 0.5rem; }
+.invite input { font-size: 13px !important; color: var(--ink-2); }
+.invite-btns { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.invite-btns .btn { flex: 1; min-width: 80px; min-height: 40px; padding: 0.4rem 0.7rem; font-size: 0.85rem; }
+.pick-add span:last-child { font-size: 0.78rem; text-align: center; line-height: 1.3; }
+.pick-add small { color: var(--muted); font-weight: 400; }
+
 /* Date + zone side by side when there's room */
 .field-2 { display: grid; grid-template-columns: 1fr; column-gap: 0.6rem; }
 .field-2 .field select { font-size: 15px; }
