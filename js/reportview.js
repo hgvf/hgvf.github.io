@@ -11,6 +11,7 @@ export async function mountReportView(opts) {
   const {
     root, collection, orderField = "date",
     tickersOf, sentimentOf, nodeTitle, chipLabel, renderDetail,
+    chipSub,                         // (item) => string — secondary label in the calendar day panel (e.g. company)
     emptyHint = "點選左側節點，內容會顯示在這裡",
     onData,
     onCollect,                       // (item) => boolean  — return true if now collected
@@ -20,6 +21,7 @@ export async function mountReportView(opts) {
 
   let all = [], view = "timeline", ticker = "__all__", year = "__all__", selectedId = null;
   let calY, calM; // calendar's current month
+  let calDay = null, calQuery = ""; // calendar: expanded day ("YYYY-MM-DD") + its search filter
   let canDelete = false;
 
   root.innerHTML = `
@@ -99,31 +101,103 @@ export async function mountReportView(opts) {
   }
 
   // ── Left: monthly calendar ────────────────────────────────────────
+  // Busy days (dozens of reports) would blow up a cell, so each cell shows a
+  // count + sentiment bar + the first few chips, and "+N" opens a day panel
+  // under the grid listing everything for that day (searchable).
+  const CAL_MAX = 3;                                // chips shown per cell before "+N"
+  const SENT_ORDER = { pos: 0, neg: 1, neu: 2 };   // signal first, neutral last
+  const sortDay = its => its.slice().sort((a, b) =>
+    (SENT_ORDER[sent(sentimentOf(a)).cls] ?? 3) - (SENT_ORDER[sent(sentimentOf(b)).cls] ?? 3)
+    || String(chip(a)).localeCompare(String(chip(b))));
+  const pad2 = n => String(n).padStart(2, "0");
+  function todayKey() { const t = new Date(); return `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`; }
+  function sentCounts(its) {
+    const c = { pos: 0, neg: 0, neu: 0 };
+    its.forEach(it => { const k = sent(sentimentOf(it)).cls; c[k in c ? k : "neu"]++; });
+    return c;
+  }
+  function chipBtn(it) {
+    const s = sent(sentimentOf(it));
+    // Cells are narrow — drop the Taiwan market suffix (1560.TW → 1560); the day panel keeps the full symbol.
+    const label = String(chip(it)).replace(/\.TWO?$/i, "");
+    return `<button class="rv-cal-chip ${s.cls}" data-id="${esc(it.id)}" title="${esc(nodeTitle(it))}">${esc(label)}</button>`;
+  }
+
+  function dayPanelHTML(key, its) {
+    if (!key || !its.length) return "";
+    const d = new Date(key + "T00:00:00");
+    const c = sentCounts(its);
+    const q = calQuery.trim().toLowerCase();
+    const shown = sortDay(its).filter(it => !q
+      || String(chip(it)).toLowerCase().includes(q)
+      || String(chipSub ? chipSub(it) : "").toLowerCase().includes(q)
+      || String(nodeTitle(it)).toLowerCase().includes(q));
+    const rows = shown.map(it => {
+      const s = sent(sentimentOf(it));
+      const sub = chipSub ? chipSub(it) : "";
+      return `<button class="rv-day-item ${s.cls}" data-id="${esc(it.id)}" title="${esc(nodeTitle(it))}">
+        <span class="rv-dot ${s.cls}"></span>
+        <span class="rv-day-tk">${esc(chip(it))}</span>
+        ${sub ? `<span class="rv-day-sub">${esc(sub)}</span>` : ""}
+      </button>`;
+    }).join("");
+    return `<section class="rv-day" data-day-panel>
+      <div class="rv-day-head">
+        <span class="rv-day-title">${d.getMonth() + 1} 月 ${d.getDate()} 日<small>（週${DOW[d.getDay()]}）</small></span>
+        <span class="rv-day-n">${its.length} 場</span>
+        <span class="rv-day-sc">
+          ${c.pos ? `<span class="pos">▲ ${c.pos}</span>` : ""}${c.neg ? `<span class="neg">▼ ${c.neg}</span>` : ""}${c.neu ? `<span class="neu">— ${c.neu}</span>` : ""}
+        </span>
+        <button class="rv-day-close" data-day-close aria-label="收合" title="收合">×</button>
+      </div>
+      ${its.length > 8 ? `<input class="rv-day-q" data-day-q type="search" placeholder="搜尋代號 / 公司…" value="${esc(calQuery)}" />` : ""}
+      <div class="rv-day-list" data-day-list>${rows || `<div class="rv-empty">沒有符合的項目。</div>`}</div>
+    </section>`;
+  }
+
   function calendarHTML(items) {
-    const prefix = `${calY}-${String(calM + 1).padStart(2, "0")}`;
+    const prefix = `${calY}-${pad2(calM + 1)}`;
     const byDay = {};
     items.forEach(it => { if (String(it.date || "").slice(0, 7) === prefix) (byDay[it.date] = byDay[it.date] || []).push(it); });
+    if (calDay && (calDay.slice(0, 7) !== prefix || !byDay[calDay])) calDay = null;
+    const monthN = Object.values(byDay).reduce((n, a) => n + a.length, 0);
+    const today = todayKey();
     const startDow = new Date(calY, calM, 1).getDay();
     const days = new Date(calY, calM + 1, 0).getDate();
     let cells = "";
     for (let i = 0; i < startDow; i++) cells += `<div class="rv-cal-cell empty"></div>`;
     for (let d = 1; d <= days; d++) {
-      const key = `${prefix}-${String(d).padStart(2, "0")}`;
-      const its = byDay[key] || [];
-      const chips = its.map(it => {
-        const s = sent(sentimentOf(it));
-        return `<button class="rv-cal-chip ${s.cls}" data-id="${esc(it.id)}" title="${esc(nodeTitle(it))}">${esc(chip(it))}</button>`;
-      }).join("");
-      cells += `<div class="rv-cal-cell${its.length ? " has" : ""}"><span class="rv-cal-day">${d}</span><div class="rv-cal-chips">${chips}</div></div>`;
+      const key = `${prefix}-${pad2(d)}`;
+      const its = sortDay(byDay[key] || []);
+      const cls = ["rv-cal-cell"];
+      if (its.length) cls.push("has");
+      if (key === today) cls.push("today");
+      if (key === calDay) cls.push("open");
+      let body = "";
+      if (its.length) {
+        const c = sentCounts(its);
+        const bar = ["pos", "neg", "neu"].filter(k => c[k])
+          .map(k => `<i class="${k}" style="flex:${c[k]}"></i>`).join("");
+        // Show every chip if they fit; otherwise CAL_MAX chips + a "+N" opener.
+        const fit = its.length <= CAL_MAX + 1;
+        const vis = fit ? its : its.slice(0, CAL_MAX);
+        const more = fit ? "" : `<button class="rv-cal-more" data-day="${key}" title="查看當日全部 ${its.length} 場">+${its.length - CAL_MAX}</button>`;
+        body = `<div class="rv-cal-bar" title="▲ ${c.pos}　▼ ${c.neg}　— ${c.neu}">${bar}</div>
+          <div class="rv-cal-chips">${vis.map(chipBtn).join("")}${more}</div>`;
+      }
+      cells += `<div class="${cls.join(" ")}"${its.length ? ` data-day="${key}"` : ""}>
+        <div class="rv-cal-top"><span class="rv-cal-day">${d}</span>${its.length > 1 ? `<span class="rv-cal-n">${its.length}</span>` : ""}</div>
+        ${body}</div>`;
     }
-    const dow = DOW.map(x => `<div class="rv-cal-dow">${x}</div>`).join("");
+    const dow = DOW.map((x, i) => `<div class="rv-cal-dow${i === 0 || i === 6 ? " we" : ""}">${x}</div>`).join("");
     return `<div class="rv-cal">
       <div class="rv-cal-nav">
         <button class="rv-nav" data-nav="-1" aria-label="上個月">‹</button>
-        <span class="rv-cal-title">${calY} 年 ${calM + 1} 月</span>
+        <span class="rv-cal-title">${calY} 年 ${calM + 1} 月${monthN ? `<span class="rv-month-n">${monthN}</span>` : ""}</span>
         <button class="rv-nav" data-nav="1" aria-label="下個月">›</button>
       </div>
       <div class="rv-cal-grid">${dow}${cells}</div>
+      ${dayPanelHTML(calDay, byDay[calDay] || [])}
     </div>`;
   }
 
@@ -169,15 +243,39 @@ export async function mountReportView(opts) {
     if (col) { e.stopPropagation(); handleCollect(col.dataset.collect); return; }
     const del = e.target.closest("[data-del]");
     if (del) { e.stopPropagation(); handleDelete(del.dataset.del); return; }
+    if (e.target.closest("[data-day-close]")) { calDay = null; calQuery = ""; renderLeft(); return; }
+    if (e.target.closest("[data-day-q]")) return;
     const nav = e.target.closest("[data-nav]");
     if (nav) {
       calM += parseInt(nav.dataset.nav, 10);
       if (calM < 0) { calM = 11; calY--; } else if (calM > 11) { calM = 0; calY++; }
+      calDay = null; calQuery = "";
       renderLeft();
       return;
     }
     const node = e.target.closest("[data-id]");
-    if (node) selectItem(node.dataset.id);
+    if (node) { selectItem(node.dataset.id); return; }
+    // Clicking a day cell (or its "+N") toggles that day's full list.
+    const day = e.target.closest("[data-day]");
+    if (day) {
+      calDay = calDay === day.dataset.day ? null : day.dataset.day; calQuery = "";
+      renderLeft();
+      if (calDay) {
+        const panel = leftEl.querySelector("[data-day-panel]");
+        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  });
+  // Live filter inside the day panel — re-render only the list so the input keeps focus.
+  leftEl.addEventListener("input", e => {
+    if (!e.target.matches("[data-day-q]")) return;
+    calQuery = e.target.value;
+    const panel = leftEl.querySelector("[data-day-panel]");
+    const html = dayPanelHTML(calDay, filtered().filter(it => it.date === calDay));
+    const tmp = document.createElement("div"); tmp.innerHTML = html;
+    const fresh = tmp.querySelector("[data-day-list]");
+    if (panel && fresh) panel.querySelector("[data-day-list]").replaceWith(fresh);
+    if (selectedId) leftEl.querySelectorAll(`[data-id="${CSS.escape(selectedId)}"]`).forEach(n => n.classList.add("active"));
   });
 
   root.querySelectorAll(".rv-tab").forEach(tab => tab.addEventListener("click", () => {
