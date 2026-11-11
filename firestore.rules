@@ -171,6 +171,49 @@ service cloud.firestore {
       allow write: if isWhitelisted();
     }
 
+    // ── Tools: 旅遊分帳 (split/) ─────────────────────────────────
+    // One doc per 分帳表 — members + every expense live in the doc (map field
+    // `expenses.<id>`), so opening a table is a single read and concurrent
+    // adds never overwrite each other (field-level updates).
+    //   read   — signed-in users whose email is in `access`
+    //   update — members; only the owner may change `access` / `inviteCode`
+    //   join   — a non-member holding the invite link may append exactly their
+    //            own email to `access`, echoing the code in `joinWith`
+    //   delete — owner only
+    match /split_tables/{id} {
+      function myEmail() { return request.auth.token.email; }
+      function isMember() { return myEmail() in resource.data.access; }
+      function isOwner() { return request.auth.uid == resource.data.owner; }
+      function ownerEdit() {
+        return isOwner()
+          && myEmail() in request.resource.data.access
+          && request.resource.data.access.size() <= 30;
+      }
+      function memberEdit() {
+        return request.resource.data.access == resource.data.access
+          && request.resource.data.get('inviteCode', null) == resource.data.get('inviteCode', null);
+      }
+      function joining() {
+        let code = resource.data.get('inviteCode', null);
+        return code is string && code.size() >= 16
+          && request.resource.data.get('joinWith', null) == code
+          && request.resource.data.access == resource.data.access.concat([myEmail()])
+          && request.resource.data.access.size() <= 30
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['access', 'joinWith', 'updatedAt']);
+      }
+      allow read: if isSignedIn() && isMember();
+      allow create: if isSignedIn()
+        && request.resource.data.owner == request.auth.uid
+        && myEmail() in request.resource.data.access
+        && request.resource.data.access.size() <= 30;
+      allow update: if isSignedIn()
+        && request.resource.data.owner == resource.data.owner
+        && ((isMember() && (ownerEdit() || memberEdit()))
+            || (!isMember() && joining()));
+      allow delete: if isSignedIn() && isOwner();
+    }
+
     match /config/auth {
       allow read: if isSignedIn();
       allow write: if isWhitelisted();

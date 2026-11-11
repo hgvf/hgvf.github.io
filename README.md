@@ -301,3 +301,18 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 
 字型為俐方體 11 號（`countdown/assets/Cubic_11.woff2`，授權見同目錄 OFL 檔）。試玩：設定 → 試玩預覽，或網址加 `?demo=last15`、`?demo=flip-bear`、`?demo=day` 等。
 
+
+## 12. Tools：旅遊分帳（`split/`）
+
+側欄 **Tools** 資料夾的工具清單由 `js/tools.js` 管理（同時給首頁與報告頁側欄用）。`requiresAuth: true` 的工具在未登入時會顯示鎖頭並擋下點擊；頁面本身也會擋，Firestore rules 再擋一次。
+
+- 手機、電腦都可以用：手機用底部抽屜，電腦（寬度 ≥ 900px）改成左右兩欄加置中對話框，按 `N` 可以快速新增一筆
+- 資料存在 `split_tables/{id}`，**一張分帳表一個 doc**，成員與所有款項都放在同一個 doc 的 `expenses.<id>` map 裡：開一張表只花 1 次讀取，多人同時新增也不會互相覆蓋
+- 只有 `access` 名單內的 Gmail 能讀寫；只有建立者能改共同編輯名單、刪除分帳表
+- 時區：每筆款項會記下 `tz`，預設是自動偵測的裝置時區，也可以手動改，同一張表會記住上次選的時區；時間和「哪一天」都以那筆款項自己的時區顯示
+- 金額以最小貨幣單位的整數儲存（TWD/JPY 為 1，USD 為 cent），均分剩下的零頭會在成員間輪替
+- 多幣別：每筆款項記自己的 `cur`（沒有的話用表的主要幣別），各幣別分開記帳。到「結算」頁填匯率（存在 `rates`，所有成員共用），可以「合併成主要幣別結算」，也可以「各幣別分開結算」；合併時四捨五入的零頭會補到餘額最大的人身上，確保加總剛好是 0
+- 邀請連結：建立者在設定裡產生 `split/#join=<表id>.<inviteCode>`。對方登入後會把自己的 email 加進 `access`，並把邀請碼寫在 `joinWith`；rules 只在邀請碼跟表上的 `inviteCode` 一致時才放行，而且這次寫入只能動到 `access`、`joinWith`、`updatedAt`。重設或關閉連結後，舊連結就失效
+- 純邏輯在 `split/js/ledger.js`（結算、餘額、時區換算），動畫在 `split/js/fx.js`
+
+⚠️ 新增了 `split_tables` 的 rules，需要重新部署：`firebase deploy --only firestore:rules`。
