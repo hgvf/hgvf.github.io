@@ -19,6 +19,7 @@ import {
 } from './admin.js';
 import { initExperience } from './experience.js';
 import { renderSideProjectNav, renderSideProjectPage } from './sideprojects.js';
+import { renderToolsNav, setToolsSignedIn } from './tools.js';
 
 /* ── App state ─────────────────────────────────────────────── */
 let _isAdmin          = false;
@@ -64,7 +65,8 @@ function showPage(pageId) {
 }
 
 renderSideProjectNav(document.getElementById('sideProjectNav'));
-renderSideProjectPage(document.getElementById('sideProjectGrid'));
+renderSideProjectPage(document.getElementById('sideProjectGrid'), document.getElementById('spToggleAll'));
+renderToolsNav(document.getElementById('toolsNav'));
 
 document.querySelectorAll('[data-page]').forEach(item => {
   item.addEventListener('click', e => {
@@ -92,6 +94,7 @@ window.addEventListener('hashchange', showPageFromHash);
 /* ── Auth ────────────────────────────────────────────────────── */
 onAuthChange(({ user, isAdmin }) => {
   _isAdmin = isAdmin;
+  setToolsSignedIn(!!user);
   const loginBtn  = document.getElementById('btnLogin');
   const logoutBtn = document.getElementById('btnLogout');
   const userInfo  = document.getElementById('userInfo');

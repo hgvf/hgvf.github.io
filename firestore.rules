@@ -171,6 +171,29 @@ service cloud.firestore {
       allow write: if isWhitelisted();
     }
 
+    // ── Tools: 旅遊分帳 (split/) ─────────────────────────────────
+    // One doc per 分帳表 — members + every expense live in the doc (map field
+    // `expenses.<id>`), so opening a table is a single read and concurrent
+    // adds never overwrite each other (field-level updates). Private: only
+    // signed-in users whose email is in `access` can read/write; only the
+    // owner can change `access` (share list) or delete the table.
+    match /split_tables/{id} {
+      function myEmail() { return request.auth.token.email; }
+      allow read: if isSignedIn() && myEmail() in resource.data.access;
+      allow create: if isSignedIn()
+        && request.resource.data.owner == request.auth.uid
+        && myEmail() in request.resource.data.access
+        && request.resource.data.access.size() <= 30;
+      allow update: if isSignedIn()
+        && myEmail() in resource.data.access
+        && request.resource.data.owner == resource.data.owner
+        && (request.resource.data.access == resource.data.access
+            || (request.auth.uid == resource.data.owner
+                && myEmail() in request.resource.data.access
+                && request.resource.data.access.size() <= 30));
+      allow delete: if isSignedIn() && request.auth.uid == resource.data.owner;
+    }
+
     match /config/auth {
       allow read: if isSignedIn();
       allow write: if isWhitelisted();

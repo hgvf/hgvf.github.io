@@ -111,27 +111,62 @@ export function renderSideProjectNav(container, base = '') {
     </a>`).join('');
 }
 
-/** Render the intro page's card grid; the layout adapts to the card count. */
-export function renderSideProjectPage(container) {
+const ICON_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg>';
+
+/** Render the intro page's card grid; the layout adapts to the card count.
+    Cards start collapsed (headline, two-line description, tags, link); the
+    header toggles the feature list. `toggleAllBtn` (optional) expands or
+    collapses every card at once. */
+export function renderSideProjectPage(container, toggleAllBtn) {
   if (!container) return;
   container.dataset.count = String(Math.min(PROJECTS.length, 3));
   if (!PROJECTS.length) {
     container.innerHTML = '<p class="sp-empty">尚無專案，敬請期待。</p>';
     return;
   }
-  container.innerHTML = PROJECTS.map(p => `
+  container.innerHTML = PROJECTS.map((p, i) => `
     <article class="sp-card${p.featured ? ' sp-card-featured' : ''}">
-      <h3 class="sp-name">${esc(p.name)}</h3>
-      ${p.tagline ? `<p class="sp-tagline">${esc(p.tagline)}</p>` : ''}
+      <button type="button" class="sp-head" aria-expanded="false" aria-controls="spBody${i}">
+        <span class="sp-head-text">
+          <span class="sp-name">${esc(p.name)}</span>
+          ${p.tagline ? `<span class="sp-tagline">${esc(p.tagline)}</span>` : ''}
+        </span>
+        <span class="sp-chevron">${ICON_CHEVRON}</span>
+      </button>
       ${p.description ? `<p class="sp-desc">${esc(p.description)}</p>` : ''}
-      ${p.features?.length ? `<ul class="sp-features">${p.features.map(f =>
-        `<li><span class="sp-check">${ICON_CHECK}</span>${esc(f)}</li>`).join('')}</ul>` : ''}
+      <div class="sp-body" id="spBody${i}"><div class="sp-body-inner">
+        ${p.features?.length ? `<ul class="sp-features">${p.features.map(f =>
+          `<li><span class="sp-check">${ICON_CHECK}</span>${esc(f)}</li>`).join('')}</ul>` : ''}
+      </div></div>
       ${p.tags?.length ? `<div class="sp-tags">${p.tags.map(t =>
         `<span class="sp-tag">${esc(t)}</span>`).join('')}</div>` : ''}
-      ${p.internal
-        ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟 ${esc(p.tagline || p.name)}</span></a>`
-        : `<a class="sp-link" href="${esc(p.url)}" target="_blank" rel="noopener">
-        ${ICON_EXTERNAL}<span>前往 ${esc(hostOf(p.url))}</span>
-      </a>`}
+      <div class="sp-foot">
+        ${p.features?.length ? `<button type="button" class="sp-more" data-n="${p.features.length}">${p.features.length} 項功能</button>` : '<span></span>'}
+        ${p.internal
+          ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟</span></a>`
+          : `<a class="sp-link" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(hostOf(p.url))}">${ICON_EXTERNAL}<span>前往</span></a>`}
+      </div>
     </article>`).join('');
+
+  const cards = [...container.querySelectorAll('.sp-card')];
+  const setOpen = (card, open) => {
+    card.classList.toggle('open', open);
+    card.querySelector('.sp-head').setAttribute('aria-expanded', String(open));
+    const more = card.querySelector('.sp-more');
+    if (more) more.textContent = open ? '收合' : `${more.dataset.n} 項功能`;
+  };
+  const syncAll = () => {
+    if (toggleAllBtn) toggleAllBtn.textContent = cards.every(c => c.classList.contains('open')) ? '全部收合' : '全部展開';
+  };
+  cards.forEach(card => {
+    const flip = () => { setOpen(card, !card.classList.contains('open')); syncAll(); };
+    card.querySelector('.sp-head').addEventListener('click', flip);
+    card.querySelector('.sp-more')?.addEventListener('click', flip);
+  });
+  toggleAllBtn?.addEventListener('click', () => {
+    const open = !cards.every(c => c.classList.contains('open'));
+    cards.forEach(c => setOpen(c, open));
+    syncAll();
+  });
+  syncAll();
 }

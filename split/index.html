@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>旅遊分帳</title>
+<meta name="description" content="多人旅遊分帳：記帳、統整、一鍵結算誰該付誰多少。">
+<meta name="theme-color" content="#F5EDE0">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="split.css">
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div id="app">
+  <!-- Boot: shown until Firebase auth resolves -->
+  <section class="view active" id="vBoot">
+    <div class="boot"><span class="boot-coin">🪙</span></div>
+  </section>
+
+  <!-- Gate: signed out -->
+  <section class="view" id="vGate">
+    <div class="gate">
+      <div class="gate-art" aria-hidden="true">
+        <span class="g-lock">🔒</span>
+        <span class="g-c g1">🪙</span><span class="g-c g2">🪙</span><span class="g-c g3">🪙</span>
+      </div>
+      <h1>旅遊分帳</h1>
+      <p>這個工具只開放給登入的使用者。<br>登入後就能建立分帳表、邀請旅伴一起記帳。</p>
+      <button type="button" class="btn btn-primary btn-lg" id="btnGateLogin">使用 Google 登入</button>
+      <a class="btn-link" href="../index.html">← 回到首頁</a>
+    </div>
+  </section>
+
+  <!-- List of tables -->
+  <section class="view" id="vList">
+    <header class="topbar">
+      <a class="icon-btn" href="../index.html" aria-label="回到首頁">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </a>
+      <h1 class="topbar-title">旅遊分帳</h1>
+      <button type="button" class="avatar-btn" id="btnMe" aria-label="帳號"></button>
+    </header>
+    <div class="scroll">
+      <p class="hello" id="hello"></p>
+      <div class="table-list" id="tableList"></div>
+    </div>
+    <button type="button" class="fab" id="btnNewTable">
+      <span class="fab-plus">＋</span><span>建立分帳表</span>
+    </button>
+  </section>
+
+  <!-- One table -->
+  <section class="view" id="vTable">
+    <header class="topbar">
+      <button type="button" class="icon-btn" id="btnBack" aria-label="返回">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h1 class="topbar-title" id="tTitle"></h1>
+      <button type="button" class="icon-btn" id="btnTableMenu" aria-label="設定">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+      </button>
+    </header>
+    <div class="scroll" id="tScroll">
+      <div class="hero" id="hero">
+        <div class="hero-label">總支出</div>
+        <div class="hero-total" id="heroTotal">0</div>
+        <div class="hero-sub" id="heroSub"></div>
+        <div class="hero-me" id="heroMe"></div>
+        <div class="hero-members" id="heroMembers"></div>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button type="button" class="tab active" data-tab="list" role="tab">明細</button>
+        <button type="button" class="tab" data-tab="summary" role="tab">統整</button>
+        <button type="button" class="tab" data-tab="settle" role="tab">結算</button>
+        <span class="tab-ink" id="tabInk"></span>
+      </nav>
+
+      <div class="panel active" id="pList"></div>
+      <div class="panel" id="pSummary"></div>
+      <div class="panel" id="pSettle"></div>
+    </div>
+    <button type="button" class="fab" id="btnAdd" title="記一筆（快捷鍵 N）">
+      <span class="fab-plus">＋</span><span>記一筆</span>
+    </button>
+  </section>
+</div>
+
+<!-- Bottom sheet (content swapped per use) -->
+<div class="sheet-wrap" id="sheetWrap" aria-hidden="true">
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" id="sheet">
+    <div class="sheet-grip" data-close></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
