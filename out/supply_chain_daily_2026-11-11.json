@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-12T06:40:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "claude"},
+  "event_window": {"start": "2026-11-10", "end": "2026-11-11"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"semiconductor": 1, "AI infrastructure": 1, "advanced packaging": 1},
+    "importance_distribution": {"relevant": 1},
+    "top_tickers": ["2330.TW", "TSM"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261110-001",
+      "slug": "strategic-investment-tsm-anthropic-openai-capex-40b",
+      "event_date": "2026-11-10",
+      "published_at": "2026-11-10",
+      "ingested_at": "2026-11-12T06:40:00+08:00",
+      "event_type": "strategic_investment",
+      "event_type_secondary": ["capacity"],
+      "themes": ["semiconductor", "AI infrastructure", "advanced packaging"],
+      "regions": ["TW", "US"],
+      "importance_score": 79,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+      "title_zh": "台積電董事會核准各至多 5 億美元入股 Anthropic 與 OpenAI，並通過約 409.3 億美元資本預算",
+      "title_original": "TSMC board approves up to $500 million investment each in Anthropic and OpenAI; approves ~US$40.93B capital appropriations",
+      "summary_zh": "台積電 11/10 董事會決議：以 IPO 價格認購至多 5 億美元 Anthropic 普通股、認購至多 5 億美元 OpenAI 特別股，另設至多 5 億美元全資投資子公司，策略性投資半導體生態系；同時核准約 409.3 億美元資本預算，用於先進製程產能建置與升級、先進封裝、成熟／特殊製程、廠房與廠務設施及 2027 年研發資本支出。上述金額為上限，尚未完成認購。",
+      "why_it_matters": "這是台積電首次直接持股終端 AI 模型公司：OpenAI 自研晶片（與 Broadcom 合作）與 Anthropic 所用的 TPU／Trainium 加速器皆在台積電投片，晶圓代工廠持股客戶的客戶，等於在 NVIDIA 與 Broadcom 等 IC 設計商之外，與 AI 算力最終需求方建立直接股權綁定，提升先進製程與 CoWoS 產能分配上的需求能見度與議價地位。約 409 億美元的單季資本預算（2 月一度為 450 億美元）延續先進製程與先進封裝擴產節奏，設備商（ASML、Applied Materials、弘塑、萬潤等）與 CoWoS 供應鏈的訂單能見度跟著拉長；新設的生態系投資子公司則可能成為台積電往上游材料／設備延伸布局的工具。",
+      "tickers": ["2330.TW", "TSM"],
+      "companies": [
+        {"name": "Taiwan Semiconductor Manufacturing Company Limited", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "investor"},
+        {"name": "Taiwan Semiconductor Manufacturing Company Limited (ADR)", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "investor"},
+        {"name": "Anthropic", "ticker": null, "exchange": null, "country": "US", "role": "investee"},
+        {"name": "OpenAI", "ticker": null, "exchange": null, "country": "US", "role": "investee"}
+      ],
+      "supply_chain": {
+        "upstream": ["semiconductor equipment", "advanced packaging materials"],
+        "component": "advanced-node AI accelerator wafers / CoWoS",
+        "supplier": ["Taiwan Semiconductor Manufacturing Company Limited"],
+        "customer": ["Anthropic", "OpenAI"],
+        "end_market": ["AI data center", "frontier AI model training & inference"]
+      },
+      "products": ["AI accelerator", "advanced-node wafer", "CoWoS"],
+      "materials": [],
+      "change": {
+        "type": "supplier_equity_in_end_customer",
+        "before": "台積電以晶圓代工身分間接服務 AI 公司（透過 NVIDIA、Broadcom、Google 等 IC 設計客戶），未持有 AI 模型公司股權",
+        "after": "台積電獲授權各至多 5 億美元直接持股 Anthropic 與 OpenAI，另設 5 億美元生態系投資子公司，並追加約 409 億美元資本預算"
+      },
+      "financial_data": {
+        "amount": 1500000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": [
+        "tsmc", "台積電", "2330", "2330.tw", "tsm", "taiwan semiconductor",
+        "anthropic", "openai", "strategic_investment", "capacity",
+        "semiconductor", "ai infrastructure", "advanced packaging", "cowos",
+        "capex", "資本預算", "資本支出", "董事會", "board resolution",
+        "股權投資", "equity investment", "ai accelerator", "先進製程", "先進封裝", "晶圓代工", "foundry"
+      ],
+      "sources": [
+        {"publisher": "TSMC — Board of Directors Resolutions (pr.tsmc.com)", "source_type": "primary", "url": "https://pr.tsmc.com/english/latest-news", "is_primary": true, "accessed_at": "2026-11-12T06:35:00+08:00"},
+        {"publisher": "Reuters via MarketScreener", "source_type": "wire", "url": "https://www.marketscreener.com/news/tsmc-board-approves-up-to-500-million-investment-each-in-anthropic-and-openai-ce785edadd81f525", "is_primary": false, "accessed_at": "2026-11-12T06:35:00+08:00"},
+        {"publisher": "TechNode Global", "source_type": "trade", "url": "https://technode.global/2026/11/11/tsmc-openai-anthropic-investments/", "is_primary": false, "accessed_at": "2026-11-12T06:35:00+08:00"},
+        {"publisher": "Converge Digest", "source_type": "trade", "url": "https://convergedigest.com/tsmc-board-40-9b-capex-anthropic-openai-investments/", "is_primary": false, "accessed_at": "2026-11-12T06:35:00+08:00"}
+      ]
+    }
+  ]
+}
