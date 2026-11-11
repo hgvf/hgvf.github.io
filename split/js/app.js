@@ -88,12 +88,45 @@ function tzOptions(selected) {
     <optgroup label="全部時區">${rest.map(opt).join('')}</optgroup>`;
 }
 
-function toast(msg) {
+function toast(msg, ms = 2400) {
   const el = $('toast');
   el.textContent = msg;
   el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove('show'), 2400);
+  toast._t = setTimeout(() => el.classList.remove('show'), ms);
+}
+
+/* ── Write sync ──────────────────────────────────────────────────
+   Firestore applies a write to the local cache immediately; the promise
+   only settles once the server acknowledges it. When the device is
+   offline or the project's daily quota is used up the SDK keeps retrying
+   silently, so awaiting it would freeze the UI. Instead: never block on
+   it, show a 同步中 chip while writes are in flight, warn when an ack is
+   slow, and report real rejections (e.g. permission-denied).
+   Resolves true on success, false on failure — never throws. */
+let _pending = 0;
+function paintSync() {
+  const c = $('syncChip');
+  if (c) c.hidden = _pending === 0;
+}
+function sync(promise, what = '儲存') {
+  _pending++; paintSync();
+  const slow = setTimeout(() => toast('⏳ 還沒同步到雲端：可能是網路不穩，或 Firestore 今天的免費額度用完了。資料先存在這台裝置，恢復後會自動上傳。', 7000), 8000);
+  return promise.then(() => true, err => {
+    console.error(err);
+    const hint = err?.code === 'permission-denied' ? '（沒有權限：請確認 firestore.rules 已部署）'
+      : err?.code === 'resource-exhausted' ? '（Firestore 今日額度已用完）' : '';
+    toast(`${what}失敗：${err?.code || err?.message || err}${hint}`, 6000);
+    return false;
+  }).finally(() => { clearTimeout(slow); _pending--; paintSync(); });
+}
+// Resolve once the list listener has seen table `id` (local writes show up
+// within a few ms), or after `ms` regardless.
+function waitForTable(id, ms = 2500) {
+  return new Promise(res => {
+    const t0 = Date.now();
+    (function poll() { if (S.tables.has(id) || Date.now() - t0 > ms) res(S.tables.has(id)); else setTimeout(poll, 40); })();
+  });
 }
 
 function guessCat(title) {
@@ -164,7 +197,9 @@ async function joinTable(id, code) {
   S.pendingJoin = id;
   show('vBoot');
   try {
-    await updateDoc(doc(db, COLL, id), { access: arrayUnion(S.user.email), joinWith: code, updatedAt: serverTimestamp() });
+    const slow = setTimeout(() => toast('⏳ 加入中…等待伺服器確認（網路不穩或額度用完時會比較久）', 6000), 6000);
+    try { await updateDoc(doc(db, COLL, id), { access: arrayUnion(S.user.email), joinWith: code, updatedAt: serverTimestamp() }); }
+    finally { clearTimeout(slow); }
     // Usually the snapshot handler finishes the job; this covers a cached
     // listener that already saw the update before we got here.
     setTimeout(() => {
@@ -239,7 +274,7 @@ onAuthStateChanged(auth, user => {
       if (first) route();
       else if (S.cur) {
         if (S.tables.has(S.cur)) renderTable();
-        else { toast('這張分帳表已被刪除'); history.replaceState(null, '', location.pathname); route(); }
+        else { if (S.deleting !== S.cur) toast('這張分帳表已被刪除'); history.replaceState(null, '', location.pathname); route(); }
       } else renderList();
     },
     err => {
@@ -405,20 +440,20 @@ $('btnNewTable').addEventListener('click', () => {
       const members = names.map((nm, i) => ({ id: uid('m'), name: nm, color: PALETTE[i % PALETTE.length] }));
       const ref = doc(collection(db, COLL));
       e.target.disabled = true;
-      try {
-        await setDoc(ref, {
+      {
+        sync(setDoc(ref, {
           name, emoji, currency: body.querySelector('#cCur').value,
           owner: S.user.uid, ownerName: S.user.displayName || S.user.email,
           access: [S.user.email, ...emails.filter(x => x !== S.user.email)],
           members, expenses: {},
           createdMs: Date.now(), updatedAt: serverTimestamp(),
-        });
+        }), '建立');
         store.set(meKey(ref.id), members[0].id);
         closeSheet();
         confetti({ n: 90 });
         buzz(20);
-        openTable(ref.id);
-      } catch (err) { console.error(err); toast('建立失敗：' + (err.code || err.message)); e.target.disabled = false; }
+        if (await waitForTable(ref.id)) openTable(ref.id);
+      }
     });
   });
 });
@@ -523,10 +558,8 @@ function pickMeSheet(t, { joined = false } = {}) {
       e.currentTarget.disabled = true;
       const usedColors = new Set(t.members.map(m => m.color));
       const m = { id: uid('m'), name: myName, color: PALETTE.find(p => !usedColors.has(p)) || PALETTE[t.members.length % PALETTE.length] };
-      try {
-        await updateDoc(doc(db, COLL, t.id), { members: [...t.members, m], updatedAt: serverTimestamp() });
-        store.set(meKey(t.id), m.id); closeSheet(); buzz(10); toast(`已把「${myName}」加進成員`);
-      } catch (err) { toast('加入失敗：' + (err.code || err.message)); e.currentTarget.disabled = false; }
+      sync(updateDoc(doc(db, COLL, t.id), { members: [...t.members, m], updatedAt: serverTimestamp() }), '加入成員');
+      store.set(meKey(t.id), m.id); closeSheet(); buzz(10); toast(`已把「${myName}」加進成員`);
     });
   });
 }
@@ -741,8 +774,8 @@ function renderSettlePanel(t) {
         if (raw && !(v > 0)) { toast('匯率要是大於 0 的數字'); return; }
         const rates = { ...(t.rates || {}) };
         if (raw) rates[inp.dataset.c] = v; else delete rates[inp.dataset.c];
-        try { await updateDoc(doc(db, COLL, t.id), { rates, updatedAt: serverTimestamp() }); toast(`已更新 ${inp.dataset.c} 匯率`); buzz(8); }
-        catch (err) { toast('儲存失敗：' + (err.code || err.message)); }
+        sync(updateDoc(doc(db, COLL, t.id), { rates, updatedAt: serverTimestamp() }), '儲存匯率');
+        toast(`已更新 ${inp.dataset.c} 匯率`); buzz(8);
       });
       inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
     });
@@ -811,23 +844,23 @@ function renderSettlePanel(t) {
     buzz(15);
     await coins(card.querySelector('.xa .av'), card.querySelector('.xb .av'), { n: 7 });
     card.classList.add('out');
-    try {
-      await writeExpense(t.id, uid('x'), { kind: 'transfer', amount: x.amount, cur: x.cur, payer: x.from, to: x.to, ts: Date.now(), tz: DEVICE_TZ });
+    writeExpense(t.id, uid('x'), { kind: 'transfer', amount: x.amount, cur: x.cur, payer: x.from, to: x.to, ts: Date.now(), tz: DEVICE_TZ });
+    setTimeout(() => {           // local snapshot lands almost immediately
       const left = settlePlan(curTable(), mode);
       if (left && !left.length) { confetti({ n: 220 }); buzz([20, 60, 20, 60, 40]); }
-    } catch (err) { toast('寫入失敗：' + (err.code || err.message)); card.classList.remove('out'); ev.currentTarget.disabled = false; }
+    }, 350);
   }));
 }
 
 /* ── Expense add / edit ───────────────────────────────────────── */
-async function writeExpense(tableId, id, rec) {
-  await updateDoc(doc(db, COLL, tableId), {
+function writeExpense(tableId, id, rec) {
+  return sync(updateDoc(doc(db, COLL, tableId), {
     [`expenses.${id}`]: { ...rec, by: S.user.email, at: Date.now() },
     updatedAt: serverTimestamp(),
-  });
+  }));
 }
-async function removeExpense(tableId, id) {
-  await updateDoc(doc(db, COLL, tableId), { [`expenses.${id}`]: deleteField(), updatedAt: serverTimestamp() });
+function removeExpense(tableId, id) {
+  return sync(updateDoc(doc(db, COLL, tableId), { [`expenses.${id}`]: deleteField(), updatedAt: serverTimestamp() }), '刪除');
 }
 
 $('btnAdd').addEventListener('click', () => { const t = curTable(); if (t) expenseSheet(t, null); });
@@ -860,7 +893,7 @@ function expenseSheet(t, id) {
       <p class="muted center">${esc(new Date(old.ts).toLocaleString('zh-TW', { timeZone: L.validTz(old.tz) ? old.tz : DEVICE_TZ }))}（${esc(L.tzName(L.validTz(old.tz) ? old.tz : DEVICE_TZ))}）</p>
       <div class="sheet-actions"><button type="button" class="btn btn-ghost" data-close>關閉</button>
       <button type="button" class="btn btn-danger" id="eDel">刪除這筆還款</button></div>`, body => {
-      armDelete(body.querySelector('#eDel'), async () => { closeSheet(); await removeExpense(t.id, id); toast('已刪除'); });
+      armDelete(body.querySelector('#eDel'), () => { closeSheet(); removeExpense(t.id, id); toast('已刪除'); });
     });
     return;
   }
@@ -986,7 +1019,7 @@ function expenseSheet(t, id) {
     });
 
     const del = body.querySelector('#eDel');
-    if (del) armDelete(del, async () => { closeSheet(); await removeExpense(t.id, id); toast('已刪除'); });
+    if (del) armDelete(del, () => { closeSheet(); removeExpense(t.id, id); toast('已刪除'); });
 
     body.querySelector('#eSave').addEventListener('click', async e => {
       const a = amount();
@@ -1011,13 +1044,9 @@ function expenseSheet(t, id) {
       if (!old) store.set(`split_cur_${t.id}`, ec);
       const fab = $('btnAdd');
       closeSheet();
-      try {
-        const p = writeExpense(t.id, id || uid('e'), rec);
-        buzz(15);
-        if (!old) coins(fab, $('heroTotal'), { n: 6 });
-        await p;
-        if (!old) toast(`已記下 ${L.fmt(a, ec)} 🪙`);
-      } catch (err) { console.error(err); toast('儲存失敗：' + (err.code || err.message)); }
+      writeExpense(t.id, id || uid('e'), rec);
+      buzz(15);
+      if (!old) { coins(fab, $('heroTotal'), { n: 6 }); toast(`已記下 ${L.fmt(a, ec)} 🪙`); }
     });
   });
 }
@@ -1124,10 +1153,8 @@ function settingsSheet(t) {
       inv.querySelector('#iOff').addEventListener('click', () => setInvite(null, '已關閉邀請連結'));
     };
     const setInvite = async (code, msg) => {
-      try {
-        await updateDoc(doc(db, COLL, t.id), { inviteCode: code ?? deleteField(), updatedAt: serverTimestamp() });
-        t.inviteCode = code; drawInvite(code); if (msg) toast(msg); buzz(8);
-      } catch (err) { toast('失敗：' + (err.code || err.message)); }
+      sync(updateDoc(doc(db, COLL, t.id), { inviteCode: code ?? deleteField(), updatedAt: serverTimestamp() }), '更新邀請連結');
+      t.inviteCode = code; drawInvite(code); if (msg) toast(msg); buzz(8);
     };
     drawInvite(t.inviteCode);
 
@@ -1145,19 +1172,18 @@ function settingsSheet(t) {
         patch.access = [S.user.email, ...emails.filter(x => x !== S.user.email)];
       }
       e.currentTarget.disabled = true;
-      try { await updateDoc(doc(db, COLL, t.id), patch); closeSheet(); toast('已儲存'); }
-      catch (err) { toast('儲存失敗：' + (err.code || err.message)); e.currentTarget.disabled = false; }
+      sync(updateDoc(doc(db, COLL, t.id), patch), '儲存設定');
+      closeSheet(); toast('已儲存');
     });
 
     const del = body.querySelector('#sDel');
-    if (del) armDelete(del, async () => {
+    if (del) armDelete(del, () => {
       closeSheet();
-      try {
-        await deleteDoc(doc(db, COLL, t.id));
-        history.replaceState(null, '', location.pathname);
-        route();
-        toast(`已刪除「${t.name}」`);
-      } catch (err) { toast('刪除失敗：' + (err.code || err.message)); }
+      S.deleting = t.id;                         // suppress the "已被刪除" toast
+      sync(deleteDoc(doc(db, COLL, t.id)), '刪除');
+      history.replaceState(null, '', location.pathname);
+      route();
+      toast(`已刪除「${t.name}」`);
     });
   });
 }
