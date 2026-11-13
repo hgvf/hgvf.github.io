@@ -55,22 +55,34 @@ def _bars(px, days, base, vbase):
 
 
 def compute(ticker: str, call_date: date, session: str, sector_etf: str, market_etf: str, today: date,
-            fetch=fetch_history, pre_bars: int = 40, post_bars: int = 20) -> dict:
-    """Reaction numbers + anonymised OHLCV for the chart (pre = before t0, post = t0 … t0+post_bars−1)."""
-    t0 = reaction_day(call_date, session)
-    t_end = add_trading_days(t0, max(20, post_bars))
-    if add_trading_days(t0, 19) > today:
-        raise Incomplete(f't0+19 = {add_trading_days(t0, 19)} 尚未到')
-    start = add_trading_days(t0, -max(8, pre_bars + 2))
+            fetch=fetch_history, pre_bars: int = 40, post_bars: int = 20, us: bool = True) -> dict:
+    """Reaction numbers + anonymised OHLCV for the chart (pre = before t0, post = t0 … t0+post_bars−1).
+
+    us=True  → t0 from the NYSE calendar.
+    us=False → t0 from the stock's own trading days in the fetched data (台股 / 日股 / 韓股…):
+               BMO = first trading day ≥ call date, AMC = first trading day > call date."""
     syms = list(dict.fromkeys([ticker, sector_etf, market_etf]))
-    data = fetch(syms, start, min(t_end, today))
+    if us:
+        t0 = reaction_day(call_date, session)
+        if add_trading_days(t0, 19) > today:
+            raise Incomplete(f't0+19 = {add_trading_days(t0, 19)} 尚未到')
+        data = fetch(syms, add_trading_days(t0, -max(8, pre_bars + 2)), min(add_trading_days(t0, max(20, post_bars)), today))
+    else:
+        data = fetch(syms, call_date - timedelta(days=int(pre_bars * 1.6) + 20), min(call_date + timedelta(days=int(max(20, post_bars) * 1.6) + 20), today))
+        own = sorted(data.get(ticker) or {})
+        after = [d for d in own if (d >= call_date.isoformat() if session == 'BMO' else d > call_date.isoformat())]
+        if not after:
+            raise Incomplete(f'{ticker} 法說後還沒有交易資料')
+        t0 = date.fromisoformat(after[0])
     out = {}
     for s in syms:
         px = data.get(s) or {}
         days = sorted(px)
-        if t0.isoformat() not in px:
+        # 指數與個股同一個交易所；偶有缺日就用 t0 當天或之後的第一個交易日
+        cand = [d for d in days if d >= t0.isoformat()]
+        if not cand:
             raise Incomplete(f'{s} 缺 t0 {t0} 的資料')
-        i0 = days.index(t0.isoformat())
+        i0 = days.index(cand[0])
         if i0 < 6 or i0 + 19 >= len(days):
             raise Incomplete(f'{s} 資料不足（需要 t0−6 … t0+19）')
         base = px[days[i0 - 1]][3]

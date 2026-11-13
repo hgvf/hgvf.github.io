@@ -22,6 +22,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)                      # earnings-guess/
 SITE = os.path.dirname(ROOT)                      # repo root
 OBF_KEY = b'hgvf-earnings'
+SUFFIX_MARKET = {'TW': 'TW', 'TWO': 'TW', 'T': 'JP', 'KS': 'KR', 'KQ': 'KR', 'DE': 'DE', 'HK': 'HK'}
+NAME_SUFFIX = re.compile(r'(,?\s+(Inc\.?|Incorporated|Corp\.?|Corporation|Co\.?,? ?Ltd\.?|Company|Ltd\.?|Limited|Holdings?|Group|plc|PLC|N\.V\.|S\.A\.|AG|SE)\b\.?)+$|(股份有限公司|有限公司|株式会社)$')
+
+
+def market_of(ticker: str) -> str:
+    t = str(ticker).upper()
+    return SUFFIX_MARKET.get(t.rsplit('.', 1)[1], 'OTHER') if '.' in t else 'US'
+
+
+def short_name(name: str, limit: int = 20) -> str:
+    n = NAME_SUFFIX.sub('', str(name or '').strip()).strip(' ,')
+    if len(n) <= limit:
+        return n
+    cut = n[:limit - 1]
+    if ' ' in cut and n[limit - 1:limit] not in (' ', ''):      # 英文名在單字邊界截斷
+        cut = cut.rsplit(' ', 1)[0]
+    return cut.rstrip(' ,') + '…'
 
 
 def load_yaml(name):
@@ -61,10 +78,10 @@ class Universe:
                 for ss in s.get('subsectors', []):
                     for t in ss.get('tickers', []):
                         sym = str(t.get('symbol') or '').upper()
-                        if not sym or (t.get('market') or 'US') != 'US' or '.' in sym:
+                        if not sym:
                             continue
                         # 對照表沒有的 watchlist 板塊就直接用板塊名（基準 ETF 走 default_sector）
-                        self.by_ticker.setdefault(sym, {'sector': game or s.get('name'), 'name': t.get('name'), 'watchlist': s.get('name')})
+                        self.by_ticker.setdefault(sym, {'sector': game or s.get('name'), 'name': t.get('name'), 'watchlist': s.get('name'), 'market': market_of(sym)})
         except FileNotFoundError:
             pass
 
@@ -73,13 +90,26 @@ class Universe:
         return (card.get('sector') or (self.meta.get('tickers') or {}).get(t, {}).get('sector')
                 or self.by_ticker.get(t, {}).get('sector') or self.bench.get('default_sector', 'Other'))
 
-    def etfs(self, sector: str) -> tuple[str, str]:
+    def etfs(self, sector: str, market: str = 'US') -> tuple[str, str]:
+        if market != 'US':
+            idx = (self.bench.get('markets') or {}).get(market)
+            if idx:
+                return idx, idx
         s = (self.bench.get('sectors') or {}).get(sector) or (self.bench.get('sectors') or {}).get(self.bench.get('default_sector', 'Other')) or {'etf': 'SPY', 'market': 'SPY'}
         return s['etf'], s['market']
 
     def peers(self, sector: str, exclude: str, extra: list[str]) -> list[str]:
-        same = sorted({t for t, v in self.by_ticker.items() if v.get('sector') == sector} | set(extra))
-        return [t for t in same if t != exclude]
+        """同市場、同產業的代號（猜公司的干擾選項）；不夠 3 個再放寬到同市場。"""
+        mk = market_of(exclude)
+        pool = {t for t, v in self.by_ticker.items() if v.get('market') == mk} | {t for t in extra if market_of(t) == mk}
+        same = sorted(t for t in pool if self.sector_of({'ticker': t}) == sector and t != exclude)
+        if len(same) < 3:
+            same += sorted(t for t in pool if t != exclude and t not in same)
+        return same
+
+    def name_of(self, ticker: str, fallback: str = '') -> str:
+        t = str(ticker).upper()
+        return short_name(self.by_ticker.get(t, {}).get('name') or fallback or t)
 
     def known_tickers(self) -> set[str]:
         return set(self.by_ticker)
@@ -100,6 +130,7 @@ def enrich(raw: dict, uni: Universe, state_card: dict, infer=infer_session) -> t
         return None, [f'schema：{err["loc"]} {err["msg"]}' for err in e.errors()]
     if not card.session:
         card.session = (meta.get('sessions') or {}).get(card.key) or state_card.get('session')
+    card.market = market_of(card.ticker)
     if not card.session and infer:
         try:
             card.session = infer(card.ticker, date.fromisoformat(card.date))
@@ -112,11 +143,11 @@ def enrich(raw: dict, uni: Universe, state_card: dict, infer=infer_session) -> t
         ra = (meta.get('release_at') or {}).get(card.key)
         card.releaseAt = str(ra) if ra else None
     if not card.session:
+        card.session = (uni.release_cfg.get('default_session') or {}).get(card.market)
+    if not card.session:
         problems.append('缺 session（BMO / AMC）：卡片或 config/meta.yaml 的 sessions 補上')
     if not card.sector:
         problems.append('缺 sector：卡片或 config/meta.yaml 的 tickers.<T>.sector 補上（或在 benchmarks.yaml 的 watchlist 對照表加上這個板塊）')
-    if card.market != 'US':
-        problems.append(f'v1 只收美股卡片（market={card.market}）')
     return card, problems
 
 
@@ -125,6 +156,7 @@ class Run:
         self.src = source
         self.cfg = load_yaml('release.yaml')
         self.uni = Universe(load_yaml('benchmarks.yaml'), load_yaml('meta.yaml'))
+        self.uni.release_cfg = self.cfg
         et, tw = now_dates()
         self.today_et, self.today_tw = today_et or et, today_tw or tw
         self.site_dir = site_dir
@@ -138,6 +170,7 @@ class Run:
         self.state = self.src.load_state()
         self.state.setdefault('cards', {})
         self.state.setdefault('seq', 0)
+        self._companies = {}
 
     # ── helpers ──
     def _released(self):
@@ -156,17 +189,50 @@ class Run:
             if card.key in seen:
                 problems.append(f'重複卡片：{card.key}')
             seen.add(card.key)
+            if card.company:
+                self._companies.setdefault(card.ticker, card.company)
             out.append((card.key, card, st, problems))
         return out
 
+    def rebuild(self, which: str = 'non_us') -> int:
+        """重建已上架的卡（同一個 id、編號、上架日）：修正基準、反應日、選項與公司名。
+        which = 'non_us' 只重建非美股；'all' 全部重建。"""
+        items = self.cards()
+        by_key = {k: c for k, c, _, _ in items if c}
+        all_tickers = sorted({c.ticker for c in by_key.values()})
+        n = 0
+        for key, st in sorted(self.state['cards'].items(), key=lambda kv: kv[1].get('n') or 0):
+            if st.get('status') != 'released' or not st.get('publicId'):
+                continue
+            card = by_key.get(key)
+            if card is None:
+                self.log(f'skip {key}: 佇列裡找不到這張卡'); continue
+            if which != 'all' and card.market == 'US':
+                continue
+            red = self.redact(card)
+            try:
+                ans = self.answer_for(card)
+            except Exception as e:
+                self.log(f'skip {key}: {e}'); continue
+            pub = self.build_public(card, red, ans, st['publicId'], st['n'], all_tickers, self.prior_for(card, items), st.get('releasedOn'))
+            self._write(pub, card)
+            if not self.dry:
+                st.update(outperform=ans['excess']['sector']['r1'] > 0, session=card.session, sector=card.sector, rebuiltAt=self.today_tw.isoformat())
+            n += 1
+            self.log(f'rebuilt {key} → {st["publicId"]} ({card.market}, 基準 {ans["benchmark"]["sector"]}, t0 {ans["t0"]})')
+        if not self.dry:
+            self.src.save_state(self.state)
+        return n
+
     def window_done(self, card: QueueCard) -> bool:
         t0 = reaction_day(date.fromisoformat(card.date), card.session)
-        return add_trading_days(t0, 19) <= self.today_et
+        # 非美股用 NYSE 日曆粗估（實際 t0 由個股自己的交易日決定，不夠就 held）
+        return add_trading_days(t0, 19 if card.market == 'US' else 21) <= self.today_et
 
     def answer_for(self, card: QueueCard) -> dict:
-        etf, mkt = self.uni.etfs(card.sector)
+        etf, mkt = self.uni.etfs(card.sector, card.market)
         kw = {'fetch': self.fetch} if self.fetch else {}
-        kw.update(pre_bars=int(self.cfg.get('chart_pre_bars', 40)), post_bars=int(self.cfg.get('chart_post_bars', 20)))
+        kw.update(pre_bars=int(self.cfg.get('chart_pre_bars', 40)), post_bars=int(self.cfg.get('chart_post_bars', 20)), us=card.market == 'US')
         r = compute(card.ticker, date.fromisoformat(card.date), card.session, etf, mkt, self.today_et, **kw)
         return {
             'ticker': card.ticker, 'company': card.company or card.ticker, 'date': card.date, 'session': card.session,
@@ -200,7 +266,7 @@ class Run:
                         'netSentiment': p.net_sentiment, 'reaction': reaction})
         return out
 
-    def build_public(self, card: QueueCard, red, ans: dict, pid: str, n: int, all_tickers: list[str], prior=None) -> dict:
+    def build_public(self, card: QueueCard, red, ans: dict, pid: str, n: int, all_tickers: list[str], prior=None, released_on=None) -> dict:
         rnd = random.Random(pid)
         order = list(range(len(red.highlights)))
         rnd.shuffle(order)
@@ -218,9 +284,10 @@ class Run:
         choices = rnd.sample(peers, min(3, len(peers))) + [card.ticker]
         rnd.shuffle(choices)
         return {
-            'id': pid, 'n': n, 'releasedOn': self.today_tw.isoformat(), 'market': card.market, 'sector': card.sector,
+            'id': pid, 'n': n, 'releasedOn': released_on or self.today_tw.isoformat(), 'market': card.market, 'sector': card.sector,
             'session': card.session, 'summary': red.summary, 'highlights': hl, 'watch': red.watch,
-            'choices': choices, 'prior': prior, 'chart': {'pre': chart_pre} if chart_pre else None, 'answer': obfuscate(ans),
+            'choices': choices, 'choiceNames': {t: self.uni.name_of(t, self._companies.get(t) or (card.company if t == card.ticker else '')) for t in choices},
+            'prior': prior, 'chart': {'pre': chart_pre} if chart_pre else None, 'answer': obfuscate(ans),
         }
 
     def redact(self, card):

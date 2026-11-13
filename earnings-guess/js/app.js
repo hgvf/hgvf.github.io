@@ -196,7 +196,7 @@ function renderForm(c, st, allDone) {
       <div class="conf"><input type="range" min="50" max="100" step="5" value="65" id="fConf"><b id="fConfV">65%</b></div>
       <span class="sub">高信心猜錯會被 Brier 扣分；|超額| &lt; ${DEADBAND * 100}% 時方向與信心不計分。</span></div>
     <div class="field"><span class="lbl">4. 猜公司（選填，+5）</span>
-      <div class="choices" id="fPick">${c.choices.map(t => `<button data-v="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>
+      <div class="choices" id="fPick">${c.choices.map(t => `<button data-v="${esc(t)}">${choiceLabel(c, t)}</button>`).join('')}</div></div>
     <button class="btn btn-primary btn-lg" id="fGo" style="width:100%" disabled>送出並揭曉</button>
     <p class="sub" style="margin-top:8px">同一張卡在這個瀏覽器只能作答一次。</p>
     </div>
@@ -251,7 +251,7 @@ function renderReveal(c, rec, ans) {
     </div>
     <h3>原卡情緒</h3>
     <p class="sub">net sentiment = <b>${ans.netSentiment > 0 ? '+' : ''}${ans.netSentiment}</b>（模型猜${ans.netSentiment > 0 ? '跑贏' : '跑輸'}${(ans.netSentiment > 0) === (r.e > 0) ? ' ○' : ' ×'}）；每句的標籤已顯示在左邊。</p>
-    <div class="choices" style="margin-top:12px">${c.choices.map(t => `<button disabled class="${t === ans.ticker ? 'right' : t === rec.guess.pick ? 'wrong' : ''}">${esc(t)}</button>`).join('')}</div>
+    <div class="choices" style="margin-top:12px">${c.choices.map(t => `<button disabled class="${t === ans.ticker ? 'right' : t === rec.guess.pick ? 'wrong' : ''}">${choiceLabel(c, t)}</button>`).join('')}</div>
     <div class="ctrl" style="margin-top:14px">
       <a class="btn btn-primary" href="#/play" id="bNext">下一題 →</a>
       <button class="btn" id="bShare">複製分享文字</button>
@@ -263,6 +263,11 @@ function renderReveal(c, rec, ans) {
     const t = shareText(c.n, r);
     try { await navigator.clipboard.writeText(t); toast('已複製：' + t); } catch { prompt('複製這段文字', t); }
   };
+}
+
+function choiceLabel(c, t) {
+  const n = c.choiceNames?.[t];
+  return `<span class="ch-tk">${esc(t)}</span>${n && n !== t ? `<span class="ch-nm">${esc(n)}</span>` : ''}`;
 }
 
 function drawMini(svg, a, b) {
@@ -392,6 +397,7 @@ function renderSettings() {
 function demoCards() {
   const mk = (id, n, sector, session, summary, hl, watch, choices, ans) => ({
     id, n, releasedOn: todayTW(), market: 'US', sector, session, summary, highlights: hl.map(h => ({ text: h.text })), watch, choices,
+    choiceNames: Object.fromEntries(choices.map(t => [t, `示範公司 ${t.slice(-1)}`])),
     prior: (DEMO_PRIOR[id] || []).map(p => ({ ...p, highlights: p.highlights.map(h => ({ text: h.text })) })),
     chart: { pre: demoChart(n) },
     answer: obfuscate({ ...ans, session, year: 2026, quarter: 'Q3', benchmark: { sector: ans.etf, market: 'SPY' },

@@ -77,3 +77,6 @@
 .hl-next { width: 100%; margin-top: 4px; }
 .form-lock { padding: 12px; border-radius: var(--r); background: var(--warn-l); color: #7c4a03; font-size: .88rem; margin-bottom: 12px; line-height: 1.5; }
 #answerForm.locked { opacity: .4; pointer-events: none; filter: grayscale(.4); }
+
+.choices button { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.2; }
+.ch-nm { font-family: var(--sans); font-weight: 500; font-size: .74rem; opacity: .75; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

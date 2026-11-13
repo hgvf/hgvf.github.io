@@ -145,7 +145,8 @@ class TestRelease(unittest.TestCase):
         self.assertTrue(all(set(h) == {'text'} for h in pub['highlights']))     # 情緒只在 answer 裡
         self.assertEqual(len(ans['sentiments']), len(pub['highlights']))
         self.assertEqual(len(pub['choices']), 4)
-        self.assertNotIn(ans['ticker'], json.dumps({k: v for k, v in pub.items() if k not in ('choices', 'answer')}))
+        self.assertNotIn(ans['ticker'], json.dumps({k: v for k, v in pub.items() if k not in ('choices', 'choiceNames', 'answer')}))
+        self.assertEqual(set(pub['choiceNames']), set(pub['choices']))
         self.assertTrue(any('缺遊戲欄位' in i['title'] for i in r.issues))
         sectors = [pub['sector']]
         for k in range(2, 5):
@@ -175,6 +176,21 @@ class TestRelease(unittest.TestCase):
         r.cfg['per_day'] = 0
         picks = r.release()
         self.assertEqual(len(picks), 7)        # 5 + KLAC Q1 + KLAC Q4; NEW1 window not done, NOSEC invalid
+
+    def test_market_helpers(self):
+        from pipeline import market_of, short_name
+        self.assertEqual([market_of(t) for t in ['NVDA', '2303.TW', '5309.TWO', '8035.T', '005930.KS']], ['US', 'TW', 'TW', 'JP', 'KR'])
+        self.assertEqual(short_name('KLA Corporation'), 'KLA')
+        self.assertEqual(short_name('聯華電子股份有限公司'), '聯華電子')
+        self.assertEqual(short_name('Advanced Micro Devices, Inc.'), 'Advanced Micro…' if len('Advanced Micro Devices') > 20 else 'Advanced Micro Devices')
+
+    def test_non_us_uses_local_index_and_own_calendar(self):
+        r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, dry_run=True, log=lambda *a: None)
+        card = QueueCard(**dict(CARD, ticker='2303.TW', company='聯華電子股份有限公司', aliases=[], session='AMC', date='2026-07-30'))
+        card.market = 'TW'
+        a = r.answer_for(card)
+        self.assertEqual(a['benchmark'], {'sector': '^TWII', 'market': '^TWII'})
+        self.assertEqual(a['t0'], '2026-07-31')
 
     def test_dry_run_writes_nothing(self):
         r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, dry_run=True, log=lambda *a: None)
