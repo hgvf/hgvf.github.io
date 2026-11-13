@@ -1,0 +1,95 @@
+name: Blind Chart — build puzzle bank
+
+# 下載行情 parquet（Release asset）→ 抽片段 → 用同一份 engine 出題 → 推到
+# orphan branch `blind-chart-puzzles`（每次 force-push，不留歷史；網站 main 的
+# git history 永遠不含題庫或行情）。前端從 raw.githubusercontent.com 讀。
+#
+# 需要的設定（見 blind-chart/DATA.md）：
+#   secrets.MARKET_DATA_TOKEN   只有行情放在「另一個 private repo」時才需要：
+#                               fine-grained token，該 repo 的 Contents: Read
+#   vars.MARKET_DATA_REPO       預設 hgvf/market-data
+on:
+  workflow_dispatch:
+    inputs:
+      data_tag:
+        description: '行情 Release tag（例 data-v2026Q4）'
+        required: true
+        default: 'data-v1'
+      seed:
+        description: '出題 seed（空白 = config/puzzles.json 的 seed）'
+        required: false
+      markets:
+        description: '市場'
+        required: false
+        default: 'TW,US,JP,KR'
+  schedule:
+    - cron: '23 3 1 * *'     # 每月 1 日 11:23 台灣時間（題庫不必每週換）
+
+permissions:
+  contents: write
+
+concurrency: { group: blind-chart-puzzles, cancel-in-progress: false }
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DATA_REPO: ${{ vars.MARKET_DATA_REPO || 'hgvf/market-data' }}
+      DATA_TAG: ${{ inputs.data_tag || vars.MARKET_DATA_TAG || 'data-v1' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Engine tests
+        run: node --test blind-chart/engine/test/*.test.mjs
+      - name: Install python deps
+        run: pip install -r blind-chart/tools/requirements.txt
+      - name: Download market data release
+        env:
+          GH_TOKEN: ${{ secrets.MARKET_DATA_TOKEN || github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/data"
+          gh release download "$DATA_TAG" -R "$DATA_REPO" -D "$RUNNER_TEMP/data" --pattern '*.parquet' --pattern '*.tar' --pattern '*.tar.gz' --pattern 'manifest.json' || {
+            echo "::error::下載不到 $DATA_REPO@$DATA_TAG（檢查 tag、MARKET_DATA_TOKEN 權限）"; exit 1; }
+          cd "$RUNNER_TEMP/data"
+          for f in *.tar *.tar.gz; do [ -e "$f" ] && tar -xf "$f" && rm "$f"; done
+          ls -la
+      - name: Sample segments
+        run: |
+          python blind-chart/tools/sample_segments.py --data "$RUNNER_TEMP/data" \
+            --out "$RUNNER_TEMP/build/segments.jsonl.gz" \
+            --markets "${{ inputs.markets || 'TW,US,JP,KR' }}" \
+            ${{ inputs.seed && format('--seed {0}', inputs.seed) || '' }} \
+            ${{ vars.MARKET_DATA_MAP && format('--map {0}', vars.MARKET_DATA_MAP) || '' }}
+      - name: Generate puzzles
+        run: |
+          node blind-chart/tools/gen-puzzles.mjs --segments "$RUNNER_TEMP/build/segments.jsonl.gz" \
+            --out "$RUNNER_TEMP/bank" ${{ inputs.seed && format('--seed {0}', inputs.seed) || '' }}
+          test -s "$RUNNER_TEMP/bank/index.json"
+      - name: Publish to orphan branch blind-chart-puzzles
+        run: |
+          cd "$RUNNER_TEMP/bank"
+          git init -q -b blind-chart-puzzles
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "Auto-generated puzzle bank — do not edit. Source: .github/workflows/blind_chart_puzzles.yml" > README.md
+          git add -A
+          git commit -qm "puzzles $(jq -r .seed manifest.json) $(date -u +%Y-%m-%d)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" blind-chart-puzzles
+      - name: Archive as Release asset (puzzles-<seed>.tar.gz)
+        # Release = 每一版題庫的永久存檔（可重現、可回滾）；分支 = 網站實際讀取的位置
+        # （Release asset 下載沒有 CORS header，瀏覽器不能直接讀，所以兩者都要）。
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          seed=$(jq -r .seed "$RUNNER_TEMP/bank/manifest.json")
+          tag="puzzles-${seed}-$(date -u +%Y%m%d)"
+          tar -czf "$RUNNER_TEMP/puzzles-${seed}.tar.gz" -C "$RUNNER_TEMP/bank" index.json manifest.json puzzles answers
+          gh release delete "$tag" -y --cleanup-tag -R "${{ github.repository }}" 2>/dev/null || true
+          gh release create "$tag" "$RUNNER_TEMP/puzzles-${seed}.tar.gz" "$RUNNER_TEMP/bank/manifest.json" \
+            -R "${{ github.repository }}" --title "Blind Chart 題庫 ${seed}" \
+            --notes "盲測K線題庫（seed ${seed}，行情 ${DATA_REPO}@${DATA_TAG}）。網站讀的是 blind-chart-puzzles 分支；這裡是存檔，要回滾就把 tar.gz 解開推回該分支。" \
+            --latest=false

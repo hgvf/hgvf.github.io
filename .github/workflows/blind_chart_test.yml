@@ -1,0 +1,14 @@
+name: Blind Chart — engine tests
+on:
+  push:
+    paths: ['blind-chart/engine/**', 'blind-chart/tools/**']
+  pull_request:
+    paths: ['blind-chart/engine/**', 'blind-chart/tools/**']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node --test blind-chart/engine/test/*.test.mjs

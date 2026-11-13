@@ -316,3 +316,41 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 - 純邏輯在 `split/js/ledger.js`（結算、餘額、時區換算），動畫在 `split/js/fx.js`
 
 ⚠️ 新增了 `split_tables` 的 rules，需要重新部署：`firebase deploy --only firestore:rules`。
+
+
+## 13. Side Project：盲測K線紀律訓練場（`blind-chart/`）
+
+全版面靜態頁，網址 `/blind-chart/`。不需 build：原生 ES modules，圖表用 CDN 的 lightweight-charts。
+
+| 路徑 | 說明 |
+|---|---|
+| `blind-chart/engine/` | `@trainer/engine`：指標 registry、條件式 parser（禁用 eval）、sizing / 停損 / 停利 / 加碼 plugin、撮合、紀律判定、Counterfactual 報告。瀏覽器與 Node 共用 |
+| `blind-chart/engine/test/` | `node --test blind-chart/engine/test/*.test.mjs`：指標對參考公式、未來函數、照規則操作 Actual = Shadow、各違規類型 |
+| `blind-chart/tools/` | 出題：`inspect_parquet.py`、`sample_segments.py`（DuckDB）、`gen-puzzles.mjs` |
+| `blind-chart/config/` | `universe.json`（流動性門檻）、`puzzles.json`（題庫參數） |
+| `blind-chart/js/` | 前端：開始 / 遊戲 / 報告 / 歷史 / 策略編輯器，Session 存 IndexedDB |
+| `.github/workflows/blind_chart_puzzles.yml` | 下載行情 Release → 出題 → force-push 到 orphan branch `blind-chart-puzzles` |
+
+行情資料的上傳格式見 **`blind-chart/DATA.md`**。題庫還沒發佈前，頁面會自動改用合成示範題。
+
+## 14. Side Project：法說會盲猜（`earnings-guess/`）
+
+| 路徑 | 說明 |
+|---|---|
+| `earnings-guess/pipeline/` | Python：`models.py`（Pydantic）、`redact.py`（去識別化 + 殘留檢查）、`reaction.py`（yfinance 反應）、`calendar_us.py`（NYSE 交易日，BMO / AMC → t0）、`pipeline.py`（排程規則、發佈）、`cli.py` |
+| `earnings-guess/config/` | `benchmarks.yaml`（sector → ETF，以及 watchlist 板塊 → sector 對照）、`release.yaml`（每日張數、間隔、答案打散、區間邊界）、`meta.yaml`（補 sector / aliases / BMO-AMC / 指定釋出日）、`redact_allowlist.txt` |
+| `earnings-guess/data/` | 已釋出的公開卡（只新增不覆蓋）與 `index.json` |
+| `.github/workflows/earnings_guess_release.yml` | 每天 22:17 UTC（台灣 06:17）把反應視窗已結束的卡全部上架（`per_day: 0` = 不限量，玩家可以一直玩）；可手動指定 `count` / `id` / `dry_run` |
+
+佇列就是 Firestore 既有的 `earnings_calls`，排程狀態存在 Firestore `earnings_guess_state/schedule`（沒有 client rule，瀏覽器讀不到）。缺 sector / session 或去識別化有疑慮的卡會開 GitHub Issue，補 `meta.yaml` 後下次排程自動重新檢查。
+
+```bash
+pip install -r earnings-guess/pipeline/requirements.txt
+python earnings-guess/pipeline/cli.py validate --credentials scripts/serviceAccount.json   # 檢查所有卡
+python earnings-guess/pipeline/cli.py release --credentials scripts/serviceAccount.json --dry-run
+python earnings-guess/pipeline/cli.py plan --credentials scripts/serviceAccount.json --days 30
+```
+
+玩法：重點一張一張出現（按「下一張」），看完才能猜股價反應；情緒標籤只放在混淆過的 answer 裡，揭曉時才顯示。題庫頁只讀 `index.json`（每張附 90 字 teaser）並分頁顯示，卡片再多也不必逐張下載。卡片附法說前 40 根日 K（以 t0 前一天收盤 = 100 縮放），揭曉後接上法說後 20 根與產業 ETF；資料由 pipeline 一起算好放進卡片 JSON（每張約 3 KB），前端不打任何行情 API。
+
+示範模式：`/earnings-guess/?demo=1`。

@@ -1,0 +1,15 @@
+{
+  "_doc": "SDD 5.1 — 出題參數。seed 每次發佈換一個即可重現。",
+  "contextBars": 250,
+  "playBars": 250,
+  "playBarsVariants": [120, 250, 500],
+  "revealBars": 60,
+  "poolSize": { "TW": 600, "US": 600, "JP": 600, "KR": 600 },
+  "candidateMultiplier": 3,
+  "minSignals": 3,
+  "strategyShare": 0.6,
+  "regimeQuota": { "up": 0.3333, "down": 0.3333, "range": 0.3334 },
+  "regime": { "upReturn": 0.15, "downReturn": -0.15, "rangeMaxAdx": 22 },
+  "maxPerSymbol": 3,
+  "seed": "2026Q4"
+}

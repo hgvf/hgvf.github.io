@@ -9,3 +9,8 @@ __pycache__/
 mil/worker/.dev.vars
 .wrangler/
 war-atlas/artifact.html
+
+# blind-chart / earnings-guess local builds (real market data — never commit)
+build/
+*.jsonl.gz
+blind-chart/puzzles/
