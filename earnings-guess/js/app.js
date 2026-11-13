@@ -130,11 +130,14 @@ async function renderCard(id, label) {
       if (mode === 'hint') return `<div class="hl ${t}"><span class="dot"></span><span>${esc(h.text)}</span><span class="tag ${SENT[t][1]} sent">${SENT[t][0]}</span></div>`;
       if (mode === 'reveal') return `<div class="hl ${t}"><span class="dot"></span><span>${esc(h.text)}</span><span class="tag ${SENT[t][1]} sent">${SENT[t][0]}</span></div>`;
       return `<div class="hl-q${cur ? ' current' : ''}"><div class="hl-q-text"><span class="hl-no">${i + 1}</span>${esc(h.text)}</div></div>`;
-    }).join('') + (mode === 'step' && q.shown < N ? `<button class="btn btn-primary hl-next" id="hlNext">下一張 →<span class="sub" style="color:inherit;opacity:.8">（還有 ${N - q.shown} 張）</span></button>` : '');
+    }).join('') + (mode === 'step' && q.shown < N ? `<div class="hl-nav">
+        <button class="btn btn-primary hl-next" id="hlNext">下一張 →<span class="sub" style="color:inherit;opacity:.8">（還有 ${N - q.shown} 張）</span></button>
+        ${N - q.shown > 1 ? `<button class="btn hl-all" id="hlAll">一次看完</button>` : ''}</div>` : '');
     $('#hlProg').textContent = mode === 'step' ? `第 ${Math.min(q.shown, N)} / ${N} 張` : mode === 'hint' ? '提示模式：直接顯示情緒' : '情緒標籤已揭曉';
     $('#hlDots').innerHTML = c.highlights.map((_, i) => `<i class="${i < q.shown ? 'seen done' : ''}"></i>`).join('');
     const done = q.shown >= N;
     $('#hlAfter').innerHTML = done && c.watch?.length ? `<h3>待觀察</h3><ul class="watch">${c.watch.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : '';
+    $('#hlAll') && ($('#hlAll').onclick = () => { q.shown = N; drawHL(); syncForm(); });
     $('#hlNext') && ($('#hlNext').onclick = () => {
       q.shown++; drawHL(); syncForm();
       $('.hl-q.current')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

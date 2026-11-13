@@ -80,20 +80,35 @@ def redact_text(text: str, card: QueueCard, amount_mode='keep') -> str:
             t = re.sub(rf"(?<![A-Za-z0-9]){re.escape(txt)}(?:['’]s)?(?![A-Za-z0-9])", REPL[kind], t, flags=re.I)
     t = re.sub(rf'(?<![A-Za-z0-9$]){re.escape(card.ticker)}(?![A-Za-z0-9])', '本公司', t)
     t = re.sub(r'本公司(\s*本公司)+', '本公司', t)
-    # quarter + year
-    t = re.sub(r"\b(?:F?Q)([1-4])\s*(?:FY\s*)?'?((?:19|20)?\d{2})\b",
+    # 英文字母邊界：中文字也是 \w，所以不用 \b（「較CY2026」「年度Q2」都要抓得到）
+    L, R = r'(?<![A-Za-z0-9])', r'(?![A-Za-z0-9])'
+    qnum = lambda g: '一二三四'.find(g) + 1 if g in '一二三四' else int(g)
+    # quarter + year（季在前 / 年在前都抓）
+    t = re.sub(L + r"(?:F?Q)([1-4])\s*(?:FY\s*)?'?((?:19|20)?\d{2})" + R,
                lambda m: _qrel(cy, cq, _year4(m.group(2)), int(m.group(1))), t)
-    t = re.sub(r"\b([1-4])Q\s*'?((?:19|20)?\d{2})\b", lambda m: _qrel(cy, cq, _year4(m.group(2)), int(m.group(1))), t)
+    t = re.sub(L + r"([1-4])Q\s*'?((?:19|20)?\d{2})" + R, lambda m: _qrel(cy, cq, _year4(m.group(2)), int(m.group(1))), t)
+    t = re.sub(L + r"(?:FY|CY)?\s*'?((?:19|20)\d{2}|\d{2})\s*(?:年度?)?\s*F?Q([1-4])" + R,
+               lambda m: _qrel(cy, cq, _year4(m.group(1)), int(m.group(2))), t)
     t = re.sub(r"((?:19|20)\d{2})\s*年?\s*(?:第)?([一二三四1-4])\s*季",
-               lambda m: _qrel(cy, cq, int(m.group(1)), '一二三四'.find(m.group(2)) + 1 if m.group(2) in '一二三四' else int(m.group(2))), t)
+               lambda m: _qrel(cy, cq, int(m.group(1)), qnum(m.group(2))), t)
     # half years
-    t = re.sub(r"\b([12])H\s*'?((?:19|20)?\d{2})\b|\bH([12])\s*'?((?:19|20)\d{2})\b",
+    t = re.sub(L + r"([12])H\s*'?((?:19|20)?\d{2})" + R + '|' + L + r"H([12])\s*'?((?:19|20)\d{2})" + R,
                lambda m: ('上半年' if (m.group(1) or m.group(3)) == '1' else '下半年') + '（' + _yrel(cy, _year4(m.group(2) or m.group(4))) + '）', t)
     # fiscal / calendar years
-    t = re.sub(r"\b(?:FY|CY|fiscal(?:\s+year)?|calendar(?:\s+year)?)\s*'?((?:19|20)?\d{2})\b",
+    t = re.sub(L + r"(?:FY|CY|fiscal(?:\s+year)?|calendar(?:\s+year)?)\s*'?((?:19|20)?\d{2})" + R,
                lambda m: _yrel(cy, _year4(m.group(1))), t, flags=re.I)
     t = re.sub(r'((?:19|20)\d{2})\s*(?:年度|年)', lambda m: _yrel(cy, int(m.group(1))), t)
     t = re.sub(r'(?<![\d.,$])((?:19|20)\d{2})(?![\d%.,])', lambda m: _yrel(cy, int(m.group(1))), t)
+    # 年份換掉後殘留的 CY / FY 前綴（「CY本年度」→「本年度」）
+    t = re.sub(L + r'(?:CY|FY)\s*(?=(?:本|上一|下一|前|後|某)年度)', '', t)
+    # 沒帶年份的季度：「Q2營收」「本年度 Q2」→ 以本季為基準換成相對季別（同一年度內）
+    t = re.sub(L + r'F?Q([1-4])' + R, lambda m: _qrel(cy, cq, cy, int(m.group(1))), t)
+    t = re.sub(r'(?<![\d年])第([一二三四])季', lambda m: _qrel(cy, cq, cy, qnum(m.group(1))), t)   # 只換「第N季」，不碰「上一季」
+    # 用月份稱呼的季度會透露財年制度（例：September quarter、6月季）
+    t = re.sub(L + r'(?:January|February|March|April|May|June|July|August|September|October|November|December|'
+               r'Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\.?[- ]quarters?' + R, '某季', t, flags=re.I)
+    t = re.sub(r'(?<!\d)(?:[1-9]|1[0-2])月(?:份)?(?:季度|季)', '某季', t)
+    t = re.sub(r'本年度\s+本季|本季\s+本季', '本季', t)
     if amount_mode == 'magnitude':
         t = re.sub(r'(\$|US\$|NT\$)\s?(\d+(?:\.\d+)?)\s?(B|M|K|bn|billion|million|trillion|T)\b',
                    lambda m: f"{m.group(1)}{'X' * len(m.group(2).split('.')[0])} {m.group(3)}", t, flags=re.I)
