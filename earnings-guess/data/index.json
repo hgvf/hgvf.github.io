@@ -1224,7 +1224,319 @@
    "sector": "Networking",
    "session": "AMC",
    "teaser": "AI光通訊需求全面加速，1.6T、OCS、Pump Laser與NPO/CPO多線成長，Q1財測提前達成原營收目標且毛利率突破50%，但高估值使盤後股價反應有限。"
+  },
+  {
+   "id": "c-fe5845",
+   "n": 154,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI需求與漲價帶動本季營收創高、雙率提升，6月底B/B升至2.2且客戶願溢價簽長約，管理層預期下一季營收與毛利率、營益率續增。"
+  },
+  {
+   "id": "c-669c85",
+   "n": 155,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本季營收與獲利明顯反彈，但7月營收再度轉弱，新廠產能與先進封裝訂單仍需後續驗證。"
+  },
+  {
+   "id": "c-ef1639",
+   "n": 156,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "石英與振盪器廠受車用與 AI 成長帶動，本季 營收年增約 36%，管理層預估 下一年度成長 20–30%。"
+  },
+  {
+   "id": "c-917dfa",
+   "n": 157,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "華泰受惠 AI 伺服器與企業級 SSD 模組，本季 營收與獲利年增，轉型 AI 記憶體封裝/EMS 方向明確。"
+  },
+  {
+   "id": "c-da8b6f",
+   "n": 158,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "COSA產能持續倍增、800G進入放量，AI光學營收占比升至45.5%，本季毛利率回升至32%；ELSFP切入CPO供應鏈提供下一階段成長選項。"
+  },
+  {
+   "id": "c-6ba689",
+   "n": 159,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "上半年本業營運損失，但業外投資收益使稅後獲利NT$6.3億、EPS 3.54；主機板占比下滑，IPC與顯卡比重上升。"
+  },
+  {
+   "id": "c-ca7595",
+   "n": 160,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "高毛利自製設備與再生晶圓推升獲利，下一年度訂單接近產能上限，但交付能力、長交期料件與高額擴產成為主要風險。"
+  },
+  {
+   "id": "c-b5d007",
+   "n": 161,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本公司上半年營收持平、本業仍虧損但近損益兩平，獲利靠業外收益；產品組合由主機板轉向 IPC 與顯示卡。"
+  },
+  {
+   "id": "c-efeeab",
+   "n": 162,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本季與上半年營收獲利強勁成長，銅價、東南亞新廠及AI Server藥水提供動能，但高銅價也可能壓抑客戶週轉與終端需求。"
+  },
+  {
+   "id": "c-5299dd",
+   "n": 163,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "上半年營收與獲利明顯復甦，公司將以高階BSI、Global Shutter與非中國供應鏈商機改善產品組合，但晶圓代工與記憶體成本上升使下半年毛利率仍面臨壓力。"
+  },
+  {
+   "id": "c-3ab458",
+   "n": 164,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本季毛利率突破三成，800G光通訊、AI雷射陶瓷基板與CIS帶動成長，但下一年度放量仍取決於良率、設備驗證與客戶需求。"
+  },
+  {
+   "id": "c-332601",
+   "n": 165,
+   "releasedOn": "2026-11-13",
+   "sector": "Robotics",
+   "session": "AMC",
+   "teaser": "AI資料中心、半導體設備與Edge AI需求帶動營收獲利創高，下一季可望續成長，但毛利率、存貨與營運資金壓力需要持續追蹤。"
+  },
+  {
+   "id": "c-fed36f",
+   "n": 166,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "環球晶本季營收明顯回升，12吋滿載且需求擴散至成熟製程，新廠進入認證與爬坡收成期，但折舊及海外製造成本仍壓抑毛利率。"
+  },
+  {
+   "id": "c-27b898",
+   "n": 167,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "半導體、AIDC與台電需求推升訂單能見度至某年度，本季毛利率升至20.8%帶動獲利增速明顯高於營收，現階段主要限制轉為產能與交貨速度。"
+  },
+  {
+   "id": "c-0b8d09",
+   "n": 168,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "中國控制器市占持續提升、高階五軸與機器人需求帶動產品組合升級，下一年度新產能開出將支撐下一階段成長。"
+  },
+  {
+   "id": "c-5a7992",
+   "n": 169,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "薄膜精密電阻供不應求，B/B 約 1.5、交期約 259 天，並規劃 下一年度–後年度大幅擴產。"
+  },
+  {
+   "id": "c-92cc97",
+   "n": 170,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "威強電（邊緣運算與工業電腦廠）本季營收與獲利大幅回升，AIoT/邊緣AI應用帶動動能，並啟動桃園新廠擴產計畫。"
+  },
+  {
+   "id": "c-079af5",
+   "n": 171,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "下半年NB需求與毛利率面臨零組件缺貨及成本上升壓力，無人機AI Box、避障與導航產品則成為下一年度主要成長動能。"
+  },
+  {
+   "id": "c-3f99c5",
+   "n": 172,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本季受產品組合改善與非面板事業成長帶動本業轉盈，但顯示事業仍虧損，下一季消費型面板需求偏弱。"
+  },
+  {
+   "id": "c-f38e58",
+   "n": 173,
+   "releasedOn": "2026-11-13",
+   "sector": "Robotics",
+   "session": "AMC",
+   "teaser": "本公司 本季 淨利年增 65%，但營收年減 26%、毛利率僅 4%，遊戲機仍占約 76%，散熱與機殼比重升至約 22%。"
+  },
+  {
+   "id": "c-7f9a56",
+   "n": 174,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "本季營收與獲利大幅優於預期，SoC占比升至51%並受AI影像晶片帶動；下一季營收續增但毛利率將因成本與產品組合正常化而回落。"
+  },
+  {
+   "id": "c-52c580",
+   "n": 175,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "半導體研磨耗材占比提高，Soft Pad與合肥廠進入量產前期，但本業獲利率、擴產支出與業外依賴仍需觀察。"
+  },
+  {
+   "id": "c-489c82",
+   "n": 176,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI先進封裝材料推動本季獲利大幅加速，上半年營業利益較5月財測再超出29%，公司同步將全年營業利益上修52%；Crasus石化事業分拆使表面營收財測下降，但留下公司的獲利結構明顯改"
+  },
+  {
+   "id": "c-b8c159",
+   "n": 177,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "牧德以「雙軌四線」切入 PCB 與半導體檢測，預期 AI 相關營收 本年度占 70%、下一年度達 80–90%，營收已連續 24 個月年增。"
+  },
+  {
+   "id": "c-ed60c3",
+   "n": 178,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本季營收與營業利益低於預期主要源自CoWoS設備驗收及約120億韓元營收遞延，而非需求取消；CoWoS擴產延續，HBM設備營收預期自兩季後加速。"
+  },
+  {
+   "id": "c-8ac6da",
+   "n": 179,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI資料中心帶動半導體與ICT材料需求強勁，全年營業利益上修22%至2,320億日圓，InP基板規劃擴產至上一年度的7至10倍，但本次財測上修仍有相當比例來自日圓貶值與銅價上漲。"
+  },
+  {
+   "id": "c-b6489c",
+   "n": 180,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "N3 AI加速器正式進入大量量產，下一季營收與獲利預計創高、兩季後續增；下一代N2價量均高於N3，成長動能可望延續至某年度。"
+  },
+  {
+   "id": "c-02ba39",
+   "n": 181,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI伺服器與網通板推升本季營收及獲利，泰國一廠轉盈且多座新廠將陸續加入，但須關注擴產執行、估值及60億元可轉債稀釋。"
+  },
+  {
+   "id": "c-9fd91c",
+   "n": 182,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "達發本季營收創歷史新高，並將本年度光通訊營收展望上修至年增超過四倍，100G DSP與TIA將成為下一年度主要成長動能。"
+  },
+  {
+   "id": "c-120f90",
+   "n": 183,
+   "releasedOn": "2026-11-13",
+   "sector": "Robotics",
+   "session": "AMC",
+   "teaser": "凌華上半年受惠Edge AI、ODM、半導體自動化及全球市場成長，營收與EPS大幅提升，但後續股價表現取決於漲價能否帶動毛利率自本季谷底回升。"
+  },
+  {
+   "id": "c-0b65da",
+   "n": 184,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "強固電腦推升 7–9 月營收連三月創高，BBU 延後半年於 下一季 出貨，管理層目標 後年度營收 100 億元。"
+  },
+  {
+   "id": "c-eb1994",
+   "n": 185,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI高階測試需求推升營收與毛利率，公司同步加速台灣擴產並規畫美國新廠，但高額資本支出、折舊與自由現金流是後續主要風險。"
+  },
+  {
+   "id": "c-d1d6fd",
+   "n": 186,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "北美CSP的CPU與AI推論晶片量產推動營收翻倍，下半年受惠台積電產能增加，下一代CPU、車用及CPO專案延續中期成長。"
+  },
+  {
+   "id": "c-d7cadf",
+   "n": 187,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "車燈光電龍頭轉型光電平台，以汽車光電、Mini-LED、AI光通訊(VCSEL)為三大引擎，並擴墨西哥產能。"
+  },
+  {
+   "id": "c-34b96b",
+   "n": 188,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "半導體測試與工業自動化需求推動營收、毛利及本業獲利高速成長，但匯兌損失仍大幅侵蝕獲利。"
+  },
+  {
+   "id": "c-cd3548",
+   "n": 189,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI/HPC需求推升上半年營收年增91.6%，本年度產能滿載、下一年度擴產50%，10kW高功耗與CPO設備成為下一階段成長引擎。"
+  },
+  {
+   "id": "c-b1ad56",
+   "n": 190,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI算力需求由GPU擴散至伺服器周邊，弘憶網通與記憶體本業同步成長，並攜手GMI Cloud切入AI運算租賃與資料中心新事業。"
+  },
+  {
+   "id": "c-9ec504",
+   "n": 191,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "本年度上半年EPS 4.65元創高、AI/ASIC/矽光子測試占比升至24%，湖口二廠7月量產、明年預期滿載。"
+  },
+  {
+   "id": "c-1e600a",
+   "n": 192,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI伺服器帶動功率元件與矽光子需求成長，H1營收年增28%轉虧為盈，公司看好全年營收成長逾35%。"
   }
  ],
- "updatedAt": "2026-11-13T07:48:43+00:00"
+ "updatedAt": "2026-11-13T08:11:03+00:00"
 }
