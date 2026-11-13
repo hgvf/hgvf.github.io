@@ -53,6 +53,17 @@ class TestRedact(unittest.TestCase):
         self.assertTrue(r.ok, r.hard)
         self.assertIn('10%', r.highlights[1]['text'])
 
+    def test_real_world_leaks(self):
+        c = dict(CARD, year=2027, quarter='Q1', aliases=[],
+                 summary='本年度 Q2營收與獲利率指引再大幅上升；Data Center於2026年6月季營收年增97.8%，較CY2025的5.91億成長；'
+                         'September quarter影響有限，December quarter才反映完整；June quarter bookings為四年最強。FY2027 Q1 EPS 0.76。')
+        out = redact_card(QueueCard(**c)).summary
+        for bad in ['Q2', 'CY', 'September', 'December', 'June', '6月季', '2026', '2025', '2027', 'FY']:
+            self.assertNotIn(bad, out, out)
+        self.assertIn('下一季營收', out)
+        self.assertIn('某季', out)
+        self.assertIn('本季 EPS', out)
+
     def test_residual_flags(self):
         from redact import residual_check
         hard, soft = residual_check(['KLAC grew in 2026; AMAT and XYZQ too'], QueueCard(**CARD), {'AI'}, {'AMAT'})

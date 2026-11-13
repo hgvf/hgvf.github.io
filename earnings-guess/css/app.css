@@ -74,7 +74,9 @@
 @keyframes hlIn { from { transform: translateY(6px); opacity: 0; } }
 .hl-q-text { line-height: 1.65; font-size: .94rem; display: flex; gap: 10px; }
 .hl-no { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-l); color: var(--accent); font-size: .76rem; font-weight: 700; display: grid; place-items: center; margin-top: 2px; }
-.hl-next { width: 100%; margin-top: 4px; }
+.hl-nav { display: flex; gap: 8px; margin-top: 4px; }
+.hl-next { flex: 1; }
+.hl-all { flex: none; }
 .form-lock { padding: 12px; border-radius: var(--r); background: var(--warn-l); color: #7c4a03; font-size: .88rem; margin-bottom: 12px; line-height: 1.5; }
 #answerForm.locked { opacity: .4; pointer-events: none; filter: grayscale(.4); }
 
