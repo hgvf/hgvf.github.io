@@ -1,0 +1,82 @@
+// presets.js — built-in Strategy Specs (SDD 4.9). 8.5 待確認：課程中的波段規則
+// 尚未提供，以下三組是通用起點，之後直接改這裡或在 UI 複製修改。
+export const PRESETS = [
+  {
+    id: 'donchian-breakout-v1',
+    name: '20 日突破 + 2ATR 停損 + 3ATR chandelier',
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14, smoothing: 'rma', trMode: 'standard' } },
+      { id: 'ema20', type: 'ema', params: { length: 20 } },
+      { id: 'ema60', type: 'ema', params: { length: 60 } },
+      { id: 'dc20', type: 'donchian', params: { length: 20 } },
+    ],
+    entry: { signal: 'cross_up(close, dc20.upper[1]) and ema20 > ema60', cooldownBars: 5 },
+    sizing: { method: 'max_loss_amount', amount: 10000, caps: { maxPositionPct: 0.3, maxOpenRiskR: 1.5, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr14', k: 2 } },
+      { type: 'breakeven', params: { atR: 1.5 } },
+      { type: 'chandelier', params: { atrId: 'atr14', k: 3 }, activateWhen: 'pos.unrealizedR >= 2' },
+    ],
+    targets: [{ at: { r: 3 }, fraction: 0.5 }],
+    exitSignals: [{ expr: 'close < ema60', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+    costModel: { type: 'none' },
+  },
+  {
+    id: 'ema-pullback-v1',
+    name: '多頭排列回檔 EMA20 + 結構停損 + 均線移動停利',
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'ema20', type: 'ema', params: { length: 20 } },
+      { id: 'ema50', type: 'ema', params: { length: 50 } },
+      { id: 'rsi14', type: 'rsi', params: { length: 14 } },
+      { id: 'sw', type: 'swing', params: { left: 3, right: 3 } },
+    ],
+    entry: { signal: 'ema20 > ema50 and rising(ema50, 5) and low[1] <= ema20[1] and close > ema20 and close > high[1] and rsi14 > 45', cooldownBars: 3 },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.4, cashOnly: true } },
+    stops: [
+      { type: 'structure', params: { swingId: 'sw', bufferAtr: 0.3, atrId: 'atr14' } },
+      { type: 'pct_initial', params: { p: 0.1 } },
+      { type: 'ma_trailing', params: { maId: 'ema20', bufferAtr: 0.5, atrId: 'atr14', trigger: 'close' }, activateWhen: 'pos.unrealizedR >= 1' },
+    ],
+    targets: [{ at: { r: 2 }, fraction: 0.33 }],
+    exitSignals: [],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'turtle-pyramid-v1',
+    name: '55 日突破 + 0.5ATR 加碼 ×3 + 10 日低點出場',
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr20', type: 'atr', params: { length: 20 } },
+      { id: 'dc55', type: 'donchian', params: { length: 55 } },
+    ],
+    entry: { signal: 'close > dc55.upper[1]', cooldownBars: 0 },
+    sizing: { method: 'risk_percent', pct: 0.005, caps: { maxPositionPct: 0.5, cashOnly: true, maxOpenRiskR: 2 } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr20', k: 2 } },
+      { type: 'donchian_trailing', params: { length: 10 } },
+    ],
+    targets: [],
+    exitSignals: [],
+    pyramiding: {
+      enabled: true, maxAdds: 3,
+      trigger: 'pos.unrealizedR >= 0.5 and close > pos.lastAddPrice + 0.5 * atr20',
+      size: { mode: 'fraction_of_initial', value: 1 },
+      onAdd: { moveStop: { type: 'breakeven' } },
+      riskCap: { maxOpenRiskR: 2 },
+    },
+    discipline: { entryWindowBars: 1, chaseAtr: 1, sizeTolerancePct: 15, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+];
+export const presetById = id => PRESETS.find(p => p.id === id);

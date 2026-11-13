@@ -1,0 +1,12 @@
+# 卡片補充資料（選填）。卡片 JSON 裡有的欄位優先；這裡用來補既有卡片沒有的欄位。
+# tickers:
+#   KLAC:
+#     sector: Semicap
+#     aliases: [KLA, "KLA Corp", {text: Rick Wallace, kind: person}, {text: eDR7380, kind: product}]
+# sessions:                 # 單一場法說會的盤前 / 盤後；沒填 → 用 yfinance earnings_dates 推斷
+#   KLAC-2026-Q2: AMC
+# release_at:               # 指定釋出日
+#   KLAC-2026-Q2: 2026-11-20
+tickers: {}
+sessions: {}
+release_at: {}

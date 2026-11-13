@@ -1,0 +1,51 @@
+/* 法說會盲猜 — builds on ../blind-chart/css/app.css (shared tokens & components) */
+.eg { display: grid; gap: var(--gutter); grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); align-items: start; }
+.eg-card .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.eg-card .summary { font-size: 1.02rem; line-height: 1.75; margin-bottom: 14px; }
+.eg-card h3 { margin-top: 16px; }
+.hl-list { display: grid; gap: 8px; }
+.hl { padding: 10px 12px; border-radius: var(--r); background: var(--card-solid); border: 1px solid var(--line); line-height: 1.6; font-size: .94rem; display: flex; gap: 10px; align-items: flex-start; }
+.hl .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 8px; background: var(--line-strong); }
+.hl.bullish .dot { background: var(--pos); } .hl.bearish .dot { background: var(--neg); } .hl.neutral .dot { background: var(--muted); }
+.hl .sent { margin-left: auto; flex: none; }
+.watch li { margin-left: 1.2em; list-style: disc; line-height: 1.7; font-size: .92rem; }
+.answer { position: sticky; top: calc(var(--top) + var(--gutter)); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.seg button { padding: 11px 6px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card-solid); font-weight: 600; font-size: .9rem; }
+.seg button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.seg button.on.out { background: var(--pos); border-color: var(--pos); }
+.seg button.on.under { background: var(--neg); border-color: var(--neg); }
+.seg button:disabled { opacity: .35; cursor: not-allowed; }
+.seg.bins button { font-size: .8rem; padding: 10px 2px; line-height: 1.25; }
+.seg.bins small { display: block; font-weight: 400; opacity: .75; font-size: .7rem; }
+.conf { display: flex; align-items: center; gap: 12px; }
+.conf input { flex: 1; accent-color: var(--accent); }
+.conf b { font-family: var(--mono); font-size: 1.2rem; min-width: 3.2em; text-align: right; }
+.choices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.choices button { padding: 10px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card-solid); font-family: var(--mono); font-weight: 600; }
+.choices button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.choices button.right { background: var(--pos-l); border-color: var(--pos); color: var(--pos); }
+.choices button.wrong { background: var(--neg-l); border-color: var(--neg); color: var(--neg); }
+.reveal-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.reveal-head .sym { font-size: 1.8rem; font-weight: 800; }
+.mini { width: 100%; height: 170px; display: block; }
+.score-lines { display: grid; gap: 4px; font-size: .9rem; }
+.score-lines div { display: flex; justify-content: space-between; gap: 10px; }
+.score-total { font-size: 1.5rem; font-weight: 800; font-family: var(--mono); }
+.mark { font-weight: 800; }
+.bank-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.bank-item { display: grid; gap: 6px; padding: 14px; border-radius: var(--r-lg); background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: left; }
+.bank-item .t { font-size: .88rem; color: var(--text2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.bank-item .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.stats-grid { display: grid; gap: var(--gutter); grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.stats-grid > .card { grid-column: span 4; }
+.stats-grid > .card.w8 { grid-column: span 8; } .stats-grid > .card.w12 { grid-column: span 12; } .stats-grid > .card.w6 { grid-column: span 6; }
+.big { font-size: 2rem; font-weight: 800; font-family: var(--mono); }
+.calib { width: 100%; height: 260px; display: block; }
+@media (max-width: 1100px) { .stats-grid > .card, .stats-grid > .card.w8, .stats-grid > .card.w6 { grid-column: span 6; } }
+@media (max-width: 900px) {
+  .eg { grid-template-columns: minmax(0, 1fr); }
+  .answer { position: static; }
+  .stats-grid > .card, .stats-grid > .card.w8, .stats-grid > .card.w6 { grid-column: span 12; }
+  .seg.bins { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); }
+}

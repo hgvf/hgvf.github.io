@@ -1,0 +1,50 @@
+# SDD 4.2 — sector → 產業基準 / 大盤基準。可自行維護。
+# watchlist: 把網站 watchlist（data/watchlist.json）的板塊名稱對應到遊戲 sector，
+#            卡片沒填 sector 時用 ticker 所屬板塊自動判斷。
+sectors:
+  Semicap:            { etf: SOXX, market: SPY }
+  Semis:              { etf: SOXX, market: SPY }
+  Memory:             { etf: SOXX, market: SPY }
+  Software:           { etf: IGV,  market: SPY }
+  Internet:           { etf: IGV,  market: SPY }
+  AI infra:           { etf: XLI,  market: SPY }
+  Power:              { etf: XLI,  market: SPY }
+  Networking:         { etf: SOXX, market: SPY }
+  Defense:            { etf: ITA,  market: SPY }
+  Space:              { etf: ITA,  market: SPY }
+  Auto:               { etf: XLY,  market: SPY }
+  Materials:          { etf: XLB,  market: SPY }
+  Energy:             { etf: XLE,  market: SPY }
+  Shipping:           { etf: XLI,  market: SPY }
+  Consumer Electronics: { etf: XLK, market: SPY }
+  Robotics:           { etf: XLI,  market: SPY }
+  Other:              { etf: SPY,  market: SPY }
+
+watchlist:
+  半導體設備: Semicap
+  晶圓測試/探針卡: Semicap
+  半導體廠務/原料: Semicap
+  記憶體/SSD/HDD: Memory
+  ASIC/IP: Semis
+  功率半導體: Semis
+  被動元件: Semis
+  IC 載板 / Substrate: Semis
+  PCB 基板材料: Semis
+  PCB基板: Semis
+  高速傳輸: Networking
+  光通訊/CPO: Networking
+  CSP/軟體: Software
+  Power: Power
+  800V HVDC: Power
+  散熱: AI infra
+  機櫃: AI infra
+  稀土/核能: Power
+  太空: Space
+  軍工: Defense
+  車用: Auto
+  機器人: Robotics
+  消費性電子: Consumer Electronics
+  航運: Shipping
+  貴金屬: Materials
+
+default_sector: Other

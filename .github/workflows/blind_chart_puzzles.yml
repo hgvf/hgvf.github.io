@@ -1,0 +1,87 @@
+name: Blind Chart — build puzzle bank
+
+# 下載行情 parquet（Release asset）→ 抽片段 → 用同一份 engine 出題 → 推到
+# orphan branch `blind-chart-puzzles`（每次 force-push，不留歷史；網站 main 的
+# git history 永遠不含題庫或行情）。前端從 raw.githubusercontent.com 讀。
+#
+# 需要的設定（見 blind-chart/DATA.md）：
+#   secrets.MARKET_DATA_TOKEN   只有行情放在「另一個 private repo」時才需要：
+#                               fine-grained token，該 repo 的 Contents: Read
+#   vars.MARKET_DATA_REPO       預設 hgvf/market-data
+on:
+  workflow_dispatch:
+    inputs:
+      data_tag:
+        description: '行情 Release tag（例 data-v2026Q4）'
+        required: true
+        default: 'data-v1'
+      seed:
+        description: '出題 seed（空白 = config/puzzles.json 的 seed）'
+        required: false
+      markets:
+        description: '市場'
+        required: false
+        default: 'TW,US,JP,KR'
+  schedule:
+    - cron: '23 3 1 * *'     # 每月 1 日 11:23 台灣時間（題庫不必每週換）
+
+permissions:
+  contents: write
+
+concurrency: { group: blind-chart-puzzles, cancel-in-progress: false }
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DATA_REPO: ${{ vars.MARKET_DATA_REPO || 'hgvf/market-data' }}
+      DATA_TAG: ${{ inputs.data_tag || vars.MARKET_DATA_TAG || 'data-v1' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Engine tests
+        run: node --test blind-chart/engine/test/*.test.mjs
+      - name: Install python deps
+        run: pip install -r blind-chart/tools/requirements.txt
+      - name: Download market data release
+        env:
+          GH_TOKEN: ${{ secrets.MARKET_DATA_TOKEN || github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/data"
+          gh release download "$DATA_TAG" -R "$DATA_REPO" -D "$RUNNER_TEMP/data" --pattern '*.parquet' --pattern '*.tar' --pattern '*.tar.gz' --pattern 'manifest.json' || {
+            echo "::error::下載不到 $DATA_REPO@$DATA_TAG（檢查 tag、MARKET_DATA_TOKEN 權限）"; exit 1; }
+          cd "$RUNNER_TEMP/data"
+          for f in *.tar *.tar.gz; do [ -e "$f" ] && tar -xf "$f" && rm "$f"; done
+          ls -la
+      - name: Sample segments
+        run: |
+          python blind-chart/tools/sample_segments.py --data "$RUNNER_TEMP/data" \
+            --out "$RUNNER_TEMP/build/segments.jsonl.gz" \
+            --markets "${{ inputs.markets || 'TW,US,JP,KR' }}" \
+            ${{ inputs.seed && format('--seed {0}', inputs.seed) || '' }} \
+            ${{ vars.MARKET_DATA_MAP && format('--map {0}', vars.MARKET_DATA_MAP) || '' }}
+      - name: Generate puzzles
+        run: |
+          node blind-chart/tools/gen-puzzles.mjs --segments "$RUNNER_TEMP/build/segments.jsonl.gz" \
+            --out "$RUNNER_TEMP/bank" ${{ inputs.seed && format('--seed {0}', inputs.seed) || '' }}
+          test -s "$RUNNER_TEMP/bank/index.json"
+      - name: Publish to orphan branch blind-chart-puzzles
+        run: |
+          cd "$RUNNER_TEMP/bank"
+          git init -q -b blind-chart-puzzles
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "Auto-generated puzzle bank — do not edit. Source: .github/workflows/blind_chart_puzzles.yml" > README.md
+          git add -A
+          git commit -qm "puzzles $(jq -r .seed manifest.json) $(date -u +%Y-%m-%d)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" blind-chart-puzzles
+      - name: Keep a tarball as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: puzzles
+          path: ${{ runner.temp }}/bank
+          retention-days: 30

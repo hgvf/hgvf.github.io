@@ -1,0 +1,8 @@
+{
+  "name": "@trainer/engine",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "private": true,
+  "scripts": { "test": "node --test test/*.test.mjs" }
+}

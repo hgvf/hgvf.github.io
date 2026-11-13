@@ -1,0 +1,77 @@
+name: Earnings Guess — daily release
+
+# 每天台灣時間 06:17 釋出法說會盲猜卡片（SDD 5.3）。
+# 佇列 = Firestore earnings_calls（網站既有的法說會卡片），排程狀態存在
+# Firestore earnings_guess_state/schedule（沒有任何 client rule，瀏覽器讀不到）。
+# 公開卡寫到 earnings-guess/data/calls/，只新增不覆蓋。
+on:
+  schedule:
+    - cron: '17 22 * * *'          # 22:17 UTC = 06:17 台灣
+  workflow_dispatch:
+    inputs:
+      count:
+        description: '今天多發幾張（空白 = config/release.yaml 的 per_day）'
+        required: false
+      id:
+        description: '指定發某張（TICKER-YEAR-Qn，例 KLAC-2026-Q2）'
+        required: false
+      dry_run:
+        description: '只印出去識別化結果與答案，不寫入'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency: { group: earnings-guess-release, cancel-in-progress: false }
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install dependencies
+        run: pip install -r earnings-guess/pipeline/requirements.txt
+      - name: Unit tests
+        run: python -m unittest discover -s earnings-guess/pipeline/tests
+      - name: Write service account credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+      - name: Release
+        # 失敗（yfinance 抓不到等）只會把卡片標成 held，不讓 workflow 失敗
+        run: |
+          python earnings-guess/pipeline/cli.py release --source firestore --credentials "$RUNNER_TEMP/sa.json" \
+            --issues-out "$RUNNER_TEMP/issues.json" \
+            ${{ inputs.count && format('--count {0}', inputs.count) || '' }} \
+            ${{ inputs.id && format('--id {0}', inputs.id) || '' }} \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+      - name: Commit public cards
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add earnings-guess/data
+          git diff --staged --quiet && echo "No new cards." || {
+            git commit -m "chore(earnings-guess): release $(TZ=Asia/Taipei date +%Y-%m-%d)"
+            for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
+          }
+      - name: Open issues (needs_review / queue low)
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -s "$RUNNER_TEMP/issues.json" ] || exit 0
+          gh label create earnings-guess --color BFD4F2 2>/dev/null || true
+          gh label create needs_review --color FBCA04 2>/dev/null || true
+          jq -c '.[]' "$RUNNER_TEMP/issues.json" | while read -r it; do
+            title=$(jq -r .title <<<"$it")
+            if gh issue list --state open --search "\"$title\" in:title" --json title -q '.[].title' | grep -Fxq "$title"; then
+              echo "exists: $title"; continue
+            fi
+            labels=$(jq -r '.labels | join(",")' <<<"$it")
+            jq -r .body <<<"$it" | gh issue create --title "$title" --label "$labels" --body-file -
+          done

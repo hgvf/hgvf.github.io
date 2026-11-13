@@ -1,0 +1,12 @@
+# 每日釋出設定（SDD 5.2 / 5.3 / 4.3）
+per_day: 1                  # 每天釋出幾張
+min_queue_alert: 7          # 佇列剩下少於這個數字 → 開 Issue 提醒補卡
+sector_gap_days: 1          # 同一個 sector 不連續 N 天（1 = 不能連續兩天）
+ticker_gap_days: 14         # 同一個 ticker 至少間隔幾天
+balance_window: 7           # 答案打散：過去 N 張中
+balance_max_outperform: 5   #   「跑贏」不超過幾張（以預設設定：1 日、相對產業基準判定）
+retry_held_days: 1          # yfinance 失敗 → held，隔幾天重試
+direction_deadband: 0.005   # |超額| < 0.5% → 方向題不計分
+bins: [-0.10, -0.03, 0.03, 0.10]   # 大跌 | 小跌 | 持平 | 小漲 | 大漲 的邊界（超額報酬）
+amount_mode: keep           # keep | magnitude（$4.2B → $X B，避免用營收規模反推公司）
+block_on_unknown_uppercase: false   # true：任何不在 allowlist 的大寫縮寫都要人工審核

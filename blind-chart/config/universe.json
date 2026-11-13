@@ -1,0 +1,11 @@
+{
+  "_doc": "SDD 3.4 / 3.5 — 品質檢查與流動性門檻。turnover 單位為當地貨幣；US 另有 minClose。",
+  "markets": {
+    "TW": { "minMedianTurnover": 50000000,  "maxAbsDailyReturn": 0.11, "lotSize": 1000, "benchmark": "TAIEX" },
+    "US": { "minMedianTurnover": 5000000,   "maxAbsDailyReturn": 0.60, "lotSize": 1,    "minClose": 5, "benchmark": "SPX" },
+    "JP": { "minMedianTurnover": 200000000, "maxAbsDailyReturn": 0.60, "lotSize": 100,  "benchmark": "N225" },
+    "KR": { "minMedianTurnover": 3000000000,"maxAbsDailyReturn": 0.60, "lotSize": 1,    "benchmark": "KOSPI" }
+  },
+  "maxZeroVolumeRun": 5,
+  "excludeBoards": ["ETF", "ETN", "REIT", "WARRANT", "TDR", "PREFERRED", "SPAC", "UNIT", "ADR", "PRO"]
+}
