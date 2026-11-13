@@ -302,9 +302,9 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 字型為俐方體 11 號（`countdown/assets/Cubic_11.woff2`，授權見同目錄 OFL 檔）。試玩：設定 → 試玩預覽，或網址加 `?demo=last15`、`?demo=flip-bear`、`?demo=day` 等。
 
 
-## 12. Tools：旅遊分帳（`split/`）
+## 12. Side Project：旅遊分帳（`split/`）
 
-側欄 **Tools** 資料夾的工具清單由 `js/tools.js` 管理（同時給首頁與報告頁側欄用）。`requiresAuth: true` 的工具在未登入時會顯示鎖頭並擋下點擊；頁面本身也會擋，Firestore rules 再擋一次。
+列在 Side Project 的「工具與其他」（`js/sideprojects.js`，`requiresAuth: true`）。未登入時側欄與卡片按鈕會顯示鎖頭並擋下點擊（擋點擊的邏輯在 `js/tools.js` 的 `bindAuthGate`）；頁面本身也會擋，Firestore rules 再擋一次。
 
 - 手機、電腦都可以用：手機用底部抽屜，電腦（寬度 ≥ 900px）改成左右兩欄加置中對話框，按 `N` 可以快速新增一筆
 - 資料存在 `split_tables/{id}`，**一張分帳表一個 doc**，成員與所有款項都放在同一個 doc 的 `expenses.<id>` map 裡：開一張表只花 1 次讀取，多人同時新增也不會互相覆蓋

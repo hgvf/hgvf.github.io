@@ -3,7 +3,7 @@
 
 import { onAuth, signInGoogle, signOutUser } from "./reports.js";
 import { renderSideProjectNav } from "./sideprojects.js";
-import { renderToolsNav, setToolsSignedIn } from "./tools.js";
+import { setToolsSignedIn } from "./tools.js";
 
 export async function mountSidebar(activeReport) {
   const host = document.getElementById("siteSidebar");
@@ -21,7 +21,6 @@ export async function mountSidebar(activeReport) {
   }
 
   renderSideProjectNav(host.querySelector("#sideProjectNav"), "../");
-  renderToolsNav(host.querySelector("#toolsNav"), "../");
 
   // Headers with data-href (Side Project) open their intro page in the SPA.
   host.querySelectorAll(".nav-folder-header").forEach(btn =>

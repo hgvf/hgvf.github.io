@@ -12,7 +12,11 @@
      features    — short bullet points, shown when the card is expanded
      tags        — tech chips; the card shows the first 3, the rest appear when expanded
      internal    — true → a page of this site (url relative to the site root): opens in
-                   the same tab, no external-link icon */
+                   the same tab, no external-link icon
+     requiresAuth — true → needs a whitelisted Google sign-in: lock badge + blocked click
+                   while signed out (js/tools.js) */
+
+import { bindAuthGate, ICON_LOCK } from './tools.js';
 
 export const GROUPS = [
   { key: 'invest', title: '投資訓練', sub: '拿真實的歷史行情與法說會練判斷力' },
@@ -121,6 +125,24 @@ export const PROJECTS = [
     tags: ['Canvas 2D', 'Pixel Art', 'PWA', 'ES Modules', 'localStorage'],
   },
   {
+    name: '旅遊分帳',
+    group: 'tool',
+    icon: '🧾',
+    url: 'split/index.html',
+    internal: true,
+    requiresAuth: true,
+    tagline: '多人多幣別記帳',
+    description: '旅行時記下誰付了什麼，自動統整並一鍵算出誰該付誰多少；多幣別、各自時區，邀請連結就能讓旅伴一起記。',
+    features: [
+      '多幣別記帳，結算時可合併成主要幣別或各幣別分開算',
+      '一鍵結算：最少轉帳次數算出誰該付誰',
+      '邀請連結：旅伴登入後就能一起記帳',
+      '每筆款項記自己的時區，跨時區旅行不會算錯日期',
+      '手機底部抽屜、電腦雙欄，按 N 快速新增',
+    ],
+    tags: ['Firestore', 'Google 登入', 'ES Modules'],
+  },
+  {
     name: 'War Atlas',
     group: 'tool',
     icon: '🗺️',
@@ -153,14 +175,15 @@ const ICON_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" 
 export function renderSideProjectNav(container, base = '') {
   if (!container) return;
   container.innerHTML = PROJECTS.map(p => p.internal ? `
-    <a class="nav-item" href="${esc(base + p.url)}">
+    <a class="nav-item${p.requiresAuth ? ' tool-item tool-auth' : ''}" href="${esc(base + p.url)}">
       <span class="nav-icon">${ICON_MAP}</span>
-      ${esc(p.name)}
+      ${esc(p.name)}${p.requiresAuth ? ICON_LOCK : ''}
     </a>` : `
     <a class="nav-item" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.url)}">
       <span class="nav-icon">${ICON_EXTERNAL}</span>
       ${esc(p.name)}
     </a>`).join('');
+  bindAuthGate(container);
 }
 
 const ICON_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -189,7 +212,7 @@ function cardHTML(p, i) {
       <div class="sp-foot">
         ${p.features?.length ? `<button type="button" class="sp-more" data-n="${p.features.length}">${p.features.length} 項功能</button>` : '<span></span>'}
         ${p.internal
-          ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟</span>${ICON_ARROW}</a>`
+          ? `<a class="sp-link${p.requiresAuth ? ' tool-auth' : ''}" href="${esc(p.url)}">${p.requiresAuth ? ICON_LOCK : ''}<span>開啟</span>${ICON_ARROW}</a>`
           : `<a class="sp-link sp-link-ext" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(hostOf(p.url))}"><span>前往</span>${ICON_EXTERNAL}</a>`}
       </div>
     </article>`;
@@ -220,6 +243,7 @@ export function renderSideProjectPage(container, toggleAllBtn) {
       </section>`;
   }).join('');
 
+  bindAuthGate(container);
   const cards = [...container.querySelectorAll('.sp-card')];
   const setOpen = (card, open) => {
     card.classList.toggle('open', open);

@@ -19,7 +19,7 @@ import {
 } from './admin.js';
 import { initExperience } from './experience.js';
 import { renderSideProjectNav, renderSideProjectPage } from './sideprojects.js';
-import { renderToolsNav, setToolsSignedIn } from './tools.js';
+import { setToolsSignedIn } from './tools.js';
 
 /* ── App state ─────────────────────────────────────────────── */
 let _isAdmin          = false;
@@ -66,7 +66,6 @@ function showPage(pageId) {
 
 renderSideProjectNav(document.getElementById('sideProjectNav'));
 renderSideProjectPage(document.getElementById('sideProjectGrid'), document.getElementById('spToggleAll'));
-renderToolsNav(document.getElementById('toolsNav'));
 
 document.querySelectorAll('[data-page]').forEach(item => {
   item.addEventListener('click', e => {
