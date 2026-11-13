@@ -1,0 +1,335 @@
+{
+ "id": "c-dbf26f",
+ "n": 141,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Power",
+ "session": "AMC",
+ "summary": "DOE 9 億美元資金正式落地並解除逾 30 億美元 enrichment 合約的融資條件，商業 backlog 增至 45 億美元、HALEU 正由示範走向正式長約，但新增產能仍以 某年度為目標且短期資本支出與成長費用快速增加。",
+ "highlights": [
+  {
+   "text": "Q2 GAAP 淨利降至 1680 萬美元，製造準備、訓練、股權薪酬及其他成長費用在擴產期將持續壓抑近期獲利。"
+  },
+  {
+   "text": "Oklo HALEU 協議目前仍為 LOI，預計供應最多五座 Aurora 多年燃料並於 某年度開始交付，下一步為 definitive agreement。"
+  },
+  {
+   "text": "Piketon 本年度新增人力指引由逾 100 人上調至逾 175 人，管理層表示部分目的在於縮短新產能導入時間。"
+  },
+  {
+   "text": "新增商業 enrichment capacity 官方時程仍為 某年度，雖管理層正嘗試壓縮時程但尚未提供提前量產承諾。"
+  },
+  {
+   "text": "本年度營收指引維持 4.5 至 5 億美元、capital spend 維持 3.5 至 5 億美元，未因 backlog 增加而上修。"
+  },
+  {
+   "text": "總 backlog 增至 45 億美元並延伸至 某年度，其中約 30 億美元為新增 本公司/HALEU enrichment backlog，季增約 6 億美元。"
+  },
+  {
+   "text": "Critical suppliers 約 75% 已完成簽約，全年仍以 100% 為目標，並透過長約與規模採購降低成本及 lead time。"
+  },
+  {
+   "text": "DOE 9 億美元 HALEU task order 正式簽約，使公司逾 30 億美元新 enrichment 客戶合約的 financing contingency 全數解除。"
+  },
+  {
+   "text": "X-energy 已與 Centrus 簽署具約束力的 本公司/HALEU supply agreement，並包含客戶預付款機制。"
+  },
+  {
+   "text": "公司預計 本年度在 Oak Ridge 完成第一台新離心機，為高產量 centrifuge manufacturing 的首個實體里程碑。"
+  },
+  {
+   "text": "俄羅斯 uranium waiver 最晚於 後年度初終止，而全球 enrichment 新產能短期有限，管理層預期 SWU 市場仍維持供給緊張。"
+  }
+ ],
+ "watch": [
+  "本年度 Oak Ridge 第一台 centrifuge 是否如期完成，以及後續離心機量產速度",
+  "Piketon 新增員工是否達到 175 人以上及 cascade installation readiness",
+  "Oklo LOI 何時轉為 definitive HALEU supply agreement，以及是否包含實質 prepayment",
+  "X-energy 與其他 HALEU offtake 合約的交付量、價格、預付款與 本公司 feed 條件",
+  "Utility 在 financing contingency 解除後是否加速簽署新的長期 本公司 合約",
+  "本公司/HALEU enrichment backlog 是否持續高於目前約 30 億美元",
+  "某年度 enrichment production 是否於 12 月 Investor Day 或後續法說進一步提前",
+  "Critical supplier 合約完成率能否由約 75% 提升至全年目標 100%",
+  "擴產期 advanced technology、stock compensation 與其他無法資本化費用對 GAAP 獲利的壓力",
+  "公司正在評估的 supply-chain M&A 是否形成垂直整合或改變長期毛利結構"
+ ],
+ "choices": [
+  "SMR",
+  "SIEGY",
+  "ASPI",
+  "LEU"
+ ],
+ "prior": [
+  {
+   "label": "上一季",
+   "summary": "Centrus 上調 本年度營收展望並加速美國本土離心機與濃縮產能建設，長期受惠 本公司、HALEU 與國安需求，但近期獲利仍受擴產費用及訂單條件限制。",
+   "highlights": [
+    {
+     "text": "本年度 Q1 營收為7,670萬美元、年增5%，調整後EPS為1.05美元，但GAAP獲利受擴產費用壓抑。"
+    },
+    {
+     "text": "公司將本年度營收展望由4.25至4.75億美元上調至4.50至5.00億美元。"
+    },
+    {
+     "text": "總backlog達39億美元並延伸至某年度，其中24億美元為已簽署但仍附帶條件的商業濃縮訂單。"
+    },
+    {
+     "text": "DOE選定Centrus取得9億美元HALEU濃縮獎項，包含選擇權後潛在總值超過10億美元。"
+    },
+    {
+     "text": "Palantir合作已辨識約3億美元潛在成本節省，預期降低離心機製造成本及縮短建置週期。"
+    },
+    {
+     "text": "Piketon年度淨增人力目標由50人以上提高至100人以上，反映招募及擴建進度快於預期。"
+    },
+    {
+     "text": "公司與Oklo評估成立HALEU去轉化合資企業，可能延伸至先進核燃料週期的垂直整合。"
+    },
+    {
+     "text": "全年資本支出預計達3.5至5億美元，且非資本化擴產費用將持續影響GAAP獲利。"
+    },
+    {
+     "text": "24億美元商業濃縮backlog仍附帶產能、融資或其他條件，尚不能完全視為無條件營收。"
+    },
+    {
+     "text": "先進反應爐商業時程、政府採購進度及離心機量產執行仍是主要中長期風險。"
+    }
+   ],
+   "watch": [],
+   "netSentiment": null,
+   "reaction": {
+    "session": "AMC",
+    "gap": 0.00294,
+    "r1": -0.10816,
+    "r5": -0.16864,
+    "excess": {
+     "sector": {
+      "r1": -0.09194,
+      "r5": -0.15027,
+      "r20": -0.18892
+     },
+     "market": {
+      "r1": -0.1051,
+      "r5": -0.1802,
+      "r20": -0.22463
+     }
+    }
+   }
+  }
+ ],
+ "chart": {
+  "pre": {
+   "o": [
+    86.4,
+    83.97,
+    89.4,
+    95.82,
+    95.89,
+    93.16,
+    101.95,
+    102.29,
+    98.02,
+    97.46,
+    96.89,
+    93.59,
+    92.94,
+    90.07,
+    94.29,
+    96.05,
+    94.35,
+    95.8,
+    91.46,
+    94.91,
+    98.8,
+    93.8,
+    91.7,
+    89.66,
+    85.66,
+    80.9,
+    87.73,
+    89.31,
+    95.49,
+    95.49,
+    95.82,
+    92.93,
+    94.37,
+    92.69,
+    92.22,
+    100.82,
+    98.86,
+    106.72,
+    106.02,
+    113.46
+   ],
+   "h": [
+    87.79,
+    89.96,
+    92.76,
+    100.94,
+    100.56,
+    99.67,
+    108.05,
+    105.57,
+    107.85,
+    100.08,
+    99.19,
+    95.44,
+    93.8,
+    94.59,
+    97.79,
+    99.97,
+    101.01,
+    97.93,
+    95.49,
+    98.25,
+    99.6,
+    95.49,
+    92.96,
+    90.55,
+    85.66,
+    88.78,
+    89.31,
+    96.3,
+    100.22,
+    97.24,
+    96.38,
+    99.33,
+    95.49,
+    94.63,
+    99.76,
+    102.13,
+    105.28,
+    108.34,
+    107.29,
+    114.13
+   ],
+   "l": [
+    81.25,
+    82.91,
+    88.84,
+    95.82,
+    92.87,
+    92.95,
+    99.63,
+    99.07,
+    97.11,
+    93.52,
+    92.96,
+    91.85,
+    88.56,
+    87.82,
+    92.68,
+    88.95,
+    93.17,
+    90.78,
+    90.86,
+    93.37,
+    95.6,
+    87.65,
+    88.11,
+    83.85,
+    81.55,
+    79.83,
+    86.5,
+    88.27,
+    95.49,
+    93.34,
+    91.7,
+    92.88,
+    88.69,
+    88.82,
+    91.07,
+    97.46,
+    97.16,
+    103.92,
+    103.65,
+    98.86
+   ],
+   "c": [
+    82.35,
+    89.13,
+    91.32,
+    99.22,
+    92.95,
+    95.66,
+    107.5,
+    103.17,
+    99.7,
+    96.12,
+    95.7,
+    92.97,
+    90.01,
+    94.29,
+    93.43,
+    91.07,
+    97.87,
+    93.04,
+    93.51,
+    97.49,
+    96.08,
+    87.65,
+    89.52,
+    87.93,
+    82.61,
+    87.65,
+    87.84,
+    96.19,
+    97.89,
+    95.93,
+    92.06,
+    98.85,
+    95.29,
+    89.7,
+    99.28,
+    99.38,
+    103.78,
+    106.3,
+    105.39,
+    100.0
+   ],
+   "v": [
+    119,
+    111,
+    61,
+    123,
+    99,
+    103,
+    285,
+    124,
+    125,
+    86,
+    113,
+    142,
+    87,
+    74,
+    90,
+    85,
+    120,
+    117,
+    81,
+    78,
+    84,
+    405,
+    85,
+    100,
+    119,
+    125,
+    110,
+    97,
+    85,
+    83,
+    89,
+    90,
+    105,
+    102,
+    93,
+    83,
+    111,
+    71,
+    77,
+    136
+   ]
+  }
+ },
+ "answer": "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"
+}

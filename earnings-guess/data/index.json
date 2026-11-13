@@ -1,4 +1,1230 @@
 {
  "version": 1,
- "calls": []
+ "calls": [
+  {
+   "id": "c-f62ff1",
+   "n": 1,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "營收年增115%且維持FY本年度超過85%成長目標，但毛利率持平、超預期幅度縮小，使股價財報後下跌。"
+  },
+  {
+   "id": "c-6dd93a",
+   "n": 2,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "800G進入高速量產、1.6T即將開始出貨且需求遠超產能，CPO高功率雷射成為下一年度後新成長曲線，但DSP/TIA供應、巨額CapEx與股本稀釋仍是主要風險。"
+  },
+  {
+   "id": "c-80ceb1",
+   "n": 3,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2本業營運顯著改善且Q3指引強勁，聯電同步擴大矽光子與先進封裝投資，但須留意投資利益推升EPS及未來折舊壓力。"
+  },
+  {
+   "id": "c-dfa1de",
+   "n": 4,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "FY本年度營收與獲利衰退但優於公司預測，ACTIS與MATRICS帶動受注明顯復甦；FY下一年度預估營收與獲利創新高、受注上看3000至4000億日圓，但研發與人事投入使營業利益率"
+  },
+  {
+   "id": "c-169bf7",
+   "n": 5,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "高階產品組合與降本推動毛利及現金流改善，但Q2交付與Q3指引低於預期，短線焦點轉向銷量能否重新加速。"
+  },
+  {
+   "id": "c-d25e10",
+   "n": 6,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI資料中心光通訊需求推動InP營收、毛利率及獲利創下重大轉折，Q3高度確認營收達6600萬美元。"
+  },
+  {
+   "id": "c-ebd343",
+   "n": 7,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI資料中心M+N PCB進入大量生產週期，本公司大幅上修本年度營收至約44億美元，並預期全年非GAAP EPS接近5美元。"
+  },
+  {
+   "id": "c-7de7a4",
+   "n": 8,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "本公司完成從住宅儲能轉型至多市場儲能平台的策略布局，但FY本年度虧損大幅擴大、Q4營收近乎歸零，短期執行風險升高。"
+  },
+  {
+   "id": "c-8fa97a",
+   "n": 9,
+   "releasedOn": "2026-11-13",
+   "sector": "Auto",
+   "session": "AMC",
+   "teaser": "Edge AI與5nm產品持續放量，新加速器及通路策略擴大長期市場，但Q3財測僅符合預期且Q4面臨記憶體供應不確定性。"
+  },
+  {
+   "id": "c-2eeb9a",
+   "n": 10,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "本季 營收 $6.72B、EPS $1.82 全面 beat，Sept 季指引 $8.1B 遠超預期，WFE 本年度 上修至 $150B，長期 GM 目標拉高至 mid-50s。"
+  },
+  {
+   "id": "c-00c2ff",
+   "n": 11,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "核心資料平台與AI收入同步加速，全年產品營收及營業利益率大幅上修，但AI工作負載占比提高使產品毛利率承壓。"
+  },
+  {
+   "id": "c-a27b8e",
+   "n": 12,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "HBM 與 AI 記憶體推動創紀錄營收與獲利，HBM4 開始量產，但結果低於極高市場預期，並遭遇韓股整體去槓桿賣壓。"
+  },
+  {
+   "id": "c-3b4a20",
+   "n": 13,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "營收 $99B 略優於預期但 EPS 微幅 miss；Apple 業務加速退場、資料中心兩客戶 12 月季開始出貨、汽車 本年度 跑率上修至 $70 億；盤後 -7.16%"
+  },
+  {
+   "id": "c-9004ff",
+   "n": 14,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "NC-1進入計費並朝40MW全額營收推進，Cloud新增逾5.4億美元長約，但Q2營收受1.23億美元一次性終止合約收入明顯墊高。"
+  },
+  {
+   "id": "c-6e08f1",
+   "n": 15,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI電源與資料中心基礎設施推升營收獲利創高，下半年續強，但毛利率約35%已屬合理常態。"
+  },
+  {
+   "id": "c-65c8c8",
+   "n": 16,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "本年度 Q4 全面 beat，Azure +43% 加速、下一季 指引 +45%，Copilot 座位破 3,000 萬，盤後 +1.59%。"
+  },
+  {
+   "id": "c-9ec97d",
+   "n": 17,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "無人系統由 本年度 的 1260 萬美元快速進入規模化階段，管理層預期 下一年度 約可達 2500 萬美元以上，並透過高毛利軟體收購改善營收品質。"
+  },
+  {
+   "id": "c-beec91",
+   "n": 18,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "BMO",
+   "teaser": "Groves 反應爐不到一年達首次臨界，大幅強化核能資產執行能力的可信度；Aurora-INL 後年度 商轉維持不變，燃料與資金能見度改善，但 FOAK 成本與 PJM 併網仍是關"
+  },
+  {
+   "id": "c-5f91f2",
+   "n": 19,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "AWS成長加速至36.7%且利潤率接近39%，強勁AI需求抵銷全年CapEx上修至2,200億美元的疑慮。"
+  },
+  {
+   "id": "c-d884c1",
+   "n": 20,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "低成本鈾礦營運持續強勁，本公司 加速整合 ASM、VAC 與 White Mesa 建構西方 mine-to-magnet 平台，但 Donald FID 延後與未來龐大資本需求仍"
+  },
+  {
+   "id": "c-fd3d53",
+   "n": 21,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "Strategic revenue年增14%並升至Business revenue的53%，NaaS與高速Waves需求強勁，但Digital revenue仍處早期規模化階段。"
+  },
+  {
+   "id": "c-d85cc6",
+   "n": 22,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "GenAI產品帶動營收成長與毛利率改善，但Adjusted EBITDA虧損擴大、backlog較上季下降，獲利與訂單轉換仍待驗證。"
+  },
+  {
+   "id": "c-22a96f",
+   "n": 23,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "Q2量價齊揚推升毛利率至32.3%，Q3維持成長且AI營收預估翻倍，但下一年度VSMC折舊仍是主要風險。"
+  },
+  {
+   "id": "c-858e25",
+   "n": 24,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "NdPr產銷持續高速成長、GM磁鐵將於Q4商業出貨，並新增九位數Gadolinium國防長約，垂直整合與10X需求能見度進一步提升。"
+  },
+  {
+   "id": "c-7b71a7",
+   "n": 25,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI資料中心、光模組與高功率密度模組共同推升營收創高，Q3財測大幅高於市場預期。"
+  },
+  {
+   "id": "c-ab325b",
+   "n": 26,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "AI安全、平台化與併購整合推動NGS ARR及營收大幅成長，FY下一年度指引優於預期，但自由現金流率與高估值限制短線股價反應。"
+  },
+  {
+   "id": "c-68c21d",
+   "n": 27,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "BMO",
+   "teaser": "AI Cloud 營收與獲利高速成長，核心合約單位經濟提升至每 MW 年收入 2,000–2,500 萬美元，短期容量價格更達 4,000–5,000 萬美元；公司開始將市場焦點從"
+  },
+  {
+   "id": "c-1169d7",
+   "n": 28,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "AMC",
+   "teaser": "本公司第二季營收、訂單與積壓訂單同步創高，Golden Dome與Astrobotic推升成長可見度，但高研發、資本支出與持續虧損仍是主要風險。"
+  },
+  {
+   "id": "c-9bc138",
+   "n": 29,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "BMO",
+   "teaser": "Q2營收與獲利低於市場預期，但Backlog升至18億美元歷史新高，Golden Dome、商用GEO衛星與NSNS推動公司從月球任務商轉型為多領域太空基礎設施Prime。"
+  },
+  {
+   "id": "c-f995d1",
+   "n": 30,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "營收、ARR與獲利全面優於指引，AI帶動大型平台交易，但AI變現仍未量化且股價盤後反轉下跌。"
+  },
+  {
+   "id": "c-156201",
+   "n": 31,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "FY27營收指引與逾600億美元新訂單大幅超出市場預期，Enterprise與DCBBS改善獲利結構，但Q4超高毛利率含明顯產品組合與遞延效應。"
+  },
+  {
+   "id": "c-5d6513",
+   "n": 32,
+   "releasedOn": "2026-11-13",
+   "sector": "Memory",
+   "session": "AMC",
+   "teaser": "40TB ePMR進入量產、AI與雲端儲存需求維持強勁，帶動價格、毛利率與自由現金流提升，但市場高度期待與exabyte增速放緩造成財報後股價承壓。"
+  },
+  {
+   "id": "c-1270a6",
+   "n": 33,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI高階銅箔基板需求、漲價與產品組合改善帶動營收及獲利創高，惟原料短缺、存貨增加與高估值需持續追蹤。"
+  },
+  {
+   "id": "c-4ad6d1",
+   "n": 34,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "Talen上修本年度財測及後年度每股自由現金流展望，PJM市場轉強與回購支撐成長，但新資料中心PPA、PPL basis及監管政策仍是關鍵變數。"
+  },
+  {
+   "id": "c-b4ace6",
+   "n": 35,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI 伺服器用 MLCC 與非 AI 終端復甦共同改善稼動率，公司大幅上修全年經常利益展望。"
+  },
+  {
+   "id": "c-9a5373",
+   "n": 36,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI資料中心營收持續高速成長並切入800V與SST高壓架構，但產能利用率不足使毛利率仍約-20%，下一年度 Q1營收指引亦未顯示明顯成長。"
+  },
+  {
+   "id": "c-e4bd39",
+   "n": 37,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI伺服器全年營收維持倍增目標、訂單能見度延伸至後年度，廣達同步上修資本支出與擴充全球產能，Q2毛利率亦自低點回升。"
+  },
+  {
+   "id": "c-e94073",
+   "n": 38,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI 軟體與反無人機業務高速成長、全年指引上修，但專業服務組合與新品擴張壓低毛利率。"
+  },
+  {
+   "id": "c-940f44",
+   "n": 39,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "Q3營收與EPS雙雙優於預期並上修全年財測，AI-first ARR年增逾150%、Firefly ARR季增40%，但總ARR成長仍約10%，市場持續等待freemium與AI轉"
+  },
+  {
+   "id": "c-32ac47",
+   "n": 40,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "營收與 backlog 創高、太空與精準打擊需求強勁，但新專案 ramp 壓抑利潤率，市場等待 H2 margin 與自由現金流改善。"
+  },
+  {
+   "id": "c-a9d52d",
+   "n": 41,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Data Center、車用與工業帶動營收強勁成長，但成本轉嫁落後使毛利率承壓，且單季EPS大增高度受金融資產評價利益挹注。"
+  },
+  {
+   "id": "c-d355bd",
+   "n": 42,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "SpaceX公開點名本公司 900 MHz提案、5G PNT完成20奈秒實網驗證且公司轉為無債務、流動性增至約3億美元，但核心估值催化劑FCC正式NPRM仍尚未落地。"
+  },
+  {
+   "id": "c-1efc20",
+   "n": 43,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI 驅動連二季創營收新高、Q3 財測遠超共識，長期 ATE TAM 上修至 $20B+。"
+  },
+  {
+   "id": "c-7c18dd",
+   "n": 44,
+   "releasedOn": "2026-11-13",
+   "sector": "AI infra",
+   "session": "AMC",
+   "teaser": "AI推論、傳統伺服器與Juniper網通需求推動營收獲利創高並上修FY本年度及FY下一年度展望，但供應限制與毛利率正常化仍是主要風險。"
+  },
+  {
+   "id": "c-db8b53",
+   "n": 45,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "營收與FY27成長受NASA insourcing及訂單延遲壓抑，但高毛利業務組合推動EBITDA、EPS與margin持續改善，核能與AI資料中心成為中長期核心成長引擎。"
+  },
+  {
+   "id": "c-092dab",
+   "n": 46,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI 資料中心、DCI、AWS HPC 與新光模組客戶共同推升營收年增 45%，下一年度 需求展望極強，但高資本支出、低自由現金流與毛利率擴張有限成為主要疑慮。"
+  },
+  {
+   "id": "c-5122fa",
+   "n": 47,
+   "releasedOn": "2026-11-13",
+   "sector": "Robotics",
+   "session": "AMC",
+   "teaser": "營收與獲利優於預期，但美國手術量成長放緩且全年指引未上修，引發市場重新評價中期成長速度。"
+  },
+  {
+   "id": "c-e8e129",
+   "n": 48,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "訂單年增105%、ECP與先進封裝高速成長，Panel Level Packaging取得正式生產訂單，SPM、Track與PECVD則為下一年度主要新產品催化劑。"
+  },
+  {
+   "id": "c-3bae24",
+   "n": 49,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI帶動DRAM、NOR與SLC NAND供需持續緊張，華邦電第二季ASP與產品組合大幅改善推升毛利率至66.2%，管理層看好Q3價格續漲、下一年度供給甚至更緊，並啟動高雄Modu"
+  },
+  {
+   "id": "c-cc576d",
+   "n": 50,
+   "releasedOn": "2026-11-13",
+   "sector": "Auto",
+   "session": "BMO",
+   "teaser": "LiDAR出貨維持高速成長，Robotics與SGI商業化明顯加速，但ASP、毛利率及SGI初期虧損仍壓抑市場評價。"
+  },
+  {
+   "id": "c-529855",
+   "n": 51,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI伺服器與Advanced Computing進入高速放量，產品組合改善推升毛利率，傳統PC、消費電子與短期上海封裝產能則形成逆風。"
+  },
+  {
+   "id": "c-739ffc",
+   "n": 52,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "Q2 營收、EPS 雙 beat 且 Q3 財測遠優於預期，Industrial/DC/Auto 全面轉強，但 YTD +65% 高估值下股價盤後仍跌 4%。"
+  },
+  {
+   "id": "c-88495b",
+   "n": 53,
+   "releasedOn": "2026-11-13",
+   "sector": "Consumer Electronics",
+   "session": "AMC",
+   "teaser": "Q3營收與EPS大幅優於預期並上修全年指引，但PC出貨量年減16%、記憶體成本持續上升，使市場焦點轉向Q4毛利率谷底與FY27修復能力。"
+  },
+  {
+   "id": "c-ed79be",
+   "n": 54,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI資料中心電源與整櫃方案帶動Q2獲利創高，並新增北美CSP客戶及推進800V HVDC量產。"
+  },
+  {
+   "id": "c-10d2df",
+   "n": 55,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "BMO",
+   "teaser": "Q3 營收€117億創高、毛利率57.5%，Q4 指引€142–152億，管理層稱下一年度–後年度供給仍不足以滿足需求。"
+  },
+  {
+   "id": "c-195074",
+   "n": 56,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "航空引擎、防衛與核能成長推動本業獲利創 Q1 新高，另有約 ¥40.1B 不動產處分利益；全年指引上修。"
+  },
+  {
+   "id": "c-516770",
+   "n": 57,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI 資料中心需求大幅加速、1.6T 進入量產主升段，出售 cellular module 後毛利結構明顯提升，Q3 財測遠高於市場預期。"
+  },
+  {
+   "id": "c-0550b3",
+   "n": 58,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "Scorpio X正式進入量產並將於Q3成為最大產品線，推動營收財測季增約40%，本公司加速轉型為完整AI Fabric與高速連接平台商。"
+  },
+  {
+   "id": "c-c1c219",
+   "n": 59,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "OCI 營收年增121%、單季新增850MW並交付逾30萬顆GPU，證明巨額AI backlog開始快速轉為營收；但高達約285億美元單季CapEx與負自由現金流仍是主要風險。"
+  },
+  {
+   "id": "c-71220f",
+   "n": 60,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "AI需求、定價與新合約利潤率同步改善，Managed Inference高速成長並上修全年財測，但巨額CapEx、債務與利息支出仍是核心風險。"
+  },
+  {
+   "id": "c-bf3bfe",
+   "n": 61,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2營收季持平但毛利率升至32.57%、EPS達24.37元，ASIC與GPU液冷需求同步成長，公司預期下半年營收與獲利逐季走高。"
+  },
+  {
+   "id": "c-866be7",
+   "n": 62,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2營收與獲利同步加速，營益率升至11.7%，車用維持35%第一大應用且車規業務年增40%，AI相關營收占比達11%。"
+  },
+  {
+   "id": "c-82b0d7",
+   "n": 63,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "BMO",
+   "teaser": "AI半導體與商業太空推升營收、EPS及電子專案訂單創高，但Lincare拖累利潤率且Q3財測低於市場期待。"
+  },
+  {
+   "id": "c-15b339",
+   "n": 64,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "Centrus 上調 本年度營收展望並加速美國本土離心機與濃縮產能建設，長期受惠 本公司、HALEU 與國安需求，但近期獲利仍受擴產費用及訂單條件限制。"
+  },
+  {
+   "id": "c-419cde",
+   "n": 65,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "AMC",
+   "teaser": "RPS與航太國防需求推動營收年增52%，全年財測上修、Livermore大幅擴產，但毛利率改善中的成本重分類與持續股權稀釋仍需追蹤。"
+  },
+  {
+   "id": "c-632b9c",
+   "n": 66,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "Core revenue 年增逾一倍且全面上修財測，600MW 資料中心與 AWS/AMD disaggregated inference 支撐 下一年度 三倍以上成長，但 GAA"
+  },
+  {
+   "id": "c-4c8912",
+   "n": 67,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "BMO",
+   "teaser": "商用航太、IGT燃氣渦輪與高毛利備件需求同步加速，全年財測再上修；下一年度至某年度新產能、LEAP/GTF技術切換及CAM綜效提供後續成長，但高估值下財報日股價呈現開高走低。"
+  },
+  {
+   "id": "c-5c3086",
+   "n": 68,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "AMC",
+   "teaser": "營收、backlog 與新簽約續創新高，Space Systems 與國防業務快速擴張，但 Neutron 首飛時程再度鬆動、Q3 毛利率下滑與高現金消耗成為短期主要壓力。"
+  },
+  {
+   "id": "c-da4cfb",
+   "n": 69,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "雲端 AI ASIC 進入量產收成期，但手機需求與獲利率仍是短期壓力。"
+  },
+  {
+   "id": "c-5ef291",
+   "n": 70,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "BMO",
+   "teaser": "Advanced Packaging需求正式進入加速期，年初至今訂單超過6億美元並開始大量延伸至下一年度，H2成長與年底獲利率目標同步上修。"
+  },
+  {
+   "id": "c-5518f8",
+   "n": 71,
+   "releasedOn": "2026-11-13",
+   "sector": "Memory",
+   "session": "AMC",
+   "teaser": "連續第二季創紀錄營收 $342.1M，Q2 財測遠超共識，MonTitan 與 Boot Drive 由試量產轉為商業放量"
+  },
+  {
+   "id": "c-471b25",
+   "n": 72,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "本公司資料中心營收翻倍、Helios需求超預期並上修下一年度成長展望，但高市場預期與毛利率持平造成盤後股價下跌。"
+  },
+  {
+   "id": "c-965bd5",
+   "n": 73,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI資料中心、1.6T光模組、機櫃同步需求及Renesas Timing Products Division收購，推動本公司核心營收與獲利高速成長。"
+  },
+  {
+   "id": "c-4e0a36",
+   "n": 74,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "BMO",
+   "teaser": "AI網路需求推動營收、EPS與backlog創高，FY下一年度預估至少成長30%，但供應限制、毛利率回落與高估值造成財報日股價重挫。"
+  },
+  {
+   "id": "c-134604",
+   "n": 75,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "Workers與Agentic AI已由使用者成長進入實質營收貢獻階段，大客戶、NRR與RPO同步加速，本公司並上修全年財測，盤後股價大漲約17%至18%。"
+  },
+  {
+   "id": "c-e28c78",
+   "n": 76,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI networking需求持續爆發，本年度 hyperscaler AI訂單達93億美元且FY27 AI營收指引達75億美元；Silicon One、Acacia與scale-"
+  },
+  {
+   "id": "c-a2e8d0",
+   "n": 77,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI伺服器推動雲端網路產品營收占比首度突破50%，Q2營收與獲利創同期新高，Vera Rubin將於Q4放量並成為下一年度主力產品。"
+  },
+  {
+   "id": "c-187727",
+   "n": 78,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI資料中心需求全面加速，本年度/FY28營收展望再度上修，Connectivity與Custom同步增強，Google合作更大的營收貢獻偏向FY29以後。"
+  },
+  {
+   "id": "c-87293d",
+   "n": 79,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "BMO",
+   "teaser": "Q2 全面 beat 但 Q3 財測略低於 consensus，AI 資料中心 下一年度 目標上調至遠高於 $2B，股價盤中重挫 -11.8%。"
+  },
+  {
+   "id": "c-495f51",
+   "n": 80,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI 驅動的 300mm 先進邏輯與記憶體需求強勁，200mm 亦開始復甦且 Spot 晶圓價格進入調漲協商，但高額折舊使獲利恢復落後需求，Q3 營業利益僅預估損益兩平。"
+  },
+  {
+   "id": "c-281de9",
+   "n": 81,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "AI Security、Data與Cloud加速，RPO年增45%且獲利率創高，但Q3財測僅符合預期且全年EPS指引下修，使盤後股價承壓。"
+  },
+  {
+   "id": "c-4186f0",
+   "n": 82,
+   "releasedOn": "2026-11-13",
+   "sector": "Memory",
+   "session": "AMC",
+   "teaser": "AI資料中心需求、NAND漲價與長期供應合約推升營收、毛利率及現金流創高，但Q1財測未進一步超越市場高預期。"
+  },
+  {
+   "id": "c-a00192",
+   "n": 83,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI伺服器需求與新客戶帶動下半年續成長，Switch成為高毛利新引擎，但高槓桿與GDR稀釋仍需追蹤。"
+  },
+  {
+   "id": "c-bb7ad4",
+   "n": 84,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "AI Security需求開始實質轉化為ARR，Net New ARR年增51%創紀錄，Falcon Flex與Next-Gen SIEM高速成長，公司再大幅上調FY27財測。"
+  },
+  {
+   "id": "c-33255b",
+   "n": 85,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "資料中心需求與訂單大幅突破、backlog 創 $6.4B 新高，但新產線 ramp 延誤使約 $400M 營收推遲至 下一年度，本年度 營收與 EBITDA 財測均大幅下修。"
+  },
+  {
+   "id": "c-a42ced",
+   "n": 86,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI 驅動創紀錄季，營收 $1.282B YoY +87%、EPS $2.56，但 Q2 guidance QoQ 下滑加下半年可見度有限，隔日股價暴跌 19.4%。"
+  },
+  {
+   "id": "c-7ddc6e",
+   "n": 87,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "GMV、營收、毛利與自由現金流同步逾 30% 成長，AI 從威脅敘事轉為導流與成交增長引擎。"
+  },
+  {
+   "id": "c-ee599e",
+   "n": 88,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI資料中心光通訊需求持續加速，6吋InP擴產提前、1.6T與CPO需求增強，公司預期FY下一年度結束前單季營收突破30億美元。"
+  },
+  {
+   "id": "c-9307c8",
+   "n": 89,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "AMC",
+   "teaser": "衛星量產與政府業務快速擴張，45顆衛星與本年度消費者Beta目標維持，但Q2營收及EPS低於市場預期，真正的大規模商用收入仍集中於下一年度。"
+  },
+  {
+   "id": "c-f396c3",
+   "n": 90,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "iPhone與Mac需求創高帶動營收及EPS優於預期，但先進製程供應吃緊、記憶體漲價與偏弱的下一季財測使盤後股價重挫。"
+  },
+  {
+   "id": "c-862b59",
+   "n": 91,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "CIS需求持續回升，Q3營收預估季增中個位數，800G光模組相關產品進入量產，使成長主軸由CIS復甦進一步延伸至AI光通訊。"
+  },
+  {
+   "id": "c-ae5f3d",
+   "n": 92,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2毛利率升至87.4%、EPS 74.38元再創新高，下半年需求續強，休士頓廠9月量產且百億元台灣擴產計畫提前啟動。"
+  },
+  {
+   "id": "c-94fe18",
+   "n": 93,
+   "releasedOn": "2026-11-13",
+   "sector": "Memory",
+   "session": "AMC",
+   "teaser": "美光 FY26Q4 營收 542.3 億美元、非GAAP毛利率 87%，並給出 FQ1 營收 615 億美元的強勁財測，資料中心記憶體需求持續爆發。"
+  },
+  {
+   "id": "c-86be9e",
+   "n": 94,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "Tempo系統交付推升營收，256-qubit半導體QPU已進入整合測試，SkyWater垂直整合供應鏈有助加速量產，但10,000-qubit與容錯量子電腦仍處早期驗證階段。"
+  },
+  {
+   "id": "c-322b6b",
+   "n": 95,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "BMO",
+   "teaser": "營收獲利雙 Beat 且 Optical +32%、Enterprise +65%，但 Q3 營收指引僅符合預期，高估值下遭 sell-the-news 重挫 14%+。"
+  },
+  {
+   "id": "c-28d87a",
+   "n": 96,
+   "releasedOn": "2026-11-13",
+   "sector": "Consumer Electronics",
+   "session": "AMC",
+   "teaser": "AI伺服器訂單與backlog創高、非AI基礎設施同步成長並大幅上修全年財測，但供應限制、毛利延續性與高估值成為下一階段風險。"
+  },
+  {
+   "id": "c-5b4a8d",
+   "n": 97,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI Cloud 需求、長約價格與融資能力同步強化，本年度 capacity 對應超過40億美元 ARR 已簽約；下一階段核心風險轉為250至300億美元 下一年度 CapEx 的"
+  },
+  {
+   "id": "c-ef3ad4",
+   "n": 98,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "BMO",
+   "teaser": "AI資料中心、ATE與工業需求同步加速，Q4財測再度大幅上修，惟高估值使強勁財報未轉化為當日股價上漲。"
+  },
+  {
+   "id": "c-00c1eb",
+   "n": 99,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "BMO",
+   "teaser": "Q2 EPS 優於預期並上調全年財測，920MW 長期核電合約與 PJM/FERC 規則加速明朗強化長期成長，但新合約對 某年度 EPS 貢獻有限且 ERCOT 短期供需仍偏鬆。"
+  },
+  {
+   "id": "c-e3cd9e",
+   "n": 100,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "BMO",
+   "teaser": "Eos第二季營收與backlog創高，但財測上限下修、單一FPUSA專案占營收約八成，後續投資主軸轉向Thorn Hill爬坡與下一年度毛利轉正。"
+  },
+  {
+   "id": "c-ec38c0",
+   "n": 101,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "記憶體景氣與稼動率改善推升營收及毛利率，Q3 DRAM 動能延續，同時積極擴產並布局 AI ASIC 與 Silicon Photonics。"
+  },
+  {
+   "id": "c-2d0822",
+   "n": 102,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "營收創Q2新高但EPS大幅miss，毛利率全面承壓；CapEx爆量進入超級投資週期，Robotaxi與Optimus敘事延續。"
+  },
+  {
+   "id": "c-ea49e0",
+   "n": 103,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "AI伺服器正式進入放量階段，下一年度伺服器營收占比30–40%成為新核心指引，但PC記憶體通膨與高ASP造成的毛利率稀釋仍需觀察。"
+  },
+  {
+   "id": "c-ce80e5",
+   "n": 104,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "BMO",
+   "teaser": "AI資料中心電力、非住宅基建與油氣需求共同推升營收、獲利及積壓訂單創高，公司上修本年度營收與自由現金流展望。"
+  },
+  {
+   "id": "c-bc9e1c",
+   "n": 105,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "BMO",
+   "teaser": "本公司推進1.2GW Texas BYOP資料中心發電專案，但Q2 EPS低於預期、資本支出及Texas政策風險導致股價重挫。"
+  },
+  {
+   "id": "c-a0a6f1",
+   "n": 106,
+   "releasedOn": "2026-11-13",
+   "sector": "Robotics",
+   "session": "BMO",
+   "teaser": "Q2 全面超標，CCS 併購貢獻大幅上修，AI 光互連驅動，Q3 財測遠高於街口共識"
+  },
+  {
+   "id": "c-1fc454",
+   "n": 107,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "公司大幅轉向AI資料中心快速供電，Project Permian將先部署未捕碳天然氣發電、未來再選擇性加入CCS，市場以逾20%漲幅正面反應。"
+  },
+  {
+   "id": "c-6a6767",
+   "n": 108,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2營收與獲利大幅成長、營益率升至5.6%，Kontron持股將提高至約49.4%，公司以Physical AI與整合綜效推動某年度ROE達20%。"
+  },
+  {
+   "id": "c-826512",
+   "n": 109,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI 驅動 Logic、DRAM/HBM 與先進封裝全面加速，本年度 系統成長再度上修、下一年度 需求能見度強，但短期高預期與擴產成本壓抑股價及毛利率反應。"
+  },
+  {
+   "id": "c-e6ca7a",
+   "n": 110,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI 基礎設施需求快速增強，CIS 多年期承諾訂單已超過 28 億美元，管理層預期 Q4 開始明顯加速並帶動 下一年度 全公司營收成長至 low-teens，但短期高 CapEx、"
+  },
+  {
+   "id": "c-ce4a33",
+   "n": 111,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "Q1 全面 beat 且 AGI CPU 需求上修至 $2B+，但高估值 + 手機 royalty 全年下修導致股價盤中 -8% 盤後續跌"
+  },
+  {
+   "id": "c-c1bf63",
+   "n": 112,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "QSSN、QSM 與 QPerfect 均朝商業化邁進，但目前營收仍有限，下半年（本年度） 的正式合約與收入認列將是估值能否進一步重估的核心。"
+  },
+  {
+   "id": "c-c62bae",
+   "n": 113,
+   "releasedOn": "2026-11-13",
+   "sector": "Space",
+   "session": "AMC",
+   "teaser": "國防與衛星服務帶動營收及獲利大幅超標，但瑞典衛星提前交付、Q3財測降速與ATM稀釋限制短線表現。"
+  },
+  {
+   "id": "c-26ace0",
+   "n": 114,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI資料中心測試需求持續擴張，Wireline、半導體與量產測試同步成長，需求已高於短期供應能力，公司上調Q4與全年財測。"
+  },
+  {
+   "id": "c-e2fdad",
+   "n": 115,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "AI、HBM與2.5D先進封裝需求再加速，Advanced Packaging全年成長展望由50%上修至約80%，Backlog突破11億美元且已延伸至下一年度，同時Advance"
+  },
+  {
+   "id": "c-21a907",
+   "n": 116,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2受NB零組件短缺拖累、本業獲利降至谷底，但正式確認進入NVIDIA AI伺服器供應鏈，醫療、半導體與航太亦已陸續接單量產，市場焦點轉向新業務放量。"
+  },
+  {
+   "id": "c-5512a5",
+   "n": 117,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "半導體 lithography 與 inspection 需求強勁推升訂單與獲利，全年營收及 EBITDA margin 財測收斂至原區間上半部，但 Biophotonics 有提"
+  },
+  {
+   "id": "c-7928ca",
+   "n": 118,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "AI資料中心需求超預期並開始排擠其他市場供貨，本公司預期本年度AI營收超過翻倍，搭配利用率提升推動下半年毛利與EPS加速成長。"
+  },
+  {
+   "id": "c-636422",
+   "n": 119,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "NAV創歷史新高且Arm AGI CPU需求突破20億美元，但OpenAI與大型AI基礎設施投資持續擴張，使資產價值成長與融資、集中度風險同步提高。"
+  },
+  {
+   "id": "c-6a2e63",
+   "n": 120,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "cRPO維持14%成長、Agentforce實際付費與消耗加速，Slack重新加速且AI開始帶動AOV提升，支持管理層H2有機營收再加速的展望。"
+  },
+  {
+   "id": "c-f789d9",
+   "n": 121,
+   "releasedOn": "2026-11-13",
+   "sector": "Defense",
+   "session": "BMO",
+   "teaser": "營收、訂單與backlog大幅成長並上修全年財測，但Adjusted EBITDA虧損急增，使市場焦點轉向H2營運槓桿與獲利能力。"
+  },
+  {
+   "id": "c-48097f",
+   "n": 122,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "伺服器營收高速成長且SOCAMM、QD陸續量產，但高原料成本使Q2毛利率降至45.47%，Q3亦僅估持平，短期獲利預期下修，主要成長催化劑延後至本年度Q4至下一年度。"
+  },
+  {
+   "id": "c-f11101",
+   "n": 123,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "Q2全面優於預期，更重要的是本公司首度預估FY下一年度營收仍可成長約70%，且該展望仍受供給限制；Rubin快速放量與AWS新增200萬顆GPU確認AI算力需求，但HBM與DRAM"
+  },
+  {
+   "id": "c-4a19e4",
+   "n": 124,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "美國商業與政府 AI 需求同步爆發，本公司 營收年增93%並大幅上修全年財測，但高估值與國際市場落差仍是主要風險。"
+  },
+  {
+   "id": "c-e0fe1e",
+   "n": 125,
+   "releasedOn": "2026-11-13",
+   "sector": "Software",
+   "session": "AMC",
+   "teaser": "營收成長加速、EA與獲利率大幅優於預期並上修全年財測，但Atlas連續五季維持約29%，未達市場對AI帶動再加速的高期待。"
+  },
+  {
+   "id": "c-2535cf",
+   "n": 126,
+   "releasedOn": "2026-11-13",
+   "sector": "Defense",
+   "session": "AMC",
+   "teaser": "Q2營收與EPS低於市場預期，但營收與毛利率持續快速成長，公司維持150至180百萬美元全年目標，關鍵轉向8至9月國防合約能否大量落地。"
+  },
+  {
+   "id": "c-344d62",
+   "n": 127,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "高階AI PCB產品放量推升營收與毛利率，1H26伺服器、光模塊及IC載板營收年增113%，公司再將本年度資本支出提高至800億元以上，加速布局1.6T光模塊、AI伺服器與IC載板"
+  },
+  {
+   "id": "c-2e4ef2",
+   "n": 128,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "NuScale已大致完成監管、燃料與供應鏈準備，但TVA正式PPA及首批OEM訂單仍未落地，且流動性增加主要來自大規模股權融資。"
+  },
+  {
+   "id": "c-701d34",
+   "n": 129,
+   "releasedOn": "2026-11-13",
+   "sector": "AI infra",
+   "session": "BMO",
+   "teaser": "下一年度 Q1 Beat and Raise，但 CapEx 上調、FCF 轉換率降至 40% 使股價 premarket 重挫 11.6%；CPI 全年 65-75% 成長維持"
+  },
+  {
+   "id": "c-98d6c5",
+   "n": 130,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "營收 EPS 雙 beat 但 Q3 guide 中值僅微幅高於共識、GM 因 memory 元件漲價僅持平，盤後累計 -13.4%。"
+  },
+  {
+   "id": "c-f0b44d",
+   "n": 131,
+   "releasedOn": "2026-11-13",
+   "sector": "AI infra",
+   "session": "BMO",
+   "teaser": "EPS 大勝 + 全年指引上修，但營收 miss 與供應鏈壅塞執行疑慮觸發 -9% 賣壓，15 個月最大跌幅。"
+  },
+  {
+   "id": "c-92c953",
+   "n": 132,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "營收 EPS 雙 beat、Q3 指引亦優，但盤後 -7.7%；Physical AI 與 Data Center 敘事升級為主軸。"
+  },
+  {
+   "id": "c-e765b1",
+   "n": 133,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "BASX資料中心冷卻需求與產能爬坡推動營收翻倍並大幅上修全年營收指引，但Memphis擴產、外包與價格成本落差使全年毛利率指引再下修至25%-26%，Q4毛利率改善成為最重要驗證點"
+  },
+  {
+   "id": "c-37ce97",
+   "n": 134,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "首度單季營收破 10 億美元，全面上修 本年度 財測；Brookfield 融資額度自 $5B 擴大至 $25B"
+  },
+  {
+   "id": "c-794c20",
+   "n": 135,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "Q2延遲的半導體design release於Q3明顯回補，高階IC光罩占比創新高，Allen與韓國8nm進度正常並開始布局EUV，但市場能見度仍偏低。"
+  },
+  {
+   "id": "c-c5b233",
+   "n": 136,
+   "releasedOn": "2026-11-13",
+   "sector": "Semicap",
+   "session": "AMC",
+   "teaser": "本公司 Q2 營收、毛利與 EPS 創歷史新高，HBM、CPU、GPU 與 CPO 共同驅動成長，但部分毛利提升來自一次性退稅與回收收益。"
+  },
+  {
+   "id": "c-0d206d",
+   "n": 137,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "EDA、Ansys 與 Design IP 全面優於預期並上修全年財測，AI、3D IC與客製晶片需求持續加速，但 Factory 2、agentic AI及Ansys整合的主要營"
+  },
+  {
+   "id": "c-472b2e",
+   "n": 138,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "Fluence毛利率恢復至11.1%，並憑兩家hyperscaler MSA與12 GWh資料中心pipeline開啟新的成長動能，但全年營收高度集中於Q4，執行與現金流風險仍需追"
+  },
+  {
+   "id": "c-a8ecdd",
+   "n": 139,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI資料中心需求推動光通訊、液冷與光半導體業務大幅成長，Q1營業利益年增205%，並將全年營業利益財測大幅上修29%。"
+  },
+  {
+   "id": "c-f1e433",
+   "n": 140,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "Q3營收與AI收入創高，FY下一年度與FY後年度 AI收入分別上看1150億及2300億美元，但短線受Q4財測、毛利率與供應限制影響。"
+  },
+  {
+   "id": "c-dbf26f",
+   "n": 141,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "DOE 9 億美元資金正式落地並解除逾 30 億美元 enrichment 合約的融資條件，商業 backlog 增至 45 億美元、HALEU 正由示範走向正式長約，但新增產能仍"
+  },
+  {
+   "id": "c-19c5c3",
+   "n": 142,
+   "releasedOn": "2026-11-13",
+   "sector": "AI infra",
+   "session": "BMO",
+   "teaser": "資料中心需求、Electrical Americas產能爬坡與Boyd液冷共同推升營收，公司再次上調本年度有機成長及EPS指引。"
+  },
+  {
+   "id": "c-66d81d",
+   "n": 143,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "CIB/AV 新產品採用加速推動 Q2 優於指引並上修全年營收財測，VA7000 汽車專案則持續朝 下一年度 量產推進。"
+  },
+  {
+   "id": "c-40f8c4",
+   "n": 144,
+   "releasedOn": "2026-11-13",
+   "sector": "Memory",
+   "session": "AMC",
+   "teaser": "AI與雲端儲存需求、HAMR放量及供給紀律推升本公司營收、毛利率與現金流，FY下一年度營收成長預計進一步加速。"
+  },
+  {
+   "id": "c-3aae9b",
+   "n": 145,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "第二季營收持平但毛利率下降並轉為虧損，車用量產與AI伺服器安全晶片進展正向，短期仍須等待獲利與AI營收占比回升。"
+  },
+  {
+   "id": "c-ac5d59",
+   "n": 146,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "BMO",
+   "teaser": "DuPont Q2 獲利與現金流優於預期並上修全年 EPS，但中東水處理專案遞延及下半年對價格成長的依賴，使市場反應相對溫和。"
+  },
+  {
+   "id": "c-d96e62",
+   "n": 147,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "Starlink穩定獲利、AI雲端服務帶動營收與EBITDA跳升，但單季184億美元資本支出及Starship執行風險使財報後股價盤後下跌。"
+  },
+  {
+   "id": "c-39a021",
+   "n": 148,
+   "releasedOn": "2026-11-13",
+   "sector": "Semis",
+   "session": "AMC",
+   "teaser": "通路庫存修正宣告結束，Data Center、國防與工業復甦共同推動成長，本年度 Q2營收與獲利率指引再大幅上升。"
+  },
+  {
+   "id": "c-feda4b",
+   "n": 149,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "BMO",
+   "teaser": "高油價與煉油利差推升獲利創六年高點，Hess綜效、頁岩效率及Microsoft資料中心供電合約強化中長期成長。"
+  },
+  {
+   "id": "c-bfe5f3",
+   "n": 150,
+   "releasedOn": "2026-11-13",
+   "sector": "Power",
+   "session": "AMC",
+   "teaser": "營收 $291.9M in-line、毛利率反彈至 46.8%，Safe Harbor 累計 $1.1B；IQ SST 打開 AI 資料中心新戰場，歐洲電池轉型加速"
+  },
+  {
+   "id": "c-ae3970",
+   "n": 151,
+   "releasedOn": "2026-11-13",
+   "sector": "AI infra",
+   "session": "AMC",
+   "teaser": "Q2 創單季營收新高 $1.9B、EPS $0.70 雙雙大幅超預期，但 Q3 營收 guidance 低於市場預期，且 SiP 遷移 headwind 延伸至 下一年度 H1。"
+  },
+  {
+   "id": "c-0817c6",
+   "n": 152,
+   "releasedOn": "2026-11-13",
+   "sector": "Other",
+   "session": "AMC",
+   "teaser": "AI伺服器與網通用高階ABF需求強勁、產品組合改善推升Functional Materials獲利並帶動全年財測上修，但下半年食品事業仍須驗證漲價能否完整抵銷約250億日圓中東相關"
+  },
+  {
+   "id": "c-c01791",
+   "n": 153,
+   "releasedOn": "2026-11-13",
+   "sector": "Networking",
+   "session": "AMC",
+   "teaser": "AI光通訊需求全面加速，1.6T、OCS、Pump Laser與NPO/CPO多線成長，Q1財測提前達成原營收目標且毛利率突破50%，但高估值使盤後股價反應有限。"
+  }
+ ],
+ "updatedAt": "2026-11-13T07:48:43+00:00"
 }

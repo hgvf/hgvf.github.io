@@ -1,0 +1,342 @@
+{
+ "id": "c-1efc20",
+ "n": 43,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Semicap",
+ "session": "AMC",
+ "summary": "AI 驅動連二季創營收新高、Q3 財測遠超共識，長期 ATE TAM 上修至 $20B+。",
+ "highlights": [
+  {
+   "text": "Compute dual-vendor 進度為 socket-by-socket 漸進式（fast follower 天花板 ~30% share），share gain 節奏低於部分市場預期。"
+  },
+  {
+   "text": "Q3 財測營收 $1.2–1.3B、EPS $1.85–$2.15，遠高於共識（營收共識 $1.03B）。"
+  },
+  {
+   "text": "Q2 營收 $1.33B（YoY +104%）、Non-GAAP EPS $2.47（YoY +300%+），雙雙優於財測高標。"
+  },
+  {
+   "text": "Semi Test 破紀錄達 $1.022B，Compute 營收 YoY 近 +600%，Memory 連三季 >$200M。"
+  },
+  {
+   "text": "AI 相關營收占比 >60%，橫跨 Semi Test / Product Test / Robotics 三大事業群同步成長。"
+  },
+  {
+   "text": "上半年營收佔全年比重下修至 50–52%，代表下半年展望轉強、能見度提升。"
+  },
+  {
+   "text": "IST（HDD 測試）QoQ +150%+，三大 HDD 供應商 AI 需求全面拉動。"
+  },
+  {
+   "text": "AI 營收集中度高 + 高本益比（P/E ~59），對未來任何 AI Capex 放緩極為敏感，估值風險為主要下行因子。"
+  },
+  {
+   "text": "OPEX 主動上升（R&D / go-to-market / 產能），Q4 OPEX 預計與 Q3 相當，反映對 下一年度 的加碼投資。"
+  },
+  {
+   "text": "Q3 毛利率財測 58–59%（QoQ -110bps），因 Compute 高毛利淡出、新品導入與產品組合稀釋。"
+  },
+  {
+   "text": "Memory book-to-bill >2；本年度 Memory TAM 較 上一年度 大 40%+；NAND 首度確認拉貨復甦。"
+  },
+  {
+   "text": "長期 ATE TAM 上修：伴隨 WFE 逼近 $250B，某年度s 末 ATE TAM 有望達或超過 $20B。"
+  },
+  {
+   "text": "下半年（本年度） Compute 因訂單時點出現 softness，Mobile 續弱；下一波 Compute 拉升要到 上半年（下一年度）。"
+  },
+  {
+   "text": "CPO TAM 後年度 為 $300M–$700M，下一年度 貢獻約 $200M（區間下緣），對整體業績短期貢獻有限。"
+  },
+  {
+   "text": "第二家 Hyperscaler 完成 correlation，Merchant GPU 首單已於 Q2 出貨；dual-vendor share gain 下一年度 開始顯現。"
+  }
+ ],
+ "watch": [],
+ "choices": [
+  "TER",
+  "AEHR",
+  "ASML",
+  "ONTO"
+ ],
+ "prior": [
+  {
+   "label": "上一季",
+   "summary": "AI 驅動創紀錄季，營收 $1.282B YoY +87%、EPS $2.56，但 Q2 guidance QoQ 下滑加下半年可見度有限，隔日股價暴跌 19.4%。",
+   "highlights": [
+    {
+     "text": "Q1 營收 $1.282B (YoY +87%、QoQ +18%)、Non-GAAP EPS $2.56 (YoY +241%)，皆創歷史新高；毛利率 60.9%、營益率 37.5%。"
+    },
+    {
+     "text": "AI 相關營收占比升至約 70%（兩季前 為 60%），Semi Test 首度單季破 $1B，Compute 佔 SoC 產品 75%。"
+    },
+    {
+     "text": "取得首張 Merchant GPU 多系統生產測試訂單，本年度 全年 GPU 營收目視 ~$50M，中期目標 30–70% dual-source 市占（需數年）。"
+    },
+    {
+     "text": "推出 Photon 100 矽光子/CPO 測試平台，中期 TAM 估 $300M–$700M；本年度 SiPh 營收目視 ~$100M。"
+    },
+    {
+     "text": "Memory Test $203M 續強，HBM+DRAM 主導，Magnum 7 順利放量，本年度 memory 市占預期提升 low single-digit。"
+    },
+    {
+     "text": "Robotics $91M 連四季序列成長 (YoY +32%)，AI 資料中心相關營收占比升至 15%。"
+    },
+    {
+     "text": "本季 財測營收 $1.15–1.25B、EPS $1.86–$2.15，中值 QoQ 下滑；毛利率降至 58–59%。"
+    },
+    {
+     "text": "全年 55–60% 營收壓在上半年（由 1 月的 60% 點估擴大為區間），下半年可見度有限、Q4 尚未完全 booked，反映客戶下單 lumpy。"
+    },
+    {
+     "text": "供應鏈訊號：tester lead time ≈ wafer 生產 lead time，測試設備結構性落後前端 capex 訊號；客戶多元 tester source 趨勢正向。"
+    },
+    {
+     "text": "完成 MultiLane Test Products JV (4/8) 與 TestInsight (4/16) 併購，共動用 $165M 現金，強化 CPO / 高速 I/O / 虛擬測試環境能力。"
+    },
+    {
+     "text": "隔日股價 -19.4%（盤中最大 -26.7%），反映估值過高（P/E >100）+ Q2 QoQ 下滑 + 下半年可見度有限，典型 guidance-driven 賣壓。"
+    },
+    {
+     "text": "維持長期目標模型：營收 $6B、Non-GAAP EPS $9.50–$11.00，達成僅需 low double-digit GPU 市占。"
+    }
+   ],
+   "watch": [],
+   "netSentiment": null,
+   "reaction": {
+    "session": "AMC",
+    "gap": 0.06748,
+    "r1": 0.12124,
+    "r5": 0.24859,
+    "excess": {
+     "sector": {
+      "r1": 0.0958,
+      "r5": 0.12219,
+      "r20": -0.0159
+     },
+     "market": {
+      "r1": 0.11129,
+      "r5": 0.21732,
+      "r20": 0.18916
+     }
+    }
+   }
+  }
+ ],
+ "chart": {
+  "pre": {
+   "o": [
+    114.3,
+    115.63,
+    123.81,
+    123.63,
+    121.48,
+    117.84,
+    120.57,
+    112.36,
+    111.82,
+    119.11,
+    133.0,
+    134.8,
+    133.86,
+    131.55,
+    142.25,
+    127.92,
+    131.94,
+    141.59,
+    141.51,
+    137.41,
+    145.8,
+    143.77,
+    133.29,
+    120.56,
+    110.42,
+    106.97,
+    118.27,
+    110.23,
+    107.59,
+    113.39,
+    111.12,
+    103.61,
+    95.4,
+    104.54,
+    112.58,
+    113.1,
+    113.2,
+    113.83,
+    109.13,
+    99.59
+   ],
+   "h": [
+    117.48,
+    122.53,
+    131.17,
+    129.07,
+    122.54,
+    118.56,
+    123.39,
+    116.89,
+    118.99,
+    127.24,
+    136.53,
+    136.05,
+    137.46,
+    137.07,
+    143.21,
+    133.69,
+    135.04,
+    147.32,
+    142.29,
+    146.3,
+    152.16,
+    144.6,
+    134.02,
+    124.68,
+    112.6,
+    110.48,
+    120.07,
+    113.07,
+    108.71,
+    113.83,
+    111.65,
+    104.6,
+    103.13,
+    109.54,
+    118.26,
+    117.38,
+    118.04,
+    115.81,
+    110.79,
+    101.03
+   ],
+   "l": [
+    112.32,
+    114.07,
+    122.75,
+    121.03,
+    110.44,
+    114.89,
+    106.14,
+    107.78,
+    111.21,
+    118.51,
+    131.93,
+    127.62,
+    127.32,
+    131.55,
+    137.1,
+    127.48,
+    129.04,
+    133.2,
+    131.94,
+    129.4,
+    143.46,
+    132.58,
+    112.9,
+    117.63,
+    102.38,
+    104.49,
+    112.48,
+    107.58,
+    104.27,
+    108.27,
+    101.4,
+    99.09,
+    92.57,
+    103.32,
+    111.03,
+    112.52,
+    113.1,
+    107.74,
+    99.67,
+    93.87
+   ],
+   "c": [
+    115.23,
+    122.45,
+    127.76,
+    126.89,
+    111.63,
+    116.85,
+    115.14,
+    108.4,
+    118.95,
+    125.74,
+    134.85,
+    127.66,
+    127.42,
+    136.57,
+    142.52,
+    131.02,
+    133.23,
+    147.19,
+    136.24,
+    144.46,
+    150.89,
+    133.27,
+    115.11,
+    118.36,
+    107.0,
+    109.64,
+    113.13,
+    112.15,
+    106.38,
+    110.16,
+    106.7,
+    100.51,
+    100.53,
+    104.09,
+    116.65,
+    115.22,
+    116.56,
+    109.13,
+    104.4,
+    100.0
+   ],
+   "v": [
+    67,
+    91,
+    87,
+    112,
+    146,
+    79,
+    114,
+    100,
+    134,
+    89,
+    122,
+    106,
+    94,
+    479,
+    116,
+    205,
+    87,
+    188,
+    307,
+    136,
+    134,
+    146,
+    158,
+    92,
+    171,
+    85,
+    99,
+    42,
+    83,
+    56,
+    85,
+    97,
+    94,
+    79,
+    107,
+    57,
+    56,
+    79,
+    111,
+    155
+   ]
+  }
+ },
+ "answer": "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"
+}

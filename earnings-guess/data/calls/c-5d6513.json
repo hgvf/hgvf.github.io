@@ -1,0 +1,301 @@
+{
+ "id": "c-5d6513",
+ "n": 32,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Memory",
+ "session": "AMC",
+ "summary": "40TB ePMR進入量產、AI與雲端儲存需求維持強勁，帶動價格、毛利率與自由現金流提升，但市場高度期待與exabyte增速放緩造成財報後股價承壓。",
+ "highlights": [
+  {
+   "text": "財報與財測雖優於市場共識，但相較競爭對手與市場高度期待仍不夠強，造成盤後股價明顯下跌。"
+  },
+  {
+   "text": "Q4 exabyte出貨為231EB、年增22%，低於前幾季約30%的成長速度。"
+  },
+  {
+   "text": "44TB HAMR預計下一年度上半年出貨，50TB產品預計下一年度下半年推出。"
+  },
+  {
+   "text": "FY本年度營收年增36%至129億美元，毛利率提升至49.1%，自由現金流達35億美元。"
+  },
+  {
+   "text": "40TB ePMR已對兩家客戶進入量產，預計FY下一年度 Q3占Nearline容量出貨超過50%。"
+  },
+  {
+   "text": "HAMR仍處於客戶驗證與導入階段，若量產時程延後，可能影響後續容量與成本改善。"
+  },
+  {
+   "text": "Cloud業務占Q4營收89%，Nearline HDD需求持續受AI推論、Agentic AI與核心雲端服務帶動。"
+  },
+  {
+   "text": "Cloud營收占比接近九成，營運表現高度依賴少數大型雲端與hyperscale客戶。"
+  },
+  {
+   "text": "客戶正討論延伸至某年度至某年度的長期供應協議，顯示中長期容量需求可見度提高。"
+  },
+  {
+   "text": "本年度 Q4營收年增44%至37.5億美元，毛利率54.4%，EPS年增109%至3.56美元。"
+  },
+  {
+   "text": "下一年度 Q1營收指引為40億至42億美元，毛利率指引55%至56%，EPS中位數為4美元。"
+  },
+  {
+   "text": "Physical AI需求開始具體化，一家自駕車客戶對下一年度儲存容量需求已增加數倍。"
+  },
+  {
+   "text": "Q4每TB成本年減約8%，公司維持中長期每年下降約10%的目標。"
+  },
+  {
+   "text": "UltraSMR正擴大至第三家大型客戶，預計FY下一年度結束時占Nearline exabyte出貨約60%。"
+  },
+  {
+   "text": "High-Bandwidth Drive已向五家客戶送樣，目標在不顯著增加功耗下提供最高八倍吞吐量。"
+  },
+  {
+   "text": "公司維持透過股利與庫藏股將自由現金流回饋股東的資本配置政策。"
+  },
+  {
+   "text": "Exabyte成長受CMR與UltraSMR客戶組合及大型客戶非線性拉貨影響，季度波動仍高。"
+  },
+  {
+   "text": "Q4每TB平均售價年增由前季高個位數加速至高雙位數，反映供需偏緊與高容量產品價值提升。"
+  }
+ ],
+ "watch": [
+  "FY下一年度後續季度exabyte出貨增速能否重新回到25%以上",
+  "40TB ePMR能否在FY下一年度 Q3達到Nearline容量出貨超過50%的目標",
+  "UltraSMR能否在FY下一年度結束時占Nearline exabyte出貨約60%",
+  "44TB HAMR是否能依計畫於下一年度上半年完成驗證並開始出貨",
+  "50TB產品能否依計畫於下一年度下半年推出",
+  "每TB平均售價高雙位數成長是否可持續，或主要來自一次性LTA重訂價",
+  "每TB成本下降幅度能否由Q4的8%改善至中長期10%目標",
+  "毛利率在FY下一年度 Q1達到55%至56%後能否持續擴張",
+  "某年度至某年度LTA能否正式簽署，以及價格與基本容量條款",
+  "High-Bandwidth Drive送樣客戶是否轉入正式量產與商業部署",
+  "Physical AI、自駕車與Neo-cloud需求能否轉化為可量化的營收或exabyte貢獻",
+  "Enterprise OEM由全快閃陣列轉向Hybrid Storage的需求是否持續擴大"
+ ],
+ "choices": [
+  "STX",
+  "RMBS",
+  "WDC",
+  "MU"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    103.15,
+    96.83,
+    95.88,
+    104.4,
+    119.19,
+    132.28,
+    133.96,
+    147.19,
+    148.84,
+    128.13,
+    126.83,
+    140.42,
+    123.88,
+    115.68,
+    121.82,
+    116.45,
+    114.7,
+    109.21,
+    102.55,
+    101.32,
+    114.44,
+    108.63,
+    106.26,
+    113.19,
+    108.37,
+    93.74,
+    86.89,
+    94.64,
+    101.86,
+    101.27,
+    107.04,
+    103.72,
+    100.74,
+    89.78,
+    92.53,
+    98.55,
+    109.62,
+    101.0,
+    106.9,
+    104.96
+   ],
+   "h": [
+    105.05,
+    99.24,
+    102.03,
+    110.23,
+    126.89,
+    140.59,
+    142.89,
+    154.07,
+    150.2,
+    131.47,
+    128.09,
+    140.42,
+    124.7,
+    125.77,
+    127.89,
+    118.92,
+    117.39,
+    115.76,
+    105.94,
+    108.4,
+    115.86,
+    112.72,
+    107.86,
+    113.58,
+    109.67,
+    96.06,
+    94.95,
+    97.46,
+    106.64,
+    108.72,
+    111.02,
+    106.32,
+    102.33,
+    90.0,
+    96.15,
+    105.37,
+    111.72,
+    103.9,
+    107.83,
+    108.76
+   ],
+   "l": [
+    92.62,
+    93.32,
+    94.19,
+    102.46,
+    117.88,
+    128.54,
+    133.7,
+    142.36,
+    139.95,
+    125.78,
+    117.96,
+    126.84,
+    111.62,
+    113.64,
+    121.41,
+    112.83,
+    101.28,
+    108.56,
+    98.3,
+    101.32,
+    110.56,
+    108.4,
+    102.5,
+    107.69,
+    95.63,
+    87.44,
+    82.92,
+    93.47,
+    99.58,
+    101.13,
+    106.71,
+    98.15,
+    90.78,
+    81.3,
+    87.97,
+    97.66,
+    102.19,
+    96.55,
+    103.49,
+    99.83
+   ],
+   "c": [
+    99.72,
+    94.4,
+    101.95,
+    108.43,
+    125.88,
+    131.19,
+    137.17,
+    143.74,
+    141.11,
+    129.2,
+    124.01,
+    130.09,
+    112.96,
+    125.56,
+    123.03,
+    115.26,
+    103.82,
+    111.23,
+    102.49,
+    106.0,
+    111.34,
+    112.22,
+    107.01,
+    108.5,
+    98.97,
+    89.91,
+    91.92,
+    93.88,
+    105.63,
+    107.22,
+    107.54,
+    100.12,
+    95.91,
+    89.28,
+    89.0,
+    102.67,
+    104.94,
+    101.55,
+    105.66,
+    100.0
+   ],
+   "v": [
+    88,
+    72,
+    77,
+    76,
+    115,
+    192,
+    164,
+    201,
+    159,
+    153,
+    148,
+    142,
+    283,
+    136,
+    112,
+    96,
+    108,
+    92,
+    97,
+    83,
+    83,
+    58,
+    58,
+    64,
+    96,
+    127,
+    142,
+    65,
+    90,
+    66,
+    69,
+    58,
+    75,
+    127,
+    111,
+    102,
+    115,
+    100,
+    94,
+    116
+   ]
+  }
+ },
+ "answer": "E0UCD04OBABMU0wwNytFWkROCgwCDwcXRUlKMBMVWQATHE4tBwAaHAYaRm4KEwIBGw8TGgcJVEoPAQAGC0tURUFYVUBLHV1MQltLQkUADRQFD0ILQ0hMKCMkUURFDwNMF0NIXFlcUV9KFgMHXxEEAExTTDZHSktUCEgRMhcAHQcKFgYTVFwUSUMGXktURUFYVUBLHV1MQlhLQkUBDRMDFEMWQ0gVSwkGA0pdW1YDVFZBVlBCRQFZRUxLHUtQQV5aQkUBXUVMSx1LUEBbWl1LURpVRkQXSFFcX1pbVEYVS1QDVQYEAR1LVBxRGwIVEkIXQ0gVSxxWUVJKRkgcVlJFXUVMFUZKXVtWA1RUR11YQkUBWldUXABVT0JWWVxVDkRFGwdfDgQGTFMVRQFZRUxLHUtQQFZeX0tRGlJUXABVT0NcUVZTX0oVRFYPX0xCQFhcXkBcGgtKDxUABgZLVDxCWFVYUBpJUEJaR1dTX1lXR0gYUE1DXlxAUUVEVkZWA1VNSlhHV1BfUFRYUBhJWUZAXV1LS1xJRVMBXVZcWl5CXkBGX0BKFF1PQkJYXlRdWlNaXxhLVEVCUVdJQ1lLT1YDVlReVlFAUl9QVFheG0lZREBRXEtKWElFVwFdWVxXUEJfS0ZSWl4bS1ZKQlFYSUReS05QA1FXXlZcQFdGNUtUBEgLAho+CBoPUVI8T1MDVVZeV1xAVkdEXkNIG1NNQ15bQFZERFZGVgNVTUNeWUBUR0RWRlQDVlZeV1BAUEZEVkZWA1NXXl9ZXUlDRFZGVQNSWV5fWV1JRFpLR1YYS1JEQlheV11ZVFpfGktYQEJQVklHW0tPUQNcWF5XXEBUS0ReQEgVU01LWUdfVV9RXlhWHElYR0BRWktKXklFShRRT0BZRVdTXVxeWl8ZS1dBM0VMBRYGBB4LTBcKUFQSTBQWCxMZFA9fQyEhMTZFX0oKFxRGABVQVEs9NypKGlpETg0AABo5ARQHSl0NREJHWylWW0BRQkRfTkgcVE1KXUdZVV9QUlhXFUlZSkBZWktLX0lEXgFcV1xXUUJWQ1lJRFUBXFRcW1xCXkZGVUdKFVxPQFhFV1ZdUVRaXhhLWEVCUVhJQ11LTlADU1ReV1tAV0BEX09IHVFNSlZHXlZfUFJYVRlJWUdAXjNLUQBFTD0UV09CQlFWSUJbS05RA1dNSlhHWlFfUVdYVxxJWERAUVxLSlFJQlABVFFHQF9ZS0JYV1hXG0lYREBaX0tKWUlPVQFcU1xcW0JfRUZWWl4aS1FEQlBeSUZbS09UA1FSXldYQFNKRF9OSBhJWUpAWFhLS1BJRlRwSUMeTFM1UEtGU09KFVRPQVZFVlZdX1NaXh5LUENCUVhJS11LTlADXFleV1pAX0FEXk9IFF1NS1pHWlRfUF9YUBtJWUVAWldLS19JQ1cBXVFcVlhCX0FGX09KFVNPQFdFVlJdW1RaXhpLV0dCUVtJRVpLTlIDU1BeVl1AVUY1S1QFD186SlhHV1BfUFRYUBhJWUZAXV1LS1xJRVMBXVZcWl5CXkBGX0BKFF1PQkJYXlRdWlNaXxhLVEVCUVdJQ1lLT1YDVlReVlFAUl9QVFheG0lZREBRXEtKWElFVwFdWVxXUEJfS0ZSWl4bS1ZKQlFYSUReS05QA1FXL0JLGEVJM1ZPUAFUVUFCUVZLRFxLQF8BVFFHQlhcV19ZVkRKHFRVXlZdQlFGRFJEShRRTUdZRVhVX1FVWlMfSVZDQl9YS0dROgtKDwcEHA0BLQ8SGhNUXHZUUUdAUVlLQlhWWF8USVBDXkdbU19ZVkRIHklQQ1ZHWlVfWVZHSBlUTUNfWkBXQkRWRFYDUVheX1tdSUdaS0dXHktWXl9YXUlAXEtHVxpLWUNCWF9WXVlRWlccUE9FWEVfVUNGUEJKHFRSXF5FX1dFRlBHShxVWFxbXkJWQ1tJT1ABVFFHQFBCVkNRSUBXAVRRS0BcWktCWFNYVR9JUEJZR15WX1lXQkgbVk1LV0dXUV9RX1hVH0lYSkBeWEtCWFNYVxlJUEJaR1hfX1lXRUgVUk1LV0ddS0pfSURRAVxTXFhYQl9ERlFEShRQT0JZRVdSXVlTWl8YS1dEQlheVV1ZUFpXHVVPQkJYXlddW1NaVx1XT0FZRVdeXV9SWlcdVU9EWEVfV0BGV1pXHVZPRVZFX1dARlBEShxVVFxdX0JWQ1hJR1UBXFZcV1tCXktGU0VKFFJPS1dFV1JdW19aXxtLWURCUFlJQlpLT18DVVBeV1xAX0dEXkBIHklYRkBbWUtKXElCX3BJQwELBxoOHg0JAhUPXzpQDAwPFRobD1RKDwcEExwAHQ9RREUUE0EJCAEGS0JFER0LGg9eDUNeTAsbCx8BFB5EAUcDFw8bBxQbSktUBFgJDRsdAUxLUQoCFxREFglQQksMEh8EDgUOD0lDEBsFAg4AAEVaRE8QDR4HGgZFX0oFAwpBDBIaTEVMBQYECx8VRUdNUAwcAgsaGw9USg8HFB4CAB0PUURFFBNBCQgBBktCRR0NEgIUTAlDXkwLGwsfARQeRHBJQwIcAAEVIA0JAg9AAA8GHUtUPC4V"
+}

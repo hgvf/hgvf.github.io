@@ -1,0 +1,331 @@
+{
+ "id": "c-4186f0",
+ "n": 82,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Memory",
+ "session": "AMC",
+ "summary": "AI資料中心需求、NAND漲價與長期供應合約推升營收、毛利率及現金流創高，但Q1財測未進一步超越市場高預期。",
+ "highlights": [
+  {
+   "text": "公司認為模型擴大、context length增加及Agentic AI將放大KV cache與NAND容量需求。"
+  },
+  {
+   "text": "下一年度 NAND市場接近5000億美元的預測隱含價格與高價值產品組合維持高檔，若ASP正常化則存在下修風險。"
+  },
+  {
+   "text": "管理層目前優先透過股票回購而非股利返還資本，預期持續降低流通股數並支撐每股盈餘。"
+  },
+  {
+   "text": "已簽署NBM最低合約收入達939億美元，含季後簽約的剩餘履約義務約911億美元。"
+  },
+  {
+   "text": "財報與財測絕對數字仍強，但未進一步超越市場極高預期，公布後股價盤後下跌。"
+  },
+  {
+   "text": "High Bandwidth Flash已與雲端及裝置客戶進行深入合作，但尚未公布明確送樣、量產或營收時程。"
+  },
+  {
+   "text": "Q4調整後自由現金流達50.35億美元，自由現金流率56%，顯示高毛利率已轉化為強勁現金流。"
+  },
+  {
+   "text": "公司主要透過製程節點轉換而非大量增加晶圓產能擴張供給，有助降低資本密集度及供過於求風險。"
+  },
+  {
+   "text": "下一年度 Q1非GAAP毛利率指引為83%至85%，中值略低於Q4的84.6%，反映產品組合、零組件成本及審慎假設。"
+  },
+  {
+   "text": "資料中心營收季增103%至29.77億美元，資料中心已占公司bit組合38%，較一年前約12%顯著提高。"
+  },
+  {
+   "text": "管理層預期手機與PC市場於CY下一年度穩定，並由單機容量提升重新帶動exabyte需求成長。"
+  },
+  {
+   "text": "下一年度 Q1預估營收103億至108億美元、非GAAP EPS 44至46美元，將由bit出貨及價格同步成長帶動。"
+  },
+  {
+   "text": "QLC Stargate企業級SSD已開始貢獻營收，補足高容量AI data lake產品組合。"
+  },
+  {
+   "text": "Consumer營收季減32%至5.56億美元，消費市場價格調整較慢，漲價亦對終端市場規模造成壓力。"
+  },
+  {
+   "text": "Q4已回購45億美元股票，董事會新增140億美元授權，使剩餘回購額度達155億美元。"
+  },
+  {
+   "text": "Q4營收季增來源約三分之一為bit出貨增加、三分之二為價格上升，顯示獲利改善仍高度受惠於NAND定價。"
+  },
+  {
+   "text": "BiCS8已占公司多數bit生產，後續將透過BiCS8與BiCS10節點轉換維持中高雙位數bit成長。"
+  },
+  {
+   "text": "公司預估全球NAND市場CY本年度超過3000億美元、CY下一年度接近5000億美元，資料中心占比將快速提升。"
+  },
+  {
+   "text": "High Bandwidth Flash定位於HBM或DRAM與傳統SSD之間，瞄準KV cache、context memory及AI推論記憶體階層。"
+  },
+  {
+   "text": "NBM採固定與浮動價格並設有上下限，管理層預期即使採最低價格，毛利率仍約在80%附近。"
+  },
+  {
+   "text": "部分客戶在簽署NBM僅一季後便追加未來3至5年需求，反映AI資料中心需求仍高於先前預估。"
+  },
+  {
+   "text": "Q4營收89.65億美元，季增51%、年增372%，高於原財測上緣82.5億美元。"
+  },
+  {
+   "text": "非GAAP毛利率84.6%、營業利益率79.2%，非GAAP EPS達39.25美元，均優於公司原指引。"
+  },
+  {
+   "text": "NBM預計占FY下一年度超過50%及FY後年度約三分之二的bit出貨，提升需求、價格及產品組合能見度。"
+  },
+  {
+   "text": "管理層預估CY本年度智慧型手機及PC單位出貨均下降約中雙位數，PC平均容量短期大致持平。"
+  },
+  {
+   "text": "公司預期客戶需求成長快於自身供給，NAND配額供應狀態可能延續至CY下一年度之後。"
+  },
+  {
+   "text": "公司已與8家資料中心及Edge客戶簽署NBM長期合作協議，加權平均期限超過4年，最長約5年。"
+  },
+  {
+   "text": "客戶透過現金存款及金融工具提供合計165億美元履約保障，可降低長約取消或未履約風險。"
+  }
+ ],
+ "watch": [
+  "下一年度 Q1營收能否達到或超過108億美元財測上緣",
+  "非GAAP毛利率能否維持在85%附近，而非逐步回落至NBM約80%的長期水準",
+  "NBM客戶是否持續追加採購量，以及FY後年度約三分之二bit承諾的實際產品組合",
+  "新增NBM客戶數量、合約期限、價格上下限與履約保障條件",
+  "QLC Stargate在AI data lake市場的客戶導入速度與營收占比",
+  "High Bandwidth Flash送樣、量產、客戶驗證及首筆營收時程",
+  "KV cache與context memory架構中NAND的實際容量、頻寬及單機價值量",
+  "BiCS10量產爬坡速度、良率、成本下降幅度及對bit growth的貢獻",
+  "FY下一年度提高安全庫存後，sellable bits與自由現金流是否受到明顯影響",
+  "Consumer、PC與智慧型手機需求是否於CY下一年度如管理層預期恢復exabyte成長",
+  "下一年度 NAND市場接近5000億美元的預測是否獲其他供應商與終端資本支出數據支持",
+  "155億美元剩餘股票回購額度的實際執行速度及對稀釋股數的影響"
+ ],
+ "choices": [
+  "STX",
+  "WDC",
+  "SIMO",
+  "SNDK"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    125.92,
+    120.28,
+    123.83,
+    140.02,
+    155.58,
+    158.03,
+    153.62,
+    151.41,
+    169.81,
+    148.66,
+    147.17,
+    165.74,
+    160.68,
+    154.81,
+    156.22,
+    154.4,
+    151.34,
+    135.41,
+    119.9,
+    117.87,
+    135.92,
+    131.73,
+    132.76,
+    133.8,
+    127.16,
+    113.11,
+    101.09,
+    104.32,
+    111.93,
+    113.0,
+    116.08,
+    114.86,
+    108.33,
+    86.9,
+    82.88,
+    84.04,
+    102.46,
+    85.88,
+    100.57,
+    103.57
+   ],
+   "h": [
+    133.51,
+    130.67,
+    140.32,
+    149.7,
+    156.97,
+    160.48,
+    153.62,
+    162.29,
+    174.33,
+    152.54,
+    149.69,
+    173.86,
+    167.06,
+    154.81,
+    168.89,
+    157.72,
+    151.98,
+    136.08,
+    121.35,
+    128.45,
+    144.58,
+    144.16,
+    133.28,
+    134.21,
+    128.06,
+    114.89,
+    111.16,
+    107.74,
+    118.15,
+    120.58,
+    125.61,
+    116.48,
+    108.33,
+    87.97,
+    83.29,
+    95.19,
+    104.03,
+    97.48,
+    107.12,
+    106.76
+   ],
+   "l": [
+    113.74,
+    117.73,
+    123.29,
+    138.11,
+    149.66,
+    146.63,
+    143.5,
+    150.24,
+    166.7,
+    144.39,
+    137.8,
+    154.91,
+    152.76,
+    140.32,
+    153.28,
+    148.25,
+    125.36,
+    126.86,
+    109.96,
+    117.73,
+    133.36,
+    131.28,
+    121.89,
+    126.73,
+    109.48,
+    102.93,
+    98.11,
+    101.86,
+    110.3,
+    112.26,
+    115.41,
+    104.52,
+    90.49,
+    77.8,
+    73.91,
+    83.23,
+    87.91,
+    83.03,
+    99.22,
+    99.59
+   ],
+   "c": [
+    121.92,
+    121.68,
+    139.32,
+    146.62,
+    156.08,
+    147.47,
+    145.04,
+    161.77,
+    168.36,
+    145.4,
+    141.76,
+    172.9,
+    154.81,
+    151.82,
+    168.36,
+    150.48,
+    129.21,
+    129.17,
+    119.79,
+    127.89,
+    137.6,
+    141.87,
+    123.95,
+    130.16,
+    119.59,
+    104.49,
+    100.32,
+    103.0,
+    117.69,
+    118.42,
+    119.24,
+    106.37,
+    94.65,
+    81.16,
+    75.22,
+    94.78,
+    89.95,
+    95.37,
+    105.71,
+    100.0
+   ],
+   "v": [
+    118,
+    75,
+    100,
+    87,
+    67,
+    70,
+    67,
+    89,
+    73,
+    94,
+    76,
+    109,
+    123,
+    82,
+    83,
+    80,
+    125,
+    67,
+    106,
+    88,
+    97,
+    80,
+    101,
+    70,
+    139,
+    127,
+    144,
+    91,
+    104,
+    77,
+    93,
+    102,
+    155,
+    194,
+    178,
+    177,
+    154,
+    107,
+    107,
+    119
+   ]
+  }
+ },
+ "answer": "E0UCD04OBABMU0w0PSwsVEoPBg4fHggAHlFSRSUHQyEIAQVJLQgBGAgEB1kMDhxMRUwDEhwCVFwPV1FAWEReX15YUlRKDxYEAR0AAQlRUkU3K25HTVAXDA8VUVJVRlQbSUMDGwgcExYaRUxEfFFDXkwHCxMgDQkCD0AADwZMU19RX0oTRkQXR1NCXF9DV0tFV0BEAUcTFxocHAkASl0NREoEEVBURF5JQltWRFIBRxNDTFNDV11YUU5WG0lDAFtLVEpDRldGUhtJQwBcWUxdQ0ZWQ1YfURxeTAwWBBYbFFRcVkcSFw0dARVRUhxUFBxHW19eR15QQlxeWkRfUENIQ1lAV0BcUk5KDxdTQkxTXklBWFJFXlBJQx8PGwUCB0pdDURfVENIQ1lAV0VeU0FKDxdUUFREXklDWF9HVwFHE0BeS1RXXVlSQFQbGBxeTBkPExtKXS1fGUtWSkJRV0lKXUtPUwNWVl5fWVtJRFlLR1YdS1FeV1pAVkpEX09IGlNNS19HWFFfUVNYVx9JWEtAXFpLQllUWFcYSVBAX0dbVV9ZVERIHlRNQ1xZQFRLRFZHUANUVl5fWFZJRlpLR1cVS1BKQlhfV11dUVpXHVxPRFtFX1ZCRldEShxVWFxXX0JWQ1FJT1ABVFBEQFlfS0JZVFheAVRQR0BZXEtCWVJYVxk4TVAMDAAEGzgGAg4PXzpLW0deUF9RUlhXGUlYR0BfWEtCWFVYVxpJUEJeR15LQlhXWFUZSVBCXEddUF9RXlhRGElQQl5HWFFfWVdFSB1JUEJdR1lfX1lXRUgaV01DXlxAVEVEVkZWA1RSXldeQF5BRF5OSBlWTUtZR1deX1FSWFUVSVhEQFFYS0pfSUdUAVxYXF5YQl5GRl9CShRTT0FCUFpJQV9LT1IDUVheV11AUUA1S1QESAsCGgMIHAxRUhxUFUgGFR0cS1RFICc/LkQBRwwTHAILE1FSRSU2dEccXkwKBgYBHDcZFVlHWwlMBkxdKFBRWF4VSVhEQFBbS0tRSUdXAVxSXF1dQlZDWElDUQFcWFxcWEJWQVlJT1MBVFNHQFBdS0JaU1hUH0lQQFpHW19fWVZASBxdTUNfUUBfQERWR1YDU1JeX1hdSUZeS0dWGktWSkJYX1NdX1RaVx1ST0BcRV9WQ0ZXQEocVFJcXkVfVkBGU0c7AUcJUFQyV19dWFNaXxtLWEVCUFpJRVFLT1MDVk1DXltAX0REVkdRA1VXXl9bXUlHXUtHVRhLUkRCWFxQXV9UWlcfUE9KX0VfVUNGX1pXHFxPR1xFX1ZBRlRFShxUVFxWUUJWQllJT1IBVFBHQFpYS0JZVVhVFUlQQ1hHWlJfWVZPSBxcTUNfXkBSSzVLVAoPXzpKWEdfVV9QUFhRAV1ZXFpYQl5CRl5BShRTT0pXRVdfXV5LR1cYS1lKQlhcUl1fVFpXHF1PRldFX1ZHRlZOShxUVFxeXkJWQl5JRFMBVFFGQFFXS0JYX1hQHklQQllHXVBfWVdBSBVUTUNeX0BUX1lXQUgeVk1DX1tAV0BEVkdXA1JUL0JLDUVJM15FSBxcTUpXR1lRX1FWWFAbSVhGQFhcS0pRSUNSAVRQQUBYW0tCWlZYUx9JUEFcR11WX1lVRkgeXU1DX19AVkREVkdeA1BTXl9YVklCUEtHVx1LVERCWF5eXV5SWlccVE9CXEVfV0pGXkBKHFVYXFdfQlZCXklGVwFUUEFAUUJWQl1JRlRwSUMETFM1VkBRS0dWHElWS0JfVktLUEtHUBxJUEddRV9UQkRWRVABVFBKQlFdS0ZdS0dWH0lXREJfW0tFXEtDXwFUVkJCUVtLRV06C0oPBwQcDQEtDxIaE1RcdlRRR0BRWUtCWFZYXxRJUENeR1tTX1lWREgeSVBDVkdaVV9ZVkdIGVRNQ19aQFdCRFZEVgNRWF5fW11JR1pLR1ceS1ZeX1hdSUBcS0dXGktZQ0JYX1ZdWVFaVxxQT0VYRV9VQ0ZQQkocVFJcXkVfV0VGUEdKHFVYXFteQlZDW0lPUAFUUUdAUEJWQ1FJQFcBVFFLQFxaS0JYU1hVH0lQQllHXlZfWVdCSBtWTUtXR1dRX1FfWFUfSVhKQF5YS0JYU1hXGUlQQlpHWF9fWVdFSBVSTUtXR11LSl9JRFEBXFNcWFhCX0RGUURKFFBPQllFV1JdWVNaXxhLV0RCWF5VXVlQWlcdVU9CQlheV11bU1pXHVdPQVlFV15dX1JaVx1VT0RYRV9XQEZXWlcdVk9FVkVfV0BGUERKHFVUXF1fQlZDWElHVQFcVlxXW0JeS0ZTRUoUUk9LV0VXUl1bX1pfG0tZREJQWUlCWktPXwNVUF5XXEBfR0ReQEgeSVhGQFtZS0pcSUJfcElDAQsHGg4eDQkCFQ9fOlAMHAILGhsPVEoPBwQTHAAdD1FERRQTQQkIAQZLQkURHQsaD14NQ15MCwsGAQEUHkQBRw8XGx0cBh9KS1QEWAkNGx0BTEtRChIaCkQWCVBCSwwCEhoOBQ4PSUMQGwUCDgAARVpETxANHgcaBkVfSgUDCkEMEhpMRUwFBgQLHxVFR01QDAwPFRobD1RKDwcUHgIAHQ9RREUYA1gRExMCS0JFER0LGg9eDUNeTAsbCx8BFB5EAUcDBwIFBxQbSktUBFgJDRsdAUxLUQoSGgpEFglQQksMEh8EDgUOD0lDEBsFAg4AAEVaRE8QDR4HGgZFX0oFEwdfDBIaTEVMBQYECx8VRUdNUAwcAgsaGw9USg8HFB4CAB0PUTVLVBZfDA4APQwAExoFAhgSXkdbKTMU"
+}

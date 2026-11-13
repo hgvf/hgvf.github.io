@@ -1,0 +1,265 @@
+{
+ "id": "c-d96e62",
+ "n": 147,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Other",
+ "session": "AMC",
+ "summary": "Starlink穩定獲利、AI雲端服務帶動營收與EBITDA跳升，但單季184億美元資本支出及Starship執行風險使財報後股價盤後下跌。",
+ "highlights": [
+  {
+   "text": "Starlink V3單顆容量預計為V2十倍，約在明年同季累積至1,000顆後開始明顯改善服務。"
+  },
+  {
+   "text": "管理層將1兆美元年度營收目標由某年度提前至某年度，但該遠期預測仍具有高度不確定性。"
+  },
+  {
+   "text": "AI部門雖然Adjusted EBITDA轉正，但GAAP營業虧損仍達13億美元。"
+  },
+  {
+   "text": "Space部門因Starship研發支出增加，第二季Adjusted EBITDA虧損2.05億美元。"
+  },
+  {
+   "text": "公司在第三季初再簽下67億美元、為期六個月的雲端服務合約。"
+  },
+  {
+   "text": "Starlink第二季淨增170萬名消費者用戶，ARPU維持每月66美元。"
+  },
+  {
+   "text": "公司將未來AI基礎設施統一採用NVIDIA Vera Rubin架構，供應鏈集中度明顯提高。"
+  },
+  {
+   "text": "Starlink Mobile將整合EchoStar 65MHz頻譜及新衛星，目標於下一年度底推出下一代服務。"
+  },
+  {
+   "text": "第二季資本支出高達184億美元，其中158億美元投入AI基礎設施，遠高於當季營收。"
+  },
+  {
+   "text": "第二季營收78億美元、年增92%，Adjusted EBITDA達35億美元、年增191%。"
+  },
+  {
+   "text": "AI部門營收26億美元、年增247%，受惠雲端算力合約而首次實現正Adjusted EBITDA。"
+  },
+  {
+   "text": "財報公布後本公司盤後下跌約7%，市場主要擔憂AI資本支出與IPO後股票供給壓力。"
+  },
+  {
+   "text": "企業與政府連線收入年增108%，Q2新增超過60億美元美國政府合約。"
+  },
+  {
+   "text": "Connectivity營收43億美元、年增66%，營業利益17億美元，仍為公司主要獲利來源。"
+  },
+  {
+   "text": "管理層預期本年度底算力超過2GW，下一年度底GPU算力可能接近10GW。"
+  },
+  {
+   "text": "管理層稱AI算力投資回收期低於一年，但尚未充分反映設備折舊、電力及長期價格下降風險。"
+  },
+  {
+   "text": "公司以本年度12月單月營收年化計算，預期年底ARR至少達1,000億美元。"
+  }
+ ],
+ "watch": [],
+ "choices": [
+  "VTSI",
+  "D",
+  "SPCX",
+  "PDN.AX"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    119.68,
+    137.03,
+    159.99,
+    167.43,
+    150.32,
+    140.46,
+    120.53,
+    123.04,
+    124.97,
+    120.18,
+    125.56,
+    130.36,
+    136.89,
+    127.45,
+    132.41,
+    126.8,
+    121.72,
+    120.04,
+    119.79,
+    115.46,
+    112.46,
+    109.72,
+    107.72,
+    101.68,
+    99.97,
+    97.43,
+    98.37,
+    91.93,
+    92.56,
+    90.56,
+    87.23,
+    91.28,
+    91.87,
+    90.24,
+    84.9,
+    93.62
+   ],
+   "h": [
+    140.84,
+    153.99,
+    180.04,
+    170.59,
+    151.6,
+    141.03,
+    132.05,
+    127.55,
+    128.18,
+    126.39,
+    132.59,
+    137.56,
+    137.03,
+    129.39,
+    133.97,
+    127.1,
+    122.02,
+    122.48,
+    120.14,
+    115.63,
+    114.36,
+    111.18,
+    109.92,
+    103.99,
+    100.3,
+    103.63,
+    99.55,
+    94.59,
+    93.35,
+    91.64,
+    94.26,
+    93.82,
+    94.89,
+    90.67,
+    91.69,
+    101.1
+   ],
+   "l": [
+    119.16,
+    134.33,
+    159.56,
+    149.21,
+    137.33,
+    122.88,
+    117.38,
+    120.26,
+    119.68,
+    118.5,
+    121.07,
+    128.97,
+    123.67,
+    124.38,
+    123.71,
+    118.77,
+    115.85,
+    117.76,
+    115.75,
+    109.14,
+    108.13,
+    105.44,
+    104.32,
+    97.44,
+    95.49,
+    96.03,
+    91.91,
+    88.45,
+    88.89,
+    86.7,
+    85.38,
+    88.05,
+    88.85,
+    85.83,
+    83.64,
+    92.33
+   ],
+   "c": [
+    128.42,
+    153.59,
+    168.67,
+    153.05,
+    147.61,
+    123.35,
+    124.56,
+    123.31,
+    122.08,
+    122.26,
+    131.01,
+    136.33,
+    125.7,
+    129.26,
+    128.0,
+    119.26,
+    118.33,
+    121.41,
+    115.93,
+    111.02,
+    108.58,
+    107.93,
+    104.61,
+    98.93,
+    95.63,
+    98.57,
+    91.97,
+    94.34,
+    91.81,
+    90.56,
+    92.88,
+    89.8,
+    89.52,
+    86.47,
+    91.38,
+    100.0
+   ],
+   "v": [
+    651,
+    321,
+    245,
+    253,
+    341,
+    212,
+    195,
+    95,
+    78,
+    159,
+    102,
+    103,
+    137,
+    77,
+    237,
+    105,
+    76,
+    58,
+    59,
+    90,
+    59,
+    73,
+    74,
+    105,
+    72,
+    100,
+    116,
+    94,
+    71,
+    81,
+    103,
+    68,
+    70,
+    74,
+    88,
+    181
+   ]
+  }
+ },
+ "answer": "E0UCD04OBABMU0w0Iys/VEoPBg4fHggAHlFSRSUWTAYEUisRHgscGgYCD0ILQSYLCgYJHAQIEQ9IFkExARseSVFERRIHWQBDSExbXlVFRVdOSx1RQ15MGgsUAAEIGEQXRyA/LUtCRQoNBgREF1dRQFhFTBYGCRUCA19HW1A/W0xLUQYCAjVICxUbAwwAE1FSUVpEWVVDSExbXlVFRVdOSx1QQ15MGwsTBhoJBUQXHkMVDxlMXV5YSUdWHlFQXkwbX0VJRVdYVx5TUEBCSxxSUVJXWFYbVlRDQkscVUNKXUZIHFZVSloUQkUWEAQTFV5HWwlMGgsEBwcVVFxWRxNDTFNDV11ZVEJXH0lDAFtLVFddWFFCUxxJQwBcWUxdQ0ZWQlEfVhxeTAQPFRgNE1RcVkcTQ0xTQ1ddWVRCVx9JQwBbS1RXXVhRQlMcSUMAXFlMXUNGVkJRH1YcD0JLHgYHAEVMPRVcT0pCUVdJRlpLTlADUVZeV1hAVEtEVkZWA1VNSlhHXV5fUVZYUBRJUEJYR1xWX1lWRkgaSVBCWEddUl9ZVkBIG1RNQ19bQFBARFZHVwNSUF5fWFhJRVBLR1cZS1JFQlhfVl1cVFpXHVNPS1xFX1dKRlVPShxVVlxZW0JWQlhJRlEBVFBDQF1fS0JZVVhSAVRQQEBQQlZCXElAUwFUUEFAXVZLQllVWFQaOE1QDAwABBs4BgIOD186S1pHW1BfUVFYVxtJWERAUVtLSlBJRFUBVFFCQFlCXkpGX1pfFEtXRkJYXlddWlJaVx1VT0BcRVdeXVFLR1YdS1BHQlheV11QUlpXHVVPRFtFX1dDRlZBShRcT0dCUFdJRFlLT14DXVZeV1BAVUREXk5IFF1NS1dHXUtKUUlFVAFcWFxXXkJeSkZQQkoUXE9GW0VXX11fUVpfFEtTL0JLDAIdCw8bB18OQ0gVSx0CEBwIBEQXRzIiN0tCRR4JFR0DWUdbUD05N0UOREUVDkwXFSIBGhpFSRNFGUQXPllLQF9YS0tdSUJTAVxQXFlaQlZDX0lAXgFUUEJAX1pLQlhQWFEbSVBDWkdZS0JZU1hWH0lQQ19HWF5fWVZESB9cTUNfXEBRRURWRl8DUFVeX1lZSUJfS0dWGktTXl9ZV0lBXktHVhRLUkNCWF9WXV9LR1ccS1RFQlhfVl1fUFpXHFZPQDNFTA9RUjxPVQNSVF5XW0BURURWRlADUE1DX1hAVkJEVkdXA1NYXl9YV0lAXktHVxhLVkFCWF9TXVFWWlccXE9HXEVfVkVGX0BKHFRUXFlFX1ZDRldHShxVWFxbUEJWQlhJRVEBVFBDQFxfS0JZVlheGElQQ11HXVJfWVZCSB5WTUNfXEBXQkRWR1MDXVkvQksCRUkzX0NIHElZQUBRWUtKWUlFXgFUUUFAUVhLQlhTWFceSVBCWEdXVF9ZVkdIGFRNQ15RQFZCRFZHVwNWVl5fWF9JQVtLR1YUS1FLQlheU11YU1pXHVFPRUJYXlFdWktHVhVLVEtCWF5QXVBLR1cdS1RLQlhfV11YVFpXHFRPRF9FX1ZBRlFCOwFHAlBUMlZRXVteWl8cS1dLQlheUV1aVlpXHFVPRUJYXlFdW1JaVxxTT0RfRV9WQUZQRUocVFBcWVhCVkJeSUBeAVRQRkBaWUtCWVZYUh5JUEJYR1dVX1lXT0gfXE1DXl5AUEFEVkdWA1VWXl9YX0lHWUtHVx9LVV5fWFxJSkRWR1IDU1ReX1hdSUdQOlpEW0dbKVxfXEtAWldaVR1RTUBfWkJWQF9LRFcdSVBHX0VfVUJEVkJQAVRRREJQWEtCXVdaXxRJVkRCX1lLRF9LQF8BU1heWVBCUUQ1GlpETwAPEQYqBgYBHEVMPRRQT0dXRVdSXVtWWl8eS1lDQlBbSUdEXkNIFFdNS1lHWFZfUVBYVh5JWEdAUVxLSl5JTlcBXFdcW1hCXkZGVkdKFFBPQlhFV1JdWktPUgNQUF5XX0BXREReQEgVV01LWEdYX19RUVhTG0lYRUBdQl5FRl5CShRTT0RaRVdQXVxRWl8aS1lKQlBZSUJbS09RA1FWXldeQF9FRF5BSB5WTUtYR11RX1FRWFQcSVhFQFlfS0peSU9KFFBPRUJQW0lLRF5DSBVXTUtYR15SX1FTWFMaSVhEQFhYS0peSU5TAVxZXFxaQlZDWElGShRcT0pCUFdJRVxLR1YdS1NHQlheV11aVVpfFEtYXl9ZXklCXUtHVh1LWUdCWF5XXV5SWlcdVU9DWUVXXl1dS09fA1JQXldRQF9ERF5PSB9STUtWR1dfX1FeWFUBXFhcXVtCXkpGXkFKFFxPRVpFV15dXFJaXxVLVkQzRUwUFgYTHwtICxUBTFM1RREdCxoPXg1DXkwHCxIHGgYaRAFHAxcPGwcUG0pLVARIBBMbHQFMS1EKEhoKRBYJUEJLDBIfBA4FDg9JQxwLHBoVEgRFWkRPEA0eBxoGRV9KBRMHXwwSGkxFTAUGBAsfFUVHTVAMHAILGhsPVEoPBwQTHAAdD1FERRQTQQkIAQZLQkURHQsaD14NQ15MCxsLHwEUHkQBRw8XGx0cBh9KS1QEWAkNGx0BTDpfShcED0IXMhcAHQcKFgYTBUQXPjwP"
+}

@@ -1,0 +1,299 @@
+{
+ "id": "c-e6ca7a",
+ "n": 110,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Other",
+ "session": "AMC",
+ "summary": "AI 基礎設施需求快速增強，CIS 多年期承諾訂單已超過 28 億美元，管理層預期 Q4 開始明顯加速並帶動 下一年度 全公司營收成長至 low-teens，但短期高 CapEx、利潤率與自由現金流承壓。",
+ "highlights": [
+  {
+   "text": "本年度 全年 CIS constant-currency 營收成長維持至少 50%，Security 維持 high-single-digit 成長。"
+  },
+  {
+   "text": "為擴充 GPU capacity，公司將額外投入最高 5 億美元 CapEx，並將 本年度 全年 CapEx 指引提高至約營收 40%。"
+  },
+  {
+   "text": "新簽美國科技公司逾 6 億美元、四年期 GPU 基礎設施合約，用於機器人開發。"
+  },
+  {
+   "text": "公司表示 AI 驅動 bot 與 zero-day 威脅增加，過去一年觀察到 DDoS attack scale 約擴大 10 倍，帶動既有安全產品需求。"
+  },
+  {
+   "text": "CrowdStrike 已轉用 本公司 的 Web Security 與 Content Delivery，提供企業級可靠性與安全能力的重要客戶驗證。"
+  },
+  {
+   "text": "Delivery 與其他 cloud applications 營收 3.96 億美元、年減 6%，傳統業務仍持續衰退。"
+  },
+  {
+   "text": "管理層預期 CIS 於 本年度 Q4 出現 hockey-stick 式加速，並於 下一年度 Q1 及全年持續擴大。"
+  },
+  {
+   "text": "大型 CIS 合約多採 take-or-pay 與 reserved-capacity 模式，且硬體、記憶體及營運成本上升通常可透過合約機制調整價格。"
+  },
+  {
+   "text": "Q2 營收 11 億美元、年增 5%，CIS 營收 9,900 萬美元、年增 39%。"
+  },
+  {
+   "text": "受 CIS 大型合約與 pipeline 支撐，管理層預期 下一年度 本公司 整體營收成長將加速至 low-teens。"
+  },
+  {
+   "text": "大型 CIS 合約通常自簽約至營收認列需要約 6 至 9 個月，因此目前大量 bookings 尚未完整反映於營收。"
+  },
+  {
+   "text": "公司暫停股票回購並將資本重新配置至 CIS，同時已發行 35 億美元零息可轉債支應成長。"
+  },
+  {
+   "text": "大型 CIS 合約 cash gross margin 約 mid-60% 至 mid-70%，正常化 non-GAAP operating margin 約 low/mid-20% 至 low-30%。"
+  },
+  {
+   "text": "Security 營收 6.04 億美元、年增 10%，主要由 API Security、Guardicore Segmentation 與 WAF 帶動。"
+  },
+  {
+   "text": "LayerX 已完成收購並更名 本公司 Workforce Protector，強化企業員工使用 AI、SaaS 與外部 LLM 時的資料防護能力。"
+  },
+  {
+   "text": "本公司 將 AI 基礎設施定位於 core-to-edge inference continuum，重點包括 AI inference、agents、video 與 robotics，而非大型 frontier foundation-model training。"
+  },
+  {
+   "text": "本年度迄今 CIS 多年期客戶承諾總額已超過 28 億美元，且 GPU capacity 已完全售罄。"
+  },
+  {
+   "text": "Q3 CIS 預期尚不會明顯加速，部分 GPU 到貨延後且大單部署仍需要時間。"
+  }
+ ],
+ "watch": [
+  "本年度 Q4 CIS 單季營收是否出現管理層所稱的 hockey-stick acceleration，並朝約 1.6 億美元以上規模提升",
+  "下一年度 Q1 大型 CIS 合約取得完整季度營收後的實際成長幅度",
+  "下一年度 全公司營收是否能兌現 low-teens growth 指引",
+  "大型 GPU 合約正常化 non-GAAP operating margin 是否能維持約 20% 至 30% 區間",
+  "本年度 約營收 40% 的高 CapEx 對自由現金流與資產報酬率的影響",
+  "新增 NVIDIA GPU 的實際到貨、rack-and-stack 與開始認列營收時間",
+  "CIS pipeline 是否持續轉換為大型 take-or-pay 多年期訂單",
+  "AI inference 與 robotics workload 是否從集中式 GPU deployment 擴展至 本公司 edge locations",
+  "LayerX／Workforce Protector 對 Security 成長率與 AI workforce security cross-sell 的實際貢獻",
+  "Delivery 舊業務衰退能否被 CIS 與 Security 成長完全抵銷"
+ ],
+ "choices": [
+  "2457.TW",
+  "TEAM",
+  "AKAM",
+  "DGII"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    113.5,
+    109.63,
+    112.61,
+    114.26,
+    112.9,
+    111.6,
+    109.04,
+    105.36,
+    100.97,
+    100.59,
+    102.55,
+    94.91,
+    97.27,
+    96.62,
+    98.91,
+    94.29,
+    95.18,
+    99.55,
+    95.98,
+    105.69,
+    109.81,
+    106.08,
+    105.32,
+    106.93,
+    101.73,
+    98.48,
+    101.59,
+    104.41,
+    104.67,
+    104.7,
+    99.14,
+    98.69,
+    94.26,
+    94.22,
+    91.61,
+    97.42,
+    97.01,
+    100.19,
+    103.75,
+    98.36
+   ],
+   "h": [
+    117.95,
+    111.87,
+    113.56,
+    115.44,
+    116.35,
+    112.66,
+    109.66,
+    105.36,
+    104.0,
+    102.94,
+    102.55,
+    96.96,
+    97.41,
+    100.57,
+    99.83,
+    97.13,
+    98.34,
+    100.35,
+    107.42,
+    110.11,
+    110.57,
+    107.78,
+    107.68,
+    107.93,
+    102.91,
+    102.41,
+    105.48,
+    107.55,
+    107.31,
+    106.09,
+    100.45,
+    99.38,
+    95.46,
+    94.89,
+    96.52,
+    98.38,
+    100.13,
+    104.27,
+    105.07,
+    101.94
+   ],
+   "l": [
+    109.09,
+    107.54,
+    109.75,
+    112.29,
+    111.22,
+    107.54,
+    103.55,
+    100.36,
+    100.55,
+    99.64,
+    94.64,
+    91.81,
+    95.08,
+    96.36,
+    94.77,
+    92.41,
+    94.73,
+    95.8,
+    95.98,
+    105.02,
+    105.68,
+    104.45,
+    104.8,
+    99.54,
+    99.72,
+    97.8,
+    100.8,
+    103.9,
+    103.32,
+    98.95,
+    97.21,
+    93.48,
+    91.03,
+    90.35,
+    91.26,
+    94.9,
+    96.16,
+    99.7,
+    102.38,
+    98.07
+   ],
+   "c": [
+    109.63,
+    111.73,
+    112.61,
+    113.2,
+    111.61,
+    107.85,
+    105.36,
+    101.85,
+    101.11,
+    100.78,
+    95.23,
+    95.56,
+    95.99,
+    99.71,
+    95.16,
+    95.46,
+    95.09,
+    96.47,
+    106.77,
+    109.25,
+    106.44,
+    105.55,
+    106.38,
+    101.23,
+    100.22,
+    101.38,
+    103.86,
+    105.36,
+    104.85,
+    99.0,
+    97.32,
+    95.19,
+    94.3,
+    90.6,
+    95.95,
+    97.16,
+    99.43,
+    104.05,
+    103.14,
+    100.0
+   ],
+   "v": [
+    143,
+    118,
+    80,
+    86,
+    72,
+    103,
+    194,
+    135,
+    87,
+    184,
+    138,
+    133,
+    83,
+    118,
+    127,
+    123,
+    91,
+    121,
+    210,
+    149,
+    91,
+    76,
+    83,
+    88,
+    59,
+    105,
+    127,
+    152,
+    99,
+    98,
+    93,
+    87,
+    90,
+    91,
+    91,
+    87,
+    96,
+    129,
+    100,
+    165
+   ]
+  }
+ },
+ "answer": "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"
+}

@@ -1,0 +1,307 @@
+{
+ "id": "c-f1e433",
+ "n": 140,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Networking",
+ "session": "AMC",
+ "summary": "Q3營收與AI收入創高，FY下一年度與FY後年度 AI收入分別上看1150億及2300億美元，但短線受Q4財測、毛利率與供應限制影響。",
+ "highlights": [
+  {
+   "text": "基礎設施軟體收入88億美元、年增29%，ARR年增15%，Private AI Cloud帶來新成長機會。"
+  },
+  {
+   "text": "AI Lab每部署1GW算力，管理層估計可能創造約300億美元年度經常性收入。"
+  },
+  {
+   "text": "Q3營收295.9億美元、年增86%，Non-GAAP EPS為3.32美元，高於市場預期。"
+  },
+  {
+   "text": "Anthropic預計本年度部署1GW、下一年度再部署5GW、後年度再增加10GW，並將於下一年度成為最大XPU客戶。"
+  },
+  {
+   "text": "XPU出貨量年增逾3.5倍，占AI收入73%；AI網路收入年增逾2.5倍。"
+  },
+  {
+   "text": "美國與新加坡EML、CW laser及InP產能年增超過3倍，以因應光互連供不應求。"
+  },
+  {
+   "text": "XPV融資可能涉及殘值保證等或有負債，公司尚未揭露未來交易的最大曝險。"
+  },
+  {
+   "text": "Meta將於Q4開始量產MTIA，下一年度底前交付三代產品，至後年度預計部署約3GW。"
+  },
+  {
+   "text": "本公司每1GW AI算力部署可取得約200億至300億美元半導體內容，預計跨產品世代維持相對穩定。"
+  },
+  {
+   "text": "AI半導體收入167億美元、年增221%、季增54%，占公司總營收56%。"
+  },
+  {
+   "text": "下一年度 AI半導體收入預估約1150億美元，FY後年度再翻倍至2300億美元，相關供給已取得。"
+  },
+  {
+   "text": "OpenAI Jalapeno已出貨，下一年度規劃部署1.3GW、後年度超過5GW，第二代XPU接近tape-out且第三代已開始開發。"
+  },
+  {
+   "text": "六家XPU客戶高度集中，未來成長更加依賴Google、Anthropic、OpenAI與Meta的資本支出及融資能力。"
+  },
+  {
+   "text": "Google長期協議預計未來數年每年帶來數百億美元TPU與AI網路產品需求。"
+  },
+  {
+   "text": "Q4毛利率預計降至73%，主因XPU及HBM記憶體內容增加造成產品組合稀釋。"
+  },
+  {
+   "text": "Q4 AI半導體收入指引217億美元、年增236%，FY本年度全年AI收入上修至580億美元。"
+  },
+  {
+   "text": "Tomahawk 6已廣泛進入AI hyperscaler，Tomahawk Ultra本季開始部署並預計FY下一年度放量。"
+  },
+  {
+   "text": "管理層對FY下一年度至FY後年度合計交付約3500億美元AI半導體具有高度信心。"
+  },
+  {
+   "text": "自由現金流137億美元、占營收46%，季度償還56億美元長期債務。"
+  },
+  {
+   "text": "AI部署仍受土地、電力、機房外殼、先進晶圓、基板、HBM與系統記憶體限制。"
+  },
+  {
+   "text": "Q4營收指引348億美元僅接近市場共識，未達較高的市場耳語值。"
+  }
+ ],
+ "watch": [
+  "Q4 AI半導體收入能否達到或超過217億美元",
+  "下一年度 AI收入1150億美元是否因供給改善而上修",
+  "Anthropic 下一年度5GW與後年度新增10GW的土地、電力及融資進度",
+  "OpenAI Jalapeno第二代XPU tape-out與下一年度1.3GW部署進度",
+  "XPV後續融資的殘值保證與最大表外曝險",
+  "Q4毛利率降至73%後，營業利益率能否維持約66%",
+  "新加坡基板廠FY下一年度投產及EML、CW laser、InP擴產進度",
+  "Tomahawk Ultra在XPU與GPU scale-up網路的實際採用率",
+  "Google TPU訂單是否受到Marvell等競爭者分食"
+ ],
+ "choices": [
+  "ALMU",
+  "CRDO",
+  "MTSI",
+  "AVGO"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    109.52,
+    108.51,
+    107.15,
+    107.76,
+    107.86,
+    104.71,
+    99.68,
+    103.14,
+    106.25,
+    103.53,
+    106.79,
+    105.57,
+    106.15,
+    101.94,
+    103.65,
+    103.57,
+    107.51,
+    104.68,
+    109.73,
+    114.83,
+    114.52,
+    116.65,
+    116.27,
+    116.02,
+    116.07,
+    113.23,
+    112.18,
+    108.17,
+    104.65,
+    101.41,
+    99.22,
+    100.94,
+    99.38,
+    98.33,
+    97.24,
+    98.52,
+    101.73,
+    100.62,
+    99.19,
+    100.66
+   ],
+   "h": [
+    110.97,
+    109.59,
+    107.76,
+    108.19,
+    108.65,
+    105.31,
+    102.75,
+    104.45,
+    106.36,
+    108.54,
+    108.27,
+    106.0,
+    106.17,
+    105.05,
+    105.14,
+    105.84,
+    108.9,
+    106.91,
+    114.93,
+    116.27,
+    116.55,
+    117.32,
+    117.83,
+    116.21,
+    116.14,
+    115.71,
+    112.32,
+    108.75,
+    105.05,
+    101.82,
+    99.97,
+    102.15,
+    99.71,
+    98.84,
+    97.88,
+    101.22,
+    102.55,
+    101.5,
+    101.13,
+    101.05
+   ],
+   "l": [
+    105.63,
+    107.75,
+    104.41,
+    104.74,
+    105.31,
+    101.27,
+    97.43,
+    102.37,
+    103.26,
+    103.47,
+    105.33,
+    103.13,
+    101.7,
+    101.17,
+    100.62,
+    102.8,
+    103.4,
+    102.01,
+    109.11,
+    113.52,
+    111.85,
+    114.81,
+    114.41,
+    112.52,
+    112.9,
+    112.03,
+    105.79,
+    106.55,
+    102.66,
+    97.38,
+    98.64,
+    99.4,
+    97.68,
+    96.75,
+    95.32,
+    98.19,
+    99.49,
+    99.74,
+    98.57,
+    99.29
+   ],
+   "c": [
+    109.22,
+    108.91,
+    104.58,
+    105.96,
+    107.36,
+    101.96,
+    100.98,
+    102.97,
+    105.24,
+    108.05,
+    106.87,
+    104.0,
+    104.35,
+    103.72,
+    100.84,
+    105.61,
+    106.0,
+    106.8,
+    113.87,
+    113.9,
+    114.52,
+    116.48,
+    115.02,
+    113.3,
+    113.29,
+    113.77,
+    107.01,
+    106.86,
+    103.47,
+    98.7,
+    99.13,
+    100.33,
+    97.69,
+    97.14,
+    96.83,
+    101.17,
+    100.42,
+    100.84,
+    100.66,
+    100.0
+   ],
+   "v": [
+    146,
+    76,
+    111,
+    105,
+    85,
+    122,
+    121,
+    75,
+    90,
+    88,
+    85,
+    79,
+    96,
+    106,
+    111,
+    123,
+    106,
+    90,
+    154,
+    88,
+    72,
+    77,
+    72,
+    67,
+    83,
+    69,
+    154,
+    104,
+    119,
+    183,
+    103,
+    99,
+    98,
+    94,
+    100,
+    111,
+    86,
+    114,
+    100,
+    203
+   ]
+  }
+ },
+ "answer": "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"
+}

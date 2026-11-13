@@ -1,0 +1,305 @@
+{
+ "id": "c-965bd5",
+ "n": 73,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Networking",
+ "session": "AMC",
+ "summary": "AI資料中心、1.6T光模組、機櫃同步需求及Renesas Timing Products Division收購，推動本公司核心營收與獲利高速成長。",
+ "highlights": [
+  {
+   "text": "Q2利息收入受可轉債資金暫存影響而達1,220萬美元，Q3預計降至約400萬美元，部分EPS貢獻不具持續性。"
+  },
+  {
+   "text": "公司發行13.5億美元零息可轉換公司債並於收購中發行約360萬股，後續需留意潛在股權稀釋。"
+  },
+  {
+   "text": "TPD約70%至75%營收來自CED，並具約70%毛利率，可強化本公司在資料中心clock IC與buffer市場的布局。"
+  },
+  {
+   "text": "FemtoClock為TPD高階低jitter clock產品家族，主要用於資料中心、網通及高速通訊設備。"
+  },
+  {
+   "text": "Q3合併營收指引為2.85億至2.95億美元，其中核心本公司營收中位數較Q2再成長約30%。"
+  },
+  {
+   "text": "Non-GAAP毛利率升至67.1%，營業利益率達34%，顯示高價值產品組合與製造固定成本吸收改善。"
+  },
+  {
+   "text": "公司計畫將clock與oscillator或resonator整合，並逐步進入module、advanced substrate及chiplet timing市場。"
+  },
+  {
+   "text": "Titan為本公司 MEMS resonator產品家族，可供合作夥伴及OEM整合至晶片、模組或消費電子裝置。"
+  },
+  {
+   "text": "VersaClock為TPD可程式化clock產品家族，特色是兼顧功耗、jitter、尺寸及設計彈性。"
+  },
+  {
+   "text": "新收購的TPD預計Q3貢獻約8,500萬美元，單季年化營收已高於原先收購後3億美元目標。"
+  },
+  {
+   "text": "CED營收達1.012億美元、年增181%，首次突破單季1億美元，並連續第九季維持三位數成長。"
+  },
+  {
+   "text": "大型消費客戶Q2貢獻2,280萬美元，預計新一代平台擴散將帶動本年度下半年及下一年度成長。"
+  },
+  {
+   "text": "公司估計整合式timing產品可在某年度前增加約25億美元CED SAM，但目前尚未提供明確量產時程。"
+  },
+  {
+   "text": "Elite Super-TCXO受惠資料中心同步需求，每個AI資料中心機櫃可新增數百美元的timing content。"
+  },
+  {
+   "text": "公司預估下一年度1.6T光模組相關營收成長100%，800G與1.6T合計SAM約4.5億美元。"
+  },
+  {
+   "text": "車用高精度定位與國防assured PNT各自對應約4億美元SAM，可受惠自駕車、GPS干擾及反欺騙需求。"
+  },
+  {
+   "text": "本公司由MEMS resonator與oscillator供應商，擴張為涵蓋clock IC、clock buffer及完整clock tree的precision timing平台。"
+  },
+  {
+   "text": "MICBU商機漏斗超過12億美元，涵蓋手機、智慧眼鏡、穿戴裝置、耳機及個人AI裝置。"
+  },
+  {
+   "text": "Q2營收1.574億美元，年增127%、季增39%，所有事業部與區域營收均年增超過50%。"
+  },
+  {
+   "text": "TPD目前仍透過Renesas的TSA依賴其製造、測試與供應鏈服務，短期成長可能受到供應限制。"
+  }
+ ],
+ "watch": [
+  "核心本公司 Q3營收是否達到2.0億至2.1億美元指引，確認30%季增能否實現",
+  "TPD單季營收是否持續高於8,500萬美元，以及Renesas供應限制何時改善",
+  "合併後毛利率是否維持在67%至69%，避免消費產品組合及整合成本造成稀釋",
+  "1.6T光模組設計案、市占率與實際營收是否符合下一年度翻倍成長目標",
+  "Elite Super-TCXO在AI機櫃同步架構中的每rack content及客戶採用範圍",
+  "FemtoClock、VersaClock與本公司 MEMS產品整合後的新產品發布與量產時程",
+  "大型消費客戶新平台的實際出貨速度，以及客戶集中與季節性風險",
+  "chiplet、advanced substrate與module timing是否取得具名客戶或明確量產時間",
+  "TPD由TSA轉移至本公司自有營運平台的進度及相關一次性整合費用",
+  "零息可轉債及收購增發股份對未來完全稀釋股數與每股盈餘的影響"
+ ],
+ "choices": [
+  "CRDO",
+  "LWLG",
+  "SITM",
+  "SMTC"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    125.74,
+    120.79,
+    126.36,
+    133.93,
+    138.09,
+    139.87,
+    128.91,
+    130.27,
+    135.58,
+    127.74,
+    131.17,
+    135.75,
+    120.4,
+    124.37,
+    130.81,
+    133.95,
+    129.46,
+    112.28,
+    106.79,
+    107.72,
+    120.69,
+    117.1,
+    111.79,
+    116.91,
+    117.11,
+    107.44,
+    99.47,
+    103.72,
+    109.1,
+    105.32,
+    105.48,
+    104.39,
+    103.11,
+    91.14,
+    89.3,
+    91.59,
+    102.97,
+    95.66,
+    108.74,
+    104.84
+   ],
+   "h": [
+    127.47,
+    127.78,
+    133.16,
+    136.79,
+    141.68,
+    139.87,
+    130.32,
+    134.79,
+    139.11,
+    133.62,
+    134.13,
+    136.59,
+    127.04,
+    131.24,
+    139.53,
+    134.96,
+    130.7,
+    118.49,
+    110.33,
+    113.35,
+    123.85,
+    118.5,
+    115.06,
+    116.91,
+    117.13,
+    109.64,
+    105.17,
+    105.87,
+    109.18,
+    109.97,
+    108.52,
+    104.86,
+    103.48,
+    92.06,
+    90.16,
+    98.75,
+    105.87,
+    102.96,
+    109.8,
+    108.25
+   ],
+   "l": [
+    112.16,
+    119.23,
+    124.1,
+    131.78,
+    134.12,
+    125.81,
+    123.81,
+    127.0,
+    132.25,
+    126.49,
+    125.45,
+    123.83,
+    115.23,
+    118.25,
+    130.26,
+    127.96,
+    107.92,
+    112.11,
+    103.84,
+    106.79,
+    119.26,
+    114.27,
+    109.89,
+    111.54,
+    107.88,
+    102.43,
+    95.75,
+    101.82,
+    105.46,
+    105.13,
+    104.29,
+    97.92,
+    93.37,
+    85.43,
+    84.51,
+    90.32,
+    98.48,
+    94.14,
+    105.87,
+    100.0
+   ],
+   "c": [
+    121.43,
+    122.3,
+    132.8,
+    134.39,
+    136.7,
+    126.1,
+    124.69,
+    134.23,
+    138.67,
+    130.16,
+    127.5,
+    124.41,
+    123.76,
+    130.81,
+    137.27,
+    129.59,
+    110.78,
+    113.32,
+    109.03,
+    112.71,
+    119.34,
+    115.8,
+    110.94,
+    114.86,
+    112.75,
+    103.95,
+    102.18,
+    102.21,
+    108.66,
+    108.75,
+    106.13,
+    102.09,
+    96.23,
+    90.42,
+    85.09,
+    97.19,
+    98.54,
+    101.33,
+    107.35,
+    100.0
+   ],
+   "v": [
+    110,
+    100,
+    100,
+    88,
+    119,
+    102,
+    81,
+    137,
+    164,
+    85,
+    111,
+    113,
+    722,
+    109,
+    110,
+    61,
+    174,
+    83,
+    168,
+    105,
+    95,
+    50,
+    54,
+    57,
+    57,
+    136,
+    100,
+    88,
+    108,
+    69,
+    39,
+    88,
+    76,
+    104,
+    104,
+    136,
+    96,
+    73,
+    93,
+    139
+   ]
+  }
+ },
+ "answer": "E0UCD04OBABMU0w0OjwqVEoPBg4fHggAHlFSRSUPeQwMF04qARUDBxUXEkQKD1BCSwoGBw1FTEQfVVNEQ1lWSkNdRVpEXgASAQcGAEVJSiY7JQ9JQwsLCBxFSVpXRFABRxAHDxsaAgFKXVQ3H0dNUAAMGjQWBhMfC0gLFVBUWF5LURxXVFwPV1FAWEReX15YUVRKDxcEBhsbABRRUhxUAUwVQ0heR1xRQlhWWkRfVENIXkdcUUZQVFpEX1BDSF5HXFJBUV9aRF9XUVBUWUBXR19URBsBRwQKDQwdFFFSHFQVSAYVHRxLVBxRGlZUXB1LU0RcXUJFAV1FTFYDV1NBQkscVUNKXUZIHFVTRlsUQkUeCRUdA1lHWwlMG19FSVhJRFAaUVJeTBtbRUlYSURSFFFZXkwbXFdRUldYVhhWUkETFEJFAwkTHkQXPlhFQFhXS0pQSUNSAVRRQ0BaXUtCWFBYVRhJUEJeR15LQlpRWFMVSVBBXUdbU19ZVUFIHVFNQ1xbQF9ARFZEUwNWTUNcX0BRRURWRVcDVVleX1pZSUpRS0dUGEtTQ0JYX1RdUVVaVxxVT0BbRV9WQEZVWlcdU09LWUVfV0pGVE9KHFVYXFdYQlZCWElCUwFUUUBAXl9LQlhTWFccSVBCX0dZUF9ZV0JIGlZNQ15cQFBENUtUBEgLAho+CBoPUVI8T1MDVVZeV1xAVkdEXkNIG1NNQ15bQFZERFZGVgNVTUNeWUBUR0RWRlQDVlZeV1BAUEZEVkZWA1NXXl9ZXUlDRFZGVQNSWV5fWV1JRFpLR1YYS1JEQlheV11ZVFpfGktYQEJQVklHW0tPUQNcWF5XXEBUS0ReQEgVU01LWUdfVV9RXlhWHElYR0BRWktKXklFShRRT0BZRVdTXVxeWl8ZS1dBM0VMBRYGBB4LTBcKUFQSTBQWCxMZFA9fQyEhMTZFX0oKFxRGABVQVEs9NypKGlpETg0AABo5ARQHSl0NREJHWylfW1hJQkRWRVcDVlheX1paSUVZS0dUFUtUQUJYXVddWFZaVx9WT0tYRV9VREZXQkocVlJcWlBCVkBYSUFXAVRTR0BQWktCWVNYVxtJUENdR1xTX1lWRkgZUk1DX1lAXkpEVkZfA1VUXl9YXElEWUtHVhVLVUZCWF5UXVxeWlcdVE9EXUVfV0JGUEE7AUcJUFQyX1VERlBEShxRUVxaW0JWQF9JR0ocV1lcWVBCVkBZSUFSAVRSQkBcW0tCW1ZYURVJUEFXR15WX1lURUgZXE1DXF5AVEFEVkdTA1NVXl9YWElKWktHVx1LVEZCWF9WXVhTWlccV09GX0VfVkdGXkdKHFRRXFxQQlZDXUlAUgFUUUBAUF9LQlhSWFQeOE1QAktUPEJZU1hQGElQQV5HWVRfWVVASBRUTUNcW0BRX1lVQkgUUU1DXFpAUkREVkRQA1dSXl9aXUlAXUtHVB5LV0VCWF9UXV9eWlcdXE9HW0VfVkNGX0RKHFVUXFpbQlZDX0lBVQFUUUVAXl9LQlheWFUfSVBCXEdbS0JYVVhWAVxZXFlYQlZDWElEUnBJQxFMUzVWQV5JQ14BVFJBQFxaS0JaUFhWGUlQQFxHVlRfWVVDSB5JUEBYR1hRX1lUR0gdXU1DXV5AXkpEVkRTA1dQXl9YXUlKWktHVx1LU0dCWF9UXVpLR1YbS1hFQlheXl1bXlpXHVxPS19FX1ZDRlNDShxVU1xZWEJWQ1xJR1cBVFFDQF5ZS0JYU1hRHjhNUBhLVDxBUFJaVxldTUNfW0JfQkRfTkobXE1EXkVfV0ZEX0dKHFVXXlhdQlFLRFFBShhdTUZdRVpUX15eWlAZSVdGQlFXOg5ERRQDQwYJMQYIHBNRUjxHVhhLWUVCWF5WXVFeWlccVU9HWkVfVkFGVFpXHF1PRlxFX1ZCRlNHShxUUlxeWEJWQVhJQl8BVFNBQF1cS0JZVFhRAVRQQUBaWktCWVBYXhxJUENfR19RX1lWQ0gaU01DXFlAUEdEVkdVA1VNQ15fQFBCRFZGXwNQVl5fWV1JSl5LR1YYS1heX1lXSUVZS0dWFEtURkJYXlNdW1VaVx1ST0JfRV9XR0ZRRUoUXE9LWEVXX11bVVpfFUtWREJYXlNdWVNaVx1RT0RWRV9XQEZfQUoUXE9BQlBZSUFfS09UA1NQXlZeQFFBRF5DSB1STUtbR19TX1FSWFAbSVBCXEdfUF9ZV0ZIHUlQQl5HXVNfWVdESB5STUtXR1lSX1lXRkgbU01DXlpAV19ZV0VIGl1NQ15aQFBBRFZGUwNWV15fWV5JQltLT1EDXFNeV1FAU0BEXkFIFFxNS1tHXV9fUVFYXhtJWEVAWFxLSlFJRlcBXFRcVl1CXkVGVFpfGUtTRUJQWklHUTpaRF4ADwYHBAsJBxtFTD0PBwQTHAAdD1FERRQDTBcIAQZLQkURHQsaD14NQ15MBwsSBxoGGkQBRwMHAgUHFBtKS1QEWAkNGx0BTEtRChIaCkQWCVBCSwACBhwVFwoPSUMcCxwaFRIERVpETxANHgcaBkVfSgUDCkEMEhpMRUwFBgQLHxVFR01QAAwbEwEJC1RKDwcUHgIAHQ9RREUUE0EJCAEGS0JFER0LGg9eDUNeTAsbCx8BFB5EAUcDBwIFBxQbSktUBFgJDRsdAUxLUQoCFxREFglQM0VMFwEBCAQ1SAsVGwMMABMASl0tO1A="
+}

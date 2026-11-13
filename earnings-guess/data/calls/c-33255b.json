@@ -1,0 +1,338 @@
+{
+ "id": "c-33255b",
+ "n": 85,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Power",
+ "session": "AMC",
+ "summary": "資料中心需求與訂單大幅突破、backlog 創 $6.4B 新高，但新產線 ramp 延誤使約 $400M 營收推遲至 下一年度，本年度 營收與 EBITDA 財測均大幅下修。",
+ "highlights": [
+  {
+   "text": "Smartstack 已占 本年度 年初至今訂單約 75%，Smartstack 10 將單機容量由 7.5 MWh 提升至 10 MWh。"
+  },
+  {
+   "text": "約 $400M 原訂 本年度 營收因製造延誤推遲至 下一年度，使全年 revenue midpoint 從 $3.4B 下修至 $3.0B。"
+  },
+  {
+   "text": "本年度 adjusted EBITDA midpoint 由 +$50M 下修至 -$10M，主要來自約 $44M 遞延營收毛利及 $15M 電池長約相關成本。"
+  },
+  {
+   "text": "公司預計 下一年度 成長可能額外需要 $300M–$500M working capital，訂單高速成長將增加融資與現金需求。"
+  },
+  {
+   "text": "目前 $6.4B backlog 中約 $2.2B 預計於 下一年度 認列，高於去年同期 本年度 coverage 的 $1.5B。"
+  },
+  {
+   "text": "公司表示現有 backlog 與新增訂單毛利仍落在長期 10%–15% 區間，尚未觀察到明顯價格競爭惡化。"
+  },
+  {
+   "text": "中國新產線初期 Smartstack 元件未達品質要求，雖已恢復正常生產，但 本年度 損失產量無法完全追回。"
+  },
+  {
+   "text": "資料中心 pipeline 增至 16 GWh，季增逾 35%，並取得 $300M developer 正式訂單及 $550M hyperscaler award。"
+  },
+  {
+   "text": "Houston 15 GWh 美國自動化產線因施工、電網連接與 automation 延誤，預計 下一年度 Q1 才達 full production。"
+  },
+  {
+   "text": "Q3 order intake 達 $1.44B、年增近兩倍，backlog 升至歷史新高 $6.4B。"
+  },
+  {
+   "text": "首個 data center developer 案件從 lead 到簽約不到三個月，明顯快於傳統 utility/IPP 約 12–18 個月的轉換週期。"
+  }
+ ],
+ "watch": [
+  "Houston 15 GWh 產線能否於 下一年度 Q1 如期達到 full production",
+  "$550M hyperscaler award 轉為正式 purchase order 與 backlog 的時間",
+  "下一季 data center developer 與 hyperscaler 新增訂單規模及 16 GWh pipeline conversion",
+  "下一年度 revenue guidance 是否維持約 80%–90% backlog coverage 原則",
+  "毛利率在一次性 ramp-up 成本消退後能否回升至 10%–15% 區間",
+  "下一年度 額外 $300M–$500M working capital 的融資方式及潛在資本成本",
+  "約 $400M 延遲營收是否確實於 下一年度 認列而非再次遞延"
+ ],
+ "choices": [
+  "FLNC",
+  "AES",
+  "TSLA",
+  "SBGSY"
+ ],
+ "prior": [
+  {
+   "label": "上一季",
+   "summary": "Fluence毛利率恢復至11.1%，並憑兩家hyperscaler MSA與12 GWh資料中心pipeline開啟新的成長動能，但全年營收高度集中於Q4，執行與現金流風險仍需追蹤。",
+   "highlights": [
+    {
+     "text": "FY本年度前七個月新訂單約20億美元，較去年同期翻倍，期末backlog達歷史新高56億美元。"
+    },
+    {
+     "text": "公司已與兩家大型hyperscaler簽署MSA，預計FY本年度 Q3取得首筆資料中心訂單。"
+    },
+    {
+     "text": "資料中心pipeline約12 GWh，季增超過30%，其中多數機會與兩家hyperscaler MSA相關。"
+    },
+    {
+     "text": "Q2調整後毛利率回升至11.1%，管理層預期下半年約12%，顯示Q1專案成本問題有所緩解。"
+    },
+    {
+     "text": "公司維持FY本年度營收32億至36億美元、調整後EBITDA 4,000萬至6,000萬美元及年底ARR 1.8億美元財測。"
+    },
+    {
+     "text": "SmartStack首套系統已完成商轉，具每acre超過500 MWh的高密度及多種電芯相容性。"
+    },
+    {
+     "text": "Tennessee電芯工廠完成控制權變更後仍符合稅額抵免資格，公司並已簽署新的多年供應協議。"
+    },
+    {
+     "text": "Q2約8,000萬美元營收因越南海關與西班牙裝載設備問題延後至Q3，但相關問題已解決。"
+    },
+    {
+     "text": "約70%的全年營收需於下半年認列，且下半年約70%集中於Q4，造成顯著的交付與驗收風險。"
+    },
+    {
+     "text": "Hyperscaler MSA不具排他性且不代表保證訂單，12 GWh pipeline仍需經過個別專案競標與PO轉換。"
+    },
+    {
+     "text": "CATL與BYD持續垂直整合並推動價格競爭，BESS ASP預期仍將下降。"
+    },
+    {
+     "text": "高C-rate電池與800V DC資料中心方案仍處於產品roadmap階段，短期不構成主要營收。"
+    }
+   ],
+   "watch": [],
+   "netSentiment": null,
+   "reaction": {
+    "session": "AMC",
+    "gap": 0.25329,
+    "r1": 0.27359,
+    "r5": 0.10385,
+    "excess": {
+     "sector": {
+      "r1": 0.27819,
+      "r5": 0.10092,
+      "r20": 0.20666
+     },
+     "market": {
+      "r1": 0.26533,
+      "r5": 0.08117,
+      "r20": 0.19954
+     }
+    }
+   }
+  }
+ ],
+ "chart": {
+  "pre": {
+   "o": [
+    181.68,
+    164.72,
+    183.95,
+    187.13,
+    183.19,
+    181.07,
+    183.42,
+    189.63,
+    176.46,
+    162.3,
+    152.31,
+    143.22,
+    144.89,
+    149.81,
+    147.84,
+    139.86,
+    131.19,
+    131.38,
+    110.98,
+    124.38,
+    127.4,
+    118.85,
+    117.6,
+    117.18,
+    112.15,
+    104.24,
+    109.25,
+    113.63,
+    120.14,
+    110.07,
+    107.95,
+    100.98,
+    98.03,
+    100.3,
+    96.29,
+    114.5,
+    102.04,
+    118.85,
+    115.59,
+    96.99
+   ],
+   "h": [
+    202.88,
+    184.25,
+    191.67,
+    189.93,
+    198.18,
+    194.32,
+    189.63,
+    201.21,
+    177.9,
+    163.44,
+    154.53,
+    149.66,
+    149.28,
+    158.67,
+    154.66,
+    142.85,
+    138.83,
+    135.65,
+    119.15,
+    129.83,
+    129.45,
+    120.59,
+    122.41,
+    122.41,
+    114.31,
+    110.07,
+    110.14,
+    117.18,
+    122.03,
+    113.55,
+    108.44,
+    105.9,
+    98.03,
+    100.38,
+    103.07,
+    114.5,
+    112.04,
+    119.91,
+    117.11,
+    114.31
+   ],
+   "l": [
+    161.81,
+    161.32,
+    174.19,
+    172.6,
+    174.41,
+    176.0,
+    166.77,
+    185.47,
+    160.41,
+    146.03,
+    141.26,
+    140.65,
+    134.75,
+    147.77,
+    138.53,
+    124.22,
+    130.28,
+    120.7,
+    109.16,
+    117.64,
+    117.98,
+    113.25,
+    115.52,
+    111.58,
+    105.75,
+    100.15,
+    105.22,
+    111.78,
+    110.75,
+    107.65,
+    101.32,
+    97.8,
+    91.29,
+    89.63,
+    95.69,
+    101.59,
+    100.3,
+    112.91,
+    107.72,
+    96.06
+   ],
+   "c": [
+    163.66,
+    183.8,
+    179.49,
+    183.04,
+    181.07,
+    177.29,
+    187.74,
+    190.69,
+    160.56,
+    149.51,
+    146.71,
+    145.87,
+    144.97,
+    150.49,
+    138.99,
+    128.69,
+    134.9,
+    122.63,
+    116.12,
+    126.72,
+    122.33,
+    114.76,
+    118.17,
+    116.35,
+    109.16,
+    106.51,
+    108.1,
+    115.67,
+    110.98,
+    109.16,
+    101.74,
+    102.27,
+    95.53,
+    90.01,
+    101.97,
+    105.45,
+    110.22,
+    118.62,
+    107.72,
+    100.0
+   ],
+   "v": [
+    212,
+    163,
+    107,
+    103,
+    123,
+    99,
+    115,
+    106,
+    153,
+    93,
+    81,
+    104,
+    117,
+    104,
+    96,
+    119,
+    71,
+    107,
+    177,
+    120,
+    95,
+    89,
+    75,
+    67,
+    75,
+    101,
+    50,
+    77,
+    100,
+    65,
+    64,
+    98,
+    74,
+    77,
+    63,
+    87,
+    80,
+    107,
+    211,
+    326
+   ]
+  }
+ },
+ "answer": "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"
+}

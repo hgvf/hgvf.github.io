@@ -1,0 +1,306 @@
+{
+ "id": "c-134604",
+ "n": 75,
+ "releasedOn": "2026-11-13",
+ "market": "US",
+ "sector": "Software",
+ "session": "AMC",
+ "summary": "Workers與Agentic AI已由使用者成長進入實質營收貢獻階段，大客戶、NRR與RPO同步加速，本公司並上修全年財測，盤後股價大漲約17%至18%。",
+ "highlights": [
+  {
+   "text": "Workers Developer Platform已由過去以擴大採用為主，正式轉為對公司營收具有實質貢獻的產品線，並為目前成長最快的產品Act。"
+  },
+  {
+   "text": "Q2營收6.961億美元、年增36%，較Q1的34%再度加速。"
+  },
+  {
+   "text": "非GAAP毛利率73.1%，季增30個基點並為八季來首次季增，但仍年減320個基點。"
+  },
+  {
+   "text": "Agent Security已開始帶動SASE與Zero Trust需求，管理層表示Agent-first安全架構協助公司近六個月取得更多市場份額。"
+  },
+  {
+   "text": "全年本年度營收指引上修至28.64億至28.70億美元，相較年初約27.85億至27.95億美元的財測明顯提高。"
+  },
+  {
+   "text": "管理層預期毛利率大致在目前水準穩定，並強調下半年整體產品unit economics將持續改善。"
+  },
+  {
+   "text": "本公司刻意不參與以大量購買GPU並出租算力為核心的AI CapEx軍備競賽，而以提高網路、CPU、GPU、記憶體與儲存利用率維持資本效率。"
+  },
+  {
+   "text": "平台開發者超過740萬人，Q2單季新增近200萬人，已超越上一年度全年新增約150萬人的規模。"
+  },
+  {
+   "text": "大型客戶貢獻73%營收，高於去年同期71%，Enterprise客戶滲透持續提高。"
+  },
+  {
+   "text": "非人類流量於本年度5月已超越人類流量，遠早於公司原先預估的下一年度，Agent流量成為網路、安全與Developer Platform的長期需求來源。"
+  },
+  {
+   "text": "排除重組費用後，本季GAAP淨虧損約僅1,800萬美元，公司表示達成GAAP獲利的進度明顯快於最晚後年度的既定目標。"
+  },
+  {
+   "text": "公司推出Monetization Gateway、Wallets與本公司.pay，試圖建立Agent存取內容、API、資料與MCP工具時的身份、信任與微支付基礎設施。"
+  },
+  {
+   "text": "RPO達27.32億美元、年增38%，Current RPO年增35%，未來營收能見度維持強勁。"
+  },
+  {
+   "text": "Pool of Funds、consumption與T-shirt sizing營收模式占比提高，雖有利Workers成長，但將提高單季營收認列與預測波動。"
+  },
+  {
+   "text": "本年度全年遣散及重組費用預估提高至最高1.65億美元，其中最高1.30億美元為現金支出。"
+  },
+  {
+   "text": "合作夥伴已貢獻約31%營收，管理層認為長期可能突破50%，甚至達到60%左右。"
+  },
+  {
+   "text": "Q3營收指引7.36億至7.37億美元、約年增31%，高於市場預期。"
+  },
+  {
+   "text": "年化消費逾10萬美元的大型客戶達4,698家、年增27%，且各大型客戶級距的淨新增數均創歷史新高。"
+  },
+  {
+   "text": "DBNRR升至120%，季增2個百分點、年增6個百分點，顯示既有客戶擴張重新加速。"
+  },
+  {
+   "text": "AI與Agent客戶正透過Workers、KV、Durable Objects、儲存與Pool of Funds合約擴大使用本公司，單季出現多筆數百萬至千萬美元級大型合約。"
+  }
+ ],
+ "watch": [
+  "DBNRR能否由120%繼續上升，驗證Workers與AI workload的既有客戶擴張強度",
+  "Workers與Developer Platform的Pool of Funds大型合約數量及實際消耗速度",
+  "Current RPO年增率能否持續維持約35%或以上",
+  "大型客戶年增率能否持續維持25%以上，以及100萬與500萬美元以上客戶級距的新增速度",
+  "毛利率是否已於73%左右落底並開始穩定回升",
+  "Agent-first Security是否轉化成更多SASE與Zero Trust大型企業合約",
+  "Monetization Gateway、Wallets與本公司.pay何時開始產生實際交易量與營收",
+  "合作夥伴營收占比是否由目前31%持續提高",
+  "全年Network CapEx能否維持營收14%至15%的目標，同時支撐快速增加的AI與Agent workloads",
+  "本公司是否維持不進入commodity GPU rental市場的資本紀律",
+  "FY本年度營收財測是否在Q3再次上修"
+ ],
+ "choices": [
+  "NBIS",
+  "META",
+  "NET",
+  "NOW"
+ ],
+ "prior": [],
+ "chart": {
+  "pre": {
+   "o": [
+    82.08,
+    76.76,
+    80.85,
+    80.63,
+    82.18,
+    81.26,
+    79.3,
+    78.08,
+    75.65,
+    78.43,
+    77.84,
+    79.41,
+    84.13,
+    84.38,
+    87.8,
+    85.08,
+    84.64,
+    91.12,
+    94.18,
+    95.82,
+    98.35,
+    93.77,
+    94.22,
+    101.56,
+    96.49,
+    92.35,
+    98.03,
+    95.97,
+    95.54,
+    95.96,
+    93.51,
+    94.04,
+    92.59,
+    93.01,
+    95.41,
+    100.17,
+    98.04,
+    98.44,
+    105.5,
+    99.56
+   ],
+   "h": [
+    83.29,
+    80.45,
+    81.53,
+    84.03,
+    83.97,
+    83.0,
+    79.3,
+    79.31,
+    80.9,
+    80.28,
+    80.01,
+    83.44,
+    87.44,
+    87.1,
+    88.72,
+    87.21,
+    88.2,
+    96.33,
+    96.49,
+    98.05,
+    98.49,
+    97.17,
+    100.07,
+    102.31,
+    97.68,
+    99.14,
+    98.64,
+    97.48,
+    95.81,
+    97.35,
+    93.8,
+    95.79,
+    94.38,
+    98.41,
+    100.2,
+    103.29,
+    101.5,
+    106.8,
+    107.23,
+    102.58
+   ],
+   "l": [
+    77.02,
+    76.12,
+    78.06,
+    79.82,
+    80.51,
+    79.76,
+    75.95,
+    74.65,
+    75.45,
+    77.67,
+    75.96,
+    77.68,
+    82.62,
+    84.38,
+    85.86,
+    83.99,
+    84.25,
+    89.3,
+    90.57,
+    94.43,
+    93.82,
+    92.6,
+    93.52,
+    95.32,
+    93.77,
+    92.02,
+    95.67,
+    94.57,
+    93.19,
+    91.61,
+    91.94,
+    90.57,
+    88.14,
+    92.45,
+    93.17,
+    96.7,
+    97.06,
+    97.92,
+    102.31,
+    98.49
+   ],
+   "c": [
+    77.23,
+    79.96,
+    80.33,
+    82.87,
+    81.2,
+    79.76,
+    78.78,
+    76.78,
+    79.08,
+    78.57,
+    79.69,
+    83.41,
+    85.7,
+    86.24,
+    86.6,
+    85.23,
+    87.03,
+    94.52,
+    96.12,
+    96.97,
+    94.36,
+    94.76,
+    99.06,
+    96.0,
+    95.79,
+    97.62,
+    95.78,
+    95.74,
+    94.57,
+    92.23,
+    92.17,
+    93.38,
+    92.85,
+    95.06,
+    99.63,
+    98.08,
+    99.41,
+    105.94,
+    103.0,
+    100.0
+   ],
+   "v": [
+    183,
+    103,
+    75,
+    111,
+    89,
+    88,
+    147,
+    111,
+    95,
+    75,
+    98,
+    206,
+    119,
+    83,
+    84,
+    93,
+    69,
+    204,
+    122,
+    99,
+    76,
+    70,
+    131,
+    97,
+    87,
+    100,
+    103,
+    123,
+    84,
+    77,
+    60,
+    86,
+    88,
+    109,
+    104,
+    122,
+    102,
+    180,
+    131,
+    185
+   ]
+  }
+ },
+ "answer": "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"
+}
