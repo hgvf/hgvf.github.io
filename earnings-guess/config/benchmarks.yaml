@@ -48,3 +48,12 @@ watchlist:
   貴金屬: Materials
 
 default_sector: Other
+
+# 非美股：個股市場用當地大盤指數當「產業」與「大盤」基準（沒有可靠的當地產業 ETF）。
+# 市場由代號後綴判斷：.TW/.TWO → TW、.T → JP、.KS/.KQ → KR、.DE → DE、.HK → HK
+markets:
+  TW: '^TWII'
+  JP: '^N225'
+  KR: '^KS11'
+  DE: '^GDAXI'
+  HK: '^HSI'

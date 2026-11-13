@@ -22,7 +22,7 @@ from sources import DirSource, FirestoreSource  # noqa: E402
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['validate', 'release', 'plan'])
+    ap.add_argument('cmd', choices=['validate', 'release', 'plan', 'rebuild'])
     ap.add_argument('--source', default='firestore', choices=['firestore', 'dir'])
     ap.add_argument('--credentials')
     ap.add_argument('--queue', default='queue/calls')
@@ -32,16 +32,19 @@ def main():
     ap.add_argument('--id')
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--days', type=int, default=30)
+    ap.add_argument('--which', default='non_us', choices=['non_us', 'all'], help='rebuild 的範圍')
     ap.add_argument('--issues-out', help='把要開的 GitHub Issue 寫成 JSON（workflow 用 gh 開）')
     a = ap.parse_args()
 
     src = FirestoreSource(a.credentials) if a.source == 'firestore' else DirSource(a.queue, a.state)
-    run = Run(src, site_dir=a.site_dir, dry_run=a.dry_run or a.cmd != 'release')
+    run = Run(src, site_dir=a.site_dir, dry_run=a.dry_run or a.cmd not in ('release', 'rebuild'))
     code = 0
     if a.cmd == 'validate':
         code = run.validate()
     elif a.cmd == 'plan':
         run.plan(a.days)
+    elif a.cmd == 'rebuild':
+        print(f'重建 {run.rebuild(a.which)} 張{"（dry run，未寫入）" if a.dry_run else ""}')
     else:
         picks = run.release(count=a.count, only_id=a.id)
         print(f'釋出 {len(picks)} 張{"（dry run，未寫入）" if a.dry_run else ""}')
