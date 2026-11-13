@@ -1,0 +1,52 @@
+{
+ "seed": "2026Q4",
+ "generatedAt": "2026-11-13T19:23:01.281Z",
+ "engine": "blind-chart/engine",
+ "read": 7200,
+ "markets": {
+  "TW": {
+   "candidates": 1800,
+   "picked": 577,
+   "strategy": 360,
+   "random": 217,
+   "regimes": {
+    "up": 200,
+    "down": 200,
+    "range": 177
+   }
+  },
+  "US": {
+   "candidates": 1800,
+   "picked": 600,
+   "strategy": 360,
+   "random": 240,
+   "regimes": {
+    "up": 200,
+    "down": 200,
+    "range": 200
+   }
+  },
+  "JP": {
+   "candidates": 1800,
+   "picked": 600,
+   "strategy": 360,
+   "random": 240,
+   "regimes": {
+    "up": 200,
+    "down": 200,
+    "range": 200
+   }
+  },
+  "KR": {
+   "candidates": 1800,
+   "picked": 526,
+   "strategy": 360,
+   "random": 166,
+   "regimes": {
+    "up": 200,
+    "down": 200,
+    "range": 126
+   }
+  }
+ }
+}
