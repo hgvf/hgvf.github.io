@@ -41,9 +41,12 @@ export function drawCallChart(el, card, ans, noteEl, SESSION) {
   const ses = SESSION?.[card.session] || '';
   candles.setMarkers(post
     ? [{ time: tm(nPre), position: 'aboveBar', color: '#D97706', shape: 'arrowDown', text: `t0 反應日（${ses}法說）` }]
-    : [{ time: tm(nPre - 1), position: 'aboveBar', color: '#D97706', shape: 'arrowDown', text: card.session === 'BMO' ? '法說前一天' : '法說當天收盤' }]);
+    : [{ time: tm(nPre - 1), position: 'aboveBar', color: '#D97706', shape: 'arrowDown', text: card.session === 'BMO' ? 't-1 法說前一日' : 't-1 法說日（盤後開）' }]);
   chart.timeScale().fitContent();
   if (noteEl) noteEl.innerHTML = post
     ? `法說前 ${nPre} 根 + 法說後 ${post.c.length} 根（橘色量 = 法說後）；虛線藍 = 產業 ETF；價格以 t0 前一天收盤 = 100 縮放`
-    : `法說前 ${nPre} 個交易日的日 K（以最後一根收盤 = 100 縮放，成交量以中位數 = 100），下一根就是反應日 t0`;
+    : (card.session === 'BMO'
+      ? `<b>盤前法說</b>：法說會在 t0 開盤前召開，最後一根（t-1）是<b>前一個交易日</b>，還沒有任何法說資訊。`
+      : `<b>盤後法說</b>：最後一根（t-1）就是<b>開法說會那一天</b>，法說在它收盤後才開，所以這根 K 棒還沒反映法說內容。`)
+      + ` 下一根 t0 是市場第一次反應的交易日，也就是你要猜的。價格以 t-1 收盤 = 100 縮放，成交量以法說前中位數 = 100。`;
 }
