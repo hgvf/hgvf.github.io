@@ -6,6 +6,8 @@ const T0 = 946684800;
 const tm = i => T0 + i * 86400;
 const bar = t => Math.round((t - T0) / 86400);
 let chart = null;
+// 價格以法說會前一根收盤 = 100 縮放；刻度直接顯示「相對那一根的漲跌 %」，不會被看成股價
+const pctFmt = p => { const d = p - 100; return Math.abs(d) < 0.05 ? '0%' : `${d > 0 ? '+' : '−'}${Math.abs(d).toFixed(1)}%`; };
 
 export function drawCallChart(el, card, ans, noteEl, SESSION) {
   if (chart) { chart.remove(); chart = null; }
@@ -21,7 +23,7 @@ export function drawCallChart(el, card, ans, noteEl, SESSION) {
     grid: { vertLines: { color: 'rgba(120,80,30,0.06)' }, horzLines: { color: 'rgba(120,80,30,0.06)' } },
     rightPriceScale: { borderColor: 'rgba(120,80,30,0.2)' },
     timeScale: { borderColor: 'rgba(120,80,30,0.2)', rightOffset: post ? 2 : 6, tickMarkFormatter: t => label(bar(t)) },
-    localization: { timeFormatter: t => label(bar(t)), priceFormatter: p => p.toFixed(1) },
+    localization: { timeFormatter: t => label(bar(t)), priceFormatter: pctFmt },
     handleScroll: { vertTouchDrag: false },
   });
   const up = '#16A34A', dn = '#DC2626';
@@ -44,6 +46,6 @@ export function drawCallChart(el, card, ans, noteEl, SESSION) {
     : [{ time: tm(nPre - 1), position: 'aboveBar', color: '#D97706', shape: 'arrowDown', text: '法說會前一根' }]);
   chart.timeScale().fitContent();
   if (noteEl) noteEl.innerHTML = post
-    ? `橘色量 = 法說後；虛線藍 = ${ans.benchmark?.sector || '基準'}；價格以法說會前一根收盤 = 100`
-    : `價格以法說會前一根收盤 = 100`;
+    ? `橘色量 = 法說後；虛線藍 = ${ans.benchmark?.sector || '基準'}；刻度 = 相對法說會前一根收盤的漲跌 %`
+    : `刻度 = 相對法說會前一根收盤的漲跌 %`;
 }
