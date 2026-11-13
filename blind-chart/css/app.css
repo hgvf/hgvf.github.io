@@ -211,3 +211,13 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
   .mobile-bar kbd { display: none; }
 }
 @media (max-width: 420px) { .tb-nav a { padding: 6px 7px; } .tb-emoji { display: none; } }
+
+/* ── 術語「?」說明 ── */
+.qm { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; margin-left: 3px; vertical-align: 1px;
+  font-size: 10px; font-weight: 700; line-height: 1; color: var(--accent); background: var(--accent-l); border: 1px solid rgba(139,94,60,.35); cursor: help; flex: none; }
+.qm:hover, .qm:focus-visible { background: var(--accent); color: #fff; outline: none; }
+.qm-pop { position: fixed; z-index: 100; padding: 10px 12px; border-radius: 10px; background: #2A1A0E; color: #FBF6EE; font-size: .84rem; line-height: 1.6;
+  box-shadow: 0 8px 28px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity .12s, transform .12s; white-space: normal; }
+.qm-pop.show { opacity: 1; transform: none; }
+.field > .lbl { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+@media (hover: none) { .qm { width: 20px; height: 20px; font-size: 12px; } }

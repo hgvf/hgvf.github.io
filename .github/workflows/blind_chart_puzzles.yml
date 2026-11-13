@@ -79,9 +79,17 @@ jobs:
           git add -A
           git commit -qm "puzzles $(jq -r .seed manifest.json) $(date -u +%Y-%m-%d)"
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" blind-chart-puzzles
-      - name: Keep a tarball as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: puzzles
-          path: ${{ runner.temp }}/bank
-          retention-days: 30
+      - name: Archive as Release asset (puzzles-<seed>.tar.gz)
+        # Release = 每一版題庫的永久存檔（可重現、可回滾）；分支 = 網站實際讀取的位置
+        # （Release asset 下載沒有 CORS header，瀏覽器不能直接讀，所以兩者都要）。
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          seed=$(jq -r .seed "$RUNNER_TEMP/bank/manifest.json")
+          tag="puzzles-${seed}-$(date -u +%Y%m%d)"
+          tar -czf "$RUNNER_TEMP/puzzles-${seed}.tar.gz" -C "$RUNNER_TEMP/bank" index.json manifest.json puzzles answers
+          gh release delete "$tag" -y --cleanup-tag -R "${{ github.repository }}" 2>/dev/null || true
+          gh release create "$tag" "$RUNNER_TEMP/puzzles-${seed}.tar.gz" "$RUNNER_TEMP/bank/manifest.json" \
+            -R "${{ github.repository }}" --title "Blind Chart 題庫 ${seed}" \
+            --notes "盲測K線題庫（seed ${seed}，行情 ${DATA_REPO}@${DATA_TAG}）。網站讀的是 blind-chart-puzzles 分支；這裡是存檔，要回滾就把 tar.gz 解開推回該分支。" \
+            --latest=false

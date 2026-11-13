@@ -49,3 +49,10 @@
   .stats-grid > .card, .stats-grid > .card.w8, .stats-grid > .card.w6 { grid-column: span 12; }
   .seg.bins { grid-auto-flow: row; grid-template-columns: repeat(5, 1fr); }
 }
+
+.prior { margin-top: 18px; border-top: 1px dashed var(--line-strong); padding-top: 12px; }
+.prior summary { cursor: pointer; font-weight: 700; font-size: .95rem; margin-bottom: 10px; }
+.prior-tabs { margin-bottom: 10px; max-width: 360px; }
+.prior-react { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .86rem; padding: 8px 10px; border-radius: var(--r); background: var(--bg2); margin-bottom: 10px; }
+.prior-react b { font-family: var(--mono); }
+.prior-sum { line-height: 1.7; margin-bottom: 10px; font-size: .95rem; color: var(--text2); }

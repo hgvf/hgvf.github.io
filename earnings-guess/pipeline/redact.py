@@ -51,7 +51,7 @@ def name_variants(company: str) -> list[str]:
 
 def _qrel(card_year: int, card_q: int, y: int, q: int) -> str:
     diff = (y * 4 + q) - (card_year * 4 + card_q)
-    return {0: '本季', -1: '上一季', 1: '下一季', -4: '去年同季', 4: '明年同季'}.get(diff, '某季')
+    return {0: '本季', -1: '上一季', -2: '兩季前', -3: '三季前', 1: '下一季', 2: '兩季後', -4: '去年同季', 4: '明年同季'}.get(diff, '某季')
 
 
 def _yrel(card_year: int, y: int) -> str:

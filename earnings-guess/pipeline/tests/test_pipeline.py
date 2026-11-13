@@ -109,6 +109,10 @@ class TestRelease(unittest.TestCase):
         cards = []
         for i, (t, sec) in enumerate([('KLAC', 'Semicap'), ('LRCX', 'Semicap'), ('NVDA', 'Semis'), ('MSFT', 'Software'), ('PLTR', 'Software')]):
             cards.append(dict(CARD, ticker=t, company=t + ' Inc', sector=sec, aliases=[], date=f'2026-07-{20 + i:02d}', summary=f'{t} beat estimates.'))
+        cards.append(dict(CARD, ticker='KLAC', company='KLAC Inc', sector='Semicap', aliases=[], quarter='Q1', date='2026-04-20',
+                          summary='KLAC Q1 2026 revenue was flat; Q2 2026 outlook cautious.'))
+        cards.append(dict(CARD, ticker='KLAC', company='KLAC Inc', sector='Semicap', aliases=[], year=2025, quarter='Q4', date='2026-01-20',
+                          summary='KLAC Q4 2025 record year.'))
         cards.append(dict(CARD, ticker='NEW1', company='New One', aliases=[], date='2026-11-10'))      # window not done
         cards.append(dict(CARD, ticker='NOSEC', company='No Sector', sector=None, aliases=[], session=None, date='2026-07-01'))
         with open(os.path.join(q, 'calls.json'), 'w') as f: json.dump({'calls': cards}, f)
@@ -139,6 +143,19 @@ class TestRelease(unittest.TestCase):
             self.assertNotEqual(a, b, sectors)        # same sector never on consecutive days
         with open(os.path.join(self.tmp, 'state', 'schedule.json')) as fh: st = json.load(fh)
         self.assertNotEqual(st['cards']['NEW1-2026-Q2']['status'], 'released')
+
+    def test_prior_quarters(self):
+        logs = []
+        r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, dry_run=True, log=logs.append)
+        items = r.cards()
+        card = next(c for k, c, _, _ in items if k == 'KLAC-2026-Q2')
+        pr = r.prior_for(card, items)
+        self.assertEqual([p['label'] for p in pr], ['上一季', '兩季前'])
+        self.assertIn('本季', pr[0]['summary'])           # "Q2 2026" seen from Q1 card = 本季
+        self.assertIn('上一季', pr[0]['summary'])
+        self.assertNotIn('KLAC', json.dumps(pr, ensure_ascii=False))
+        self.assertNotIn('2025', json.dumps(pr, ensure_ascii=False))
+        self.assertIsNotNone(pr[0]['reaction'])
 
     def test_dry_run_writes_nothing(self):
         r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, dry_run=True, log=lambda *a: None)

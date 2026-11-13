@@ -100,10 +100,37 @@ async function renderCard(id, label) {
       <h3>重點（順序已打亂${showSent ? '' : '、情緒標籤隱藏'}）</h3>
       <div class="hl-list">${c.highlights.map(h => `<div class="hl ${showSent ? h.sentiment : ''}"><span class="dot"></span><span>${esc(h.text)}</span>${showSent ? `<span class="tag ${SENT[h.sentiment][1]} sent">${SENT[h.sentiment][0]}</span>` : ''}</div>`).join('')}</div>
       ${c.watch?.length ? `<h3>待觀察</h3><ul class="watch">${c.watch.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
+      ${priorHTML(c, st, showSent)}
     </section>
     <aside class="answer" id="answerPane"></aside>
   </div>`;
+  bindPrior();
   if (prev) renderReveal(c, prev); else renderForm(c, st);
+}
+
+function priorHTML(c, st, showSent) {
+  if (!c.prior?.length) return '';
+  const tabs = c.prior.map((p, i) => `<button class="${i ? '' : 'on'}" data-pi="${i}">${esc(p.label)}</button>`).join('');
+  const body = (p, i) => {
+    const r = p.reaction;
+    const ex = r?.excess?.[st.bench]?.[st.window];
+    return `<div class="prior-body" data-pb="${i}" ${i ? 'hidden' : ''}>
+      ${r ? `<div class="prior-react"><span>當時反應（${SESSION[r.session] || ''}）</span>
+        <span>個股 1 日 <b class="${sign(r.r1)}">${pct(r.r1)}</b></span>
+        <span>${WIN[st.window]}${BENCH[st.bench].replace('相對', '超額 vs ')} <b class="${sign(ex)}">${pct(ex)}</b></span></div>` : '<p class="sub">（沒有當時的股價反應資料）</p>'}
+      <p class="prior-sum">${esc(p.summary)}</p>
+      <div class="hl-list">${p.highlights.map(h => `<div class="hl ${showSent ? h.sentiment : ''}"><span class="dot"></span><span>${esc(h.text)}</span>${showSent ? `<span class="tag ${SENT[h.sentiment][1]} sent">${SENT[h.sentiment][0]}</span>` : ''}</div>`).join('')}</div>
+      ${p.watch?.length ? `<p class="sub" style="margin-top:8px">當時待觀察：${p.watch.map(esc).join('；')}</p>` : ''}
+    </div>`;
+  };
+  return `<details class="prior" open><summary>前幾季參考 <span class="sub">同一家公司，已去識別化；季別是相對本季</span></summary>
+    <div class="seg prior-tabs">${tabs}</div>${c.prior.map(body).join('')}</details>`;
+}
+function bindPrior() {
+  $$('.prior-tabs button').forEach(b => b.onclick = () => {
+    $$('.prior-tabs button').forEach(x => x.classList.toggle('on', x === b));
+    $$('.prior-body').forEach(x => { x.hidden = x.dataset.pb !== b.dataset.pi; });
+  });
 }
 
 function renderForm(c, st) {
@@ -190,7 +217,7 @@ function renderReveal(c, rec) {
   if (!settings().hint) renderSentiments(c);
 }
 function renderSentiments(c) {
-  $$('.hl').forEach((el, i) => {
+  $$('.eg-card > .hl-list .hl').forEach((el, i) => {
     const h = c.highlights[i];
     if (!h || el.querySelector('.sent')) return;
     el.classList.add(h.sentiment);
@@ -315,7 +342,7 @@ function renderSettings() {
 // ── demo cards (fictional) ──
 function demoCards() {
   const mk = (id, n, sector, session, summary, hl, watch, choices, ans) => ({
-    id, n, releasedOn: todayTW(), market: 'US', sector, session, summary, highlights: hl, watch, choices,
+    id, n, releasedOn: todayTW(), market: 'US', sector, session, summary, highlights: hl, watch, choices, prior: DEMO_PRIOR[id] || [],
     answer: obfuscate({ ...ans, session, year: 2026, quarter: 'Q3', benchmark: { sector: ans.etf, market: 'SPY' } }),
   });
   const path = (k, j) => Array.from({ length: 26 }, (_, i) => +(100 * (i < 5 ? 1 - (5 - i) * 0.002 : (1 + k) * (1 + j * (i - 5) / 20))).toFixed(2));
@@ -334,6 +361,21 @@ function demoCards() {
       { ticker: 'DEMOI', company: '示範電力公司', date: '2026-10-29', t0: '2026-10-29', etf: 'XLI', returns: { gap: -0.01, r1: 0.008, r5: 0.02, r20: 0.05 }, excess: { sector: { r1: 0.003, r5: 0.012, r20: 0.03 }, market: { r1: 0.004, r5: 0.015, r20: 0.035 } }, path: path(0.008, 0.04), benchPath: path(0.005, 0.02), netSentiment: 1 }),
   ];
 }
+const DEMO_PRIOR = {
+  'demo-1': [
+    { label: '上一季', summary: '本公司上一季營收符合預期，管理層表示先進封裝客戶開始拉貨，但成熟製程需求仍疲弱。', netSentiment: 0,
+      highlights: [{ text: '先進封裝相關訂單季增 15%', sentiment: 'bullish' }, { text: '成熟製程客戶延後設備交期', sentiment: 'bearish' }],
+      watch: ['先進封裝訂單能否延續'], reaction: { session: 'AMC', gap: 0.01, r1: 0.018, r5: 0.02, excess: { sector: { r1: 0.006, r5: 0.004, r20: 0.01 }, market: { r1: 0.012, r5: 0.01, r20: 0.02 } } } },
+    { label: '兩季前', summary: '本公司兩季前下修全年展望，主因某地區出口限制。', netSentiment: -1,
+      highlights: [{ text: '某地區營收占比自 45% 降至 38%', sentiment: 'bearish' }], watch: [],
+      reaction: { session: 'AMC', gap: -0.06, r1: -0.071, r5: -0.05, excess: { sector: { r1: -0.052, r5: -0.03, r20: -0.01 }, market: { r1: -0.065, r5: -0.04, r20: -0.02 } } } },
+  ],
+  'demo-2': [
+    { label: '上一季', summary: '本公司上一季 ARR 年增 22%，AI 模組進入封測。', netSentiment: 1,
+      highlights: [{ text: 'ARR 年增 22%', sentiment: 'bullish' }, { text: '銷售週期拉長', sentiment: 'bearish' }], watch: ['AI 模組上市時程'],
+      reaction: { session: 'AMC', gap: 0.03, r1: 0.04, r5: 0.05, excess: { sector: { r1: 0.032, r5: 0.04, r20: 0.03 }, market: { r1: 0.035, r5: 0.045, r20: 0.04 } } } },
+  ],
+};
 function demoIndex() { return demoCards().map(c => ({ id: c.id, n: c.n, releasedOn: c.releasedOn, sector: c.sector, session: c.session })); }
 
 route();

@@ -7,6 +7,7 @@ import { saveCustomStrategy, deleteCustomStrategy, allSessions } from './store.j
 import { INDICATORS, STOPS, SIZING, validateSpec, deepClone, prepare, barsFromPuzzle, simulate, maxWarmup, normalizeSpec } from '../engine/index.js';
 import { getPuzzle } from './bank.js';
 import { ChartView } from './chart.js';
+import { qm, tip } from './glossary.js';
 
 let chart = null;
 
@@ -81,36 +82,36 @@ export async function renderEditor(root, id) {
   function form() {
     const f = $('#eForm');
     const num = (path, v, sch = {}) => `<input class="input mono" data-p="${path}" data-t="${sch.type || 'number'}" type="${sch.enum ? 'text' : sch.type === 'boolean' ? 'checkbox' : 'number'}" ${sch.type === 'boolean' ? (v ? 'checked' : '') : `value="${esc(v ?? '')}"`} step="any">`;
-    const field = (label, inner) => `<div class="field"><label>${esc(label)}</label>${inner}</div>`;
-    const schemaFields = (base, props, params) => Object.entries(props || {}).map(([k, sch]) =>
+    const field = (label, inner, key = label, scope) => `<div class="field"><span class="lbl">${esc(label)} ${qm(key, scope)}</span>${inner}</div>`;
+    const schemaFields = (base, props, params) => { const scope = base.startsWith('stops') ? 'stop' : base.split('.')[0]; return Object.entries(props || {}).map(([k, sch]) =>
       field(k, sch.enum ? `<select class="input" data-p="${base}.${k}" data-t="string">${sch.enum.map(o => `<option ${(params?.[k] ?? sch.default) === o ? 'selected' : ''}>${o}</option>`).join('')}</select>`
         : sch.type === 'string' ? `<input class="input mono" data-p="${base}.${k}" data-t="string" value="${esc(params?.[k] ?? '')}">`
-          : num(`${base}.${k}`, params?.[k] ?? sch.default, sch))).join('');
+          : num(`${base}.${k}`, params?.[k] ?? sch.default, sch), k, scope)).join(''); };
     const exprIn = (path, v) => `<input class="input mono" data-p="${path}" data-t="string" value="${esc(v ?? '')}" placeholder="條件式">`;
     f.innerHTML = `
-      <div class="form-grid">${field('id', `<input class="input mono" data-p="id" data-t="string" value="${esc(spec.id)}">`)}${field('名稱', `<input class="input" data-p="name" data-t="string" value="${esc(spec.name || '')}">`)}</div>
-      <h3>指標</h3>
-      ${(spec.indicators || []).map((ind, i) => `<div class="blk"><div class="blk-head"><span class="mono">${esc(ind.id)}</span><span class="tag">${esc(INDICATORS[ind.type]?.label || ind.type)}</span><span class="grow"></span><button class="btn btn-sm" data-rm="indicators.${i}">移除</button></div>
+      <div class="form-grid">${field('id', `<input class="input mono" data-p="id" data-t="string" value="${esc(spec.id)}">`)}${field('名稱', `<input class="input" data-p="name" data-t="string" value="${esc(spec.name || '')}">`, 'name')}</div>
+      <h3>指標 ${qm('expr')}</h3>
+      ${(spec.indicators || []).map((ind, i) => `<div class="blk"><div class="blk-head"><span class="mono">${esc(ind.id)}</span><span class="tag">${esc(INDICATORS[ind.type]?.label || ind.type)}</span>${qm(ind.type)}<span class="grow"></span><button class="btn btn-sm" data-rm="indicators.${i}">移除</button></div>
         <div class="form-grid">${schemaFields(`indicators.${i}.params`, INDICATORS[ind.type]?.paramsSchema.properties, ind.params)}</div></div>`).join('')}
-      <div class="ctrl"><select class="input" id="addInd" style="width:auto">${Object.entries(INDICATORS).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join('')}</select><button class="btn btn-sm" id="addIndBtn">＋ 指標</button></div>
-      <h3>進場</h3>
+      <div class="ctrl"><select class="input" id="addInd" style="width:auto">${Object.entries(INDICATORS).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join('')}</select><button class="btn btn-sm" id="addIndBtn">＋ 指標</button></div><p class="sub" id="addIndTip" style="margin-top:4px">${esc(tip('atr') || '')}</p>
+      <h3>進場 ${qm('R')}</h3>
       ${field('entry.signal', exprIn('entry.signal', spec.entry?.signal))}
       <div class="form-grid">${field('cooldownBars', num('entry.cooldownBars', spec.entry?.cooldownBars ?? 0, { type: 'integer' }))}</div>
-      <h3>部位大小</h3>
+      <h3>部位大小 ${qm('lotSize')}</h3>
       <div class="form-grid">${field('method', `<select class="input" data-p="sizing.method" data-t="string">${Object.keys(SIZING).map(m => `<option ${spec.sizing?.method === m ? 'selected' : ''}>${m}</option>`).join('')}</select>`)}
-        ${schemaFields('sizing', SIZING[spec.sizing?.method || 'max_loss_amount']?.paramsSchema.properties, spec.sizing)}
+        ${schemaFields('sizing', SIZING[spec.sizing?.method || 'max_loss_amount']?.paramsSchema.properties, spec.sizing)}</div><p class="sub" style="margin:-4px 0 10px">${esc(tip(spec.sizing?.method || 'max_loss_amount') || '')}</p><div class="form-grid">
         ${field('maxPositionPct', num('sizing.caps.maxPositionPct', spec.sizing?.caps?.maxPositionPct))}${field('maxOpenRiskR', num('sizing.caps.maxOpenRiskR', spec.sizing?.caps?.maxOpenRiskR))}</div>
-      <h3>停損（可疊加，有效停損取最高且只上不下）</h3>
-      ${(spec.stops || []).map((st, i) => `<div class="blk"><div class="blk-head"><span class="tag">${esc(STOPS[st.type]?.label || st.type)}</span><span class="grow"></span><button class="btn btn-sm" data-rm="stops.${i}">移除</button></div>
-        <div class="form-grid">${schemaFields(`stops.${i}.params`, STOPS[st.type]?.paramsSchema.properties, st.params)}</div>${field('activateWhen（選填）', exprIn(`stops.${i}.activateWhen`, st.activateWhen))}</div>`).join('')}
-      <div class="ctrl"><select class="input" id="addStop" style="width:auto">${Object.entries(STOPS).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join('')}</select><button class="btn btn-sm" id="addStopBtn">＋ 停損</button></div>
-      <h3>出場訊號</h3>
+      <h3>停損 ${qm('stops')} <span class="sub">可疊加，有效停損取最高且只上不下</span></h3>
+      ${(spec.stops || []).map((st, i) => `<div class="blk"><div class="blk-head"><span class="tag">${esc(STOPS[st.type]?.label || st.type)}</span>${qm(st.type)}<span class="grow"></span><button class="btn btn-sm" data-rm="stops.${i}">移除</button></div>
+        <div class="form-grid">${schemaFields(`stops.${i}.params`, STOPS[st.type]?.paramsSchema.properties, st.params)}</div>${field('activateWhen（選填）', exprIn(`stops.${i}.activateWhen`, st.activateWhen), 'activateWhen')}</div>`).join('')}
+      <div class="ctrl"><select class="input" id="addStop" style="width:auto">${Object.entries(STOPS).map(([k, p]) => `<option value="${k}">${esc(p.label)}</option>`).join('')}</select><button class="btn btn-sm" id="addStopBtn">＋ 停損</button></div><p class="sub" id="addStopTip" style="margin-top:4px"></p>
+      <h3>出場訊號 ${qm('exitSignals')}</h3>
       ${(spec.exitSignals || []).map((x, i) => `<div class="form-grid" style="grid-template-columns:1fr 100px auto">${field('expr', exprIn(`exitSignals.${i}.expr`, x.expr))}${field('fraction', num(`exitSignals.${i}.fraction`, x.fraction ?? 1))}<button class="btn btn-sm" data-rm="exitSignals.${i}" style="align-self:end">移除</button></div>`).join('')}
       <button class="btn btn-sm" id="addExit">＋ 出場訊號</button>
-      <h3>加碼</h3>
+      <h3>加碼 ${qm('pyramiding')}</h3>
       <div class="form-grid">${field('enabled', num('pyramiding.enabled', spec.pyramiding?.enabled, { type: 'boolean' }))}${field('maxAdds', num('pyramiding.maxAdds', spec.pyramiding?.maxAdds ?? 0, { type: 'integer' }))}</div>
-      ${field('trigger', exprIn('pyramiding.trigger', spec.pyramiding?.trigger))}
-      <h3>紀律容忍度</h3>
+      ${field('trigger', exprIn('pyramiding.trigger', spec.pyramiding?.trigger), 'trigger', 'pyramiding')}
+      <h3>紀律容忍度 ${qm('discipline')}</h3>
       <div class="form-grid">${['entryWindowBars', 'chaseAtr', 'sizeTolerancePct', 'stopGraceBars'].map(k => field(k, num(`discipline.${k}`, spec.discipline?.[k]))).join('')}
         ${field('allowDiscretionaryExit', num('discipline.allowDiscretionaryExit', spec.discipline?.allowDiscretionaryExit !== false, { type: 'boolean' }))}
         ${field('fill.mode', `<select class="input" data-p="fill.mode" data-t="string">${['next_open', 'this_close'].map(m => `<option ${spec.fill?.mode === m ? 'selected' : ''}>${m}</option>`).join('')}</select>`)}</div>`;
@@ -121,6 +122,8 @@ export async function renderEditor(root, id) {
       if (inp.dataset.p === 'sizing.method') form();
     });
     $$('[data-rm]', f).forEach(b => b.onclick = () => { const [k, i] = b.dataset.rm.split('.'); spec[k].splice(+i, 1); setJSON(); form(); validate(); });
+    const syncTips = () => { $('#addIndTip').textContent = tip($('#addInd').value) || ''; $('#addStopTip').textContent = tip($('#addStop').value) || ''; };
+    $('#addInd').onchange = $('#addStop').onchange = syncTips; syncTips();
     $('#addIndBtn').onclick = () => { const type = $('#addInd').value; let n = 1; while (spec.indicators.some(x => x.id === `${type}${n}`)) n++; spec.indicators.push({ id: `${type}${n}`, type, params: {} }); setJSON(); form(); validate(); };
     $('#addStopBtn').onclick = () => { spec.stops.push({ type: $('#addStop').value, params: {} }); setJSON(); form(); validate(); };
     $('#addExit').onclick = () => { (spec.exitSignals ||= []).push({ expr: 'close < ema20', fraction: 1 }); setJSON(); form(); validate(); };

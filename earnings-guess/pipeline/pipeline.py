@@ -5,6 +5,7 @@ import base64
 import json
 import os
 import random
+import re
 import secrets
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -169,7 +170,34 @@ class Run:
             'year': card.year, 'quarter': card.quarter, 'netSentiment': card.net_sentiment, **r,
         }
 
-    def build_public(self, card: QueueCard, red, ans: dict, pid: str, n: int, all_tickers: list[str]) -> dict:
+    def prior_for(self, card: QueueCard, items) -> list[dict]:
+        """前一、兩季同公司的卡（以「本季」為基準去識別化），附當時的反應供參考。"""
+        n = int(self.cfg.get('prior_quarters', 2))
+        qn = lambda c: c.year * 4 + int(c.quarter[1]) if re.match(r'Q[1-4]$', c.quarter) else c.year * 4
+        prev = sorted((c for _, c, _, _ in items if c and c.ticker == card.ticker and qn(c) < qn(card) and c.date < card.date),
+                      key=qn, reverse=True)[:n]
+        out = []
+        for p in prev:
+            ctx = card.model_copy(update={'summary': p.summary, 'highlights': p.highlights, 'watch': p.watch,
+                                          'aliases': list(card.aliases) + list(p.aliases), 'company': card.company or p.company})
+            red = self.redact(ctx)
+            if not red.ok:
+                self.log(f'prior {p.key} 去識別化有疑慮，略過：{red.hard}')
+                continue
+            label = {1: '上一季', 2: '兩季前', 3: '三季前', 4: '去年同季'}.get(qn(card) - qn(p), f'{qn(card) - qn(p)} 季前')
+            reaction = None
+            if p.session:
+                try:
+                    a = self.answer_for(p)
+                    reaction = {'session': p.session, 'gap': a['returns']['gap'], 'r1': a['returns']['r1'], 'r5': a['returns']['r5'],
+                                'excess': {'sector': a['excess']['sector'], 'market': a['excess']['market']}}
+                except Exception as e:      # missing prices → show the text only
+                    self.log(f'prior {p.key} 反應計算失敗：{e}')
+            out.append({'label': label, 'summary': red.summary, 'highlights': red.highlights, 'watch': red.watch,
+                        'netSentiment': p.net_sentiment, 'reaction': reaction})
+        return out
+
+    def build_public(self, card: QueueCard, red, ans: dict, pid: str, n: int, all_tickers: list[str], prior=None) -> dict:
         rnd = random.Random(pid)
         order = list(range(len(red.highlights)))
         rnd.shuffle(order)
@@ -183,7 +211,7 @@ class Run:
         return {
             'id': pid, 'n': n, 'releasedOn': self.today_tw.isoformat(), 'market': card.market, 'sector': card.sector,
             'session': card.session, 'summary': red.summary, 'highlights': hl, 'watch': red.watch,
-            'choices': choices, 'answer': obfuscate(ans),
+            'choices': choices, 'prior': prior or [], 'answer': obfuscate(ans),
         }
 
     def redact(self, card):
@@ -258,7 +286,7 @@ class Run:
                 continue
             self.state['seq'] += 1
             pid = f'c-{secrets.token_hex(3)}'
-            pub = self.build_public(card, red, ans, pid, self.state['seq'], all_tickers)
+            pub = self.build_public(card, red, ans, pid, self.state['seq'], all_tickers, self.prior_for(card, items))
             self._write(pub, card)
             meta = {'status': 'released', 'releasedOn': self.today_tw.isoformat(), 'publicId': pid, 'n': self.state['seq'], 'sector': card.sector,
                     'ticker': card.ticker, 'outperform': out, 'session': card.session}

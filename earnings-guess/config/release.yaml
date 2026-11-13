@@ -10,3 +10,4 @@ direction_deadband: 0.005   # |超額| < 0.5% → 方向題不計分
 bins: [-0.10, -0.03, 0.03, 0.10]   # 大跌 | 小跌 | 持平 | 小漲 | 大漲 的邊界（超額報酬）
 amount_mode: keep           # keep | magnitude（$4.2B → $X B，避免用營收規模反推公司）
 block_on_unknown_uppercase: false   # true：任何不在 allowlist 的大寫縮寫都要人工審核
+prior_quarters: 2          # 公開卡附上同公司前幾季的卡（去識別化後）與當時反應，給玩家參考；0 = 不附

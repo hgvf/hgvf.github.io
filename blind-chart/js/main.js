@@ -8,6 +8,7 @@ import { renderPlay, stopPlay } from './play.js';
 import { renderReport } from './report.js';
 import { renderHistory } from './history.js';
 import { renderEditor } from './editor.js';
+import { qm, initTips } from './glossary.js';
 
 const view = $('#view');
 
@@ -58,7 +59,7 @@ async function renderSetup(root) {
   <div class="setup-grid">
     <section class="card">
       <h2>開始新的 Session <span class="sub">題目隱藏代號與日期，價格已縮放</span></h2>
-      <div class="field"><span class="lbl">市場</span><div class="chips" data-k="market">
+      <div class="field"><span class="lbl">市場 ${qm('mixed')}</span><div class="chips" data-k="market">
         ${['TW', 'US', 'JP', 'KR', 'MIX'].map(m => `<button class="chip${st.market === m ? ' on' : ''}" data-v="${m}">${MARKET_NAME[m]} <span class="sub">${counts[m] || 0}</span></button>`).join('')}
       </div></div>
       <div class="field"><span class="lbl">策略 <a class="sub" href="#/editor" style="margin-left:6px;text-decoration:underline">編輯 / 新增</a></span>
@@ -68,10 +69,10 @@ async function renderSetup(root) {
       <div class="field"><span class="lbl">可操作 K 棒數</span><div class="chips" data-k="playBars">
         ${[120, 250, 500].map(n => `<button class="chip${st.playBars === n ? ' on' : ''}" data-v="${n}">${n} 根</button>`).join('')}
       </div></div>
-      <div class="field"><span class="lbl">提示強度</span><div class="chips" data-k="hint">
+      <div class="field"><span class="lbl">提示強度 ${qm('hint')}</span><div class="chips" data-k="hint">
         ${[['full', '線 + 提示列'], ['lines', '只有線'], ['none', '什麼都不畫']].map(([v, n]) => `<button class="chip${st.hint === v ? ' on' : ''}" data-v="${v}">${n}</button>`).join('')}
       </div></div>
-      <div class="field"><span class="lbl">模式</span><div class="chips" data-k="mode">
+      <div class="field"><span class="lbl">模式 ${qm('campaign')}</span><div class="chips" data-k="mode">
         <button class="chip${st.mode === 'single' ? ' on' : ''}" data-v="single">單題</button>
         <button class="chip${st.mode === 'campaign' ? ' on' : ''}" data-v="campaign">連關</button>
         <select class="input" id="campN" style="width:auto">${[5, 10, 20].map(n => `<option value="${n}" ${st.campaignN === n ? 'selected' : ''}>${n} 題</option>`).join('')}</select>
@@ -161,4 +162,5 @@ export async function newSession(settings, campaign = null, startEquity) {
   return s;
 }
 
+initTips();
 route();

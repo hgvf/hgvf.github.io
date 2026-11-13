@@ -5,6 +5,7 @@ import { $, $$, esc, fmt, fmtInt, fmtPct, fmtR, sign, toast, sparkline, MARKET_N
 import { getSession, saveSession } from './store.js';
 import { getPuzzle } from './bank.js';
 import { ChartView } from './chart.js';
+import { qm } from './glossary.js';
 import { prepareForPuzzle, simulate, INDICATORS, roundLot } from '../engine/index.js';
 
 let G = null;                    // current game
@@ -279,12 +280,12 @@ function renderPortfolio(adv, run) {
       <dt>現金 / 市值</dt><dd>${fmtInt(a.cash)} / ${fmtInt(p ? p.size * c : 0)}</dd>
       <dt>持倉</dt><dd>${p ? `${fmtInt(p.size)} 股 @ ${fmt(p.avgPrice)}` : '空手'}</dd>
       ${p ? `<dt>持有 / 加碼</dt><dd>${p.barsHeld} 根 / ${p.adds} 次</dd>
-      <dt>未實現</dt><dd class="${sign(p.unrealizedPnl)}">${fmtInt(p.unrealizedPnl)}（${fmtPct((c / p.avgPrice - 1) * 100)}，${fmtR(p.unrealizedR)}）</dd>
-      <dt>有效停損</dt><dd>${fmt(p.stop)}（${fmtPct((p.stop / c - 1) * 100)}${Number.isFinite(atr) ? `，${fmt((c - p.stop) / atr, 1)} ATR` : ''}）</dd>
-      <dt>未保護風險</dt><dd>${fmt(a.openRiskR)}R（${fmt(a.openRisk / a.equity * 100)}%）</dd>
+      <dt>未實現 ${qm('unrealized')}</dt><dd class="${sign(p.unrealizedPnl)}">${fmtInt(p.unrealizedPnl)}（${fmtPct((c / p.avgPrice - 1) * 100)}，${fmtR(p.unrealizedR)}）</dd>
+      <dt>有效停損 ${qm('effStop')}</dt><dd>${fmt(p.stop)}（${fmtPct((p.stop / c - 1) * 100)}${Number.isFinite(atr) ? `，${fmt((c - p.stop) / atr, 1)} ATR` : ''}）</dd>
+      <dt>未保護風險 ${qm('openRisk')}</dt><dd>${fmt(a.openRiskR)}R（${fmt(a.openRisk / a.equity * 100)}%）</dd>
       <dt>下一個目標</dt><dd>${Number.isFinite(nextT) ? `${fmt(nextT)}（${fmtPct((nextT / c - 1) * 100)}）` : '—'}</dd>` : ''}
       <dt>已實現</dt><dd class="${sign(realized)}">本題 ${fmtInt(realized)}${camp ? `　連關 ${fmtInt((camp.realized || 0) + realized)}` : ''}</dd>
-      <dt>最大回撤</dt><dd>${fmt(mdd * 100)}%</dd>
+      <dt>最大回撤 ${qm('maxDD')}</dt><dd>${fmt(mdd * 100)}%</dd>
       <dt>紀律</dt><dd>${G.s.settings.hideDiscipline ? '<span class="muted">結束後揭曉</span>' : `${nViol ? `<span class="neg">${nViol} 次違規</span>` : '<span class="pos">0 違規</span>'}`}</dd>
     </dl>
     <canvas class="spark" id="spark" style="margin-top:10px"></canvas>
@@ -302,7 +303,7 @@ function renderOrder(adv, run) {
   const stopBtn = adv.hit?.stop && p ? `<button class="btn btn-sell btn-lg" id="oStop">確認停損 @ ${fmt(adv.hit.stop.price)}</button>` : '';
   const tgtBtn = adv.hit?.targets?.length && p ? `<button class="btn btn-warn btn-lg" id="oTgt">確認停利 @ ${fmt(adv.hit.targets[0].price)}（${fmtInt(adv.hit.targets.reduce((s, x) => s + x.qty, 0))} 股）</button>` : '';
   $('#order').innerHTML = `
-    <h2>下單 <span class="sub">${G.ctx.spec.fill.mode === 'this_close' ? '本根收盤成交' : '下一根開盤成交'}</span></h2>
+    <h2>下單 ${qm('R')} <span class="sub">${G.ctx.spec.fill.mode === 'this_close' ? '本根收盤成交' : '下一根開盤成交'}</span></h2>
     <div class="order-grid">
       ${stopBtn}${tgtBtn}
       <div class="qty-row">
