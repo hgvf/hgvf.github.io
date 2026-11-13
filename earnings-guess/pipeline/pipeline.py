@@ -164,6 +164,7 @@ class Run:
     def answer_for(self, card: QueueCard) -> dict:
         etf, mkt = self.uni.etfs(card.sector)
         kw = {'fetch': self.fetch} if self.fetch else {}
+        kw.update(pre_bars=int(self.cfg.get('chart_pre_bars', 40)), post_bars=int(self.cfg.get('chart_post_bars', 20)))
         r = compute(card.ticker, date.fromisoformat(card.date), card.session, etf, mkt, self.today_et, **kw)
         return {
             'ticker': card.ticker, 'company': card.company or card.ticker, 'date': card.date, 'session': card.session,
@@ -202,7 +203,13 @@ class Run:
         order = list(range(len(red.highlights)))
         rnd.shuffle(order)
         hl = [red.highlights[i] for i in order]
-        ans = {**ans, 'sentiments': [h['sentiment'] for h in hl]}
+        prior = prior or []
+        # 情緒標籤是逐張判斷題的答案 → 只放在混淆過的 answer 裡，公開卡只有文字
+        chart_pre = ans.pop('chartPre', None)
+        ans = {**ans, 'sentiments': [h['sentiment'] for h in hl],
+               'priorSentiments': [[h['sentiment'] for h in p['highlights']] for p in prior]}
+        hl = [{'text': h['text']} for h in hl]
+        prior = [{**p, 'highlights': [{'text': h['text']} for h in p['highlights']], 'netSentiment': None} for p in prior]
         peers = self.uni.peers(card.sector, card.ticker, [t for t in all_tickers if self.uni.sector_of({'ticker': t}) == card.sector])
         if len(peers) < 3:
             peers += [t for t in sorted(self.uni.known_tickers() | set(all_tickers)) if t != card.ticker and t not in peers]
@@ -211,7 +218,7 @@ class Run:
         return {
             'id': pid, 'n': n, 'releasedOn': self.today_tw.isoformat(), 'market': card.market, 'sector': card.sector,
             'session': card.session, 'summary': red.summary, 'highlights': hl, 'watch': red.watch,
-            'choices': choices, 'prior': prior or [], 'answer': obfuscate(ans),
+            'choices': choices, 'prior': prior, 'chart': {'pre': chart_pre} if chart_pre else None, 'answer': obfuscate(ans),
         }
 
     def redact(self, card):
@@ -234,7 +241,8 @@ class Run:
         return 1 if bad else 0
 
     def release(self, count=None, only_id=None) -> list[dict]:
-        count = count or int(self.cfg.get('per_day', 1))
+        count = count or int(self.cfg.get('per_day', 0)) or 10 ** 9
+        unlimited = count >= 10 ** 9
         items = self.cards()
         all_tickers = sorted({c.ticker for _, c, _, _ in items if c})
         released = self._released()
@@ -263,7 +271,7 @@ class Run:
             if len(picks) >= count:
                 break
             hist = released + [(k, v) for k, v in picks]
-            if not forced and not self._gaps_ok(card, hist):
+            if not forced and not unlimited and not self._gaps_ok(card, hist):
                 continue
             red = self.redact(card)
             if not red.ok:
@@ -281,7 +289,7 @@ class Run:
                 self.log(f'held {key}: {e}')
                 continue
             out = ans['excess']['sector']['r1'] > 0
-            if not forced and out and not self._balance_ok(hist, out):
+            if not forced and not unlimited and out and not self._balance_ok(hist, out):
                 self.log(f'skip {key}: 跑贏卡太多（答案打散）')
                 continue
             self.state['seq'] += 1

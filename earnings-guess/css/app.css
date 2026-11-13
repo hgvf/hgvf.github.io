@@ -56,3 +56,35 @@
 .prior-react { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .86rem; padding: 8px 10px; border-radius: var(--r); background: var(--bg2); margin-bottom: 10px; }
 .prior-react b { font-family: var(--mono); }
 .prior-sum { line-height: 1.7; margin-bottom: 10px; font-size: .95rem; color: var(--text2); }
+
+.call-chart { height: 260px; margin: 4px 0 6px; }
+.chart-note { margin-bottom: 14px; }
+@media (max-width: 900px) { .call-chart { height: 220px; } }
+
+/* ── 逐張情緒判斷 ── */
+.hl-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; }
+.hl-head h3 { margin: 0; }
+.hl-dots { display: flex; gap: 4px; margin-left: auto; }
+.hl-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--line-strong); }
+.hl-dots i.seen { background: var(--accent-l); border-color: var(--accent); }
+.hl-dots i.done { background: var(--accent); }
+.hl-q { border: 1px solid var(--line); background: var(--card-solid); border-radius: var(--r); padding: 10px 12px; display: grid; gap: 8px; opacity: .72; }
+.hl-q.current { opacity: 1; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-l); padding: 16px; animation: hlIn .25s ease; }
+.hl-q.current .hl-q-text { font-size: 1.05rem; }
+@keyframes hlIn { from { transform: translateY(6px); opacity: 0; } }
+.hl-q-text { line-height: 1.65; font-size: .94rem; display: flex; gap: 10px; }
+.hl-no { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-l); color: var(--accent); font-size: .76rem; font-weight: 700; display: grid; place-items: center; margin-top: 2px; }
+.sent-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.hl-q:not(.current) .sent-pick button { padding: 5px; font-size: .8rem; }
+.hl-q:not(.current) .sent-pick small { display: none; }
+.sent-pick button { padding: 9px 6px; border-radius: 10px; border: 1px solid var(--line-strong); background: #fff; font-weight: 700; font-size: .9rem; line-height: 1.2; }
+.sent-pick small { display: block; font-weight: 400; font-size: .7rem; opacity: .7; font-family: var(--mono); }
+.sent-pick .sp-bullish.on { background: var(--pos); border-color: var(--pos); color: #fff; }
+.sent-pick .sp-bearish.on { background: var(--neg); border-color: var(--neg); color: #fff; }
+.sent-pick .sp-neutral.on { background: var(--neutral, #78716C); border-color: #78716C; color: #fff; }
+.hl-next { width: 100%; margin-top: 4px; }
+.sent-res { margin-left: auto; flex: none; display: flex; align-items: center; gap: 6px; }
+.form-lock { padding: 12px; border-radius: var(--r); background: var(--warn-l); color: #7c4a03; font-size: .88rem; margin-bottom: 12px; line-height: 1.5; }
+#answerForm.locked { opacity: .4; pointer-events: none; filter: grayscale(.4); }
+.sent-acc { display: flex; align-items: baseline; gap: 12px; }
+.sent-acc .big { font-size: 1.6rem; }

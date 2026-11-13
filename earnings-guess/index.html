@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../blind-chart/css/app.css?v=1">
-<link rel="stylesheet" href="css/app.css?v=1">
+<link rel="stylesheet" href="css/app.css?v=2">
+<script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -20,7 +21,7 @@
   </a>
   <h1 class="tb-title"><span class="tb-emoji">🎙️</span><span class="tb-long">法說會盲猜</span><span class="tb-short">法說會盲猜</span></h1>
   <nav class="tb-nav" id="nav">
-    <a href="#/today" data-route="today">今日題</a>
+    <a href="#/play" data-route="play">開始玩</a>
     <a href="#/bank" data-route="bank">題庫</a>
     <a href="#/stats" data-route="stats">統計</a>
     <a href="#/settings" data-route="settings">設定</a>
@@ -29,6 +30,6 @@
 <div class="banner" id="banner" hidden></div>
 <main id="view" class="view"></main>
 <div class="toast" id="toast" role="status"></div>
-<script type="module" src="js/app.js?v=1"></script>
+<script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>

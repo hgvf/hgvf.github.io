@@ -82,7 +82,7 @@ def fake_fetch(syms, start, end):
         k = {'KLAC': 1.01, 'SOXX': 1.002, 'SPY': 1.001}.get(s, 1.0)
         px, o = 100.0, {}
         for x in days:
-            o[x.isoformat()] = (px, px * k); px *= k
+            o[x.isoformat()] = (px, px * k * 1.005, px * 0.995, px * k, 1e6); px *= k
         out[s] = o
     return out
 
@@ -100,6 +100,15 @@ class TestReaction(unittest.TestCase):
     def test_incomplete(self):
         with self.assertRaises(Incomplete):
             compute('KLAC', date(2026, 7, 30), 'AMC', 'SOXX', 'SPY', date(2026, 8, 10), fetch=fake_fetch)
+
+
+def pub_chart(tmp):
+    idx = json.load(open(os.path.join(tmp, 'earnings-guess', 'data', 'index.json')))
+    pub = json.load(open(os.path.join(tmp, 'earnings-guess', 'data', 'calls', idx['calls'][-1]['id'] + '.json')))
+    ans = deobfuscate(pub['answer'])
+    assert len(ans['chartPost']['c']) == 20 and 'chartPre' not in ans
+    assert pub['chart']['pre']['c'][-1] == 100.0          # close(t0−1) = 100
+    return pub['chart']
 
 
 class TestRelease(unittest.TestCase):
@@ -121,16 +130,20 @@ class TestRelease(unittest.TestCase):
     def run_day(self, d, **kw):
         logs = []
         r = Run(self.src, today_et=d, today_tw=d + timedelta(days=1), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, log=logs.append, **kw)
+        r.cfg['per_day'] = 1          # 限量模式：檢查排程規則
         return r, r.release()
 
     def test_daily_release_rules(self):
         r, picks = self.run_day(date(2026, 10, 1))
         self.assertEqual(len(picks), 1)
+        self.assertEqual(len(pub_chart(self.tmp)['pre']['c']), 40)
         idx = json.load(open(os.path.join(self.tmp, 'earnings-guess', 'data', 'index.json')))
         self.assertEqual(len(idx['calls']), 1)
         pub = json.load(open(os.path.join(self.tmp, 'earnings-guess', 'data', 'calls', idx['calls'][0]['id'] + '.json')))
         ans = deobfuscate(pub['answer'])
         self.assertIn(ans['ticker'], pub['choices'])
+        self.assertTrue(all(set(h) == {'text'} for h in pub['highlights']))     # 情緒只在 answer 裡
+        self.assertEqual(len(ans['sentiments']), len(pub['highlights']))
         self.assertEqual(len(pub['choices']), 4)
         self.assertNotIn(ans['ticker'], json.dumps({k: v for k, v in pub.items() if k not in ('choices', 'answer')}))
         self.assertTrue(any('缺遊戲欄位' in i['title'] for i in r.issues))
@@ -157,8 +170,15 @@ class TestRelease(unittest.TestCase):
         self.assertNotIn('2025', json.dumps(pr, ensure_ascii=False))
         self.assertIsNotNone(pr[0]['reaction'])
 
+    def test_unlimited_release(self):
+        r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, log=lambda *a: None)
+        r.cfg['per_day'] = 0
+        picks = r.release()
+        self.assertEqual(len(picks), 7)        # 5 + KLAC Q1 + KLAC Q4; NEW1 window not done, NOSEC invalid
+
     def test_dry_run_writes_nothing(self):
         r = Run(self.src, today_et=date(2026, 10, 1), today_tw=date(2026, 10, 2), site_dir=self.tmp, fetch=fake_fetch, infer=lambda *a: None, dry_run=True, log=lambda *a: None)
+        r.cfg['per_day'] = 1
         self.assertEqual(len(r.release()), 1)
         self.assertFalse(os.path.exists(os.path.join(self.tmp, 'earnings-guess', 'data', 'index.json')))
         self.assertFalse(os.path.exists(os.path.join(self.tmp, 'state', 'schedule.json')))
