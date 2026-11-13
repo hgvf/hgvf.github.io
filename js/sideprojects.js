@@ -3,21 +3,65 @@
    the shared report sidebar (partials/sidebar.html via js/sidebar.js).
 
    To add a project, append an object to PROJECTS:
-     name        — card label / sidebar link text (required)
+     name        — card title / sidebar link text (required)
      url         — project website (required)
-     tagline     — big headline on the card
-     description — one or two sentences under the headline
-     features    — short bullet points (optional)
-     tags        — small chips under the features (optional)
-     featured    — true → accent border, like a highlighted plan card
+     group       — which section it belongs to (a key of GROUPS)
+     icon        — one emoji shown in the card's icon tile
+     tagline     — short subtitle under the title (don't repeat the name)
+     description — one or two sentences (the card shows two lines until expanded)
+     features    — short bullet points, shown when the card is expanded
+     tags        — tech chips; the card shows the first 3, the rest appear when expanded
      internal    — true → a page of this site (url relative to the site root): opens in
                    the same tab, no external-link icon */
 
+export const GROUPS = [
+  { key: 'invest', title: '投資訓練', sub: '拿真實的歷史行情與法說會練判斷力' },
+  { key: 'game', title: '遊戲', sub: '' },
+  { key: 'tool', title: '工具與其他', sub: '' },
+];
+
 export const PROJECTS = [
   {
+    name: '盲測K線',
+    group: 'invest',
+    icon: '🕯️',
+    url: 'blind-chart/index.html',
+    internal: true,
+    tagline: '紀律訓練場',
+    description: '在匿名的歷史 K 線上逐根推進、照策略規則交易，結束後揭曉代號，量化「照規則」與「實際操作」的差距。',
+    features: [
+      '策略用 JSON 描述：指標、條件式、部位大小、可疊加停損、分批停利、加碼',
+      '三個帳戶對照：你的實際帳戶、完全照規則的影子帳戶、逐一修正違規的反事實帳戶',
+      '14 種違規判定與紀律分數，算出每個違規讓你少賺 / 多賠多少',
+      '台 / 美 / 日 / 韓與混合盲測，單題或連關模式',
+      '策略編輯器即時驗證，專業術語旁都有說明',
+    ],
+    tags: ['lightweight-charts', 'IndexedDB', 'DuckDB', 'GitHub Actions'],
+  },
+  {
+    name: '法說會盲猜',
+    group: 'invest',
+    icon: '🎙️',
+    url: 'earnings-guess/index.html',
+    internal: true,
+    tagline: '只看重點猜股價反應',
+    description: '讀一場去識別化的法說會重點與法說前的日 K，猜股價相對產業的反應方向、幅度與信心，作答後揭曉公司與後續走勢。',
+    features: [
+      '重點一張一張看，附同公司前一、兩季的法說內容與當時反應',
+      '方向、幅度區間、信心（Brier 校準）與猜公司四種計分',
+      '揭曉後接上法說後四週的日 K 與產業 ETF 對照',
+      '統計頁：校準曲線、各產業命中率、你 vs 法說會情緒模型',
+      '題目不限量，作答紀錄可匯出 JSON / CSV',
+    ],
+    tags: ['yfinance', 'lightweight-charts', 'Pydantic', 'GitHub Actions'],
+  },
+  {
     name: 'NIBBLE',
+    group: 'game',
+    icon: '⚾',
     url: 'https://nibble-beryl.vercel.app/',
-    tagline: 'NIBBLE - 配球策略遊戲',
+    tagline: '配球策略遊戲',
+    description: '用真實 Statcast 數據模擬投打對決：決定配球、猜球路，看球數、跑者與出局數怎麼改變每一球的機率。',
     features: [
       '四種模式：策略模擬、投手對決、打者猜球、實戰比對',
       '情境感知機率：球數、壘上跑者、出局、比數與投打左右',
@@ -25,27 +69,30 @@ export const PROJECTS = [
       '跨聯盟對決（例：MLB 王牌 vs NPB 強打）與聯盟強度校正',
       '3D 投打動畫與打席結果動畫',
     ],
-    tags: ['Next.js', 'DuckDB-WASM', 'Web Worker', 'Monte Carlo', 'Python Pipeline'],
-    featured: true,
+    tags: ['Next.js', 'DuckDB-WASM', 'Monte Carlo', 'Web Worker', 'Python Pipeline'],
   },
   {
     name: 'fish-craft',
+    group: 'game',
+    icon: '🐟',
     url: 'https://fish-craft.vercel.app',
-    tagline: 'fishcraft - 魚世無爭',
-    description: '你是一個魚族王朝：在家園礁繁殖、照顧、裝備你的族群，出征七片海域，讓魚王一代代傳承下去。',
+    tagline: '魚世無爭',
+    description: '經營一個魚族王朝：在家園礁繁殖、照顧、裝備你的族群，出征七片海域，讓魚王一代代傳承下去。',
     features: [
       '家園礁：繁殖、照顧與裝備你的魚族',
       '出征七片海域',
       '魚王世代傳承',
       '帳號與雲端存檔（選用）',
     ],
-    tags: ['Vite', 'TypeScript', 'Canvas 2D', 'Vercel', 'Supabase'],
+    tags: ['Vite', 'TypeScript', 'Canvas 2D', 'Supabase', 'Vercel'],
   },
   {
     name: '大叔釣魚',
+    group: 'game',
+    icon: '🎣',
     url: 'https://fish-craft.vercel.app/fishing/',
-    tagline: '大叔釣魚 - 像素療癒放置釣魚',
-    description: '坐在船首紅色塑膠椅上的大叔幫你釣魚：魚不常上鉤，適合開著分頁放著看，偶爾開船換漁場、賣魚升級裝備。',
+    tagline: '像素療癒放置釣魚',
+    description: '坐在船首紅色塑膠椅上的大叔幫你釣魚，開著分頁放著看就好，偶爾開船換漁場、賣魚升級裝備。',
     features: [
       '9,243 種真實魚類（臺灣 2,070 種＋世界 21 片海域）與 22 種神話生物，每種都有像素圖',
       '108 個漁場：從桃園永安漁港、世界各海域到東海龍宮、冥河、銀河',
@@ -54,14 +101,16 @@ export const PROJECTS = [
       '颱風、聖嬰現象、軍事演習等事件影響出航與漁獲',
       '書本式圖鑑、販賣紀錄與釣魚日誌',
     ],
-    tags: ['Vite', 'Canvas 2D', 'Pixel Art', 'Idle Game', 'localStorage', 'Vercel'],
+    tags: ['Canvas 2D', 'Pixel Art', 'Idle Game', 'localStorage', 'Vercel'],
   },
   {
     name: '下班倒數',
+    group: 'tool',
+    icon: '⏰',
     url: 'countdown/index.html',
     internal: true,
-    tagline: '下班倒數計時器 - 上班時間的劇場',
-    description: '不只告訴你還剩多久：像素世界會隨時間演進，鴨子、熊熊、狗、貓輪流來翻時間牌，最後五分鐘是跨年等級的像素煙火秀。',
+    tagline: '上班時間的劇場',
+    description: '不只告訴你還剩多久：像素世界隨時間演進，動物輪流來翻時間牌，最後五分鐘是跨年等級的像素煙火秀。',
     features: [
       '15 個主題：隕石墜落、定時炸彈、發射按鈕、高鐵月台、媽媽的訊息、最後通牒、廚房計時器、碼表…',
       '四隻動物翻牌彩蛋、便當、下午茶、UFO 等時間軸事件',
@@ -69,40 +118,12 @@ export const PROJECTS = [
       '最後 5 分鐘四幕像素煙火高潮，全程無音效',
       '彩蛋圖鑑、成就徽章與動物造型解鎖，可截圖分享',
     ],
-    tags: ['Canvas 2D', 'Pixel Art', 'ES Modules', 'PWA', 'localStorage', 'GitHub Pages'],
-  },
-  {
-    name: '盲測K線',
-    url: 'blind-chart/index.html',
-    internal: true,
-    tagline: '盲測K線紀律訓練場',
-    description: '在匿名的歷史 K 線上逐根推進，策略規則即時畫出停損、停利、加碼線，但每筆成交都要自己按；結束後揭曉代號，量化「照規則」與「實際操作」的差距。',
-    features: [
-      '策略用 JSON 描述：指標、條件式、部位大小、可疊加停損、分批停利、加碼、紀律容忍度',
-      '三個帳戶對照：你的實際帳戶、完全照規則的影子帳戶、逐一修正違規的反事實帳戶',
-      '14 種違規判定與紀律分數，每個違規算出它讓你少賺 / 多賠多少',
-      '台 / 美 / 日 / 韓與混合盲測，單題或連關模式，策略編輯器即時驗證',
-      '前端與出題器共用同一套引擎，同一份 Session 在任何裝置都重現同一份報告',
-    ],
-    tags: ['lightweight-charts', 'ES Modules', 'IndexedDB', 'DuckDB', 'GitHub Actions'],
-    featured: true,
-  },
-  {
-    name: '法說會盲猜',
-    url: 'earnings-guess/index.html',
-    internal: true,
-    tagline: '法說會盲猜 - 只看重點猜股價反應',
-    description: '每天釋出一張去識別化的法說會卡片，猜股價相對產業基準的方向、幅度與信心，作答後揭曉公司與實際反應。',
-    features: [
-      '每天 06:17 自動釋出：反應視窗結束、去識別化通過才上架',
-      '方向、幅度區間、信心（Brier 校準）與猜公司四種計分',
-      '統計頁：校準曲線、各產業命中率、你 vs 法說會情緒模型',
-      '作答紀錄可匯出 JSON / CSV 做因子研究',
-    ],
-    tags: ['yfinance', 'Pydantic', 'GitHub Actions', 'localStorage'],
+    tags: ['Canvas 2D', 'Pixel Art', 'PWA', 'ES Modules', 'localStorage'],
   },
   {
     name: 'War Atlas',
+    group: 'tool',
+    icon: '🗺️',
     url: 'war-atlas/index.html',
     internal: true,
     tagline: '戰役地圖集',
@@ -113,7 +134,7 @@ export const PROJECTS = [
       '分階段動畫：進攻路線、戰線與事件',
       '貼上 skill 產生的 JSON 即可登錄新戰役',
     ],
-    tags: ['Leaflet', 'Firestore', 'GitHub Pages', 'LLM Skill'],
+    tags: ['Leaflet', 'Firestore', 'LLM Skill', 'GitHub Pages'],
   },
 ];
 
@@ -125,6 +146,7 @@ const hostOf = url => { try { return new URL(url).host; } catch { return url; } 
 const ICON_EXTERNAL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 const ICON_MAP = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>';
 const ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>';
+const ICON_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
 /** Fill a sidebar folder's children with one link per project. `base` prefixes internal
     (site-relative) urls — "../" on the report pages one folder down. */
@@ -142,41 +164,61 @@ export function renderSideProjectNav(container, base = '') {
 }
 
 const ICON_CHEVRON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="6 9 12 15 18 9"/></svg>';
+const TAGS_SHOWN = 3;
 
-/** Render the intro page's card grid; the layout adapts to the card count.
-    Cards start collapsed (headline, two-line description, tags, link); the
-    header toggles the feature list. `toggleAllBtn` (optional) expands or
-    collapses every card at once. */
-export function renderSideProjectPage(container, toggleAllBtn) {
-  if (!container) return;
-  container.dataset.count = String(Math.min(PROJECTS.length, 3));
-  if (!PROJECTS.length) {
-    container.innerHTML = '<p class="sp-empty">尚無專案，敬請期待。</p>';
-    return;
-  }
-  container.innerHTML = PROJECTS.map((p, i) => `
-    <article class="sp-card${p.featured ? ' sp-card-featured' : ''}">
+function cardHTML(p, i) {
+  const tags = p.tags || [];
+  return `
+    <article class="sp-card">
       <button type="button" class="sp-head" aria-expanded="false" aria-controls="spBody${i}">
+        <span class="sp-icon" aria-hidden="true">${esc(p.icon || '✦')}</span>
         <span class="sp-head-text">
           <span class="sp-name">${esc(p.name)}</span>
           ${p.tagline ? `<span class="sp-tagline">${esc(p.tagline)}</span>` : ''}
         </span>
         <span class="sp-chevron">${ICON_CHEVRON}</span>
       </button>
-      ${p.description ? `<p class="sp-desc">${esc(p.description)}</p>` : ''}
+      <p class="sp-desc">${esc(p.description || '')}</p>
+      ${tags.length ? `<div class="sp-tags">${tags.map((t, k) =>
+        `<span class="sp-tag${k >= TAGS_SHOWN ? ' sp-tag-extra' : ''}">${esc(t)}</span>`).join('')}${tags.length > TAGS_SHOWN
+        ? `<span class="sp-tag sp-tag-more">+${tags.length - TAGS_SHOWN}</span>` : ''}</div>` : ''}
       <div class="sp-body" id="spBody${i}"><div class="sp-body-inner">
         ${p.features?.length ? `<ul class="sp-features">${p.features.map(f =>
           `<li><span class="sp-check">${ICON_CHECK}</span>${esc(f)}</li>`).join('')}</ul>` : ''}
       </div></div>
-      ${p.tags?.length ? `<div class="sp-tags">${p.tags.map(t =>
-        `<span class="sp-tag">${esc(t)}</span>`).join('')}</div>` : ''}
       <div class="sp-foot">
         ${p.features?.length ? `<button type="button" class="sp-more" data-n="${p.features.length}">${p.features.length} 項功能</button>` : '<span></span>'}
         ${p.internal
-          ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟</span></a>`
-          : `<a class="sp-link" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(hostOf(p.url))}">${ICON_EXTERNAL}<span>前往</span></a>`}
+          ? `<a class="sp-link" href="${esc(p.url)}"><span>開啟</span>${ICON_ARROW}</a>`
+          : `<a class="sp-link sp-link-ext" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(hostOf(p.url))}"><span>前往</span>${ICON_EXTERNAL}</a>`}
       </div>
-    </article>`).join('');
+    </article>`;
+}
+
+/** Render the intro page: one section per group, cards in an even grid.
+    Cards start collapsed (title, two-line description, three tags, link); the
+    header toggles the feature list. `toggleAllBtn` expands / collapses all. */
+export function renderSideProjectPage(container, toggleAllBtn) {
+  if (!container) return;
+  if (!PROJECTS.length) {
+    container.innerHTML = '<p class="sp-empty">尚無專案，敬請期待。</p>';
+    return;
+  }
+  let i = 0;
+  const groups = [...GROUPS, { key: undefined, title: '其他', sub: '' }];
+  container.innerHTML = groups.map(g => {
+    const list = PROJECTS.filter(p => (g.key ? p.group === g.key : !GROUPS.some(x => x.key === p.group)));
+    if (!list.length) return '';
+    return `
+      <section class="sp-section">
+        <header class="sp-section-head">
+          <h3 class="sp-section-title">${esc(g.title)}</h3>
+          <span class="sp-section-count">${list.length}</span>
+          ${g.sub ? `<span class="sp-section-sub">${esc(g.sub)}</span>` : ''}
+        </header>
+        <div class="sp-grid">${list.map(p => cardHTML(p, i++)).join('')}</div>
+      </section>`;
+  }).join('');
 
   const cards = [...container.querySelectorAll('.sp-card')];
   const setOpen = (card, open) => {
