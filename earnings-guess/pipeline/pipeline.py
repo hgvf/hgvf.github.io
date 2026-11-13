@@ -63,13 +63,15 @@ class Universe:
                         sym = str(t.get('symbol') or '').upper()
                         if not sym or (t.get('market') or 'US') != 'US' or '.' in sym:
                             continue
-                        self.by_ticker.setdefault(sym, {'sector': game, 'name': t.get('name')})
+                        # 對照表沒有的 watchlist 板塊就直接用板塊名（基準 ETF 走 default_sector）
+                        self.by_ticker.setdefault(sym, {'sector': game or s.get('name'), 'name': t.get('name'), 'watchlist': s.get('name')})
         except FileNotFoundError:
             pass
 
     def sector_of(self, card: dict) -> str | None:
         t = str(card.get('ticker', '')).upper()
-        return card.get('sector') or (self.meta.get('tickers') or {}).get(t, {}).get('sector') or self.by_ticker.get(t, {}).get('sector')
+        return (card.get('sector') or (self.meta.get('tickers') or {}).get(t, {}).get('sector')
+                or self.by_ticker.get(t, {}).get('sector') or self.bench.get('default_sector', 'Other'))
 
     def etfs(self, sector: str) -> tuple[str, str]:
         s = (self.bench.get('sectors') or {}).get(sector) or (self.bench.get('sectors') or {}).get(self.bench.get('default_sector', 'Other')) or {'etf': 'SPY', 'market': 'SPY'}
