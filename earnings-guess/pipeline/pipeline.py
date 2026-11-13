@@ -380,7 +380,8 @@ class Run:
                 idx = json.load(f)
         except FileNotFoundError:
             idx = {'version': 1, 'calls': []}
-        idx['calls'] = [c for c in idx['calls'] if c['id'] != pub['id']] + [{'id': pub['id'], 'n': pub['n'], 'releasedOn': pub['releasedOn'], 'sector': pub['sector'], 'session': pub['session']}]
+        idx['calls'] = [c for c in idx['calls'] if c['id'] != pub['id']] + [{'id': pub['id'], 'n': pub['n'], 'releasedOn': pub['releasedOn'], 'sector': pub['sector'], 'session': pub['session'],
+                                                                                 'teaser': pub['summary'][:90]}]
         idx['updatedAt'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with open(idx_path, 'w', encoding='utf-8') as f:
             json.dump(idx, f, ensure_ascii=False, indent=1)

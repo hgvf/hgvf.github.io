@@ -351,6 +351,6 @@ python earnings-guess/pipeline/cli.py release --credentials scripts/serviceAccou
 python earnings-guess/pipeline/cli.py plan --credentials scripts/serviceAccount.json --days 30
 ```
 
-玩法：重點一張一張出現，每張先判斷偏多 / 中性 / 偏空（情緒答案只放在混淆過的 answer 裡，結束後算 accuracy），看完才能猜股價反應。卡片附法說前 40 根日 K（以 t0 前一天收盤 = 100 縮放），揭曉後接上法說後 20 根與產業 ETF；資料由 pipeline 一起算好放進卡片 JSON（每張約 3 KB），前端不打任何行情 API。
+玩法：重點一張一張出現（按「下一張」），看完才能猜股價反應；情緒標籤只放在混淆過的 answer 裡，揭曉時才顯示。題庫頁只讀 `index.json`（每張附 90 字 teaser）並分頁顯示，卡片再多也不必逐張下載。卡片附法說前 40 根日 K（以 t0 前一天收盤 = 100 縮放），揭曉後接上法說後 20 根與產業 ETF；資料由 pipeline 一起算好放進卡片 JSON（每張約 3 KB），前端不打任何行情 API。
 
 示範模式：`/earnings-guess/?demo=1`。

@@ -74,17 +74,6 @@
 @keyframes hlIn { from { transform: translateY(6px); opacity: 0; } }
 .hl-q-text { line-height: 1.65; font-size: .94rem; display: flex; gap: 10px; }
 .hl-no { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-l); color: var(--accent); font-size: .76rem; font-weight: 700; display: grid; place-items: center; margin-top: 2px; }
-.sent-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.hl-q:not(.current) .sent-pick button { padding: 5px; font-size: .8rem; }
-.hl-q:not(.current) .sent-pick small { display: none; }
-.sent-pick button { padding: 9px 6px; border-radius: 10px; border: 1px solid var(--line-strong); background: #fff; font-weight: 700; font-size: .9rem; line-height: 1.2; }
-.sent-pick small { display: block; font-weight: 400; font-size: .7rem; opacity: .7; font-family: var(--mono); }
-.sent-pick .sp-bullish.on { background: var(--pos); border-color: var(--pos); color: #fff; }
-.sent-pick .sp-bearish.on { background: var(--neg); border-color: var(--neg); color: #fff; }
-.sent-pick .sp-neutral.on { background: var(--neutral, #78716C); border-color: #78716C; color: #fff; }
 .hl-next { width: 100%; margin-top: 4px; }
-.sent-res { margin-left: auto; flex: none; display: flex; align-items: center; gap: 6px; }
 .form-lock { padding: 12px; border-radius: var(--r); background: var(--warn-l); color: #7c4a03; font-size: .88rem; margin-bottom: 12px; line-height: 1.5; }
 #answerForm.locked { opacity: .4; pointer-events: none; filter: grayscale(.4); }
-.sent-acc { display: flex; align-items: baseline; gap: 12px; }
-.sent-acc .big { font-size: 1.6rem; }

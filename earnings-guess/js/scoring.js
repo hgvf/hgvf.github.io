@@ -27,16 +27,10 @@ export function score(guess, ans, setting) {
   return { e, dirScored, dirOk, actualBin, binOk, binNear, pickOk, brier, parts, total: Math.round((parts.dir + parts.bin + parts.pick + parts.calib) * 10) / 10 };
 }
 
-/** 逐張情緒判斷：guesses / truth 是 bullish|neutral|bearish 陣列 */
-export function sentimentScore(guesses, truth) {
-  const n = truth.length, correct = truth.filter((t, i) => guesses[i] === t).length;
-  return { guesses, truth, n, correct, acc: n ? correct / n : NaN };
-}
-
-export function shareText(n, r, sent) {
+export function shareText(n, r) {
   const m = ok => (ok == null ? '—' : ok ? '○' : '×');
   const bin = r.binOk ? '○' : r.binNear ? '△' : '×';
-  return `法說會盲猜 #${n}：方向 ${m(r.dirOk)} 區間 ${bin} 公司 ${m(r.pickOk)}${sent ? ` 情緒 ${sent.correct}/${sent.n}` : ''}，得分 ${r.total}`;
+  return `法說會盲猜 #${n}：方向 ${m(r.dirOk)} 區間 ${bin} 公司 ${m(r.pickOk)}，得分 ${r.total}`;
 }
 
 /** records: [{ id, sector, releasedOn, guess, result, hinted, netSentiment, ts }] */
@@ -60,19 +54,7 @@ export function stats(records) {
   if (!set.has(key(d))) d.setDate(d.getDate() - 1);
   let streak = 0;
   while (set.has(key(d))) { streak++; d.setDate(d.getDate() - 1); }
-  const sentRecs = records.filter(r => r.sent);
-  const cls = {};
-  for (const k of ['bullish', 'neutral', 'bearish']) {
-    let n = 0, hit = 0, pred = 0, predHit = 0;
-    for (const r of sentRecs) r.sent.truth.forEach((t, i) => {
-      if (t === k) { n++; if (r.sent.guesses[i] === k) hit++; }
-      if (r.sent.guesses[i] === k) { pred++; if (t === k) predHit++; }
-    });
-    cls[k] = { n, recall: n ? hit / n : NaN, precision: pred ? predHit / pred : NaN };
-  }
-  const sTot = sentRecs.reduce((a, r) => a + r.sent.n, 0), sHit = sentRecs.reduce((a, r) => a + r.sent.correct, 0);
   return {
-    sentiment: { cards: sentRecs.length, n: sTot, acc: sTot ? sHit / sTot : NaN, cls },
     n: records.length, formal: formal.length, scored: scored.length,
     dirHit: mean(scored.map(r => (r.result.dirOk ? 1 : 0))),
     binHit: mean(formal.map(r => (r.result.binOk ? 1 : 0))),
@@ -85,8 +67,8 @@ export function stats(records) {
 }
 
 export function toCSV(records) {
-  const head = ['id', 'n', 'releasedOn', 'answeredAt', 'sector', 'ticker', 'window', 'bench', 'dir', 'bin', 'conf', 'pick', 'hinted', 'excess', 'dirOk', 'binOk', 'pickOk', 'brier', 'score', 'netSentiment', 'sentCorrect', 'sentN', 'sentAcc'];
+  const head = ['id', 'n', 'releasedOn', 'answeredAt', 'sector', 'ticker', 'window', 'bench', 'dir', 'bin', 'conf', 'pick', 'hinted', 'excess', 'dirOk', 'binOk', 'pickOk', 'brier', 'score', 'netSentiment'];
   const rows = records.map(r => [r.id, r.n, r.releasedOn, new Date(r.ts).toISOString(), r.sector, r.ticker, r.setting.window, r.setting.bench, r.guess.dir, r.guess.bin, r.guess.conf, r.guess.pick || '', r.hinted ? 1 : 0,
-    r.result.e, r.result.dirOk, r.result.binOk, r.result.pickOk, r.result.brier ?? '', r.result.total, r.netSentiment, r.sent?.correct ?? '', r.sent?.n ?? '', r.sent?.acc ?? '']);
+    r.result.e, r.result.dirOk, r.result.binOk, r.result.pickOk, r.result.brier ?? '', r.result.total, r.netSentiment]);
   return [head, ...rows].map(r => r.map(x => (typeof x === 'string' && /[",\n]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x ?? '')).join(',')).join('\n');
 }

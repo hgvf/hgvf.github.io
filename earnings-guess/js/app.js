@@ -2,7 +2,7 @@
 // keeps answers in localStorage (one answer per card per browser).
 import { deobfuscate, obfuscate } from './obf.js';
 import { drawCallChart } from './chart.js';
-import { score, shareText, stats, toCSV, sentimentScore, binOf, binsFor, BIN_NAMES, BIN_RANGE, DEADBAND } from './scoring.js';
+import { score, shareText, stats, toCSV, binOf, binsFor, BIN_NAMES, BIN_RANGE, DEADBAND } from './scoring.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -99,9 +99,9 @@ async function renderCard(id, label) {
   const prev = answers()[id];
   const truth = deobfuscate(c.answer);               // sentiments live in the obfuscated answer
   const N = c.highlights.length;
-  // quiz state (not persisted: refreshing restarts the walk-through)
-  const q = { shown: prev || st.hint ? N : 1, guesses: prev?.sent?.guesses?.slice() || Array(N).fill(null) };
-  const mode = prev ? 'reveal' : st.hint ? 'hint' : 'quiz';
+  // step state (not persisted: refreshing restarts the walk-through)
+  const q = { shown: prev || st.hint ? N : 1 };
+  const mode = prev ? 'reveal' : st.hint ? 'hint' : 'step';
   view.innerHTML = `
   <div class="eg">
     <section class="card eg-card">
@@ -116,37 +116,25 @@ async function renderCard(id, label) {
       <div class="hl-head"><h3>重點</h3><span class="sub" id="hlProg"></span><div class="hl-dots" id="hlDots"></div></div>
       <div class="hl-list" id="hlList"></div>
       <div id="hlAfter"></div>
-      ${priorHTML(c, st, mode === 'quiz' ? null : truth)}
+      ${priorHTML(c, st, mode === 'step' ? null : truth)}
     </section>
     <aside class="answer" id="answerPane"></aside>
   </div>`;
   bindPrior();
-  const allDone = () => mode !== 'quiz' || (q.shown >= N && q.guesses.every(Boolean));
+  const allDone = () => mode !== 'step' || q.shown >= N;
 
   const drawHL = () => {
     $('#hlList').innerHTML = c.highlights.slice(0, q.shown).map((h, i) => {
-      const t = truth.sentiments?.[i], g = q.guesses[i];
-      const cur = mode === 'quiz' && i === q.shown - 1;
+      const t = truth.sentiments?.[i];
+      const cur = mode === 'step' && i === q.shown - 1;
       if (mode === 'hint') return `<div class="hl ${t}"><span class="dot"></span><span>${esc(h.text)}</span><span class="tag ${SENT[t][1]} sent">${SENT[t][0]}</span></div>`;
-      if (mode === 'reveal') {
-        const ok = g && g === t;
-        return `<div class="hl ${t}"><span class="dot"></span><span>${esc(h.text)}</span>
-          <span class="sent-res">${g ? `<span class="sub">你：${SENT[g][0]}</span> <b class="${ok ? 'pos' : 'neg'}">${ok ? '✓' : '✗'}</b>` : ''}<span class="tag ${SENT[t][1]}">${SENT[t][0]}</span></span></div>`;
-      }
-      return `<div class="hl-q${cur ? ' current' : ''}" data-i="${i}">
-        <div class="hl-q-text"><span class="hl-no">${i + 1}</span>${esc(h.text)}</div>
-        <div class="sent-pick">${['bullish', 'neutral', 'bearish'].map(s => `<button class="sp-${s}${g === s ? ' on' : ''}" data-s="${s}">${SENT[s][0]}<small>${s}</small></button>`).join('')}</div>
-      </div>`;
-    }).join('') + (mode === 'quiz' && q.shown < N ? `<button class="btn btn-primary hl-next" id="hlNext" ${q.guesses[q.shown - 1] ? '' : 'disabled'}>下一張 →<span class="sub" style="color:inherit;opacity:.8">（還有 ${N - q.shown} 張）</span></button>` : '');
-    $('#hlProg').textContent = mode === 'quiz' ? `第 ${Math.min(q.shown, N)} / ${N} 張 · 先判斷這句話對股價是偏多、中性還是偏空` : mode === 'hint' ? '提示模式：直接顯示情緒' : '';
-    $('#hlDots').innerHTML = c.highlights.map((_, i) => `<i class="${i < q.shown ? 'seen' : ''}${q.guesses[i] ? ' done' : ''}"></i>`).join('');
+      if (mode === 'reveal') return `<div class="hl ${t}"><span class="dot"></span><span>${esc(h.text)}</span><span class="tag ${SENT[t][1]} sent">${SENT[t][0]}</span></div>`;
+      return `<div class="hl-q${cur ? ' current' : ''}"><div class="hl-q-text"><span class="hl-no">${i + 1}</span>${esc(h.text)}</div></div>`;
+    }).join('') + (mode === 'step' && q.shown < N ? `<button class="btn btn-primary hl-next" id="hlNext">下一張 →<span class="sub" style="color:inherit;opacity:.8">（還有 ${N - q.shown} 張）</span></button>` : '');
+    $('#hlProg').textContent = mode === 'step' ? `第 ${Math.min(q.shown, N)} / ${N} 張` : mode === 'hint' ? '提示模式：直接顯示情緒' : '情緒標籤已揭曉';
+    $('#hlDots').innerHTML = c.highlights.map((_, i) => `<i class="${i < q.shown ? 'seen done' : ''}"></i>`).join('');
     const done = q.shown >= N;
     $('#hlAfter').innerHTML = done && c.watch?.length ? `<h3>待觀察</h3><ul class="watch">${c.watch.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : '';
-    $$('.sent-pick button').forEach(b => b.onclick = () => {
-      const i = +b.closest('[data-i]').dataset.i;
-      q.guesses[i] = b.dataset.s;
-      drawHL(); syncForm();
-    });
     $('#hlNext') && ($('#hlNext').onclick = () => {
       q.shown++; drawHL(); syncForm();
       $('.hl-q.current')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -158,15 +146,12 @@ async function renderCard(id, label) {
     const done = allDone();
     lock.hidden = done;
     $('#answerForm').classList.toggle('locked', !done);
-    const cnt = { bullish: 0, neutral: 0, bearish: 0 };
-    q.guesses.forEach(g => g && cnt[g]++);
-    $('#sentSum').innerHTML = mode === 'quiz' ? `你的判斷：<span class="pos">偏多 ${cnt.bullish}</span> · 中性 ${cnt.neutral} · <span class="neg">偏空 ${cnt.bearish}</span>` : '';
-    lock.textContent = `先看完 ${N} 張重點並判斷情緒（${q.guesses.filter(Boolean).length}/${N}），再來猜股價反應`;
+    lock.textContent = `先看完 ${N} 張重點（${Math.min(q.shown, N)}/${N}），再來猜股價反應`;
   };
   drawHL();
   drawCallChart($('#callChart'), c, prev ? truth : null, $('#chartNote'), SESSION);
   if (prev) renderReveal(c, prev, truth);
-  else { renderForm(c, st, () => (mode === 'quiz' ? q.guesses.slice() : null), allDone); syncForm(); }
+  else { renderForm(c, st, allDone); syncForm(); }
 }
 
 function priorHTML(c, st, truth) {
@@ -195,13 +180,12 @@ function bindPrior() {
   });
 }
 
-function renderForm(c, st, getSent, allDone) {
+function renderForm(c, st, allDone) {
   const pane = $('#answerPane');
   const g = { dir: null, bin: null, conf: 65, pick: null };
   pane.innerHTML = `
   <section class="card">
     <h2>你的判斷 <span class="sub">${WIN[st.window]} · ${BENCH[st.bench]}${st.hint ? ' · 提示模式（不計正式統計）' : ''}</span></h2>
-    <p class="sub" id="sentSum" style="margin-bottom:10px"></p>
     <div class="form-lock" id="formLock" hidden></div>
     <div id="answerForm">
     <div class="field"><span class="lbl">1. 方向（超額報酬）</span>
@@ -230,13 +214,11 @@ function renderForm(c, st, getSent, allDone) {
   $('#fConf').oninput = e => { g.conf = +e.target.value; $('#fConfV').textContent = `${g.conf}%`; };
   $('#fGo').onclick = () => {
     if (answers()[c.id]) return toast('這張卡已經作答過了');
-    if (!allDone()) return toast('先把每一張重點的情緒判斷完');
+    if (!allDone()) return toast('先看完每一張重點');
     const ans = deobfuscate(c.answer);
     const setting = { window: st.window, bench: st.bench };
     const result = score(g, ans, setting);
-    const guesses = getSent();
-    const sent = guesses ? sentimentScore(guesses, ans.sentiments) : null;
-    const rec = { id: c.id, n: c.n, releasedOn: c.releasedOn, sector: c.sector, ticker: ans.ticker, guess: { ...g }, setting, hinted: !!st.hint, result, sent, netSentiment: ans.netSentiment, ts: Date.now() };
+    const rec = { id: c.id, n: c.n, releasedOn: c.releasedOn, sector: c.sector, ticker: ans.ticker, guess: { ...g }, setting, hinted: !!st.hint, result, netSentiment: ans.netSentiment, ts: Date.now() };
     const all = answers(); all[c.id] = rec; store(LS.ans, all);
     renderCard(c.id);
   };
@@ -247,8 +229,6 @@ function renderReveal(c, rec, ans) {
   const r = rec.result, s = rec.setting;
   const ex = ans.excess;
   const mark = ok => (ok == null ? '<span class="muted">不計</span>' : ok ? '<span class="pos mark">○</span>' : '<span class="neg mark">×</span>');
-  const sn = rec.sent;
-  const yourNet = sn ? sn.guesses.filter(x => x === 'bullish').length - sn.guesses.filter(x => x === 'bearish').length : null;
   $('#answerPane').innerHTML = `
   <section class="card">
     <div class="reveal-head"><span class="sym">${esc(ans.ticker)}</span><span style="font-weight:600">${esc(ans.company)}</span></div>
@@ -269,9 +249,8 @@ function renderReveal(c, rec, ans) {
       <div><span>信心 ${rec.guess.conf}%：Brier ${r.brier == null ? '不計' : r.brier.toFixed(3)}</span><b class="${r.parts.calib < 0 ? 'neg' : ''}">${r.parts.calib >= 0 ? '+' : ''}${r.parts.calib.toFixed(1)}</b></div>
       <div style="border-top:1px solid var(--line);padding-top:6px"><span>合計</span><span class="score-total">${r.total}</span></div>
     </div>
-    <h3>情緒判斷</h3>
-    ${sn ? `<div class="sent-acc"><span class="big">${sn.correct}/${sn.n}</span><span>accuracy <b>${pct0(sn.acc)}</b></span></div>` : '<p class="sub">提示模式，沒有情緒判斷。</p>'}
-    <p class="sub" style="margin-top:6px">原卡 net sentiment = <b>${ans.netSentiment > 0 ? '+' : ''}${ans.netSentiment}</b>（模型猜${ans.netSentiment > 0 ? '跑贏' : '跑輸'}${(ans.netSentiment > 0) === (r.e > 0) ? ' ○' : ' ×'}）${yourNet != null ? `　你的 net = <b>${yourNet > 0 ? '+' : ''}${yourNet}</b>` : ''}</p>
+    <h3>原卡情緒</h3>
+    <p class="sub">net sentiment = <b>${ans.netSentiment > 0 ? '+' : ''}${ans.netSentiment}</b>（模型猜${ans.netSentiment > 0 ? '跑贏' : '跑輸'}${(ans.netSentiment > 0) === (r.e > 0) ? ' ○' : ' ×'}）；每句的標籤已顯示在左邊。</p>
     <div class="choices" style="margin-top:12px">${c.choices.map(t => `<button disabled class="${t === ans.ticker ? 'right' : t === rec.guess.pick ? 'wrong' : ''}">${esc(t)}</button>`).join('')}</div>
     <div class="ctrl" style="margin-top:14px">
       <a class="btn btn-primary" href="#/play" id="bNext">下一題 →</a>
@@ -281,7 +260,7 @@ function renderReveal(c, rec, ans) {
   </section>`;
   if ($('#mini')) drawMini($('#mini'), ans.path, ans.benchPath);
   $('#bShare').onclick = async () => {
-    const t = shareText(c.n, r, sn);
+    const t = shareText(c.n, r);
     try { await navigator.clipboard.writeText(t); toast('已複製：' + t); } catch { prompt('複製這段文字', t); }
   };
 }
@@ -312,20 +291,29 @@ async function renderBank() {
       <select class="input" id="bAns"><option value="">全部</option><option value="todo">未作答</option><option value="done">已作答</option></select>
     </div>
   </section>
-  <div class="bank-grid" id="bGrid"></div>`;
+  <div class="bank-grid" id="bGrid"></div>
+  <button class="btn" id="bMore" style="width:100%;margin-top:var(--gutter)" hidden></button>`;
+  // 題庫只讀 index.json（每張卡附 90 字 teaser），一次畫 PAGE 張，不用逐張下載卡片
+  const PAGE = 60;
+  let shown = PAGE;
   const draw = async () => {
     const sec = $('#bSec').value, an = $('#bAns').value;
     const list = idx.filter(c => (!sec || c.sector === sec) && (!an || (an === 'done') === !!A[c.id]));
-    const cards = await Promise.all(list.slice(0, 120).map(c => loadCard(c.id).catch(() => null)));
-    $('#bGrid').innerHTML = cards.filter(Boolean).map(c => {
+    const page = list.slice(0, shown);
+    // 舊版 index 沒有 teaser 的卡才去抓卡片本身
+    await Promise.all(page.filter(c => c.teaser == null).map(async c => { c.teaser = (await loadCard(c.id).catch(() => null))?.summary?.slice(0, 90) || ''; }));
+    $('#bGrid').innerHTML = page.map(c => {
       const a = A[c.id];
       return `<a class="bank-item" href="#/card/${c.id}">
         <div class="row"><span class="tag">#${c.n}</span><span class="tag">${esc(c.sector)}</span><span class="tag warn">${SESSION[c.session]}</span><span class="sub" style="margin-left:auto">${esc(c.releasedOn)}</span></div>
-        <div class="t">${esc(c.summary)}</div>
+        <div class="t">${esc(c.teaser)}…</div>
         <div class="row">${a ? `<span class="tag pos">已作答 · ${a.result.total} 分</span><span class="sub mono">${esc(a.ticker)}</span>` : '<span class="tag warn">未作答</span>'}</div></a>`;
     }).join('') || '<p class="empty">沒有符合的卡片。</p>';
+    $('#bMore').hidden = list.length <= shown;
+    $('#bMore').textContent = `再顯示 ${Math.min(PAGE, list.length - shown)} 張（共 ${list.length}）`;
   };
-  $('#bSec').onchange = $('#bAns').onchange = draw;
+  $('#bMore').onclick = () => { shown += PAGE; draw(); };
+  $('#bSec').onchange = $('#bAns').onchange = () => { shown = PAGE; draw(); };
   draw();
 }
 
@@ -339,11 +327,6 @@ async function renderStats() {
     <section class="card"><h2>區間命中率</h2><div class="big">${pct0(S.binHit)}</div><p class="sub">公司命中 ${pct0(S.pickHit)}</p></section>
     <section class="card"><h2>平均 Brier</h2><div class="big">${f(S.brier)}</div><p class="sub">越小越好；永遠填 50% = 0.250</p></section>
     <section class="card"><h2>累計得分</h2><div class="big">${Math.round(S.total)}</div><p class="sub">${S.formal} 題正式作答，${S.n - S.formal} 題提示模式</p></section>
-    <section class="card"><h2>情緒判斷 accuracy</h2><div class="big">${pct0(S.sentiment.acc)}</div>
-      <p class="sub">${S.sentiment.n} 句重點、${S.sentiment.cards} 張卡</p>
-      <div class="tbl-wrap" style="margin-top:8px"><table class="tbl"><thead><tr><th>類別</th><th>句數</th><th>Recall</th><th>Precision</th></tr></thead><tbody>
-        ${['bullish', 'neutral', 'bearish'].map(k => `<tr><td>${SENT[k][0]} <span class="sub">${k}</span></td><td>${S.sentiment.cls[k].n}</td><td>${pct0(S.sentiment.cls[k].recall)}</td><td>${pct0(S.sentiment.cls[k].precision)}</td></tr>`).join('')}
-      </tbody></table></div></section>
     <section class="card"><h2>連續作答</h2><div class="big">${S.streak} 天</div></section>
     <section class="card"><h2>匯出</h2><div class="ctrl"><button class="btn btn-sm" id="xJson">JSON</button><button class="btn btn-sm" id="xCsv">CSV</button><label class="btn btn-sm">匯入 JSON<input type="file" id="xImp" accept="application/json" hidden></label></div><p class="sub" style="margin-top:8px">匯出後可在其他裝置匯入還原統計，或拿去做因子研究。</p></section>
     <section class="card w6"><h2>校準曲線 <span class="sub">信心分箱 vs 實際命中</span></h2><svg class="calib" id="calib" viewBox="0 0 400 260"></svg></section>
@@ -459,6 +442,6 @@ const DEMO_PRIOR = {
       reaction: { session: 'AMC', gap: 0.03, r1: 0.04, r5: 0.05, excess: { sector: { r1: 0.032, r5: 0.04, r20: 0.03 }, market: { r1: 0.035, r5: 0.045, r20: 0.04 } } } },
   ],
 };
-function demoIndex() { return demoCards().map(c => ({ id: c.id, n: c.n, releasedOn: c.releasedOn, sector: c.sector, session: c.session })); }
+function demoIndex() { return demoCards().map(c => ({ id: c.id, n: c.n, releasedOn: c.releasedOn, sector: c.sector, session: c.session, teaser: c.summary.slice(0, 90) })); }
 
 route();
