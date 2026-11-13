@@ -340,9 +340,9 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 | `earnings-guess/pipeline/` | Python：`models.py`（Pydantic）、`redact.py`（去識別化 + 殘留檢查）、`reaction.py`（yfinance 反應）、`calendar_us.py`（NYSE 交易日，BMO / AMC → t0）、`pipeline.py`（排程規則、發佈）、`cli.py` |
 | `earnings-guess/config/` | `benchmarks.yaml`（sector → ETF，以及 watchlist 板塊 → sector 對照）、`release.yaml`（每日張數、間隔、答案打散、區間邊界）、`meta.yaml`（補 sector / aliases / BMO-AMC / 指定釋出日）、`redact_allowlist.txt` |
 | `earnings-guess/data/` | 已釋出的公開卡（只新增不覆蓋）與 `index.json` |
-| `.github/workflows/earnings_guess_release.yml` | 每天 22:17 UTC（台灣 06:17）把反應視窗已結束的卡全部上架（`per_day: 0` = 不限量，玩家可以一直玩）；可手動指定 `count` / `id` / `dry_run` |
+| `.github/workflows/earnings_guess_release.yml` | **手動執行**（Actions → Run workflow），把反應視窗已結束的卡全部上架（`per_day: 0` = 不限量）；可手動指定 `count` / `id` / `dry_run` |
 
-佇列就是 Firestore 既有的 `earnings_calls`，排程狀態存在 Firestore `earnings_guess_state/schedule`（沒有 client rule，瀏覽器讀不到）。缺 sector / session 或去識別化有疑慮的卡會開 GitHub Issue，補 `meta.yaml` 後下次排程自動重新檢查。
+佇列就是 Firestore 既有的 `earnings_calls`，排程狀態存在 Firestore `earnings_guess_state/schedule`（沒有 client rule，瀏覽器讀不到）。sector 依序取：卡片 → `meta.yaml` → watchlist 板塊（有對照用對照，沒有就直接用板塊名）→ `Other`（基準 SPY）。缺 BMO/AMC（yfinance 也推不出）或去識別化有疑慮的卡會開 GitHub Issue，補 `meta.yaml` 後下次排程自動重新檢查。
 
 ```bash
 pip install -r earnings-guess/pipeline/requirements.txt

@@ -1,12 +1,10 @@
-name: Earnings Guess — daily release
+name: Earnings Guess — release cards
 
-# 每天台灣時間 06:17 釋出法說會盲猜卡片（SDD 5.3）。
+# 手動上架法說會盲猜卡片（Actions → Run workflow）；不排程。
 # 佇列 = Firestore earnings_calls（網站既有的法說會卡片），排程狀態存在
 # Firestore earnings_guess_state/schedule（沒有任何 client rule，瀏覽器讀不到）。
 # 公開卡寫到 earnings-guess/data/calls/，只新增不覆蓋。
 on:
-  schedule:
-    - cron: '17 22 * * *'          # 22:17 UTC = 06:17 台灣
   workflow_dispatch:
     inputs:
       count:
