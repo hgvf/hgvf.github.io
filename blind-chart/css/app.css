@@ -88,10 +88,6 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
 
 /* ── setup ── */
 .setup-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--gutter); align-items: start; }
-.preset-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
-.preset { text-align: left; padding: 12px 14px; border-radius: var(--r); border: 1px solid var(--line-strong); background: var(--card-solid); display: grid; gap: 4px; }
-.preset.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-l); }
-.preset b { font-size: .92rem; } .preset span { font-size: .78rem; color: var(--muted); font-family: var(--mono); overflow-wrap: anywhere; }
 .resume { display: grid; gap: 8px; }
 .resume-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--line); background: var(--card-solid); }
 .resume-item .grow { flex: 1; min-width: 0; font-size: .86rem; }
@@ -115,7 +111,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
 .ind-toggles button { font-size: .74rem; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--line-strong); color: var(--text2); }
 .ind-toggles button.on { background: var(--accent-l); border-color: var(--accent); color: var(--accent); }
 .chart-main { flex: 1; min-height: 200px; position: relative; }
-.chart-sub { height: 120px; margin-top: 4px; border-top: 1px dashed var(--line); }
+.chart-sub { height: 120px; margin-top: 4px; border-top: 1px dashed var(--line); position: relative; }
 .chart-sub[hidden] { display: none; }
 .legend { position: absolute; left: 8px; top: 6px; z-index: 3; font-size: .74rem; font-family: var(--mono); display: flex; gap: 10px; flex-wrap: wrap; pointer-events: none; background: rgba(251,246,238,.75); border-radius: 6px; padding: 2px 6px; }
 .legend i { display: inline-block; width: 10px; height: 3px; vertical-align: middle; margin-right: 3px; border-radius: 2px; }
@@ -199,7 +195,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
   .mobile-tabs button { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--card-solid); font-weight: 600; font-size: .88rem; }
   .mobile-tabs button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
   .play [data-pane] { display: none; }
-  .play[data-tab="order"] [data-pane="order"], .play[data-tab="pf"] [data-pane="pf"], .play[data-tab="log"] [data-pane="log"] { display: block; }
+  .play[data-tab="order"] [data-pane="order"], .play[data-tab="pf"] [data-pane="pf"], .play[data-tab="rule"] [data-pane="rule"], .play[data-tab="log"] [data-pane="log"] { display: block; }
   .play .hint { order: 0; }
   .desk-ctrl { display: none !important; }
   .mobile-bar {
@@ -228,49 +224,23 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: .84rem; }
 .strat-group { font-size: .74rem; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin: 12px 0 6px; }
 .strat-group:first-of-type { margin-top: 4px; }
 .strat-list button { display: flex; align-items: center; gap: 8px; }
-.strat-list button > span:first-child { flex: 1; min-width: 0; }
-.sh-chip { flex: none; font-family: var(--mono); font-size: .7rem; font-weight: 600; padding: 1px 6px; border-radius: 6px; background: var(--bg2); color: var(--text2); }
-.sh-chip.pos { background: var(--pos-l); color: var(--pos); } .sh-chip.neg { background: var(--neg-l); color: var(--neg); }
 .si-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-.si-head h2 { margin: 0; }
-.si-rules { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: .9rem; line-height: 1.6; }
-.si-rules dt { font-weight: 700; color: var(--accent); white-space: nowrap; display: flex; align-items: flex-start; gap: 2px; }
-.si-source { margin-top: 12px; padding: 10px 12px; border-radius: var(--r); background: var(--bg2); font-size: .84rem; line-height: 1.65; display: grid; gap: 4px; }
-.si-source b { color: var(--text2); }
 .si-tables { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; align-items: start; }
 .si-tbl td, .si-tbl th { padding: 5px 8px; }
 .si-note { margin-top: 8px; line-height: 1.6; }
-.preset-top { display: flex; gap: 6px; align-items: center; min-height: 20px; }
-.preset-top .sh-chip { margin-left: auto; }
-.preset .preset-desc { font-family: var(--sans); font-size: .8rem; color: var(--text2); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 @media (max-width: 900px) { .si-tables { grid-template-columns: minmax(0, 1fr); } }
 
 /* ── 策略頁改版 ── */
 .ed-aside { position: sticky; top: calc(var(--top) + var(--gutter)); max-height: calc(100dvh - var(--top) - 2 * var(--gutter)); overflow-y: auto; }
-.ed-overview-link { display: block; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--card-solid); font-weight: 600; font-size: .88rem; }
-.ed-overview-link.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-l); }
 .ed-select { display: none; margin-top: 8px; }
-.lv { font-size: .66rem; font-weight: 700; padding: 0 5px; border-radius: 5px; background: var(--pos-l); color: var(--pos); vertical-align: 1px; white-space: nowrap; }
 .ed-side { display: grid; gap: var(--gutter); position: sticky; top: calc(var(--top) + var(--gutter)); max-height: calc(100dvh - var(--top) - 2 * var(--gutter)); overflow-y: auto; min-width: 0; }
 .ed-head .ed-title { font-size: 1.35rem; margin: 2px 0 6px; }
 .ed-idea { font-size: .95rem; line-height: 1.65; color: var(--text2); margin-bottom: 10px; }
 .dirty-tag { font-size: .8rem; font-weight: 600; color: var(--warn); margin-left: auto; }
 .ed-actions { margin-top: 12px; }
-.prof-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.prof { display: inline-flex; flex-direction: column; gap: 1px; padding: 6px 10px; border-radius: 10px; background: var(--card-solid); border: 1px solid var(--line); font-size: .82rem; min-width: 84px; }
-.prof b { font-size: .7rem; font-weight: 600; color: var(--muted); }
-.prof span { font-family: var(--mono); font-weight: 600; }
 .ed-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -4px -4px 14px; padding: 0 4px; overflow-x: auto; }
 .ed-tabs button { padding: 9px 14px; font-weight: 600; font-size: .9rem; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
 .ed-tabs button.on { color: var(--accent); border-bottom-color: var(--accent); }
-.flow { display: grid; gap: 10px; }
-.flow-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; }
-.flow-n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem; }
-.flow-body { padding: 10px 12px; border-radius: var(--r); background: var(--card-solid); border: 1px solid var(--line); min-width: 0; }
-.flow-title { font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 2px; }
-.flow-body p { font-size: .9rem; line-height: 1.65; }
-.flow-now { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); font-size: .85rem; display: grid; gap: 4px; }
-code.expr, .flow-now code { font-family: var(--mono); font-size: .8rem; background: var(--bg2); padding: 2px 6px; border-radius: 5px; overflow-wrap: anywhere; }
 .rule-list { margin-left: 1.1em; display: grid; gap: 3px; line-height: 1.55; }
 .rule-list li { list-style: disc; }
 .fac-tbl td, .fac-tbl th { white-space: normal; text-align: left; vertical-align: top; }
@@ -286,10 +256,8 @@ code.expr, .flow-now code { font-family: var(--mono); font-size: .8rem; backgrou
 .knob-ctrl input[type=range] { width: 100%; accent-color: var(--accent); }
 .knob-num { padding: 6px 8px; font-size: .85rem; }
 .knob-unit { font-size: .78rem; color: var(--muted); min-width: 2.5em; }
-.knob-help { font-size: .8rem; color: var(--text2); line-height: 1.55; }
 .rule-sec { padding: 4px 0 14px; border-bottom: 1px dashed var(--line); margin-bottom: 12px; }
 .rule-sec h3 { margin-top: 4px !important; display: flex; align-items: center; gap: 2px; }
-.sec-intro { font-size: .84rem; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
 .vars-grid { display: grid; gap: 6px; margin-bottom: 8px; }
 .var-row { display: grid; grid-template-columns: 120px 140px auto; gap: 8px; align-items: center; }
 .cheat { margin-top: 6px; padding: 10px 12px; border-radius: var(--r); background: var(--bg2); }
@@ -298,11 +266,6 @@ code.expr, .flow-now code { font-family: var(--mono); font-size: .8rem; backgrou
 .cheat-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .chip-sm { font-size: .74rem; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--card-solid); }
 .chip-sm:hover { border-color: var(--accent); color: var(--accent); }
-.si-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 4px; }
-.si-links a { color: var(--accent); text-decoration: underline; }
-.ref-list { display: grid; gap: 10px; font-size: .86rem; line-height: 1.6; }
-.ref-list li { list-style: none; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-.ref-list a { color: var(--accent); text-decoration: underline; }
 .cat-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .cat-card { padding: 12px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--card-solid); font-size: .86rem; line-height: 1.6; }
 .cat-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
@@ -317,8 +280,6 @@ code.expr, .flow-now code { font-family: var(--mono); font-size: .8rem; backgrou
 .ov-tbl .bh-row td { background: var(--bg2); color: var(--text2); font-style: italic; }
 .progress { height: 6px; border-radius: 999px; background: var(--bg2); overflow: hidden; margin-top: 6px; }
 .progress > i { display: block; height: 100%; background: var(--accent); }
-.preset-pick { margin-top: 8px; font-size: .84rem; }
-.preset-pick a { color: var(--accent); text-decoration: underline; }
 @media (max-width: 1200px) {
   .editor-ov { grid-template-columns: 220px minmax(0, 1fr); }
   .cat-cards { grid-template-columns: minmax(0, 1fr); }
@@ -332,3 +293,75 @@ code.expr, .flow-now code { font-family: var(--mono); font-size: .8rem; backgrou
   .knob-ctrl { grid-template-columns: minmax(0, 1fr) 80px auto auto; }
   .var-row { grid-template-columns: 90px minmax(0, 1fr) auto; }
 }
+
+/* ── 白話規則（開始頁、遊戲頁、策略頁共用） ── */
+.pl { display: grid; gap: 8px; }
+.pl-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: start; }
+.pl-lbl { font-size: .74rem; font-weight: 700; text-align: center; padding: 2px 0; border-radius: 6px; background: var(--bg2); color: var(--text2); margin-top: 2px; }
+.pl-lbl.buy { background: var(--pos-l); color: var(--pos); } .pl-lbl.sell { background: var(--neg-l); color: var(--neg); }
+.pl-lbl.add { background: rgba(37,99,235,.1); color: var(--blue); }
+.pl-list { margin-left: 1.1em; display: grid; gap: 2px; font-size: .9rem; line-height: 1.6; }
+.pl-list li { list-style: disc; }
+.pl-list b { color: var(--accent); font-family: var(--mono); font-weight: 600; }
+.pl code, .ind-list code { font-family: var(--mono); font-size: .8rem; background: var(--bg2); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
+.link { color: var(--accent); text-decoration: underline; font-size: .86rem; }
+
+/* ── 開始頁 ── */
+.pick-groups { display: grid; gap: 8px; }
+.pick-row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; align-items: center; }
+.pick-cat { font-size: .78rem; font-weight: 600; color: var(--muted); }
+.chip-s { padding: 6px 12px; font-size: .86rem; }
+.pick-info { margin-top: 10px; padding: 12px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--card-solid); }
+.pick-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.pick-head b { font-size: 1rem; }
+.pick-more { margin-left: auto; color: var(--accent); text-decoration: underline; font-size: .84rem; }
+.pick-idea { font-size: .86rem; color: var(--text2); margin-bottom: 8px; line-height: 1.6; }
+.risk-amt { align-self: center; }
+.howto { margin-left: 1.1em; display: grid; gap: 4px; font-size: .9rem; line-height: 1.6; }
+.howto li { list-style: disc; }
+.keys { margin-top: 10px; line-height: 2; }
+
+/* ── 遊戲頁 ── */
+.tg-lbl { font-size: .7rem; color: var(--muted); align-self: center; margin-right: 2px; }
+.tg-sep { width: 1px; align-self: stretch; background: var(--line-strong); margin: 0 4px; }
+.ind-toggles .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; }
+.card-link { margin-left: auto; font-size: .8rem; font-weight: 500; color: var(--accent); text-decoration: underline; }
+.rule-card .pl-list { font-size: .84rem; }
+.rule-card .pl-row { grid-template-columns: 34px minmax(0, 1fr); }
+.mk-list { display: grid; gap: 3px; font-size: .82rem; line-height: 1.5; margin-bottom: 8px; }
+.mk-list li { list-style: none; display: flex; align-items: center; gap: 6px; }
+.mk { width: 14px; text-align: center; font-size: .8rem; flex: none; }
+.ln { width: 14px; height: 0; border-top: 2px solid var(--c); flex: none; }
+.ln.dash { border-top-style: dashed; }
+.sub-legend { top: 4px; }
+
+/* ── 策略頁 ── */
+.ed-nav { display: block; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--card-solid); font-weight: 600; font-size: .88rem; margin-bottom: 6px; }
+.ed-nav.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-l); }
+.ed-imp { margin-top: 12px; }
+.stat-line { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .86rem; color: var(--text2); }
+.stat-line b { font-family: var(--mono); }
+.err-list:empty { display: none; }
+.err-list { margin-top: 10px; }
+.ind-list { display: grid; gap: 4px; font-size: .86rem; }
+.ind-list li { list-style: none; display: grid; grid-template-columns: 90px 160px minmax(0, 1fr); gap: 8px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.knob-head .qm { margin-left: 2px; }
+
+/* ── JSON 寫法 ── */
+.gd p { font-size: .88rem; line-height: 1.7; margin-bottom: 8px; }
+.gd p code, .gd-tbl code { font-family: var(--mono); font-size: .78rem; background: var(--bg2); padding: 1px 5px; border-radius: 5px; }
+.gd-toc { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .88rem; }
+.gd-toc a { color: var(--accent); text-decoration: underline; }
+.gd-code { font-family: var(--mono); font-size: .8rem; line-height: 1.55; background: var(--bg2); padding: 12px; border-radius: var(--r); overflow-x: auto; }
+.gd-tbl td, .gd-tbl th { text-align: left; white-space: normal; vertical-align: top; }
+.gd-tbl td:first-child { white-space: nowrap; }
+.gd section { scroll-margin-top: calc(var(--top) + 12px); }
+@media (max-width: 900px) {
+  .pick-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .ind-list li { grid-template-columns: 80px minmax(0, 1fr); }
+  .ind-list li .sub { grid-column: 1 / -1; }
+  .gd-tbl td:first-child { white-space: normal; }
+}
+
+/* 程式碼不要連字（>= 不要變成 ≥） */
+.mono, code, pre, kbd, textarea.input, .input.mono { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }

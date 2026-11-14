@@ -372,12 +372,12 @@ class Run:
             picks.append((key, meta))
             self.log(json.dumps({'key': key, 'public': {**pub, 'answer': '<obfuscated>'}, 'answer': ans} if self.dry else {'released': key, 'id': pid}, ensure_ascii=False, indent=1))
         if missing:
-            self.issues.append({'title': f'法說會盲猜：{len(missing)} 張卡缺遊戲欄位', 'labels': ['earnings-guess', 'needs_review'],
+            self.issues.append({'title': f'賭財報：{len(missing)} 張卡缺遊戲欄位', 'labels': ['earnings-guess', 'needs_review'],
                                 'body': '這些卡還不能排進佇列：\n\n| 卡片 | 原因 |\n|---|---|\n' + '\n'.join(f'| {k} | {"；".join(p)} |' for k, p in missing)
                                 + '\n\n在 `earnings-guess/config/meta.yaml` 補上即可，下次排程會自動重新檢查。'})
         left = sum(1 for _, c, st, p in items if c and st.get('status') not in ('released', 'invalid') and not p)
         if left - len(picks) < int(self.cfg.get('min_queue_alert', 7)):
-            self.issues.append({'title': '法說會盲猜：佇列快用完了，請補卡', 'labels': ['earnings-guess'],
+            self.issues.append({'title': '賭財報：佇列快用完了，請補卡', 'labels': ['earnings-guess'],
                                 'body': f'目前還沒釋出、資料完整的卡剩 {left - len(picks)} 張（門檻 {self.cfg.get("min_queue_alert", 7)}）。\n\n用財報電話會議分析頁的匯入功能新增卡片即可，pipeline 會自動排進佇列。'})
         if not self.dry:
             self.state['lastRun'] = datetime.now(timezone.utc).isoformat()
@@ -431,7 +431,7 @@ class Run:
         return sum(1 for v in recent if v.get('outperform')) + (1 if out else 0) <= mx
 
     def _issue(self, key, what, lines):
-        return {'title': f'法說會盲猜：{key} {what}', 'labels': ['earnings-guess', 'needs_review'],
+        return {'title': f'賭財報：{key} {what}', 'labels': ['earnings-guess', 'needs_review'],
                 'body': '\n'.join(['卡片沒有自動釋出，原因：', '', *[f'- {x}' for x in lines if x], '',
                                    '處理方式：在 `earnings-guess/config/meta.yaml` 補上 `tickers.<T>.aliases` / `sector` / `sessions`，'
                                    '或直接修改卡片文字。下次排程會自動重新檢查，不需要手動改狀態。'])}

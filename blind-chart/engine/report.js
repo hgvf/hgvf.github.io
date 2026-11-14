@@ -104,7 +104,7 @@ export function reportMarkdown(rep, meta = {}) {
   const row = (k, a, s, b) => `| ${k} | ${a} | ${s} | ${b} |`;
   const A = rep.stats.actual, S = rep.stats.shadow;
   const lines = [
-    `# 盲測 K 線檢討報告${meta.symbol ? ` — ${meta.symbol} ${meta.name || ''}` : ''}`, '',
+    `# 你有紀律嗎? 檢討報告${meta.symbol ? ` — ${meta.symbol} ${meta.name || ''}` : ''}`, '',
     meta.startDate ? `期間：${meta.startDate} → ${meta.endDate}　策略：${meta.strategy || ''}` : '', '',
     `**紀律分數 ${rep.score}**　規則遵守率 ${f(rep.complianceRate, 0)}%　Shadow − Actual = ${f(rep.gap, 0)} 點`, '',
     '| 指標 | Actual | Shadow | Buy & hold |', '|---|---|---|---|',

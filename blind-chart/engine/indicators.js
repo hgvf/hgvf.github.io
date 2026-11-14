@@ -210,6 +210,28 @@ registerIndicator({
   },
 });
 registerIndicator({
+  type: 'kd', label: 'KD 隨機指標', pane: 'sub', outputs: ['k', 'd'],
+  paramsSchema: { type: 'object', properties: { length: int(9), kSmooth: int(3, 1, 20), dSmooth: int(3, 1, 20) }, required: ['length'] },
+  warmup: p => p.length + (p.kSmooth + p.dSmooth) * 4,
+  // 台灣常用算法：RSV = (收 − N 日最低) ÷ (N 日最高 − N 日最低) × 100；
+  // K = 前 K × (1 − 1/kSmooth) + RSV / kSmooth；D 同理平滑 K。起始值 50。
+  compute: (b, p) => {
+    const { high: h, low: l, close: c } = b, n = c.length, L = p.length;
+    const k = NaNArr(n), d = NaNArr(n);
+    let pk = 50, pd = 50;
+    for (let i = L - 1; i < n; i++) {
+      let hi = -Infinity, lo = Infinity;
+      for (let j = i - L + 1; j <= i; j++) { if (h[j] > hi) hi = h[j]; if (l[j] < lo) lo = l[j]; }
+      const rsv = hi > lo ? (c[i] - lo) / (hi - lo) * 100 : 50;
+      if (!Number.isFinite(rsv)) continue;
+      pk = pk + (rsv - pk) / p.kSmooth;
+      pd = pd + (pk - pd) / p.dSmooth;
+      k[i] = pk; d[i] = pd;
+    }
+    return { k, d };
+  },
+});
+registerIndicator({
   type: 'adx', label: 'ADX / DMI', pane: 'sub', outputs: ['adx', 'pdi', 'mdi'],
   paramsSchema: { type: 'object', properties: { length: int(14) }, required: ['length'] },
   warmup: p => p.length * 5,

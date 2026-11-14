@@ -42,8 +42,8 @@ export async function deleteSession(id) {
 }
 
 export function getSettings() {
-  try { return { hint: 'full', hideDiscipline: false, market: 'TW', presetId: 'donchian-breakout-v1', playBars: 250, mode: 'single', campaignN: 10, speed: 4, ...JSON.parse(localStorage.getItem('bc.settings') || '{}') }; }
-  catch { return { hint: 'full', market: 'TW', presetId: 'donchian-breakout-v1', playBars: 250, mode: 'single', campaignN: 10, speed: 4 }; }
+  try { return { hint: 'full', hideDiscipline: false, market: 'TW', presetId: 'donchian-breakout-v1', playBars: 250, mode: 'single', campaignN: 10, speed: 4, risk: 0.01, ...JSON.parse(localStorage.getItem('bc.settings') || '{}') }; }
+  catch { return { hint: 'full', market: 'TW', presetId: 'donchian-breakout-v1', playBars: 250, mode: 'single', campaignN: 10, speed: 4, risk: 0.01 }; }
 }
 export function setSettings(patch) {
   const s = { ...getSettings(), ...patch };

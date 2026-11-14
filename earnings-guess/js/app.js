@@ -1,4 +1,4 @@
-// app.js — 法說會盲猜 frontend. Reads data/index.json + data/calls/<id>.json,
+// app.js — 賭財報（法說會盲猜）frontend. Reads data/index.json + data/calls/<id>.json,
 // keeps answers in localStorage (one answer per card per browser).
 import { deobfuscate, obfuscate } from './obf.js';
 import { drawCallChart } from './chart.js';

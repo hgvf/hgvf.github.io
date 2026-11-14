@@ -318,7 +318,7 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 ⚠️ 新增了 `split_tables` 的 rules，需要重新部署：`firebase deploy --only firestore:rules`。
 
 
-## 13. Side Project：盲測K線紀律訓練場（`blind-chart/`）
+## 13. Side Project：你有紀律嗎?（盲測 K 線，`blind-chart/`）
 
 全版面靜態頁，網址 `/blind-chart/`。不需 build：原生 ES modules，圖表用 CDN 的 lightweight-charts。
 
@@ -331,9 +331,9 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 | `blind-chart/js/` | 前端：開始 / 遊戲 / 報告 / 歷史 / 策略編輯器，Session 存 IndexedDB |
 | `.github/workflows/blind_chart_puzzles.yml` | 下載行情 Release → 出題 → force-push 到 orphan branch `blind-chart-puzzles` |
 
-行情資料的上傳格式見 **`blind-chart/DATA.md`**。內建 15 個策略的說明、旋鈕、出處與題庫回測見 **`blind-chart/STRATEGIES.md`**（策略頁 `#/editor` 有總覽比較、旋鈕調整與快速回測）（重跑回測：`node blind-chart/tools/backtest-presets.mjs --bank <題庫資料夾>`）。題庫還沒發佈前，頁面會自動改用合成示範題。
+行情資料的上傳格式見 **`blind-chart/DATA.md`**。內建 15 個策略的說明、旋鈕、出處與題庫回測見 **`blind-chart/STRATEGIES.md`**（策略頁 `#/editor` 有總覽比較、旋鈕調整與快速回測；策略 JSON 寫法在 `#/guide`）（重跑回測：`node blind-chart/tools/backtest-presets.mjs --bank <題庫資料夾>`）。題庫還沒發佈前，頁面會自動改用合成示範題。
 
-## 14. Side Project：法說會盲猜（`earnings-guess/`）
+## 14. Side Project：賭財報（法說會盲猜，`earnings-guess/`）
 
 | 路徑 | 說明 |
 |---|---|

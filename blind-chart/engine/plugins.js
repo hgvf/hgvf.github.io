@@ -117,13 +117,15 @@ registerSizing({ method: 'percent_equity', label: '帳戶 % 部位', paramsSchem
 registerSizing({ method: 'fixed_shares', label: '固定股數', paramsSchema: { type: 'object', properties: { shares: { type: 'number', default: 1000 } } }, qty: x => x.p.shares });
 registerSizing({ method: 'vol_target', label: '波動度目標', paramsSchema: { type: 'object', properties: { targetVolPct: { type: 'number', default: 0.01 }, atrId: { type: 'string' } } }, qty: x => x.equity * x.p.targetVolPct / Math.max(x.atr, 1e-9) });
 
-/** Suggested entry size with caps & lot rounding. Returns { qty, riskPerShare, R } */
+/** Suggested entry size with caps & lot rounding. Returns { qty, riskPerShare, R }
+    caps: maxPositionPct（單筆市值上限）、maxRiskPct（每筆最多賠帳戶幾 %）、cashOnly、maxOpenRiskR */
 export function sizeEntry(spec, x, lot) {
   const s = spec.sizing || {};
   const plugin = SIZING[s.method] || SIZING.max_loss_amount;
   let q = plugin.qty({ ...x, p: { ...s, amount: s.amount ?? 10000 } });
   const caps = s.caps || {};
   if (isNum(caps.maxPositionPct)) q = Math.min(q, x.equity * caps.maxPositionPct / x.price);
+  if (isNum(caps.maxRiskPct)) q = Math.min(q, x.equity * caps.maxRiskPct / dist(x));   // 每筆最多賠（開始頁設定）
   if (caps.cashOnly !== false) q = Math.min(q, x.cash / x.price);
   if (isNum(caps.maxOpenRiskR) && s.method === 'max_loss_amount' && isNum(s.amount)) {
     q = Math.min(q, caps.maxOpenRiskR * s.amount / dist(x));
@@ -138,3 +140,15 @@ export const PYRAMID_SIZE = {
   pyramid_decreasing: (pos, v) => pos.initialShares * Math.pow(v ?? 0.5, pos.adds),
   risk_based: (pos, v, price, stop) => (v ?? 0.5) * pos.R0 / Math.max(price - stop, 1e-9),
 };
+
+/** 開始頁的「每筆最多賠」：把它套到策略的部位規則。
+    依風險決定股數的方法（risk_percent / max_loss_amount）直接改成這個風險；
+    其他方法（固定比例、波動度…）保留原算法，再加上「每筆最多賠」上限。 */
+export function applyRiskLimit(spec, pct, equity) {
+  if (!(pct > 0)) return spec;
+  const s = spec.sizing = { method: 'max_loss_amount', amount: 10000, ...(spec.sizing || {}) };
+  s.caps = { ...(s.caps || {}), maxRiskPct: pct };
+  if (s.method === 'risk_percent') s.pct = pct;
+  else if (s.method === 'max_loss_amount') s.amount = Math.round(equity * pct);
+  return spec;
+}

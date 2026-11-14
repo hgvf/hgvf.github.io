@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""法說會盲猜 pipeline CLI.
+"""賭財報（法說會盲猜）pipeline CLI.
 
   python earnings-guess/pipeline/cli.py validate  [--source firestore|dir] ...
   python earnings-guess/pipeline/cli.py release   [--count N] [--id TICKER-YEAR-Qn] [--dry-run]

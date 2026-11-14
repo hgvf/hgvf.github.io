@@ -91,5 +91,5 @@ jobs:
           gh release delete "$tag" -y --cleanup-tag -R "${{ github.repository }}" 2>/dev/null || true
           gh release create "$tag" "$RUNNER_TEMP/puzzles-${seed}.tar.gz" "$RUNNER_TEMP/bank/manifest.json" \
             -R "${{ github.repository }}" --title "Blind Chart 題庫 ${seed}" \
-            --notes "盲測K線題庫（seed ${seed}，行情 ${DATA_REPO}@${DATA_TAG}）。網站讀的是 blind-chart-puzzles 分支；這裡是存檔，要回滾就把 tar.gz 解開推回該分支。" \
+            --notes "你有紀律嗎?（盲測 K 線）題庫（seed ${seed}，行情 ${DATA_REPO}@${DATA_TAG}）。網站讀的是 blind-chart-puzzles 分支；這裡是存檔，要回滾就把 tar.gz 解開推回該分支。" \
             --latest=false
