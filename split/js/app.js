@@ -63,6 +63,12 @@ const myMember = t => {
 
 const curTable = () => S.tables.get(S.cur) || null;
 const memberOf = (t, id) => t.members?.find(m => m.id === id) || { id, name: '?', color: '#999' };
+// [[memberId, paid]] for an expense, in member order (unknown ids last).
+const payersOf = (t, e) => {
+  const paid = L.paidOf(e);
+  const order = id => { const i = (t.members || []).findIndex(m => m.id === id); return i < 0 ? 1e9 : i; };
+  return Object.entries(paid).sort((a, b) => order(a[0]) - order(b[0]));
+};
 const avatar = (m, size = '') =>
   `<span class="av ${size}" style="--c:${esc(m.color)}" title="${esc(m.name)}">${esc([...(m.name || '?')][0])}</span>`;
 
@@ -569,7 +575,7 @@ function renderListPanel(t) {
   const entries = Object.entries(t.expenses || {})
     .filter(([, e]) => e && e.amount > 0)
     .filter(([id, e]) => !S.filter || e.payer === S.filter || e.to === S.filter
-      || Object.keys(L.sharesOf(e, id)).includes(S.filter))
+      || L.paidOf(e)[S.filter] > 0 || Object.keys(L.sharesOf(e, id)).includes(S.filter))
     .sort((a, b) => (b[1].ts || 0) - (a[1].ts || 0));
   const chips = `<div class="filter-row">
     <button type="button" class="fchip${S.filter ? '' : ' on'}" data-f="">全部</button>
@@ -623,10 +629,21 @@ function rowHtml(t, id, e) {
   const cat = L.catOf(e.cat);
   const sh = Object.keys(L.sharesOf(e, id));
   const who = sh.length === t.members.length ? '全員' : sh.map(m => memberOf(t, m).name).join('、');
+  const pays = payersOf(t, e);
+  const cc = L.curOf(e, t);
+  // Several payers: name them in the sub line and list each one's amount below,
+  // so everyone can see exactly who put in how much.
+  const payTxt = pays.length > 1
+    ? `${pays.map(([m]) => avatar(memberOf(t, m), 'xs')).join('')} ${pays.length} 人合付`
+    : `${avatar(payer, 'xs')} ${esc(payer.name)} 付`;
+  const payList = pays.length > 1
+    ? `<span class="row-payers">${pays.map(([m, v]) => { const mm = memberOf(t, m);
+        return `<span class="rp">${avatar(mm, 'xs')}${esc(mm.name)} <b>${esc(L.fmt(v, cc))}</b></span>`; }).join('')}</span>`
+    : '';
   return `<button type="button" class="row" data-id="${esc(id)}">
     <span class="row-ic">${cat.emoji}</span>
     <span class="row-main"><span class="row-title">${esc(e.title || cat.label)}</span>
-    <span class="row-sub">${timeOf(e)} · ${avatar(payer, 'xs')} ${esc(payer.name)} 付 · 分給 ${esc(who)}${e.custom ? '（自訂）' : ''}</span></span>
+    <span class="row-sub">${timeOf(e)} · ${payTxt} · 分給 ${esc(who)}${e.custom ? '（自訂）' : ''}</span>${payList}</span>
     ${amtHtml(t, e)}</button>`;
 }
 
@@ -646,7 +663,7 @@ function renderSummaryPanel(t, K, st) {
   const people = t.members.map(m => {
     const pick = k => Object.fromEntries(curs.map(cc => [cc, K.by[cc][m.id]?.[k] || 0]));
     const paid = pick('paid'), share = pick('share'), sent = pick('sent'), recv = pick('recv');
-    const paidList = exps.filter(([, e]) => e.payer === m.id);
+    const paidList = exps.filter(([, e]) => L.paidOf(e)[m.id] > 0);
     const net = netFor(m.id);
     const w = Math.abs(net) / maxAbs * 50;
     const open = S.openMembers.has(m.id);
@@ -668,10 +685,13 @@ function renderSummaryPanel(t, K, st) {
       <div class="pcard-net ${K.complete ? (net > 0 ? 'pos' : net < 0 ? 'neg' : '') : ''}">${netText}
         ${xfer ? `<small>（含還款 ${esc(xfer)}）</small>` : ''}</div>
       <div class="pcard-body"><div>
-        ${paidList.length ? paidList.map(([, e]) => `<div class="mini">
+        ${paidList.length ? paidList.map(([, e]) => {
+          const ec = L.curOf(e, t), mine = L.paidOf(e)[m.id];
+          return `<div class="mini">
           <span>${L.catOf(e.cat).emoji} ${esc(e.title || L.catOf(e.cat).label)}</span>
           <span class="muted">${dayLabel(L.dayKey(e.ts, e.tz))}</span>
-          <b>${esc(L.fmt(e.amount, L.curOf(e, t)))}</b></div>`).join('') : '<p class="muted">還沒有付過錢 😇</p>'}
+          <b>${esc(L.fmt(mine, ec))}${mine !== e.amount ? `<small>合付，共 ${esc(L.fmt(e.amount, ec))}</small>` : ''}</b></div>`;
+        }).join('') : '<p class="muted">還沒有付過錢 😇</p>'}
       </div></div>
     </div>`;
   }).join('');
@@ -907,6 +927,13 @@ function expenseSheet(t, id) {
     custom: !!old?.custom,
   };
   const customVals = old?.custom || {};
+  // 多人合付: who paid and how much each. Only records the money that went
+  // out; how the bill is shared (分給誰) is chosen separately below.
+  const oldPaid = old ? L.paidOf(old) : {};
+  st.multiPay = Object.keys(oldPaid).length > 1;
+  st.payers = new Set(st.multiPay ? Object.keys(oldPaid) : [st.payer]);
+  const payVals = {};                    // memberId → typed text (survives mode toggles)
+  if (st.multiPay) Object.entries(oldPaid).forEach(([m, v]) => { payVals[m] = L.fmtNum(v, ec).replace(/,/g, ''); });
   // Zone: editing keeps the stored zone; new entries use this table's sticky
   // choice ('' = follow the device, i.e. auto-detect).
   const tzPref = old ? (L.validTz(old.tz) ? old.tz : '') : (L.validTz(store.get(tzPrefKey(t.id))) ? store.get(tzPrefKey(t.id)) : '');
@@ -930,9 +957,12 @@ function expenseSheet(t, id) {
       <label class="field"><span>時區</span>
         <select id="eTz">${tzOptions(tzSel)}</select></label>
     </div>
-    <div class="field"><span>誰付的</span>
+    <div class="field"><span>誰付的
+      <span class="seg" id="ePayMode"><button type="button" data-m="one">一人付</button><button type="button" data-m="multi">多人合付</button></span></span>
       <div class="who-row" id="ePayer">${t.members.map(m =>
-        `<button type="button" class="who" data-id="${esc(m.id)}">${avatar(m)}<span>${esc(m.name)}</span></button>`).join('')}</div></div>
+        `<button type="button" class="who" data-id="${esc(m.id)}">${avatar(m)}<span>${esc(m.name)}</span></button>`).join('')}</div>
+      <div class="custom-box" id="ePayers"></div>
+      <div class="split-preview" id="ePayPrev"></div></div>
     <div class="field"><span>分給誰
       <span class="seg" id="eMode"><button type="button" data-m="eq">均分</button><button type="button" data-m="cu">自訂金額</button></span></span>
       <div class="who-row multi" id="eAmong">${t.members.map(m =>
@@ -948,7 +978,17 @@ function expenseSheet(t, id) {
 
     const paint = () => {
       body.querySelectorAll('#eCat .cat-opt').forEach(b => b.classList.toggle('on', b.dataset.c === st.cat));
-      body.querySelectorAll('#ePayer .who').forEach(b => b.classList.toggle('on', b.dataset.id === st.payer));
+      body.querySelectorAll('#ePayer .who').forEach(b => b.classList.toggle('on',
+        st.multiPay ? st.payers.has(b.dataset.id) : b.dataset.id === st.payer));
+      body.querySelectorAll('#ePayMode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'multi') === st.multiPay));
+      const pbox = body.querySelector('#ePayers');
+      if (st.multiPay) {
+        pbox.innerHTML = `<p class="pay-note">填上每個人實際出了多少，加總要等於總金額。這只記錄誰先墊了錢，<b>不會改變下面「分給誰」的分攤</b>。</p>` +
+          t.members.filter(m => st.payers.has(m.id)).map(m => `<label class="cu">${avatar(m, 'sm')}<span>${esc(m.name)}</span>
+          <input inputmode="decimal" data-id="${esc(m.id)}" placeholder="0" value="${esc(payVals[m.id] ?? '')}"></label>`).join('');
+        pbox.querySelectorAll('input').forEach(i => i.addEventListener('input', () => { payVals[i.dataset.id] = i.value; payPreview(); }));
+      } else pbox.innerHTML = '';
+      payPreview();
       body.querySelectorAll('#eAmong .who').forEach(b => b.classList.toggle('on', st.among.has(b.dataset.id)));
       body.querySelectorAll('#eMode button').forEach(b => b.classList.toggle('on', (b.dataset.m === 'cu') === st.custom));
       const box = body.querySelector('#eCustom');
@@ -961,6 +1001,37 @@ function expenseSheet(t, id) {
       preview();
     };
     const customSum = () => [...body.querySelectorAll('#eCustom input')].reduce((s, i) => s + (L.toMinor(i.value || '0', ec) || 0), 0);
+    // Payer amounts actually typed, member order: { memberId: minor > 0 }.
+    const payMap = () => {
+      const o = {};
+      t.members.filter(m => st.payers.has(m.id)).forEach(m => {
+        const v = L.toMinor(payVals[m.id] || '0', ec) || 0;
+        if (v > 0) o[m.id] = v;
+      });
+      return o;
+    };
+    const payPreview = () => {
+      const pv = body.querySelector('#ePayPrev');
+      if (!st.multiPay) { pv.textContent = ''; pv.className = 'split-preview'; return; }
+      const a = amount();
+      if (!st.payers.size) { pv.textContent = '至少選一個付款的人'; pv.className = 'split-preview warn'; return; }
+      if (!(a > 0)) { pv.textContent = '先填上面的總金額'; pv.className = 'split-preview'; return; }
+      const diff = a - Object.values(payMap()).reduce((x, v) => x + v, 0);
+      if (!diff) { pv.textContent = '付款金額剛好 ✓'; pv.className = 'split-preview ok'; return; }
+      pv.className = 'split-preview warn';
+      pv.textContent = diff > 0 ? `付款還差 ${L.fmt(diff, ec)}` : `付款超出 ${L.fmt(-diff, ec)}`;
+      // Exactly one payer still blank → offer to put the remainder on them.
+      const blank = t.members.filter(m => st.payers.has(m.id) && !String(payVals[m.id] ?? '').trim());
+      if (diff > 0 && blank.length === 1) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'link-btn';
+        b.textContent = `補給 ${blank[0].name}`;
+        b.addEventListener('click', () => {
+          payVals[blank[0].id] = L.fmtNum(diff, ec).replace(/,/g, ''); buzz(5); paint();
+        });
+        pv.append(' ', b);
+      }
+    };
     const preview = () => {
       const a = amount(), n = st.among.size, pv = body.querySelector('#ePrev');
       if (!(a > 0) || !n) { pv.textContent = n ? '' : '至少選一個人'; pv.className = 'split-preview' + (n ? '' : ' warn'); return; }
@@ -977,7 +1048,7 @@ function expenseSheet(t, id) {
       }
     };
 
-    amtIn.addEventListener('input', preview);
+    amtIn.addEventListener('input', () => { payPreview(); preview(); });
     body.querySelector('#eCur').addEventListener('change', e => {
       ec = e.target.value; body.querySelector('#eSym').innerHTML = `${esc(L.cur(ec).sym)}<small>${ec} ▾</small>`; buzz(5); paint();
     });
@@ -999,7 +1070,26 @@ function expenseSheet(t, id) {
       if (!timeTouched) tsIn.value = L.tsToWall(Date.now(), effTz());
     });
     body.querySelector('#ePayer').addEventListener('click', e => {
-      const b = e.target.closest('.who'); if (!b) return; st.payer = b.dataset.id; buzz(5); paint();
+      const b = e.target.closest('.who'); if (!b) return;
+      const idm = b.dataset.id;
+      if (!st.multiPay) st.payer = idm;
+      else if (st.payers.has(idm)) st.payers.delete(idm);
+      else st.payers.add(idm);
+      buzz(5); paint();
+    });
+    body.querySelector('#ePayMode').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const multi = b.dataset.m === 'multi';
+      if (multi === st.multiPay) return;
+      st.multiPay = multi;
+      if (multi) st.payers.add(st.payer);
+      else {
+        // Back to one payer: keep whoever put in the most (or the first picked).
+        const pm = payMap();
+        const top = Object.keys(pm).sort((x, y) => pm[y] - pm[x])[0];
+        st.payer = top || t.members.find(m => st.payers.has(m.id))?.id || st.payer;
+      }
+      buzz(5); paint();
     });
     body.querySelector('#eAmong').addEventListener('click', e => {
       const b = e.target.closest('.who'); if (!b) return;
@@ -1027,10 +1117,21 @@ function expenseSheet(t, id) {
       if (!st.among.size) { toast('至少選一個人分攤'); return; }
       const wall = L.wallToTs(tsIn.value, effTz());
       const ts = Number.isFinite(wall) ? wall : Date.now();
+      let payer = st.payer, payers = null;
+      if (st.multiPay) {
+        const pm = payMap();
+        const ids = Object.keys(pm);
+        if (!ids.length) { toast('填一下每個人各付了多少'); return; }
+        const diff = a - ids.reduce((x, m) => x + pm[m], 0);
+        if (diff) { toast(`付款金額加總要等於總金額（${diff > 0 ? '還差' : '超出'} ${L.fmt(Math.abs(diff), ec)}）`); return; }
+        payer = ids.reduce((best, m) => (pm[m] > pm[best] ? m : best), ids[0]);
+        if (ids.length > 1) payers = pm;           // only one >0 → plain single payer
+      }
       const rec = {
         kind: 'expense', amount: a, title: titleIn.value.trim(), cat: st.cat || 'other',
-        ts, tz: effTz(), cur: ec, payer: st.payer, among: t.members.filter(m => st.among.has(m.id)).map(m => m.id),
+        ts, tz: effTz(), cur: ec, payer, among: t.members.filter(m => st.among.has(m.id)).map(m => m.id),
       };
+      if (payers) rec.payers = payers;
       if (st.custom) {
         const cu = {};
         body.querySelectorAll('#eCustom input').forEach(i => { const v = L.toMinor(i.value || '0', ec) || 0; if (v > 0) cu[i.dataset.id] = v; });
@@ -1039,7 +1140,7 @@ function expenseSheet(t, id) {
         rec.among = Object.keys(cu);
       }
       e.currentTarget.disabled = true;
-      store.set(`split_last_${t.id}`, st.payer);
+      store.set(`split_last_${t.id}`, payer);
       if (!old) store.set(tzPrefKey(t.id), tzSel);
       if (!old) store.set(`split_cur_${t.id}`, ec);
       const fab = $('btnAdd');
@@ -1073,6 +1174,7 @@ function settingsSheet(t) {
   const used = new Set();
   Object.entries(t.expenses || {}).forEach(([id, e]) => {
     used.add(e.payer); if (e.to) used.add(e.to);
+    Object.keys(L.paidOf(e)).forEach(m => used.add(m));
     Object.keys(L.sharesOf(e, id)).forEach(m => used.add(m));
   });
   const hasExp = Object.keys(t.expenses || {}).length > 0;
