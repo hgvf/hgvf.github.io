@@ -397,9 +397,7 @@ function renderStrategy(root, list, stats, loaded) {
       <h3>出處</h3>
       ${sourceHTML(basePreset && !builtin ? { source: basePreset.source } : spec)}
       ${backtestTablesHTML(baseId, stats)}
-      ${!builtin && basePreset ? '<p class="sub">↑ 是原版內建策略的數字；你調整後的版本請用右側「快速回測」。</p>' : ''}
-      <h3>延伸閱讀</h3>
-      <ul class="ref-list">${GENERAL_REFERENCES.map(r => `<li><span class="tag">${esc(r.topic)}</span> ${esc(r.ref)}${r.url ? ` <a href="${esc(r.url)}" target="_blank" rel="noopener">↗</a>` : ''}<br><span class="sub">${esc(r.claim)}</span></li>`).join('')}</ul>`;
+      ${!builtin && basePreset ? '<p class="sub">↑ 是原版內建策略的數字；你調整後的版本請用右側「快速回測」。</p>' : ''}`;
   }
 
   function jsonTab() {
