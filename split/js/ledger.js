@@ -5,8 +5,14 @@
 //
 // Expense record (table.expenses[id]):
 //   { kind: 'expense', amount, title, cat, ts, payer, among: [memberId],
-//     custom?: { memberId: amount } }   // custom → unequal split, sums to amount
+//     custom?: { memberId: amount },   // custom → unequal split, sums to amount
+//     payers?: { memberId: amount } }  // several people paid; sums to amount
 //   { kind: 'transfer', amount, ts, payer: fromId, to: toId }   // 還款紀錄
+//
+// Who PAID (payer / payers) and who SHARES the cost (among / custom) are
+// independent: recording that two people each covered part of the bill
+// never changes how the bill is split. With `payers`, `payer` is still set
+// (to the biggest contributor) so filters and older clients keep working.
 
 export const CURRENCIES = {
   TWD: { sym: 'NT$', dec: 0, label: '新台幣' },
@@ -70,6 +76,22 @@ export function sharesOf(exp, id = '') {
   return out;
 }
 
+/** How much each member actually paid for one expense: { memberId: minor }.
+    Falls back to a single `payer` paying the whole amount. A `payers` map
+    that doesn't add up to `amount` is ignored (treated as single payer) so
+    a bad record can never make the books unbalanced. */
+export function paidOf(exp) {
+  if (!exp || exp.kind === 'transfer') return {};
+  const p = exp.payers;
+  if (p && typeof p === 'object') {
+    const ent = Object.entries(p).filter(([, v]) => Number.isInteger(v) && v > 0);
+    if (ent.length && ent.reduce((s, [, v]) => s + v, 0) === exp.amount) return Object.fromEntries(ent);
+  }
+  return { [exp.payer]: exp.amount };
+}
+/** True when more than one member paid for this expense. */
+export const isMultiPay = exp => Object.keys(paidOf(exp)).length > 1;
+
 /* ── Multi-currency ──────────────────────────────────────────────
    Each expense carries its own `cur` (falls back to the table's main
    currency). Balances are kept per currency; to settle in one go the
@@ -109,7 +131,7 @@ export function balances(table, c = table.currency || 'TWD') {
       get(e.to).recv += e.amount;
       return;
     }
-    get(e.payer).paid += e.amount;
+    Object.entries(paidOf(e)).forEach(([m, v]) => { get(m).paid += v; });
     Object.entries(sharesOf(e, id)).forEach(([m, v]) => { get(m).share += v; });
   });
   Object.values(res).forEach(r => { r.net = r.paid - r.share + r.sent - r.recv; });
