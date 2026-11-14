@@ -331,7 +331,7 @@ import 永不刪除 Firestore 裡的資料。若想刪除某個 ticker / 題材�
 | `blind-chart/js/` | 前端：開始 / 遊戲 / 報告 / 歷史 / 策略編輯器，Session 存 IndexedDB |
 | `.github/workflows/blind_chart_puzzles.yml` | 下載行情 Release → 出題 → force-push 到 orphan branch `blind-chart-puzzles` |
 
-行情資料的上傳格式見 **`blind-chart/DATA.md`**。題庫還沒發佈前，頁面會自動改用合成示範題。
+行情資料的上傳格式見 **`blind-chart/DATA.md`**。內建 12 個策略的說明、出處與題庫回測見 **`blind-chart/STRATEGIES.md`**（重跑回測：`node blind-chart/tools/backtest-presets.mjs --bank <題庫資料夾>`）。題庫還沒發佈前，頁面會自動改用合成示範題。
 
 ## 14. Side Project：法說會盲猜（`earnings-guess/`）
 

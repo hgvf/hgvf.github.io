@@ -1,9 +1,25 @@
-// presets.js — built-in Strategy Specs (SDD 4.9). 8.5 待確認：課程中的波段規則
-// 尚未提供，以下三組是通用起點，之後直接改這裡或在 UI 複製修改。
+// presets.js — built-in Strategy Specs (SDD 4.9).
+// 前三組是原本的入門策略，後面是常見策略範本（出處見 source）。每個 preset 另外帶：
+//   category  — 趨勢跟隨 / 動能突破 / 均值回歸（策略頁分組用）
+//   summary   — entry / exit / sizing 的白話說明
+//   source    — 文獻或書籍出處、原文報告的績效（claim）與本站改寫的地方（note）
+// 這些欄位不影響引擎；validateSpec 會忽略。在題庫上的回測數字見 config/preset-stats.json。
+export const CATEGORIES = ['趨勢跟隨', '動能突破', '均值回歸'];
 export const PRESETS = [
   {
     id: 'donchian-breakout-v1',
     name: '20 日突破 + 2ATR 停損 + 3ATR chandelier',
+    category: '趨勢跟隨',
+    summary: {
+      entry: '收盤突破前一根的 20 日高點，且 EMA20 > EMA60',
+      exit: '2 ATR 初始停損；賺 1.5R 保本；賺 2R 後改 3 ATR Chandelier；3R 先賣一半；收盤跌破 EMA60 全出',
+      sizing: '固定最大虧損 1 萬點 ÷ 停損距離，單筆市值上限 30%、總風險 1.5R',
+    },
+    source: {
+      ref: 'Donchian 通道突破（Richard Donchian）；海龜交易法的短週期版本',
+      claim: '通道突破屬於時間序列動能 / 趨勢跟隨。Hurst, Ooi & Pedersen 在多資產期貨上的趨勢跟隨研究（1880 起）報告扣費後 Sharpe 約 0.76–0.77，且在多數股市大跌期間是正報酬；單一股票上的效果通常弱很多。',
+      note: '本站預設的入門策略。',
+    },
     direction: 'long',
     account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
     indicators: [
@@ -29,6 +45,17 @@ export const PRESETS = [
   {
     id: 'ema-pullback-v1',
     name: '多頭排列回檔 EMA20 + 結構停損 + 均線移動停利',
+    category: '均值回歸',
+    summary: {
+      entry: '多頭排列（EMA20 > EMA50 且 EMA50 上揚），前一根回測 EMA20，今天收盤站回 EMA20 並突破前高，RSI > 45',
+      exit: '前一個波段低點下方 0.3 ATR（結構停損）；賺 1R 後收盤跌破 EMA20 − 0.5 ATR 出場；2R 先賣 1/3',
+      sizing: '帳戶 1% 風險 ÷ 停損距離，單筆市值上限 40%',
+    },
+    source: {
+      ref: '多頭趨勢中的回檔買進（pullback）；結構停損放在 swing low 下方',
+      claim: '屬於趨勢內的短期均值回歸，沒有單一權威的績效研究；勝率通常高於突破法，但每筆賺得較少。',
+      note: '',
+    },
     direction: 'long',
     account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
     indicators: [
@@ -54,6 +81,17 @@ export const PRESETS = [
   {
     id: 'turtle-pyramid-v1',
     name: '55 日突破 + 0.5ATR 加碼 ×3 + 10 日低點出場',
+    category: '趨勢跟隨',
+    summary: {
+      entry: '收盤突破前一根的 55 日高點（海龜系統二）',
+      exit: '2 ATR（2N）初始停損；跌破 10 日低點出場；加碼後停損移到均價',
+      sizing: '帳戶 0.5% 風險 ÷ 2N；每再漲 0.5 N 加碼一個單位，最多 3 次，總風險上限 2R',
+    },
+    source: {
+      ref: 'Faith (2007) Way of the Turtle；Dennis & Eckhardt 的海龜交易法則',
+      claim: '原海龜法則用於分散的期貨組合，1980 年代報酬極高但回撤也大（常見 −30% 以上）；分散多市場是它能運作的關鍵，單一股票上勝率低、靠少數大趨勢。',
+      note: '原法一個單位 = 1% 權益 ÷ N，這裡用 0.5% 並設總風險上限。',
+    },
     direction: 'long',
     account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
     indicators: [
@@ -76,6 +114,311 @@ export const PRESETS = [
       riskCap: { maxOpenRiskR: 2 },
     },
     discipline: { entryWindowBars: 1, chaseAtr: 1, sizeTolerancePct: 15, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  // ───────────── 以下為常見策略範本（文獻 / 書籍出處見 source） ─────────────
+  {
+    id: 'sma200-timing-v1',
+    name: '200 日均線擇時（Faber 10 個月均線）',
+    category: '趨勢跟隨',
+    summary: {
+      entry: '收盤價向上穿越 200 日均線',
+      exit: '收盤跌破 200 日均線的 2% 緩衝帶；另有 3 ATR 災難停損',
+      sizing: '帳戶 90% 部位（資產配置型，不追求單筆 R）',
+    },
+    source: {
+      ref: 'Faber (2007) A Quantitative Approach to Tactical Asset Allocation, Journal of Wealth Management',
+      claim: '原文用月線 10 個月均線擇時 S&P 500（1901 起）：年化報酬約 10.2% vs 買進持有 9.3%，跌在均線下時報酬低、波動高；主要價值在降低大回撤。',
+      note: '這裡用 200 日均線近似 10 個月均線，並加 2% 緩衝減少日線來回洗。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr20', type: 'atr', params: { length: 20 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+    ],
+    entry: { signal: 'cross_up(close, sma200)', cooldownBars: 5 },
+    sizing: { method: 'percent_equity', pct: 0.9, caps: { cashOnly: true } },
+    stops: [{ type: 'atr_initial', params: { atrId: 'atr20', k: 3 } }],
+    targets: [],
+    exitSignals: [{ expr: 'close < sma200 * 0.98', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 2, chaseAtr: 1, sizeTolerancePct: 15, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'golden-cross-v1',
+    name: '黃金交叉 50/200 + Chandelier 出場',
+    category: '趨勢跟隨',
+    summary: {
+      entry: '50 日均線向上穿越 200 日均線（黃金交叉）',
+      exit: '死亡交叉出場；賺到 2R 後改用 3 ATR Chandelier 移動停利',
+      sizing: '帳戶 1% 風險 ÷ 停損距離（3 ATR），單筆市值上限 50%',
+    },
+    source: {
+      ref: '經典均線交叉（Brock, Lakonishok & LeBaron 1992 檢驗過的移動平均規則）；Chandelier Exit 出自 Chuck LeBeau',
+      claim: 'Brock 等人 1897–1986 道瓊指數上發現均線訊號後的報酬顯著較高；但後續研究指出扣除成本、近年資料後優勢明顯縮小。',
+      note: '慢速訊號，一題 250 根裡常只有 0–1 次進場。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr22', type: 'atr', params: { length: 22 } },
+      { id: 'sma50', type: 'sma', params: { length: 50 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+    ],
+    entry: { signal: 'cross_up(sma50, sma200)', cooldownBars: 10 },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.5, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr22', k: 3 } },
+      { type: 'chandelier', params: { atrId: 'atr22', k: 3 }, activateWhen: 'pos.unrealizedR >= 2' },
+    ],
+    targets: [],
+    exitSignals: [{ expr: 'cross_down(sma50, sma200)', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 2, chaseAtr: 1, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'connors-rsi2-v1',
+    name: 'Connors RSI(2) 均值回歸',
+    category: '均值回歸',
+    summary: {
+      entry: '收盤 > 200 日均線（只做多頭裡的回檔），且 RSI(2) < 10',
+      exit: '收盤站回 5 日均線；最多持有 10 根；3 ATR 災難停損',
+      sizing: '帳戶 1% 風險 ÷ 3 ATR，單筆市值上限 40%',
+    },
+    source: {
+      ref: 'Connors & Alvarez (2009) Short Term Trading Strategies That Work',
+      claim: '書中在美股指數 / 大型股上報告勝率常在七成以上、持有天數短；原作通常不設停損，門檻多用 RSI(2) < 5。第三方回測在近年指數上的優勢明顯下降。',
+      note: '原作不設停損；這裡為了讓 R 有定義加上 3 ATR 災難停損，並以 10 根時間停損限制持有。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+      { id: 'sma5', type: 'sma', params: { length: 5 } },
+      { id: 'rsi2', type: 'rsi', params: { length: 2 } },
+    ],
+    entry: { signal: 'close > sma200 and rsi2 < 10', cooldownBars: 1 },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.4, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr14', k: 3 } },
+      { type: 'time_stop', params: { bars: 10, minR: 99 } },
+    ],
+    targets: [],
+    exitSignals: [{ expr: 'close > sma5', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 0, chaseAtr: 1, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'minervini-trend-template-v1',
+    name: 'Minervini 趨勢模板 + 20 日突破',
+    category: '動能突破',
+    summary: {
+      entry: '趨勢模板（收盤 > 50 > 150 > 200 日均線、200 日線上揚一個月、距 52 週高點 25% 內、離 52 週低點 30% 以上）且突破 20 日高點、量增 40%',
+      exit: '初始 8% 停損；賺 2R 後保本；收盤跌破 50 日均線出場；3R 先賣 1/3',
+      sizing: '帳戶 1% 風險 ÷ 停損距離，單筆市值上限 25%',
+    },
+    source: {
+      ref: 'Minervini (2013) Trade Like a Stock Market Wizard（SEPA / Trend Template）；O\'Neil CAN SLIM 的 7–8% 停損',
+      claim: '書中以作者自身交易紀錄為主，沒有可重現的系統化 Sharpe / 回撤數據；強調小停損、讓少數大贏家支撐整體報酬。',
+      note: '原法還看基本面與型態（VCP），這裡只實作可量化的趨勢模板與突破。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'sma50', type: 'sma', params: { length: 50 } },
+      { id: 'sma150', type: 'sma', params: { length: 150 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+      { id: 'vol50', type: 'volume_ma', params: { length: 50 } },
+    ],
+    entry: {
+      signal: 'close > sma50 and sma50 > sma150 and sma150 > sma200 and rising(sma200, 20)'
+        + ' and close >= highest(high, 250) * 0.75 and close >= lowest(low, 250) * 1.3'
+        + ' and close > highest(high, 20)[1] and volume > vol50 * 1.4',
+      cooldownBars: 5,
+    },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.25, cashOnly: true } },
+    stops: [
+      { type: 'pct_initial', params: { p: 0.08 } },
+      { type: 'breakeven', params: { atR: 2 } },
+      { type: 'ma_trailing', params: { maId: 'sma50', trigger: 'close' }, activateWhen: 'pos.barsHeld >= 10' },
+    ],
+    targets: [{ at: { r: 3 }, fraction: 0.33 }],
+    exitSignals: [],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'clenow-momentum-v1',
+    name: 'Clenow 迴歸動能 + 波動度部位',
+    category: '動能突破',
+    summary: {
+      entry: '90 日指數迴歸年化斜率 × R² 向上穿越 30，收盤 > 100 日均線，90 天內沒有超過 15% 的單日跳動',
+      exit: '收盤跌破 100 日均線或動能轉負；3 ATR 初始停損',
+      sizing: '波動度目標：股數 = 權益 × 0.5% ÷ ATR（每天預期波動約帳戶 0.5%）',
+    },
+    source: {
+      ref: 'Clenow (2015) Stocks on the Move',
+      claim: '原法是 S&P 500 成分股排名輪動 + 大盤在 200 日線上才買。第三方 1999–2014 回測：年化約 12% vs S&P 500 5.2%，最大回撤約 −24% vs −55%；也有研究指出 R² 對短期報酬沒有預測力。',
+      note: '盲測一次只有一檔，無法做跨股排名；改成單檔門檻版，保留迴歸動能、跳空過濾與 ATR 部位。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr20', type: 'atr', params: { length: 20 } },
+      { id: 'sma100', type: 'sma', params: { length: 100 } },
+      { id: 'lr90', type: 'linreg', params: { length: 90 } },
+    ],
+    entry: { signal: 'cross_up(lr90, 30) and close > sma100 and highest(abs(close / close[1] - 1), 90) < 0.15', cooldownBars: 5 },
+    sizing: { method: 'vol_target', targetVolPct: 0.005, atrId: 'atr20', caps: { maxPositionPct: 0.5, cashOnly: true } },
+    stops: [{ type: 'atr_initial', params: { atrId: 'atr20', k: 3 } }],
+    targets: [],
+    exitSignals: [{ expr: 'close < sma100 or lr90 < 0', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 2, chaseAtr: 1, sizeTolerancePct: 15, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'bb-squeeze-breakout-v1',
+    name: '布林收斂後突破（Squeeze）',
+    category: '動能突破',
+    summary: {
+      entry: '前一根布林寬度接近近 120 日最窄（≤ 最低值 × 1.2），今天收盤突破布林上軌',
+      exit: '2 ATR 初始停損；收盤跌破布林中線出場；2R 先賣一半',
+      sizing: '帳戶 1% 風險 ÷ 2 ATR，單筆市值上限 40%',
+    },
+    source: {
+      ref: 'Bollinger (2001) Bollinger on Bollinger Bands（Squeeze）；Carter (2005) Mastering the Trade（TTM Squeeze）',
+      claim: '波動收斂之後常接著波動擴張是被廣泛觀察到的現象（波動群聚）；但突破方向本身沒有穩定的文獻績效數據，多為實務經驗。',
+      note: '以布林寬度相對歷史低點定義收斂，不使用 Keltner 判斷。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'bb', type: 'bollinger', params: { length: 20, mult: 2 } },
+    ],
+    entry: { signal: 'bb.width[1] <= lowest(bb.width, 120)[1] * 1.2 and cross_up(close, bb.upper)', cooldownBars: 5 },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.4, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr14', k: 2 } },
+      { type: 'ma_trailing', params: { maId: 'bb.mid', trigger: 'close' }, activateWhen: 'pos.barsHeld >= 3' },
+    ],
+    targets: [{ at: { r: 2 }, fraction: 0.5 }],
+    exitSignals: [],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'adx-dmi-trend-v1',
+    name: 'ADX / DMI 趨勢 + 加碼',
+    category: '趨勢跟隨',
+    summary: {
+      entry: 'ADX 向上穿越 20（趨勢開始成形）且 +DI > −DI，收盤 > 200 日均線',
+      exit: '−DI 反穿 +DI 出場；2.5 ATR 初始停損，賺 1.5R 後改 3 ATR Chandelier',
+      sizing: '帳戶 0.75% 風險；獲利 1R 且再漲 1 ATR 時加碼初始部位的一半，最多 2 次，加碼後停損移到均價',
+    },
+    source: {
+      ref: 'Wilder (1978) New Concepts in Technical Trading Systems',
+      claim: 'Wilder 提出 ADX / DMI 用來辨識趨勢強度；原書以範例說明，沒有現代標準的 Sharpe / 回撤統計，後續回測結果依市場差異很大。',
+      note: '加 200 日均線過濾只做多頭；加碼規則示範金字塔式加碼與總風險上限。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'adx14', type: 'adx', params: { length: 14 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+    ],
+    entry: { signal: 'adx14.pdi > adx14.mdi and cross_up(adx14, 20) and close > sma200', cooldownBars: 3 },
+    sizing: { method: 'risk_percent', pct: 0.0075, caps: { maxPositionPct: 0.5, maxOpenRiskR: 1.5, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr14', k: 2.5 } },
+      { type: 'chandelier', params: { atrId: 'atr14', k: 3 }, activateWhen: 'pos.unrealizedR >= 1.5' },
+    ],
+    targets: [],
+    exitSignals: [{ expr: 'cross_down(adx14.pdi, adx14.mdi)', fraction: 1 }],
+    pyramiding: {
+      enabled: true, maxAdds: 2,
+      trigger: 'pos.unrealizedR >= 1 and close > pos.lastAddPrice + 1 * atr14',
+      size: { mode: 'fraction_of_initial', value: 0.5 },
+      onAdd: { moveStop: { type: 'breakeven' } },
+      riskCap: { maxOpenRiskR: 1.5 },
+    },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'supertrend-v1',
+    name: 'SuperTrend 翻多 + 線上移動停損',
+    category: '趨勢跟隨',
+    summary: {
+      entry: 'SuperTrend(10, 3) 由空翻多，且收盤 > 100 日 EMA',
+      exit: '收盤跌破 SuperTrend 線（翻空）出場；2 ATR 初始停損',
+      sizing: '固定最大虧損金額 1 萬點 ÷ 停損距離，單筆市值上限 40%',
+    },
+    source: {
+      ref: 'Olivier Seban 推廣的 SuperTrend（以 ATR 通道追蹤趨勢）',
+      claim: '屬於實務常用的 ATR 通道追蹤法，沒有同儕審查的績效研究；表現接近其他 ATR 移動停損的趨勢跟隨系統。',
+      note: '以 SuperTrend 線本身當移動停損，翻空當天收盤確認後出場。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr10', type: 'atr', params: { length: 10 } },
+      { id: 'st', type: 'supertrend', params: { atrLength: 10, mult: 3 } },
+      { id: 'ema100', type: 'ema', params: { length: 100 } },
+    ],
+    entry: { signal: 'st.dir > 0 and st.dir[1] < 0 and close > ema100', cooldownBars: 3 },
+    sizing: { method: 'max_loss_amount', amount: 10000, caps: { maxPositionPct: 0.4, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr10', k: 2 } },
+      { type: 'ma_trailing', params: { maId: 'st.line', trigger: 'close' } },
+    ],
+    targets: [],
+    exitSignals: [],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
+    fill: { mode: 'next_open' },
+  },
+  {
+    id: 'macd-pullback-v1',
+    name: 'MACD 零軸下金叉（多頭回檔）',
+    category: '均值回歸',
+    summary: {
+      entry: '收盤 > 200 日均線，MACD 在零軸下方向上穿越訊號線（多頭中的回檔結束）',
+      exit: 'MACD 死叉出場；2 ATR 初始停損；賺 1R 後保本',
+      sizing: '帳戶 1% 風險 ÷ 2 ATR，單筆市值上限 40%',
+    },
+    source: {
+      ref: 'Appel (1979) MACD；「只在 200 日線之上做零軸下金叉」是常見的趨勢過濾變體',
+      claim: 'MACD 交叉本身在多數研究中扣成本後沒有穩定優勢；加長期趨勢過濾、只做回檔是實務上降低假訊號的常見做法。',
+      note: '用 200 日均線過濾，只在多頭結構裡接回檔。',
+    },
+    direction: 'long',
+    account: { initialEquity: 1000000, lotSize: { TW: 1000, US: 1, JP: 100, KR: 1 } },
+    indicators: [
+      { id: 'atr14', type: 'atr', params: { length: 14 } },
+      { id: 'sma200', type: 'sma', params: { length: 200 } },
+      { id: 'macd', type: 'macd', params: { fast: 12, slow: 26, signal: 9 } },
+    ],
+    entry: { signal: 'close > sma200 and cross_up(macd.macd, macd.signal) and macd.macd < 0', cooldownBars: 3 },
+    sizing: { method: 'risk_percent', pct: 0.01, caps: { maxPositionPct: 0.4, cashOnly: true } },
+    stops: [
+      { type: 'atr_initial', params: { atrId: 'atr14', k: 2 } },
+      { type: 'breakeven', params: { atR: 1 } },
+    ],
+    targets: [],
+    exitSignals: [{ expr: 'cross_down(macd.macd, macd.signal)', fraction: 1 }],
+    pyramiding: { enabled: false },
+    discipline: { entryWindowBars: 1, chaseAtr: 0.5, sizeTolerancePct: 10, stopGraceBars: 0, allowDiscretionaryExit: true },
     fill: { mode: 'next_open' },
   },
 ];

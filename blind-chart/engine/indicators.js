@@ -294,6 +294,45 @@ registerIndicator({
   },
 });
 
+registerIndicator({
+  // Rate of change: (close / close[n] − 1) × 100
+  type: 'roc', label: 'ROC 變動率', pane: 'sub', outputs: ['value'],
+  paramsSchema: { type: 'object', properties: { length: int(20), source: srcSchema }, required: ['length'] },
+  warmup: p => p.length + 1,
+  compute: (b, p) => {
+    const x = sourceSeries(b, p.source), n = x.length, out = NaNArr(n);
+    for (let i = p.length; i < n; i++) out[i] = (x[i] / x[i - p.length] - 1) * 100;
+    return { value: out };
+  },
+});
+registerIndicator({
+  // Clenow-style momentum: least-squares fit of ln(close) over `length` bars.
+  //   slope = annualised % trend ((e^(β·252) − 1) × 100), r2 = fit quality, adj = slope × r2
+  type: 'linreg', label: '指數迴歸動能（Clenow）', pane: 'sub', outputs: ['adj', 'slope', 'r2'],
+  paramsSchema: { type: 'object', properties: { length: int(90, 10, 500) }, required: ['length'] },
+  warmup: p => p.length,
+  compute: (b, p) => {
+    const L = p.length, c = b.close, n = c.length;
+    const adj = NaNArr(n), slope = NaNArr(n), r2 = NaNArr(n);
+    const xm = (L - 1) / 2;
+    let sxx = 0; for (let k = 0; k < L; k++) sxx += (k - xm) ** 2;
+    for (let i = L - 1; i < n; i++) {
+      let ym = 0, ok = true;
+      for (let k = 0; k < L; k++) { const v = c[i - L + 1 + k]; if (!(v > 0)) { ok = false; break; } ym += Math.log(v); }
+      if (!ok) continue;
+      ym /= L;
+      let sxy = 0, syy = 0;
+      for (let k = 0; k < L; k++) { const dy = Math.log(c[i - L + 1 + k]) - ym; sxy += (k - xm) * dy; syy += dy * dy; }
+      const beta = sxy / sxx;
+      const rr = syy > 0 ? (sxy * sxy) / (sxx * syy) : 0;
+      slope[i] = (Math.exp(beta * 252) - 1) * 100;
+      r2[i] = rr;
+      adj[i] = slope[i] * rr;
+    }
+    return { adj, slope, r2 };
+  },
+});
+
 /** Compute every indicator in a spec. Returns { seriesName: Float64Array }.
     Naming: multi-output → `${id}.${out}`; the first output is also exposed
     as bare `${id}` (so `atr14`, `ema20` work as in the SDD examples). */

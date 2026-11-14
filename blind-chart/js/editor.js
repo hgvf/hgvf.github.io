@@ -5,26 +5,36 @@ import { $, $$, esc, toast, download } from './ui.js';
 import { allStrategies, strategyById } from './strategies.js';
 import { saveCustomStrategy, deleteCustomStrategy, allSessions } from './store.js';
 import { INDICATORS, STOPS, SIZING, validateSpec, deepClone, prepare, barsFromPuzzle, simulate, maxWarmup, normalizeSpec } from '../engine/index.js';
-import { getPuzzle } from './bank.js';
+import { getPuzzle, loadBank } from './bank.js';
 import { ChartView } from './chart.js';
 import { qm, tip } from './glossary.js';
+import { CATEGORIES } from '../engine/index.js';
+import { loadPresetStats, sharpeChip, strategyInfoHTML } from './presetstats.js';
 
 let chart = null;
 
 export async function renderEditor(root, id) {
   const list = allStrategies();
+  const stats = await loadPresetStats();
   let spec = deepClone(strategyById(id || list[0].id));
   const builtin = !!spec.builtin; delete spec.builtin;
+  const infoSpec = { ...spec, builtin };
+  const groups = [...CATEGORIES.map(c => [c, list.filter(s => s.builtin && s.category === c)]),
+    ['其他內建', list.filter(s => s.builtin && !CATEGORIES.includes(s.category))],
+    ['我的策略', list.filter(s => !s.builtin)]].filter(([, l]) => l.length);
   root.innerHTML = `
   <div class="editor">
     <aside class="card">
-      <h2>策略</h2>
-      <div class="strat-list">${list.map(s => `<button data-id="${esc(s.id)}" class="${s.id === spec.id ? 'on' : ''}">${esc(s.name || s.id)}${s.builtin ? ' <span class="sub">內建</span>' : ''}</button>`).join('')}</div>
+      <h2>策略 <span class="sub">右側數字 = 題庫 Sharpe ${qm('sharpe')}</span></h2>
+      ${groups.map(([g, l]) => `<div class="strat-group">${esc(g)}</div>
+      <div class="strat-list">${l.map(s => `<button data-id="${esc(s.id)}" class="${s.id === spec.id ? 'on' : ''}"><span>${esc(s.name || s.id)}</span>${sharpeChip(stats, s.id)}</button>`).join('')}</div>`).join('')}
       <div class="ctrl" style="margin-top:12px">
         <button class="btn btn-sm" id="eDup">複製一份</button>
         <label class="btn btn-sm">匯入 JSON<input type="file" id="eImp" accept="application/json" hidden></label>
       </div>
     </aside>
+    <div class="ed-main">
+    <section class="card strat-info">${strategyInfoHTML(infoSpec, stats)}</section>
     <section class="card">
       <h2>參數 <span class="sub">${builtin ? '內建 preset 唯讀；改完按「另存」會存成自訂策略' : '自訂策略（存在這台裝置）'}</span></h2>
       <div id="eForm"></div>
@@ -37,6 +47,7 @@ export async function renderEditor(root, id) {
         ${builtin ? '' : '<button class="btn btn-sm" id="eDel">刪除</button>'}
       </div>
     </section>
+    </div>
     <section class="card ed-preview">
       <h2>驗證 <span id="eOk"></span></h2>
       <ul class="err-list" id="eErr"></ul>
@@ -131,7 +142,10 @@ export async function renderEditor(root, id) {
 
   async function preview() {
     const playing = (await allSessions()).find(s => s.status === 'playing');
-    const pz = await getPuzzle(playing?.puzzleId || 'demo-1');
+    const bank = await loadBank();
+    // 沒有進行中的題目就從題庫挑一題（同一個策略固定同一題，切換參數時好比較）
+    const pick = playing?.puzzleId || (bank.demo ? 'demo-1' : bank.index[[...spec.id].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % bank.index.length].id);
+    const pz = await getPuzzle(pick);
     const bars = barsFromPuzzle(pz);
     const ns = normalizeSpec(spec);
     const warm = Math.min(maxWarmup(ns.indicators), pz.contextBars - 20);
@@ -144,7 +158,7 @@ export async function renderEditor(root, id) {
     chart = new ChartView($('#ePrev'), document.createElement('div'), null, { playStart: pz.contextBars, spec: ns });
     chart.update({ ctx, t: pz.contextBars - 1, run, hint: 'full' });
     chart.focus(pz.contextBars - 1, pz.contextBars);
-    $('#ePrevInfo').textContent = `${playing ? '目前題目' : '示範題'}背景區：${run.signals.length} 個訊號、影子帳戶 ${run.trades.length} 筆交易（warmup ${warm} 根）。`;
+    $('#ePrevInfo').textContent = `${playing ? '目前題目' : bank.demo ? '示範題' : '題庫隨機一題'}背景區：${run.signals.length} 個訊號、影子帳戶 ${run.trades.length} 筆交易（warmup ${warm} 根）。`;
   }
 }
 
