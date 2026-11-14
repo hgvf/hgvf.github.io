@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14T09:40:37.196Z",
+ "generatedAt": "2026-11-14T12:10:19.538Z",
  "bankSeed": "2026Q4",
  "puzzles": 2303,
  "method": "影子帳戶（完全照規則）在題庫每一題的可操作區間回測；每題獨立、起始權益相同；無交易成本。題庫的多頭 / 空頭 / 盤整各約 1/3，比真實市場更偏空，絕對報酬會比長期實際偏低。",
@@ -15,6 +15,7 @@
   "exposure": 1,
   "trades": 0,
   "tradesPerPuzzle": 0,
+  "avgHoldBars": null,
   "winRate": null,
   "avgWinR": null,
   "avgLossR": null,
@@ -60,6 +61,7 @@
    "exposure": 0.1815,
    "trades": 6538,
    "tradesPerPuzzle": 2.8389,
+   "avgHoldBars": 17.4541,
    "winRate": 0.2905,
    "avgWinR": 2.198,
    "avgLossR": -0.8713,
@@ -104,6 +106,7 @@
    "exposure": 0.243,
    "trades": 6827,
    "tradesPerPuzzle": 2.9644,
+   "avgHoldBars": 22.0086,
    "winRate": 0.3785,
    "avgWinR": 1.7043,
    "avgLossR": -0.9527,
@@ -148,6 +151,7 @@
    "exposure": 0.0884,
    "trades": 7108,
    "tradesPerPuzzle": 3.0864,
+   "avgHoldBars": 8.3683,
    "winRate": 0.0875,
    "avgWinR": 4.59,
    "avgLossR": -0.522,
@@ -192,6 +196,7 @@
    "exposure": 0.2938,
    "trades": 5648,
    "tradesPerPuzzle": 2.4525,
+   "avgHoldBars": 32.5993,
    "winRate": 0.2188,
    "avgWinR": 2.8815,
    "avgLossR": -0.5284,
@@ -236,6 +241,7 @@
    "exposure": 0.0869,
    "trades": 1530,
    "tradesPerPuzzle": 0.6644,
+   "avgHoldBars": 35.0248,
    "winRate": 0.3693,
    "avgWinR": 1.8975,
    "avgLossR": -0.9328,
@@ -280,6 +286,7 @@
    "exposure": 0.0721,
    "trades": 11562,
    "tradesPerPuzzle": 5.0204,
+   "avgHoldBars": 4.6842,
    "winRate": 0.6268,
    "avgWinR": 0.289,
    "avgLossR": -0.4134,
@@ -312,6 +319,51 @@
     "US": 0.0013
    }
   },
+  "connors-double7-v1": {
+   "puzzles": 2303,
+   "sharpe": 0.126,
+   "annReturn": 0.0019,
+   "medianAnnReturn": 0,
+   "profitablePct": 0.4238,
+   "maxDDMedian": 0.0123,
+   "maxDDP90": 0.0243,
+   "maxDDWorst": 0.0588,
+   "exposure": 0.171,
+   "trades": 14909,
+   "tradesPerPuzzle": 6.4737,
+   "avgHoldBars": 7.7705,
+   "winRate": 0.6307,
+   "avgWinR": 0.4144,
+   "avgLossR": -0.6222,
+   "expectancyR": 0.0316,
+   "profitFactor": 1.1353,
+   "byRegime": {
+    "down": {
+     "puzzles": 800,
+     "sharpe": -0.3009,
+     "annReturn": -0.0042,
+     "maxDDMedian": 0.0113
+    },
+    "range": {
+     "puzzles": 703,
+     "sharpe": 0.0097,
+     "annReturn": 0.0001,
+     "maxDDMedian": 0.0127
+    },
+    "up": {
+     "puzzles": 800,
+     "sharpe": 0.5097,
+     "annReturn": 0.0095,
+     "maxDDMedian": 0.0126
+    }
+   },
+   "byMarket": {
+    "KR": 0.0028,
+    "TW": 0.0007,
+    "JP": 0.0021,
+    "US": 0.0019
+   }
+  },
   "minervini-trend-template-v1": {
    "puzzles": 2303,
    "sharpe": 0.0754,
@@ -324,6 +376,7 @@
    "exposure": 0.0786,
    "trades": 1967,
    "tradesPerPuzzle": 0.8541,
+   "avgHoldBars": 25.0641,
    "winRate": 0.3279,
    "avgWinR": 2.1597,
    "avgLossR": -0.8047,
@@ -356,6 +409,96 @@
     "US": -0.0008
    }
   },
+  "high52-v1": {
+   "puzzles": 2303,
+   "sharpe": 0.0697,
+   "annReturn": 0.0013,
+   "medianAnnReturn": 0,
+   "profitablePct": 0.2723,
+   "maxDDMedian": 0.0123,
+   "maxDDP90": 0.0304,
+   "maxDDWorst": 0.0862,
+   "exposure": 0.1443,
+   "trades": 3510,
+   "tradesPerPuzzle": 1.5241,
+   "avgHoldBars": 25.1541,
+   "winRate": 0.3507,
+   "avgWinR": 1.9909,
+   "avgLossR": -0.9172,
+   "expectancyR": 0.1027,
+   "profitFactor": 1.1606,
+   "byRegime": {
+    "down": {
+     "puzzles": 800,
+     "sharpe": -0.268,
+     "annReturn": -0.0029,
+     "maxDDMedian": 0
+    },
+    "range": {
+     "puzzles": 703,
+     "sharpe": -0.3633,
+     "annReturn": -0.0065,
+     "maxDDMedian": 0.0136
+    },
+    "up": {
+     "puzzles": 800,
+     "sharpe": 0.4496,
+     "annReturn": 0.0125,
+     "maxDDMedian": 0.0181
+    }
+   },
+   "byMarket": {
+    "KR": 0.0015,
+    "TW": 0.0018,
+    "JP": 0.0024,
+    "US": -0.0003
+   }
+  },
+  "tsmom-12m-v1": {
+   "puzzles": 2303,
+   "sharpe": 0.1115,
+   "annReturn": 0.0086,
+   "medianAnnReturn": 0,
+   "profitablePct": 0.2818,
+   "maxDDMedian": 0.024,
+   "maxDDP90": 0.0895,
+   "maxDDWorst": 0.4359,
+   "exposure": 0.155,
+   "trades": 5001,
+   "tradesPerPuzzle": 2.1715,
+   "avgHoldBars": 20.1036,
+   "winRate": 0.3497,
+   "avgWinR": 0.8783,
+   "avgLossR": -0.3149,
+   "expectancyR": 0.1024,
+   "profitFactor": 1.4902,
+   "byRegime": {
+    "down": {
+     "puzzles": 800,
+     "sharpe": -0.3036,
+     "annReturn": -0.0117,
+     "maxDDMedian": 0.0163
+    },
+    "range": {
+     "puzzles": 703,
+     "sharpe": -0.2029,
+     "annReturn": -0.0104,
+     "maxDDMedian": 0.0296
+    },
+    "up": {
+     "puzzles": 800,
+     "sharpe": 0.4376,
+     "annReturn": 0.0456,
+     "maxDDMedian": 0.0289
+    }
+   },
+   "byMarket": {
+    "KR": 0.011,
+    "TW": 0.0172,
+    "JP": 0.0034,
+    "US": 0.0035
+   }
+  },
   "clenow-momentum-v1": {
    "puzzles": 2303,
    "sharpe": 0.096,
@@ -368,6 +511,7 @@
    "exposure": 0.1112,
    "trades": 1727,
    "tradesPerPuzzle": 0.7499,
+   "avgHoldBars": 40.0874,
    "winRate": 0.304,
    "avgWinR": 3.0147,
    "avgLossR": -0.8229,
@@ -412,6 +556,7 @@
    "exposure": 0.0623,
    "trades": 3109,
    "tradesPerPuzzle": 1.35,
+   "avgHoldBars": 12.8575,
    "winRate": 0.3371,
    "avgWinR": 1.5758,
    "avgLossR": -0.7806,
@@ -456,6 +601,7 @@
    "exposure": 0.0914,
    "trades": 3640,
    "tradesPerPuzzle": 1.5805,
+   "avgHoldBars": 15.9912,
    "winRate": 0.2783,
    "avgWinR": 1.8836,
    "avgLossR": -0.6289,
@@ -500,6 +646,7 @@
    "exposure": 0.1925,
    "trades": 5194,
    "tradesPerPuzzle": 2.2553,
+   "avgHoldBars": 23.0803,
    "winRate": 0.3032,
    "avgWinR": 2.4452,
    "avgLossR": -0.9018,
@@ -544,6 +691,7 @@
    "exposure": 0.081,
    "trades": 4055,
    "tradesPerPuzzle": 1.7607,
+   "avgHoldBars": 12.8742,
    "winRate": 0.3112,
    "avgWinR": 1.6198,
    "avgLossR": -0.6271,
