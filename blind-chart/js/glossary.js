@@ -4,7 +4,7 @@ import { esc } from './ui.js';
 
 export const GLOSSARY = {
   // ── 基本概念 ──
-  R: 'R（風險單位）：進場時「進場價 − 初始停損」× 股數，也就是這筆交易如果照規則停損會虧多少。+2R = 賺到兩倍原本願意承擔的風險。',
+  R: 'R：一筆交易照規則停損時會賠的錢（買價 − 停損價）× 股數。開始頁的「每筆最多賠」就是 1R 的上限，股數由它反推。+2R = 賺到兩倍風險。',
   '1R': '1R = 這筆交易照規則停損時的預定虧損金額。所有損益都可以換算成幾個 R，方便比較不同大小的交易。',
   id: '策略的唯一代號（英數），用來存檔與辨識。',
   name: '顯示用的策略名稱。',
@@ -23,7 +23,9 @@ export const GLOSSARY = {
   bollinger: '布林通道：均線 ± 倍數 × 標準差。width = 通道寬度 / 中線，可看波動收斂或擴張。',
   keltner: 'Keltner 通道：EMA ± 倍數 × ATR，比布林通道平滑。',
   rsi: 'RSI 相對強弱指標（0–100）：近期漲幅佔總波動的比例。> 70 常視為過熱，< 30 常視為超賣。',
-  macd: 'MACD：快 EMA − 慢 EMA（macd），再取其 EMA 當訊號線（signal），兩者差為柱狀體（hist）。',
+  macd: 'MACD：快 EMA − 慢 EMA（macd，又稱 DIF），再取其 EMA 當訊號線（signal），兩者差為柱狀體（hist）。',
+  kd: 'KD 隨機指標（0–100）：收盤價在最近 N 天高低區間的位置。K 是快線、D 是慢線；> 80 偏熱、< 20 偏冷。',
+  kSmooth: 'K 值的平滑天數（台灣常用 3）。', dSmooth: 'D 值的平滑天數（台灣常用 3）。',
   adx: 'ADX 趨向指標：衡量趨勢「強度」（不分方向），> 25 通常代表有趨勢；pdi / mdi 分別是上漲與下跌動能。',
   supertrend: 'SuperTrend：以 ATR 畫出的跟隨趨勢線，價格在線上方為多頭（dir = 1）。',
   swing: 'Swing 波段高低點：左右各 N 根都比它低（高）的高點（低點）。要等右邊 N 根走完才確認，所以不會偷看未來。',
@@ -56,6 +58,7 @@ export const GLOSSARY = {
   'sizing.pct': '比例（0.01 = 1%）。',
   cost: '每筆投入的總金額。', shares: '每筆固定買幾股。', targetVolPct: '希望一天的波動佔權益的比例（0.01 = 1%）。',
   maxPositionPct: '單筆市值上限：持倉市值不超過權益的這個比例（0.3 = 30%）。',
+  maxRiskPct: '每筆最多賠：一筆交易打到停損最多賠帳戶的幾 %（開始頁設定）。',
   maxOpenRiskR: '未保護風險上限：所有持倉（含加碼）如果全部停損，總虧損不超過幾個 R。',
   cashOnly: '只用現金，不融資。',
   lotSize: '交易單位：台股一張 1000 股、日股 100 股、美韓 1 股，股數會無條件捨去到這個倍數。',
@@ -141,6 +144,11 @@ export const GLOSSARY = {
 
 export function tip(key, scope) {
   return (scope && GLOSSARY[`${scope}.${key}`]) || GLOSSARY[key] || null;
+}
+
+/** 直接用一段文字做「?」按鈕（旋鈕說明等） */
+export function qmText(text) {
+  return text ? `<button type="button" class="qm" data-tip="${esc(text)}" aria-label="說明">?</button>` : '';
 }
 
 /** 「?」按鈕 HTML；找不到說明時回傳空字串。 */

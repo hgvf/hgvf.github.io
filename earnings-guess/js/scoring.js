@@ -30,7 +30,7 @@ export function score(guess, ans, setting) {
 export function shareText(n, r) {
   const m = ok => (ok == null ? '—' : ok ? '○' : '×');
   const bin = r.binOk ? '○' : r.binNear ? '△' : '×';
-  return `法說會盲猜 #${n}：方向 ${m(r.dirOk)} 區間 ${bin} 公司 ${m(r.pickOk)}，得分 ${r.total}`;
+  return `賭財報 #${n}：方向 ${m(r.dirOk)} 區間 ${bin} 公司 ${m(r.pickOk)}，得分 ${r.total}`;
 }
 
 /** records: [{ id, sector, releasedOn, guess, result, hinted, netSentiment, ts }] */

@@ -1,12 +1,14 @@
-// presets.js — 內建策略（SDD 4.9）。引擎只讀規則欄位；其他欄位給策略頁顯示：
-//   category  趨勢跟隨 / 動能突破 / 均值回歸        level  入門 / 進階
-//   idea      一句話的核心想法                      summary { entry, exit, sizing } 白話規則
-//   roles     { 指標 id: 這個因子在策略裡做什麼 }
+// presets.js — 內建策略（SDD 4.9）。引擎只讀規則欄位；其他欄位給頁面顯示：
+//   short     短名稱（開始頁、清單）                  category  趨勢跟隨 / 動能突破 / 均值回歸
+//   level     入門 / 進階                            idea      一句話的核心想法
+//   plain     { buy[], sell[], add[]? } 白話條列；{path} 會換成目前數值（path 同 knobs），
+//             {path|%} 乘 100 加 %、{path|below} 顯示 (1 − 值) 的 %、{path|above} 顯示 (值 − 1) 的 %
+//   roles     { 指標 id: 這個指標在策略裡做什麼 }
 //   vars      條件式裡的 $變數（門檻），可用旋鈕調整
-//   knobs     快速調整旋鈕：{ path, label, min, max, step, unit, help, pct? }
+//   knobs     旋鈕：{ path, label, min, max, step, unit, help, pct? }
 //             path 寫法見 spec.js 的 getKnob（ind:<id>.<參數>、stop:<類型>.<參數>、點分路徑）
-//   source    { ref, claim, note, links: [{ title, url }] } 文獻出處與原文報告
-// 前三個的順序不要動（測試用 PRESETS[0] / PRESETS[2]）。題庫回測見 config/preset-stats.json。
+// 文獻出處整理在 STRATEGIES.md。前三個的順序不要動（測試用 PRESETS[0] / PRESETS[2]）。
+// 題庫回測見 config/preset-stats.json。
 
 export const CATEGORIES = ['趨勢跟隨', '動能突破', '均值回歸'];
 
@@ -16,8 +18,8 @@ const base = { direction: 'long', account: ACCOUNT, fill: { mode: 'next_open' },
 
 // 常用旋鈕
 const K = {
-  riskPct: { path: 'sizing.pct', label: '每筆風險（帳戶 %）', min: 0.0025, max: 0.03, step: 0.0025, pct: true, help: '一筆交易打到停損時，最多虧掉帳戶的幾 %（= 1R）。專業交易者多用 0.5–2%。調大部位會變大、報酬與回撤一起放大。' },
-  riskAmt: { path: 'sizing.amount', label: '每筆風險金額（點）', min: 2000, max: 50000, step: 1000, unit: '點', help: '一筆交易打到停損時最多虧多少點（= 1R）。股數 = 這個金額 ÷ 停損距離。' },
+  riskPct: { path: 'sizing.pct', label: '每筆風險（帳戶 %）', min: 0.0025, max: 0.03, step: 0.0025, pct: true, help: '一筆打到停損最多賠帳戶幾 %（= 1R）。遊戲裡以開始頁的「每筆最多賠」為準，選「照策略」才用這個值。' },
+  riskAmt: { path: 'sizing.amount', label: '每筆風險金額（點）', min: 2000, max: 50000, step: 1000, unit: '點', help: '一筆打到停損最多賠多少（= 1R）。遊戲裡以開始頁的「每筆最多賠」為準，選「照策略」才用這個值。' },
   maxPos: { path: 'sizing.caps.maxPositionPct', label: '單筆市值上限', min: 0.1, max: 1, step: 0.05, pct: true, help: '一筆部位的市值最多佔帳戶幾 %。停損很近時，依風險算出的股數可能很大，這個上限避免單押。' },
   atrStop: (k = 'atr_initial') => ({ path: `stop:${k}.k`, label: '初始停損（ATR 倍數）', min: 1, max: 5, step: 0.25, unit: '× ATR', help: '進場價往下幾倍 ATR 停損。越寬越不容易被正常波動洗掉，但每股風險變大、部位變小。' }),
   chand: { path: 'stop:chandelier.k', label: 'Chandelier 倍數', min: 2, max: 6, step: 0.25, unit: '× ATR', help: '移動停利 = 進場後最高價 − 倍數 × ATR。越小越早鎖住獲利、越容易被回檔洗出。' },
@@ -28,12 +30,12 @@ export const PRESETS = [
     ...base,
     id: 'donchian-breakout-v1',
     name: '20 日突破 + 2ATR 停損 + 3ATR chandelier',
+    short: '20 日突破',
     category: '趨勢跟隨', level: '入門',
     idea: '創 20 日新高代表趨勢可能啟動；只在中期均線多頭時做，用 ATR 控制每筆虧損、讓賺錢的單用移動停利跑。',
-    summary: {
-      entry: '收盤突破前一根的 20 日高點，且 EMA20 > EMA60',
-      exit: '2 ATR 初始停損；賺 1.5R 保本；賺 2R 後改 3 ATR Chandelier；3R 先賣一半；收盤跌破 EMA60 全出',
-      sizing: '固定最大虧損 1 萬點 ÷ 停損距離，單筆市值上限 30%、總風險 1.5R',
+    plain: {
+      buy: ['收盤突破前 {ind:dc20.length} 天的最高價', 'EMA20 在 EMA60 之上（多頭才做）'],
+      sell: ['停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 {stop:breakeven.atR}R，停損拉到成本', '賺到 {targets.0.at.r}R 先賣 {targets.0.fraction|%}', '賺到 2R 後，從最高點回落 {stop:chandelier.k} 倍 ATR 就賣', '收盤跌破 EMA60 全賣'],
     },
     roles: { atr14: '波動度：決定停損距離與部位大小', ema20: '趨勢過濾（短）', ema60: '趨勢過濾（長）＋出場線', dc20: '突破判斷：前 20 日最高價' },
     indicators: [
@@ -61,23 +63,17 @@ export const PRESETS = [
       { path: 'targets.0.fraction', label: '停利賣出比例', min: 0.1, max: 1, step: 0.1, pct: true, help: '到第一停利時賣掉幾 %。剩下的交給移動停利。' },
       K.riskAmt, K.maxPos,
     ],
-    source: {
-      ref: 'Donchian 通道突破；Hurst, Ooi & Pedersen (2017) A Century of Evidence on Trend-Following Investing, Journal of Portfolio Management 44(1)',
-      claim: '通道突破屬於趨勢跟隨。Hurst 等人在分散的期貨組合（1880 年起）報告扣費後 Sharpe 約 0.76–0.77，且在股市大跌期間多為正報酬；單一股票上的效果通常弱很多。',
-      note: '本站預設的入門策略。',
-      links: [{ title: 'A Century of Evidence on Trend-Following Investing (PDF)', url: 'https://www.trendfollowing.com/whitepaper/Century_Evidence_Trend_Following.pdf' }],
-    },
   },
   {
     ...base,
     id: 'ema-pullback-v1',
     name: '多頭排列回檔 EMA20 + 結構停損 + 均線移動停利',
+    short: '均線回檔',
     category: '均值回歸', level: '進階',
     idea: '多頭趨勢中的回檔是較好的上車點：等價格回測短均線、再重新轉強才買，停損放在前一個波段低點下方。',
-    summary: {
-      entry: '多頭排列（EMA20 > EMA50 且 EMA50 上揚），前一根回測 EMA20，今天收盤站回 EMA20 並突破前高，RSI > 45',
-      exit: '前一個波段低點下方 0.3 ATR（結構停損）；賺 1R 後收盤跌破 EMA20 − 0.5 ATR 出場；2R 先賣 1/3',
-      sizing: '帳戶 1% 風險 ÷ 停損距離，單筆市值上限 40%',
+    plain: {
+      buy: ['多頭排列：EMA{ind:ema20.length} > EMA{ind:ema50.length}，且 EMA{ind:ema50.length} 往上', '前一根回到 EMA{ind:ema20.length}，今天收盤站回並突破前一根高點', 'RSI(14) 高於 {vars.rsiMin}'],
+      sell: ['停損：前一個波段低點再往下 {stop:structure.bufferAtr} 倍 ATR（最多 10%）', '賺到 {targets.0.at.r}R 先賣 {targets.0.fraction|%}', '賺到 1R 後，收盤跌破 EMA{ind:ema20.length} 再往下 {stop:ma_trailing.bufferAtr} 倍 ATR 就賣'],
     },
     roles: { atr14: '波動度：停損緩衝', ema20: '回檔支撐＋移動停利線', ema50: '趨勢方向（要上揚）', rsi14: '動能過濾：不接太弱的回檔', sw: '波段低點：結構停損的位置' },
     vars: { rsiMin: 45 },
@@ -106,23 +102,18 @@ export const PRESETS = [
       { path: 'targets.0.at.r', label: '第一停利', min: 1, max: 5, step: 0.5, unit: 'R', help: '漲到幾 R 先賣一部分。' },
       K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: '多頭趨勢中的回檔買進（pullback），結構停損放在 swing low 下方',
-      claim: '屬於趨勢內的短期均值回歸，沒有單一權威的績效研究；勝率通常高於突破法，但每筆賺得較少。',
-      note: '',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'turtle-pyramid-v1',
     name: '55 日突破 + 0.5ATR 加碼 ×3 + 10 日低點出場',
+    short: '海龜 55 日突破',
     category: '趨勢跟隨', level: '進階',
     idea: '海龜交易法系統二：只做大突破，賺錢後順勢加碼，讓少數大趨勢支撐整體獲利。',
-    summary: {
-      entry: '收盤突破前一根的 55 日高點（海龜系統二）',
-      exit: '2 ATR（2N）初始停損；跌破 10 日低點出場；加碼後停損移到均價',
-      sizing: '帳戶 0.5% 風險 ÷ 2N；每再漲 0.5 N 加碼一個單位，最多 3 次，總風險上限 2R',
+    plain: {
+      buy: ['收盤突破前 {ind:dc55.length} 天的最高價'],
+      sell: ['停損：買價往下 {stop:atr_initial.k} 倍 ATR', '跌破最近 {stop:donchian_trailing.length} 天最低價就賣'],
+      add: ['賺錢且比上次買價再漲 {vars.addAtr} 倍 ATR 就加碼，最多 {pyramiding.maxAdds} 次', '每次加碼和第一筆一樣多，加碼後停損拉到成本', '全部部位一起停損最多賠 {pyramiding.riskCap.maxOpenRiskR}R'],
     },
     roles: { atr20: 'N（波動度）：停損、加碼間距與部位都以它計算', dc55: '突破判斷：前 55 日最高價' },
     vars: { addMinR: 0.5, addAtr: 0.5 },
@@ -153,23 +144,17 @@ export const PRESETS = [
       { path: 'pyramiding.riskCap.maxOpenRiskR', label: '加碼後總風險上限', min: 1, max: 4, step: 0.5, unit: 'R', help: '含所有加碼的部位一起打到停損，最多虧幾 R。' },
       K.riskPct,
     ],
-    source: {
-      ref: 'Faith (2007) Way of the Turtle；Dennis & Eckhardt 的海龜交易法則',
-      claim: '原海龜法則用於分散的期貨組合，1980 年代報酬極高但回撤也大（常見 −30% 以上）；分散多市場是它能運作的關鍵，單一股票上勝率低、靠少數大趨勢。',
-      note: '原法一個單位 = 1% 權益 ÷ N，這裡用 0.5% 並設總風險上限。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'sma200-timing-v1',
     name: '200 日均線擇時（Faber 10 個月均線）',
+    short: '200 日均線',
     category: '趨勢跟隨', level: '入門',
     idea: '價格在長期均線之上才持有、跌破就退場；不求抓頂底，只求避開大空頭。',
-    summary: {
-      entry: '收盤價向上穿越 200 日均線',
-      exit: '收盤跌破 200 日均線的 2% 緩衝帶；另有 3 ATR 災難停損',
-      sizing: '帳戶 90% 部位（資產配置型，不追求單筆 R）',
+    plain: {
+      buy: ['收盤由下往上穿過 {ind:sma200.length} 日均線'],
+      sell: ['收盤跌破均線再往下 {vars.band|%} 就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR（防大跌）', '賣出後 {entry.cooldownBars} 根內不再買'],
     },
     roles: { atr20: '災難停損距離', sma200: '多空分界線' },
     vars: { band: 0.02 },
@@ -189,23 +174,17 @@ export const PRESETS = [
       K.atrStop(),
       { path: 'sizing.pct', label: '投入比例', min: 0.2, max: 1, step: 0.05, pct: true, help: '訊號成立時投入帳戶的幾 %。' },
     ],
-    source: {
-      ref: 'Faber (2007) A Quantitative Approach to Tactical Asset Allocation, Journal of Wealth Management',
-      claim: '原文用月線 10 個月均線擇時 S&P 500（1901 起）：年化報酬約 10.2% vs 買進持有 9.3%，跌在均線下時報酬低、波動高；主要價值在降低大回撤。',
-      note: '這裡用 200 日均線近似 10 個月均線，並加 2% 緩衝減少日線來回洗。',
-      links: [{ title: 'CXO Advisory：均線擇時的長期表現', url: 'https://www.cxoadvisory.com/technical-trading/long-term-outperformance-from-trends-defined-by-moving-averages' }],
-    },
   },
   {
     ...base,
     id: 'golden-cross-v1',
     name: '黃金交叉 50/200 + Chandelier 出場',
+    short: '黃金交叉',
     category: '趨勢跟隨', level: '入門',
     idea: '中期均線上穿長期均線代表趨勢翻多；訊號慢但雜訊少，適合抓大波段。',
-    summary: {
-      entry: '50 日均線向上穿越 200 日均線（黃金交叉）',
-      exit: '死亡交叉出場；賺 2R 後改用 3 ATR Chandelier 移動停利',
-      sizing: '帳戶 1% 風險 ÷ 停損距離（3 ATR），單筆市值上限 50%',
+    plain: {
+      buy: ['{ind:sma50.length} 日均線往上穿過 {ind:sma200.length} 日均線'],
+      sell: ['停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 {vars.trailAtR}R 後，從最高點回落 {stop:chandelier.k} 倍 ATR 就賣', '短均線跌回長均線下方（死亡交叉）全賣'],
     },
     roles: { atr22: '停損與 Chandelier 的波動度', sma50: '中期趨勢', sma200: '長期趨勢' },
     vars: { trailAtR: 2 },
@@ -229,23 +208,17 @@ export const PRESETS = [
       { path: 'vars.trailAtR', label: '移動停利啟動', min: 0.5, max: 4, step: 0.5, unit: 'R', help: '賺到幾 R 後啟動 Chandelier 移動停利。' },
       K.chand, K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Brock, Lakonishok & LeBaron (1992) Simple Technical Trading Rules and the Stochastic Properties of Stock Returns, Journal of Finance 47(5)；Sullivan, Timmermann & White (1999) Journal of Finance 54(5)；Chandelier Exit 出自 LeBeau & Lucas (1992)',
-      claim: 'Brock 等人 1897–1986 道瓊指數上發現均線買進訊號後的報酬顯著較高；Sullivan 等人做資料探勘修正後發現，同樣的規則在 1987 年之後的樣本外沒有顯著優勢。',
-      note: '慢速訊號，一題 250 根裡常只有 0–1 次進場。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'connors-rsi2-v1',
     name: 'Connors RSI(2) 均值回歸',
+    short: 'RSI(2) 超賣',
     category: '均值回歸', level: '入門',
     idea: '多頭結構裡，連續急跌兩三天的股票短期常會反彈；快進快出、勝率高、每筆賺得少。',
-    summary: {
-      entry: '收盤 > 200 日均線（只做多頭裡的回檔），且 RSI(2) < 10',
-      exit: '收盤站回 5 日均線；最多持有 10 根；3 ATR 災難停損',
-      sizing: '帳戶 1% 風險 ÷ 3 ATR，單筆市值上限 40%',
+    plain: {
+      buy: ['收盤在 200 日均線之上（長期多頭）', 'RSI({ind:rsi2.length}) 低於 {vars.rsiTh}（短線急跌）'],
+      sell: ['收盤站回 {ind:sma5.length} 日均線就賣', '持有滿 {stop:time_stop.bars} 根就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR'],
     },
     roles: { atr14: '災難停損距離', sma200: '長期多頭過濾', sma5: '出場線：站回就獲利了結', rsi2: '超賣判斷：2 日 RSI 極低' },
     vars: { rsiTh: 10 },
@@ -270,23 +243,17 @@ export const PRESETS = [
       { path: 'stop:time_stop.bars', label: '最長持有', min: 3, max: 20, step: 1, unit: '根', help: '超過這麼多根還沒反彈就出場。' },
       K.atrStop(), K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Connors & Alvarez (2009) Short Term Trading Strategies That Work',
-      claim: '書中在美股指數 / 大型股上報告勝率常在七成以上、持有天數短；原作通常不設停損，門檻多用 RSI(2) < 5。第三方回測在近年指數上的優勢明顯下降。',
-      note: '原作不設停損；這裡為了讓 R 有定義加上 3 ATR 災難停損，並以 10 根時間停損限制持有。',
-      links: [{ title: 'Backtrex：RSI(2) 在 Nasdaq 100 的近年回測', url: 'https://backtrex.com/en/backtests/connors-rsi-2-nasdaq-100' }],
-    },
   },
   {
     ...base,
     id: 'connors-double7-v1',
     name: 'Connors Double 7（7 日低點買、7 日高點賣）',
+    short: 'Double 7',
     category: '均值回歸', level: '入門',
     idea: '多頭裡收在 7 日最低就買、收在 7 日最高就賣；規則極簡、只有一個天數參數。',
-    summary: {
-      entry: '收盤 > 200 日均線，且今天收盤是近 7 日最低',
-      exit: '收盤是近 7 日最高就出場；最多持有 15 根；3 ATR 災難停損',
-      sizing: '帳戶 1% 風險 ÷ 3 ATR，單筆市值上限 40%',
+    plain: {
+      buy: ['收盤在 {ind:sma200.length} 日均線之上', '今天收盤是近 {vars.n} 天最低'],
+      sell: ['收盤是近 {vars.n} 天最高就賣', '持有滿 {stop:time_stop.bars} 根就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR'],
     },
     roles: { atr14: '災難停損距離', sma200: '長期多頭過濾' },
     vars: { n: 7 },
@@ -308,23 +275,17 @@ export const PRESETS = [
       { path: 'stop:time_stop.bars', label: '最長持有', min: 5, max: 30, step: 1, unit: '根', help: '' },
       K.atrStop(), K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Connors & Alvarez (2009) High Probability ETF Trading',
-      claim: '原作以 ETF 為對象，屬於高勝率、短持有的均值回歸；第三方在 SPY 與另外 8 個市場測試的結果隨市場差異大，指數 ETF 上較穩定。',
-      note: '原作不設停損；這裡加 3 ATR 災難停損與 15 根時間停損。',
-      links: [{ title: 'StrategyQuant：Double 7 在 SPY 與 8 個市場的測試', url: 'https://strategyquant.com/blog/larry-connors-double-7-strategy-tested-on-spy-and-8-other-markets/' }],
-    },
   },
   {
     ...base,
     id: 'minervini-trend-template-v1',
     name: 'Minervini 趨勢模板 + 20 日突破',
+    short: 'Minervini 模板',
     category: '動能突破', level: '進階',
     idea: '只買已經處在強勢上升段（第二階段）的股票，在它突破整理區、量能放大時進場，停損很小。',
-    summary: {
-      entry: '趨勢模板（收盤 > 50 > 150 > 200 日均線、200 日線上揚一個月、距 52 週高點 25% 內、離 52 週低點 30% 以上）且突破 20 日高點、量增 40%',
-      exit: '初始 8% 停損；賺 2R 後保本；收盤跌破 50 日均線出場；3R 先賣 1/3',
-      sizing: '帳戶 1% 風險 ÷ 停損距離，單筆市值上限 25%',
+    plain: {
+      buy: ['收盤 > 50 日 > 150 日 > 200 日均線，200 日均線往上', '離 52 週高點 {vars.nearHigh|below} 以內，比 52 週低點高 {vars.aboveLow|above} 以上', '收盤突破前 {vars.breakoutN} 天高點，成交量是 50 日均量的 {vars.volMult} 倍以上'],
+      sell: ['停損：買價往下 {stop:pct_initial.p|%}', '賺到 {stop:breakeven.atR}R，停損拉到成本', '賺到 {targets.0.at.r}R 先賣 {targets.0.fraction|%}', '持有 10 根後，收盤跌破 50 日均線就賣'],
     },
     roles: { atr14: '（參考）波動度', sma50: '短期趨勢＋出場線', sma150: '中期趨勢', sma200: '長期趨勢（要上揚）', vol50: '量能基準：突破時要放量' },
     vars: { nearHigh: 0.75, aboveLow: 1.3, breakoutN: 20, volMult: 1.4 },
@@ -358,23 +319,17 @@ export const PRESETS = [
       { path: 'targets.0.at.r', label: '第一停利', min: 1, max: 6, step: 0.5, unit: 'R', help: '' },
       K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Minervini (2013) Trade Like a Stock Market Wizard（SEPA / Trend Template）；O\'Neil (1988) How to Make Money in Stocks（CAN SLIM 的 7–8% 停損）',
-      claim: '書中以作者自身交易紀錄為主，沒有可重現的系統化 Sharpe / 回撤數據；強調小停損、讓少數大贏家支撐整體報酬。學術上「接近 52 週高點的股票較強」有 George & Hwang (2004) 支持。',
-      note: '原法還看基本面與型態（VCP），這裡只實作可量化的趨勢模板與突破。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'high52-v1',
     name: '52 週高點動能（George & Hwang）',
+    short: '52 週高點',
     category: '動能突破', level: '入門',
     idea: '股價逼近 52 週高點時，投資人常因「錨定」不敢追，好消息反應不足；接近高點的股票之後傾向繼續走強。',
-    summary: {
-      entry: '收盤 / 前 52 週最高價 向上穿越 0.95（距高點 5% 以內），且收盤 > 50 日均線',
-      exit: '收盤距 52 週高點超過 15% 出場；2.5 ATR 初始停損；賺 2R 後改 3 ATR Chandelier',
-      sizing: '帳戶 1% 風險 ÷ 停損距離，單筆市值上限 40%',
+    plain: {
+      buy: ['收盤離前 52 週最高價不到 {vars.near|below}', '收盤在 {ind:sma50.length} 日均線之上'],
+      sell: ['從 52 週高點回落超過 {vars.exitNear|below} 就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 2R 後，從最高點回落 {stop:chandelier.k} 倍 ATR 就賣'],
     },
     roles: { atr14: '停損與 Chandelier 的波動度', sma50: '中期趨勢過濾' },
     vars: { near: 0.95, exitNear: 0.85 },
@@ -396,23 +351,17 @@ export const PRESETS = [
       { path: 'ind:sma50.length', label: '趨勢均線', min: 20, max: 150, step: 5, unit: '天', help: '' },
       K.atrStop(), K.chand, K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5)',
-      claim: '1963–2001 美股：用「現價 / 52 週高點」排序的策略，報酬與傳統動能策略同量級（約每月 0.45%），且預測力優於過去報酬、長期不反轉。原文是跨股票排序的多空組合。',
-      note: '盲測一次一檔，改成「逼近 52 週高點就買、明顯回落就賣」的單檔版。',
-      links: [{ title: 'CXO Advisory：52 週高點作為個股動能指標', url: 'https://cxoadvisory.com/technical-trading/the-52-week-high-as-a-momentum-indicator-for-individual-stocks' }],
-    },
   },
   {
     ...base,
     id: 'tsmom-12m-v1',
     name: '12 個月時間序列動能（TSMOM）+ 波動度部位',
+    short: '12 個月動能',
     category: '動能突破', level: '入門',
     idea: '過去 12 個月是上漲的就持有、轉成下跌就出場；部位依波動度調整，讓每檔的風險差不多。',
-    summary: {
-      entry: '過去 252 日報酬由負轉正',
-      exit: '過去 252 日報酬轉負出場；4 ATR 災難停損',
-      sizing: '波動度目標：股數 = 權益 × 1% ÷ ATR（每天預期波動約帳戶 1%），單筆市值上限 90%',
+    plain: {
+      buy: ['過去 {ind:roc252.length} 天的漲幅由下往上超過 {vars.th}%'],
+      sell: ['過去 {ind:roc252.length} 天的漲幅跌回 {vars.th}% 以下就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR'],
     },
     roles: { atr20: '波動度：決定部位大小與災難停損', roc252: '12 個月報酬（%）' },
     vars: { th: 0 },
@@ -431,26 +380,17 @@ export const PRESETS = [
       { path: 'sizing.targetVolPct', label: '每日波動目標', min: 0.0025, max: 0.03, step: 0.0025, pct: true, help: '股數 = 權益 × 目標 ÷ ATR。波動大的股票自動買少。' },
       K.atrStop(), { ...K.maxPos },
     ],
-    source: {
-      ref: 'Moskowitz, Ooi & Pedersen (2012) Time Series Momentum, Journal of Financial Economics 104(2)；波動度調整見 Moreira & Muir (2017) Volatility-Managed Portfolios, Journal of Finance 72(4)',
-      claim: '58 個流動期貨 / 遠期市場中，每一個的 12 個月時間序列動能都是正報酬；分散組合的 Sharpe 第三方摘要約 1.0–1.3（各來源不同）。Moreira & Muir 發現依波動度反向調整曝險能提高多數因子的 Sharpe。',
-      note: '原文以月為單位、跨 58 個市場分散；這裡是單檔、日線版本。',
-      links: [
-        { title: 'SSRN：Time Series Momentum', url: 'https://papers.ssrn.com/abstract=2089463' },
-        { title: 'NBER：Volatility Managed Portfolios', url: 'https://www.nber.org/papers/w22208' },
-      ],
-    },
   },
   {
     ...base,
     id: 'clenow-momentum-v1',
     name: 'Clenow 迴歸動能 + 波動度部位',
+    short: 'Clenow 動能',
     category: '動能突破', level: '進階',
     idea: '用「漲得又快又穩」來衡量動能：對數價格的迴歸斜率 × R²，再用 ATR 決定部位，避免單押高波動股。',
-    summary: {
-      entry: '90 日指數迴歸年化斜率 × R² 向上穿越 30，收盤 > 100 日均線，90 天內沒有超過 15% 的單日跳動',
-      exit: '收盤跌破 100 日均線或動能轉負；3 ATR 初始停損',
-      sizing: '波動度目標：股數 = 權益 × 0.5% ÷ ATR（每天預期波動約帳戶 0.5%）',
+    plain: {
+      buy: ['過去 {ind:lr90.length} 天漲得又快又穩：動能分數往上穿過 {vars.momTh}', '收盤在 {ind:sma100.length} 日均線之上', '過去 90 天沒有單日漲跌超過 {vars.gapMax|%}'],
+      sell: ['收盤跌破 {ind:sma100.length} 日均線，或動能轉負就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR'],
     },
     roles: { atr20: '波動度：部位大小與停損', sma100: '趨勢過濾＋出場線', lr90: '動能分數：年化斜率 × R²（越高代表漲得又快又穩）' },
     vars: { momTh: 30, gapMax: 0.15 },
@@ -472,26 +412,17 @@ export const PRESETS = [
       { path: 'sizing.targetVolPct', label: '每日波動目標', min: 0.001, max: 0.02, step: 0.001, pct: true, help: '原作 0.1%（因為同時持有約 20 檔）；單檔遊戲調高才看得出效果。' },
       K.atrStop(), K.maxPos,
     ],
-    source: {
-      ref: 'Clenow (2015) Stocks on the Move',
-      claim: '原法是 S&P 500 成分股排名輪動 + 大盤在 200 日線上才買。第三方 1999–2014 回測：年化約 12% vs S&P 500 5.2%，最大回撤約 −24% vs −55%；也有分析指出 R² 對短期報酬沒有預測力。',
-      note: '盲測一次只有一檔，無法做跨股排名；改成單檔門檻版，保留迴歸動能、跳空過濾與 ATR 部位。',
-      links: [
-        { title: 'The Chartist：Stocks on the Move 回測', url: 'https://www.thechartist.com.au/?p=5829' },
-        { title: '反面分析：How not to invest — Clenow momentum', url: 'https://chrischow.github.io/dataandstuff/2018-11-10-how-not-to-invest-clenow-momentum' },
-      ],
-    },
   },
   {
     ...base,
     id: 'bb-squeeze-breakout-v1',
     name: '布林收斂後突破（Squeeze）',
+    short: '布林收斂突破',
     category: '動能突破', level: '入門',
     idea: '波動縮到很小之後常接著大波動；等通道收窄、價格往上突破時跟上。',
-    summary: {
-      entry: '前一根布林寬度接近近 120 日最窄（≤ 最低值 × 1.2），今天收盤突破布林上軌',
-      exit: '2 ATR 初始停損；收盤跌破布林中線出場；2R 先賣一半',
-      sizing: '帳戶 1% 風險 ÷ 2 ATR，單筆市值上限 40%',
+    plain: {
+      buy: ['布林通道寬度縮到近 {vars.lookback} 天最窄附近', '收盤突破布林上軌'],
+      sell: ['停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 {targets.0.at.r}R 先賣 {targets.0.fraction|%}', '持有 3 根後，收盤跌破布林中線就賣'],
     },
     roles: { atr14: '停損距離', bb: '布林通道：寬度判斷收斂、上軌判斷突破、中線當出場線' },
     vars: { squeeze: 1.2, lookback: 120 },
@@ -516,23 +447,18 @@ export const PRESETS = [
       { path: 'targets.0.at.r', label: '第一停利', min: 1, max: 5, step: 0.5, unit: 'R', help: '' },
       K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Bollinger (2001) Bollinger on Bollinger Bands（Squeeze）；Carter (2005) Mastering the Trade（TTM Squeeze）',
-      claim: '波動收斂之後常接著波動擴張是被廣泛觀察到的現象（波動群聚）；但突破方向本身沒有穩定的文獻績效數據，多為實務經驗。',
-      note: '以布林寬度相對歷史低點定義收斂，不使用 Keltner 判斷。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'adx-dmi-trend-v1',
     name: 'ADX / DMI 趨勢 + 加碼',
+    short: 'ADX 趨勢',
     category: '趨勢跟隨', level: '進階',
     idea: '先確認「有趨勢」（ADX 上升）而且方向向上（+DI > −DI）才進場，獲利後順勢加碼。',
-    summary: {
-      entry: 'ADX 向上穿越 20（趨勢開始成形）且 +DI > −DI，收盤 > 200 日均線',
-      exit: '−DI 反穿 +DI 出場；2.5 ATR 初始停損，賺 1.5R 後改 3 ATR Chandelier',
-      sizing: '帳戶 0.75% 風險；獲利 1R 且再漲 1 ATR 時加碼初始部位的一半，最多 2 次，加碼後停損移到均價',
+    plain: {
+      buy: ['ADX 往上穿過 {vars.adxTh}（開始有趨勢）', '+DI > −DI（方向向上），收盤在 200 日均線之上'],
+      sell: ['停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 {vars.trailAtR}R 後，從最高點回落 {stop:chandelier.k} 倍 ATR 就賣', '−DI 往上穿過 +DI 全賣'],
+      add: ['賺 1R 以上且比上次買價再漲 {vars.addAtr} 倍 ATR，加碼第一筆的一半', '最多 {pyramiding.maxAdds} 次，加碼後停損拉到成本'],
     },
     roles: { atr14: '停損、Chandelier、加碼間距', adx14: 'ADX：趨勢強度；+DI / −DI：多空方向', sma200: '長期多頭過濾' },
     vars: { adxTh: 20, trailAtR: 1.5, addMinR: 1, addAtr: 1 },
@@ -566,23 +492,17 @@ export const PRESETS = [
       { path: 'vars.addAtr', label: '加碼間距', min: 0.25, max: 3, step: 0.25, unit: '× ATR', help: '' },
       K.riskPct,
     ],
-    source: {
-      ref: 'Wilder (1978) New Concepts in Technical Trading Systems',
-      claim: 'Wilder 提出 ADX / DMI 用來辨識趨勢強度；原書以範例說明，沒有現代標準的 Sharpe / 回撤統計，後續回測結果依市場差異很大。',
-      note: '加 200 日均線過濾只做多頭；加碼規則示範金字塔式加碼與總風險上限。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'supertrend-v1',
     name: 'SuperTrend 翻多 + 線上移動停損',
+    short: 'SuperTrend',
     category: '趨勢跟隨', level: '入門',
     idea: '用 ATR 通道追蹤趨勢：翻多就進場，SuperTrend 線本身就是移動停損，翻空就走。',
-    summary: {
-      entry: 'SuperTrend(10, 3) 由空翻多，且收盤 > 100 日 EMA',
-      exit: '收盤跌破 SuperTrend 線（翻空）出場；2 ATR 初始停損',
-      sizing: '固定最大虧損金額 1 萬點 ÷ 停損距離，單筆市值上限 40%',
+    plain: {
+      buy: ['SuperTrend（{ind:st.atrLength} 天、{ind:st.mult} 倍 ATR）由空翻多', '收盤在 EMA{ind:ema100.length} 之上'],
+      sell: ['收盤跌破 SuperTrend 線就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR'],
     },
     roles: { atr10: '初始停損距離', st: 'SuperTrend：line 是追蹤線、dir 是方向（1 多、−1 空）', ema100: '長期趨勢過濾' },
     indicators: [
@@ -603,23 +523,17 @@ export const PRESETS = [
       { path: 'ind:ema100.length', label: '趨勢過濾 EMA', min: 20, max: 250, step: 10, unit: '天', help: '' },
       K.atrStop(), K.riskAmt, K.maxPos,
     ],
-    source: {
-      ref: 'Olivier Seban 推廣的 SuperTrend（以 ATR 通道追蹤趨勢）',
-      claim: '屬於實務常用的 ATR 通道追蹤法，沒有同儕審查的績效研究；表現接近其他 ATR 移動停損的趨勢跟隨系統。',
-      note: '以 SuperTrend 線本身當移動停損，翻空當天收盤確認後出場。',
-      links: [],
-    },
   },
   {
     ...base,
     id: 'macd-pullback-v1',
     name: 'MACD 零軸下金叉（多頭回檔）',
+    short: 'MACD 回檔',
     category: '均值回歸', level: '入門',
     idea: '長期多頭裡，MACD 在零軸下方翻多代表一段回檔結束；比單純 MACD 交叉少很多假訊號。',
-    summary: {
-      entry: '收盤 > 200 日均線，MACD 在零軸下方向上穿越訊號線（多頭中的回檔結束）',
-      exit: 'MACD 死叉出場；2 ATR 初始停損；賺 1R 後保本',
-      sizing: '帳戶 1% 風險 ÷ 2 ATR，單筆市值上限 40%',
+    plain: {
+      buy: ['收盤在 200 日均線之上', 'MACD 在零軸下方往上穿過訊號線'],
+      sell: ['MACD 往下穿過訊號線就賣', '停損：買價往下 {stop:atr_initial.k} 倍 ATR', '賺到 {stop:breakeven.atR}R，停損拉到成本'],
     },
     roles: { atr14: '停損距離', sma200: '長期多頭過濾', macd: 'MACD：快慢 EMA 差（macd）與其訊號線（signal）' },
     indicators: [
@@ -643,24 +557,7 @@ export const PRESETS = [
       { path: 'stop:breakeven.atR', label: '保本啟動', min: 0.5, max: 3, step: 0.25, unit: 'R', help: '' },
       K.riskPct, K.maxPos,
     ],
-    source: {
-      ref: 'Appel (1979) MACD；「只在 200 日線之上做零軸下金叉」是常見的趨勢過濾變體',
-      claim: 'MACD 交叉本身在多數研究中扣成本後沒有穩定優勢；加長期趨勢過濾、只做回檔是實務上降低假訊號的常見做法。',
-      note: '用 200 日均線過濾，只在多頭結構裡接回檔。',
-      links: [],
-    },
   },
 ];
 export const presetById = id => PRESETS.find(p => p.id === id);
 
-/** 跨策略的通用文獻（策略頁「文獻」區塊顯示） */
-export const GENERAL_REFERENCES = [
-  { topic: '技術分析整體', ref: 'Park & Irwin (2007) What Do We Know About the Profitability of Technical Analysis? Journal of Economic Surveys 21(4)', claim: '回顧大量研究：多數發現技術交易規則在 1990 年代初期以前有經濟利潤，但風險與交易成本的估計、資料探勘問題讓結論仍不確定。', url: 'https://ideas.repec.org/a/bla/jecsur/v21y2007i4p786-826.html' },
-  { topic: '均線規則與資料探勘', ref: 'Brock, Lakonishok & LeBaron (1992) Journal of Finance 47(5)；Sullivan, Timmermann & White (1999) Journal of Finance 54(5)', claim: '均線與通道規則在 1897–1986 道瓊上有效；修正資料探勘偏誤後，1987 年後樣本外優勢不再顯著。', url: '' },
-  { topic: '趨勢跟隨', ref: 'Hurst, Ooi & Pedersen (2017) A Century of Evidence on Trend-Following Investing, Journal of Portfolio Management 44(1)', claim: '多資產期貨組合 1880 年起扣費後 Sharpe 約 0.76–0.77，股市大跌時多為正報酬。', url: 'https://www.trendfollowing.com/whitepaper/Century_Evidence_Trend_Following.pdf' },
-  { topic: '時間序列動能', ref: 'Moskowitz, Ooi & Pedersen (2012) Time Series Momentum, Journal of Financial Economics 104(2)', claim: '58 個流動期貨市場，12 個月動能在每個市場都是正報酬；1–12 個月持續、更長期部分反轉。', url: 'https://papers.ssrn.com/abstract=2089463' },
-  { topic: '橫斷面動能', ref: 'Jegadeesh & Titman (1993) Returns to Buying Winners and Selling Losers, Journal of Finance 48(1)', claim: '買進過去 3–12 個月贏家、賣出輸家，之後 3–12 個月有顯著超額報酬（跨股票排序的組合）。', url: '' },
-  { topic: '52 週高點', ref: 'George & Hwang (2004) The 52-Week High and Momentum Investing, Journal of Finance 59(5)', claim: '接近 52 週高點的程度比過去報酬更能預測未來報酬，且長期不反轉。', url: 'https://cxoadvisory.com/technical-trading/the-52-week-high-as-a-momentum-indicator-for-individual-stocks' },
-  { topic: '波動度調整部位', ref: 'Moreira & Muir (2017) Volatility-Managed Portfolios, Journal of Finance 72(4)', claim: '依前期波動反向調整曝險，多數因子的 Sharpe 提高；工作論文版市場組合 Sharpe 約提高 25%。', url: 'https://www.nber.org/papers/w22208' },
-  { topic: '部位大小與 R 倍數', ref: 'Tharp (1998) Trade Your Way to Financial Freedom；Vince (1990) The Mathematics of Money Management；Kelly (1956) A New Interpretation of Information Rate', claim: '以「每筆風險佔帳戶固定 %」與 R 倍數管理部位；過大的部位（超過 Kelly）長期會降低成長率。', url: '' },
-];

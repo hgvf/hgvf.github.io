@@ -2,21 +2,23 @@
 import { $, $$, esc, toast, MARKET_NAME } from './ui.js';
 import { loadBank, pickPuzzle, getPuzzle } from './bank.js';
 import { getSettings, setSettings, saveSession, allSessions, deleteSession, uid } from './store.js';
+import { shortName, rulesBlock, fmtMoney } from './describe.js';
 import { allStrategies, strategyById } from './strategies.js';
-import { prepareForPuzzle, scanSignals, deepClone } from '../engine/index.js';
+import { prepareForPuzzle, scanSignals, deepClone, applyRiskLimit, CATEGORIES } from '../engine/index.js';
 import { renderPlay, stopPlay } from './play.js';
 import { renderReport } from './report.js';
 import { renderHistory } from './history.js';
 import { renderEditor } from './editor.js';
+import { renderGuide } from './guide.js';
 import { qm, initTips } from './glossary.js';
-import { loadPresetStats, sharpeChip } from './presetstats.js';
+import { loadPresetStats } from './presetstats.js';
 
 const view = $('#view');
 
 async function route() {
   stopPlay();
   const [, name = 'setup', arg] = (location.hash || '#/setup').split('/');
-  $$('#nav a').forEach(a => a.classList.toggle('active', a.dataset.route === name || (name === 'report' && a.dataset.route === 'history')));
+  $$('#nav a').forEach(a => a.classList.toggle('active', a.dataset.route === name || (name === 'report' && a.dataset.route === 'history') || (name === 'guide' && a.dataset.route === 'editor')));
   view.innerHTML = '';
   view.className = 'view';
   try {
@@ -29,6 +31,7 @@ async function route() {
     } else if (name === 'report') await renderReport(view, arg);
     else if (name === 'history') await renderHistory(view);
     else if (name === 'editor') await renderEditor(view, arg);
+    else if (name === 'guide') await renderGuide(view);
     else await renderSetup(view);
   } catch (e) {
     console.error(e);
@@ -47,6 +50,8 @@ async function bannerForBank() {
   return b;
 }
 
+const RISK_OPTS = [[0.005, '0.5%'], [0.01, '1%'], [0.02, '2%'], [0.03, '3%'], [0, '照策略']];
+
 async function renderSetup(root) {
   const bank = await loadBank();
   const st = getSettings();
@@ -57,72 +62,80 @@ async function renderSetup(root) {
   const counts = {};
   for (const p of bank.index) counts[p.market] = (counts[p.market] || 0) + 1;
   counts.MIX = bank.index.length;
+  const equity = 1000000;
+  const groups = [...CATEGORIES.map(c => [c, strategies.filter(s => s.builtin && s.category === c)]),
+    ['我的策略', strategies.filter(s => !s.builtin)]].filter(([, l]) => l.length);
   root.innerHTML = `
   <div class="setup-grid">
     <section class="card">
-      <h2>開始新的 Session <span class="sub">題目隱藏代號與日期，價格已縮放</span></h2>
+      <h2>開始</h2>
       <div class="field"><span class="lbl">市場 ${qm('mixed')}</span><div class="chips" data-k="market">
         ${['TW', 'US', 'JP', 'KR', 'MIX'].map(m => `<button class="chip${st.market === m ? ' on' : ''}" data-v="${m}">${MARKET_NAME[m]} <span class="sub">${counts[m] || 0}</span></button>`).join('')}
       </div></div>
-      <div class="field"><span class="lbl">策略 <a class="sub" href="#/editor" style="margin-left:6px;text-decoration:underline">編輯 / 新增</a></span>
-        <div class="preset-list" data-k="presetId">
-          ${strategies.map(s => `<button class="preset${st.presetId === s.id ? ' on' : ''}" data-v="${esc(s.id)}">
-            <span class="preset-top">${s.category ? `<span class="tag">${esc(s.category)}</span>` : ''}${s.level === '入門' ? '<span class="lv">入門</span>' : ''}${s.builtin ? '' : '<span class="tag">自訂</span>'}${sharpeChip(pstats, s.id)}</span>
-            <b>${esc(s.name || s.id)}</b><span class="preset-desc">${esc(s.idea || s.summary?.entry || s.entry?.signal || '')}</span></button>`).join('')}
+      <div class="field"><span class="lbl">策略</span>
+        <div class="pick-groups" data-k="presetId">
+          ${groups.map(([g, l]) => `<div class="pick-row"><span class="pick-cat">${esc(g)}</span><div class="chips">
+            ${l.map(s => `<button class="chip chip-s${st.presetId === s.id ? ' on' : ''}" data-v="${esc(s.id)}">${esc(shortName(s))}</button>`).join('')}</div></div>`).join('')}
         </div>
-        <p class="preset-pick" id="presetPick"></p></div>
-      <div class="field"><span class="lbl">可操作 K 棒數</span><div class="chips" data-k="playBars">
+        <div class="pick-info" id="pickInfo"></div>
+      </div>
+      <div class="field"><span class="lbl">每筆最多賠（1R）${qm('R')}</span><div class="chips" data-k="risk">
+        ${RISK_OPTS.map(([v, n]) => `<button class="chip${st.risk === v ? ' on' : ''}" data-v="${v}">${n}</button>`).join('')}
+        <span class="sub risk-amt" id="riskAmt"></span>
+      </div></div>
+      <div class="field"><span class="lbl">K 棒數</span><div class="chips" data-k="playBars">
         ${[120, 250, 500].map(n => `<button class="chip${st.playBars === n ? ' on' : ''}" data-v="${n}">${n} 根</button>`).join('')}
       </div></div>
-      <div class="field"><span class="lbl">提示強度 ${qm('hint')}</span><div class="chips" data-k="hint">
-        ${[['full', '線 + 提示列'], ['lines', '只有線'], ['none', '什麼都不畫']].map(([v, n]) => `<button class="chip${st.hint === v ? ' on' : ''}" data-v="${v}">${n}</button>`).join('')}
+      <div class="field"><span class="lbl">提示 ${qm('hint')}</span><div class="chips" data-k="hint">
+        ${[['full', '線 + 提示'], ['lines', '只有線'], ['none', '不提示']].map(([v, n]) => `<button class="chip${st.hint === v ? ' on' : ''}" data-v="${v}">${n}</button>`).join('')}
       </div></div>
       <div class="field"><span class="lbl">模式 ${qm('campaign')}</span><div class="chips" data-k="mode">
         <button class="chip${st.mode === 'single' ? ' on' : ''}" data-v="single">單題</button>
         <button class="chip${st.mode === 'campaign' ? ' on' : ''}" data-v="campaign">連關</button>
         <select class="input" id="campN" style="width:auto">${[5, 10, 20].map(n => `<option value="${n}" ${st.campaignN === n ? 'selected' : ''}>${n} 題</option>`).join('')}</select>
-        <span class="sub" style="align-self:center">連關：權益延續到下一題，最後出綜合報告</span>
       </div></div>
-      <label class="field" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="hideDisc" ${st.hideDiscipline ? 'checked' : ''}> <span>結束前隱藏即時違規計數</span></label>
-      <div class="start-row">
-        <button class="btn btn-primary btn-lg" id="btnStart">開始 ▶</button>
-        <span class="sub">快捷鍵：<kbd>N</kbd> 下一根　<kbd>Space</kbd> 播放　<kbd>J</kbd> 下一事件　<kbd>B</kbd> 買　<kbd>A</kbd> 加碼　<kbd>S</kbd> 賣　<kbd>U</kbd> 撤銷本根</span>
-      </div>
+      <label class="field" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="hideDisc" ${st.hideDiscipline ? 'checked' : ''}> <span>結束前不顯示違規次數</span></label>
+      <div class="start-row"><button class="btn btn-primary btn-lg" id="btnStart">開始 ▶</button></div>
     </section>
     <aside style="display:grid;gap:var(--gutter)">
-      <section class="card">
-        <h2>繼續上次 <span class="sub">${playing.length} 個未完成</span></h2>
-        <div class="resume">${playing.length ? playing.map(s => `
-          <div class="resume-item"><div class="grow"><b>${esc(MARKET_NAME[s.mixed ? 'MIX' : s.market] || s.market)}</b> · ${esc(s.spec?.name || s.presetId)}<br><span class="sub">第 ${s.cursor - s.playStart + 1} / ${s.playBars} 根${s.campaign ? ` · 連關 ${s.campaign.index + 1}/${s.campaign.total}` : ''}</span></div>
-            <a class="btn btn-sm btn-primary" href="#/play/${s.id}">繼續</a><button class="btn btn-sm" data-del="${s.id}">刪除</button></div>`).join('') : '<p class="sub">沒有未完成的 Session。</p>'}</div>
-      </section>
-      <section class="card">
-        <h2>匯入 Session</h2>
-        <p class="sub" style="margin-bottom:8px">匯入其他裝置匯出的 Session JSON（含策略 spec 與 action log），可重現同一份報告。</p>
-        <input type="file" id="importFile" accept="application/json" class="input">
-      </section>
+      ${playing.length ? `<section class="card">
+        <h2>繼續上次</h2>
+        <div class="resume">${playing.map(s => `
+          <div class="resume-item"><div class="grow"><b>${esc(MARKET_NAME[s.mixed ? 'MIX' : s.market] || s.market)}</b> · ${esc(shortName(s.spec) || s.presetId)}<br><span class="sub">第 ${s.cursor - s.playStart + 1} / ${s.playBars} 根${s.campaign ? ` · 連關 ${s.campaign.index + 1}/${s.campaign.total}` : ''}</span></div>
+            <a class="btn btn-sm btn-primary" href="#/play/${s.id}">繼續</a><button class="btn btn-sm" data-del="${s.id}">刪除</button></div>`).join('')}</div>
+      </section>` : ''}
       <section class="card">
         <h2>怎麼玩</h2>
-        <div class="callout">
-          逐根推進，系統依策略即時畫出停損（紅）、停利（綠）、均價（灰）、加碼觸發（藍）。<b>所有成交都要你親手按</b>：下單預設下一根開盤成交；
-          盤中觸發停損 / 停利的那一根要按「確認停損 / 停利」才會以線價成交，晚一根就算違規。結束後揭曉代號，並和「完全照規則」的影子帳戶比較。
-        </div>
+        <ul class="howto">
+          <li>K 線一根一根往後走，看不到股票代號和日期。</li>
+          <li>照選好的策略操作，買、賣、加碼都要自己按。</li>
+          <li>碰到停損或停利的那一根要按「確認」，拖到下一根算違規。</li>
+          <li>結束後公布是哪檔股票，再跟完全照規則操作的結果比。</li>
+        </ul>
+        <p class="sub keys"><kbd>N</kbd> 下一根　<kbd>Space</kbd> 播放　<kbd>J</kbd> 下一個事件　<kbd>B</kbd> 買　<kbd>A</kbd> 加碼　<kbd>S</kbd> 賣　<kbd>U</kbd> 撤銷</p>
       </section>
     </aside>
   </div>`;
+  const syncInfo = () => {
+    const cur = getSettings();
+    const s = strategies.find(x => x.id === cur.presetId) || strategies[0];
+    const ps = pstats?.presets?.[s.builtin ? s.id : s.basedOn];
+    $('#pickInfo', root).innerHTML = `
+      <div class="pick-head"><b>${esc(shortName(s))}</b>${s.category ? `<span class="tag">${esc(s.category)}</span>` : ''}
+        ${ps ? `<span class="sub">題庫 Sharpe ${ps.sharpe.toFixed(2)} · 勝率 ${Math.round(ps.winRate * 100)}% · 每題約 ${ps.tradesPerPuzzle.toFixed(1)} 筆</span>` : ''}
+        <a class="pick-more" href="#/editor/${encodeURIComponent(s.id)}">完整規則 →</a></div>
+      ${s.idea ? `<p class="pick-idea">${esc(s.idea)}</p>` : ''}
+      ${rulesBlock(s, { risk: cur.risk, equity })}`;
+    $('#riskAmt', root).textContent = cur.risk > 0 ? `= ${fmtMoney(equity * cur.risk)}（起始資金 ${fmtMoney(equity)}）` : '用策略自己的設定';
+  };
   $$('[data-k]', root).forEach(g => g.addEventListener('click', e => {
     const b = e.target.closest('[data-v]'); if (!b) return;
     $$('[data-v]', g).forEach(x => x.classList.toggle('on', x === b));
     const k = g.dataset.k, v = b.dataset.v;
-    setSettings({ [k]: k === 'playBars' ? +v : v });
+    setSettings({ [k]: k === 'playBars' || k === 'risk' ? +v : v });
+    if (k === 'presetId' || k === 'risk') syncInfo();
   }));
-  const syncPick = () => {
-    const cur = strategies.find(x => x.id === getSettings().presetId);
-    const el = $('#presetPick', root);
-    if (el) el.innerHTML = cur ? `已選：<b>${esc(cur.name || cur.id)}</b>　<a href="#/editor/${encodeURIComponent(cur.id)}">看白話說明、調整參數 →</a>` : '';
-  };
-  $('[data-k="presetId"]', root).addEventListener('click', () => setTimeout(syncPick));
-  syncPick();
+  syncInfo();
   $('#campN', root).addEventListener('change', e => setSettings({ campaignN: +e.target.value }));
   $('#hideDisc', root).addEventListener('change', e => setSettings({ hideDiscipline: e.target.checked }));
   $$('[data-del]', root).forEach(b => b.addEventListener('click', async () => { await deleteSession(b.dataset.del); route(); }));
@@ -133,15 +146,6 @@ async function renderSetup(root) {
       const sess = await newSession(s, s.mode === 'campaign' ? { id: uid('c'), index: 0, total: s.campaignN, played: [], settings: s } : null);
       location.hash = `#/play/${sess.id}`;
     } catch (err) { console.error(err); toast(err.message); e.target.disabled = false; }
-  });
-  $('#importFile', root).addEventListener('change', async e => {
-    const f = e.target.files[0]; if (!f) return;
-    try {
-      const s = JSON.parse(await f.text());
-      if (!s.puzzleId || !Array.isArray(s.actions) || !s.spec) throw new Error('不是 Session JSON');
-      s.id = s.id || uid(); await saveSession(s);
-      toast('已匯入'); location.hash = s.status === 'done' ? `#/report/${s.id}` : `#/play/${s.id}`;
-    } catch (err) { toast(`匯入失敗：${err.message}`); }
   });
 }
 
@@ -162,12 +166,15 @@ export async function newSession(settings, campaign = null, startEquity) {
     if (nSig >= 3 || tries === 7) break;     // 隨機池：訊號數低於 minSignals 自動換下一題
     played.add(id);
   }
+  const initialEquity = startEquity ?? spec.account?.initialEquity ?? 1000000;
+  const risk = settings.risk ?? 0.01;
+  applyRiskLimit(spec, risk, initialEquity);
   const s = {
-    id: uid(), createdAt: Date.now(), status: 'playing',
+    id: uid(), createdAt: Date.now(), status: 'playing', risk,
     puzzleId: id, market: puzzle.market, mixed, regime: puzzle.tags?.regime, synthetic: !!puzzle.synthetic,
     presetId: spec.id, spec, settings: { hint: settings.hint, hideDiscipline: !!settings.hideDiscipline, speed: settings.speed || 4 },
     playStart: puzzle.contextBars, playBars: puzzle.playBars, cursor: puzzle.contextBars,
-    initialEquity: startEquity ?? spec.account?.initialEquity ?? 1000000,
+    initialEquity,
     actions: [], campaign: campaign ? { ...campaign, played: [...(campaign.played || []), id] } : null,
   };
   await saveSession(s);

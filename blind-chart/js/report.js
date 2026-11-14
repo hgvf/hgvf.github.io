@@ -63,7 +63,7 @@ export async function renderReport(root, id) {
         </div>
       </div>
       <div class="chart-main" id="repChart" style="height:340px;margin-top:12px"></div>
-      <p class="sub" style="margin-top:6px">灰色 K 棒為題目結束後揭曉的後續 ${puzzle.revealBars} 根；○ 為規則要求但你沒做的動作。</p>
+      <p class="sub" style="margin-top:6px">灰色 K 棒：題目結束後的 ${puzzle.revealBars} 根　○ 該做沒做</p>
     </section>
 
     <section class="card w4">
@@ -80,41 +80,38 @@ export async function renderReport(root, id) {
           <tr><td>期望值 R/筆 ${qm('expectancy')}</td><td>${fmtR(A.expectancyR)}</td><td>${fmtR(Sh.expectancyR)}</td><td>—</td></tr>
           <tr><td>Profit factor ${qm('profitFactor')}</td><td>${fmt(A.profitFactor)}</td><td>${fmt(Sh.profitFactor)}</td><td>—</td></tr>
         </tbody></table></div>
-      <p class="sub" style="margin-top:8px">Buy &amp; hold 有 survivorship bias ${qm('survivorship')}：題庫只收現存標的。</p>
       <div class="ctrl" style="margin-top:12px">
         ${camp && !isLastOfCampaign ? '<button class="btn btn-primary" id="bNextCamp">連關下一題 →</button>' : '<a class="btn btn-primary" href="#/setup">再來一題</a>'}
         <button class="btn btn-sm" id="bMd">匯出 Markdown</button>
-        <button class="btn btn-sm" id="bJson">匯出 Session JSON</button>
       </div>
-      ${camp ? `<div class="callout" style="margin-top:10px">連關 ${camp.index + 1}/${camp.total}：本題結束權益 ${fmtInt(rep.actual.finalEquity)}，下一題以此為起始權益。${isLastOfCampaign ? '<br><b>連關完成</b>，到「歷史」頁看綜合報告。' : ''}</div>` : ''}
+      ${camp ? `<p class="sub" style="margin-top:10px">連關 ${camp.index + 1}/${camp.total} · 結束權益 ${fmtInt(rep.actual.finalEquity)}${isLastOfCampaign ? ' · 連關完成，綜合報告在「歷史」' : ''}</p>` : ''}
     </section>
 
     <section class="card w7">
-      <h2>權益曲線對照 <span class="sub">報酬 %：Actual（棕）vs Shadow（藍）vs B&amp;H（灰）；▼ 違規點</span></h2>
+      <h2>權益曲線 <span class="sub">你（棕）· 照規則（藍）· 買進持有（灰）· ▼ 違規</span></h2>
       <div class="rep-chart" id="eqChart"></div>
     </section>
     <section class="card w5">
-      <h2>R 分佈 <span class="sub">Actual（棕）/ Shadow（藍）</span></h2>
+      <h2>R 分佈 <span class="sub">你（棕）· 照規則（藍）</span></h2>
       ${histogramHTML(rep.rHist)}
       <h3>違規次數</h3>
       <div class="chips">${Object.entries(rep.counts).map(([c, n]) => `<span class="tag neg">${esc(VIOLATIONS[c]?.name || c)} × ${n}</span>`).join('') || '<span class="tag pos">沒有違規</span>'}</div>
     </section>
 
     <section class="card">
-      <h2>違規清單 ${qm('counterfactual')} <span class="sub">依代價排序；代價 = 「只修正這一個違規」的反事實權益 − 實際權益（正 = 這個違規讓你少賺 / 多賠）。點一下跳到那根 K 棒</span></h2>
+      <h2>違規清單 ${qm('counterfactual')} <span class="sub">依代價排序，點一下跳到那根</span></h2>
       ${rep.violations.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>違規</th><th>第幾根</th><th>規則要求</th><th>你做了</th><th>代價（點）</th><th>代價（R）</th></tr></thead><tbody>
         ${rep.violations.map(v => `<tr class="click" data-bar="${v.bar}"><td><span class="tag ${v.cost < 0 ? 'warn' : 'neg'}">${esc(v.name)}</span> <span class="sub mono">${v.code}</span></td><td>${bar(v.bar)}</td><td style="text-align:left;white-space:normal">${esc(v.required || '')}</td><td style="text-align:left;white-space:normal">${esc(v.did || '')}</td><td class="mono ${sign(-v.cost)}">${fmtInt(v.cost)}</td><td class="mono">${fmt(v.costR)}</td></tr>`).join('')}
-      </tbody></table></div>
-      <p class="sub" style="margin-top:6px">各違規代價加總（${fmtInt(rep.sumCost)}）不一定等於 Shadow − Actual（${fmtInt(rep.gap)}），差額 ${fmtInt(rep.interaction)} 是違規之間的交互作用，以及影子帳戶進出時機不同造成的差異。</p>` : '<p class="empty">完全照規則，沒有違規 👏</p>'}
+      </tbody></table></div>` : '<p class="empty">完全照規則，沒有違規</p>'}
     </section>
 
     <section class="card w6">
-      <h2>違規但賺錢 <span class="sub">這次是運氣</span></h2>
-      ${rep.lucky.length ? rep.lucky.map(v => { const h = histAvg(v.code); return `<div class="callout" style="margin-bottom:8px"><b>${esc(v.name)}</b>（第 ${bar(v.bar)} 根）讓你多賺 ${fmtInt(-v.cost)} 點。${Number.isFinite(h) ? `歷史上同類違規平均代價 <b class="${sign(-h)}">${fmtInt(h)}</b> 點。` : '還沒有足夠的歷史 Session 可以比較。'}</div>`; }).join('') : '<p class="sub">沒有。</p>'}
+      <h2>違規但賺錢 <span class="sub">運氣</span></h2>
+      ${rep.lucky.length ? rep.lucky.map(v => { const h = histAvg(v.code); return `<div class="callout" style="margin-bottom:8px"><b>${esc(v.name)}</b>（第 ${bar(v.bar)} 根）讓你多賺 ${fmtInt(-v.cost)} 點。${Number.isFinite(h) ? `同類違規過去平均代價 <b class="${sign(-h)}">${fmtInt(h)}</b> 點。` : ''}</div>`; }).join('') : '<p class="sub">沒有。</p>'}
     </section>
     <section class="card w6">
-      <h2>遵守但賠錢 <span class="sub">這是策略的正常成本</span></h2>
-      ${rep.compliantLosers.length ? `<p class="sub" style="margin-bottom:8px">照規則停損的交易，虧損應該都落在 −1R 附近：</p><div class="chips">${rep.compliantLosers.map(t => `<span class="tag">${bar(t.entryBar)}→${bar(t.exitBar)}：${fmtR(t.R)}</span>`).join('')}</div>` : '<p class="sub">沒有。</p>'}
+      <h2>遵守但賠錢 <span class="sub">策略的正常成本</span></h2>
+      ${rep.compliantLosers.length ? `<div class="chips">${rep.compliantLosers.map(t => `<span class="tag">${bar(t.entryBar)}→${bar(t.exitBar)}：${fmtR(t.R)}</span>`).join('')}</div>` : '<p class="sub">沒有。</p>'}
     </section>
 
     <section class="card">
@@ -140,11 +137,10 @@ export async function renderReport(root, id) {
   ], { markers: rep.violations.map(v => ({ x: v.bar, position: 'aboveBar', color: '#DC2626', shape: 'arrowDown', text: v.code.slice(0, 6) })), xLabel: b => `#${b - ps + 1}` });
 
   $('#bMd').onclick = () => download(`blind-chart-${s.id}.md`, reportMarkdown(rep, { ...ans, strategy: s.spec.name }), 'text/markdown');
-  $('#bJson').onclick = () => download(`blind-chart-${s.id}.json`, JSON.stringify({ ...s, report: s.result }, null, 1));
   $('#bNextCamp') && ($('#bNextCamp').onclick = async e => {
     e.target.disabled = true;
     const realized = (camp.realized || 0) + (rep.actual.finalEquity - s.initialEquity);
-    const next = await newSession(camp.settings || { market: s.mixed ? 'MIX' : s.market, presetId: s.presetId, playBars: s.playBars, hint: s.settings.hint, hideDiscipline: s.settings.hideDiscipline },
+    const next = await newSession({ ...(camp.settings || { market: s.mixed ? 'MIX' : s.market, presetId: s.presetId, playBars: s.playBars, hint: s.settings.hint, hideDiscipline: s.settings.hideDiscipline }), risk: camp.settings?.risk ?? s.risk ?? 0 },
       { ...camp, index: camp.index + 1, realized }, rep.actual.finalEquity);
     location.hash = `#/play/${next.id}`;
   });

@@ -4,11 +4,14 @@
 import { $, $$, esc, fmt, fmtInt, fmtPct, fmtR, sign, toast, sparkline, MARKET_NAME } from './ui.js';
 import { getSession, saveSession } from './store.js';
 import { getPuzzle } from './bank.js';
-import { ChartView } from './chart.js';
+import { ChartView, TOOLS, TOOL_INDS, COL } from './chart.js';
+import { rulesBlock, shortName } from './describe.js';
 import { qm } from './glossary.js';
-import { prepareForPuzzle, simulate, INDICATORS, roundLot } from '../engine/index.js';
+import { prepareForPuzzle, simulate, INDICATORS, roundLot, computeIndicators } from '../engine/index.js';
 
 let G = null;                    // current game
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ignore */ } };
 export function stopPlay() {
   if (!G) return;
   clearInterval(G.timer);
@@ -31,12 +34,16 @@ export async function renderPlay(root, id) {
     <section class="card chart-card">
       <div class="chart-head">
         <span class="title">${s.mixed ? '混合盲測' : esc(MARKET_NAME[s.market] || s.market)}</span>
-        <span class="tag">${esc(s.spec.name || s.spec.id)}</span>
+        <span class="tag">${esc(shortName(s.spec))}</span>
         ${s.campaign ? `<span class="tag warn">連關 ${s.campaign.index + 1}/${s.campaign.total}</span>` : ''}
         <span class="grow"></span>
         <div class="ind-toggles" id="indToggles">
-          ${priceInds.map(x => `<button class="on" data-ov="${esc(x.id)}">${esc(x.id)}</button>`).join('')}
+          ${priceInds.length + subInds.length ? `<span class="tg-lbl">策略</span>
+          ${priceInds.map(x => `<button class="on" data-ov="${esc(x.id)}"><i class="dot" data-dot="${esc(x.id)}"></i>${esc(x.id)}</button>`).join('')}
           ${subInds.map(x => `<button data-sub="${esc(x.id)}">${esc(x.id)}</button>`).join('')}
+          <span class="tg-sep"></span>` : ''}
+          <span class="tg-lbl">指標</span>
+          ${Object.entries(TOOLS).map(([k, t]) => (t.pane === 'price' ? `<button data-tool="${k}">${t.label}</button>` : `<button data-sub="tool:${k}">${t.label}</button>`)).join('')}
         </div>
       </div>
       <div class="chart-main" id="chartMain"><div class="legend" id="legend"></div></div>
@@ -52,12 +59,13 @@ export async function renderPlay(root, id) {
     </section>
 
     <nav class="mobile-tabs" id="mTabs">
-      <button data-t="order" class="on">下單</button><button data-t="pf">持倉</button><button data-t="log">紀錄</button>
+      <button data-t="order" class="on">下單</button><button data-t="pf">持倉</button><button data-t="rule">策略</button><button data-t="log">紀錄</button>
     </nav>
 
     <aside class="side">
       <div class="hint" id="hint"></div>
       <section class="card" data-pane="pf" id="pf"></section>
+      <section class="card rule-card" data-pane="rule" id="ruleCard"></section>
     </aside>
 
     <div class="bottom">
@@ -74,16 +82,26 @@ export async function renderPlay(root, id) {
   </div>`;
 
   G = { s, puzzle, ctx, t: s.cursor, timer: null, qty: null, qtyTouched: false };
-  G.chart = new ChartView($('#chartMain'), $('#chartSub'), $('#legend'), { playStart: ctx.playStart, spec: ctx.spec });
+  const tools = computeIndicators(ctx.bars, TOOL_INDS);
+  G.chart = new ChartView($('#chartMain'), $('#chartSub'), $('#legend'), { playStart: ctx.playStart, spec: ctx.spec, tools });
+  $$('[data-dot]').forEach(d => { d.style.background = G.chart.colors[d.dataset.dot] || 'currentColor'; });
+  renderRuleCard();
 
+  // 一般指標：預設全關；副圖（策略的副圖指標、RSI、KD、MACD）一次只開一個。開關狀態記在這台裝置。
+  const saveTools = () => lsSet('bc.chartTools', { price: Object.keys(G.chart.toolOn).filter(k => G.chart.toolOn[k]), sub: G.chart.subId?.startsWith('tool:') ? G.chart.subId : null });
+  const pref = lsGet('bc.chartTools') || {};
+  for (const k of pref.price || []) if (TOOLS[k]) $(`[data-tool="${k}"]`)?.classList.toggle('on', G.chart.toggleTool(k));
+  if (pref.sub && TOOLS[pref.sub.slice(5)]) { $(`[data-sub="${pref.sub}"]`)?.classList.add('on'); G.chart.setSub(pref.sub); }
   $('#indToggles').addEventListener('click', e => {
-    const ov = e.target.closest('[data-ov]'), sb = e.target.closest('[data-sub]');
+    const ov = e.target.closest('[data-ov]'), sb = e.target.closest('[data-sub]'), tl = e.target.closest('[data-tool]');
     if (ov) ov.classList.toggle('on', G.chart.toggleOverlay(ov.dataset.ov));
+    if (tl) { tl.classList.toggle('on', G.chart.toggleTool(tl.dataset.tool)); saveTools(); }
     if (sb) {
       const on = !sb.classList.contains('on');
       $$('[data-sub]').forEach(b => b.classList.remove('on'));
       if (on) sb.classList.add('on');
       G.chart.setSub(on ? sb.dataset.sub : null);
+      saveTools();
     }
   });
   $('#mTabs').addEventListener('click', e => {
@@ -139,7 +157,7 @@ function step(n = 1) {
   if (G.timer && G.s.settings.hint !== 'none') {
     const a = G.run.advice[G.t];
     if (a?.hit && a.pos) { togglePlay(); toast('盤中觸發停損 / 停利，請確認'); }
-    else if (a?.entrySignal) { togglePlay(); toast('進場訊號成立'); }
+    else if (a?.entrySignal) { togglePlay(); toast('買訊'); }
   }
 }
 function jump() {
@@ -244,18 +262,18 @@ function renderHint(adv, run, hint) {
   const S = G.ctx.series, t = G.t, msgs = [];
   let cls = '';
   if (hint === 'full') {
-    if (adv.hit?.stop && adv.pos) { cls = 'alert'; msgs.push(`<b>盤中跌破${adv.hit.stop.trail ? '移動停利' : '停損'} ${fmt(adv.hit.stop.line)}</b>：規則 → 以 ${fmt(adv.hit.stop.price)} 全部出場（按「確認停損」）`); }
-    if (adv.hit?.targets?.length && adv.pos) { cls = cls || 'go'; for (const th of adv.hit.targets) msgs.push(`<b>達停利 ${fmt(th.line)}</b>：規則 → 賣出 ${fmtInt(th.qty)} 股（${Math.round(th.fraction * 100)}%）`); }
-    if (adv.exitAll && adv.pos) { cls = 'alert'; msgs.push(`<b>${adv.exitAll.reason === 'time_stop' ? '時間停損' : '收盤跌破移動停損線'}</b>：規則 → 下一根開盤全部出場`); }
-    if (adv.exitPart && adv.pos) { cls = cls || 'alert'; msgs.push(`<b>出場訊號成立</b>：規則 → 下一根開盤賣出 ${fmtInt(adv.exitPart.qty)} 股`); }
-    if (adv.entrySignal) { cls = 'go'; const g = adv.suggest; msgs.push(`<b>進場訊號成立</b>：建議 ${fmtInt(g.qty)} 股，初始停損 ${fmt(g.stop)}，1R = ${fmtInt(g.R)} 點（帳戶風險 ${fmt(g.riskPct, 2)}%）`); }
-    if (adv.addSignal && adv.pos) { cls = cls || 'go'; msgs.push(`<b>加碼條件成立</b>：建議加碼 ${fmtInt(adv.addQty)} 股`); }
-    if (!msgs.length) msgs.push(adv.pos ? `持有中。有效停損 ${fmt(adv.pos.stop)}，未實現 ${fmtR(adv.pos.unrealizedR)}。` : '無訊號，觀望。');
-    for (const o of adv.openObligations || []) if (o.bar < t && o.type !== 'entry' && adv.pos) { cls = 'alert'; msgs.push(`⚠ 第 ${o.bar - G.ctx.playStart + 1} 根起規則要求出場，你仍持有`); break; }
+    if (adv.hit?.stop && adv.pos) { cls = 'alert'; msgs.push(`<b>盤中碰到${adv.hit.stop.trail ? '移動停利' : '停損'} ${fmt(adv.hit.stop.line)}</b>：按「確認停損」，以 ${fmt(adv.hit.stop.price)} 全部賣出`); }
+    if (adv.hit?.targets?.length && adv.pos) { cls = cls || 'go'; for (const th of adv.hit.targets) msgs.push(`<b>碰到停利 ${fmt(th.line)}</b>：賣 ${fmtInt(th.qty)} 股（${Math.round(th.fraction * 100)}%）`); }
+    if (adv.exitAll && adv.pos) { cls = 'alert'; msgs.push(`<b>賣訊</b>：${adv.exitAll.reason === 'time_stop' ? '持有時間到' : '收盤跌破移動停損'}，下一根開盤全部賣出`); }
+    if (adv.exitPart && adv.pos) { cls = cls || 'alert'; msgs.push(`<b>賣訊</b>：下一根開盤賣 ${fmtInt(adv.exitPart.qty)} 股`); }
+    if (adv.entrySignal) { cls = 'go'; const g = adv.suggest; msgs.push(`<b>買訊</b>：建議買 ${fmtInt(g.qty)} 股，停損 ${fmt(g.stop)}，1R = ${fmtInt(g.R)}（帳戶 ${fmt(g.riskPct, 2)}%）`); }
+    if (adv.addSignal && adv.pos) { cls = cls || 'go'; msgs.push(`<b>加訊</b>：建議加碼 ${fmtInt(adv.addQty)} 股`); }
+    if (!msgs.length) msgs.push(adv.pos ? `持有中，停損 ${fmt(adv.pos.stop)}，目前 ${fmtR(adv.pos.unrealizedR)}` : '沒有訊號');
+    for (const o of adv.openObligations || []) if (o.bar < t && o.type !== 'entry' && adv.pos) { cls = 'alert'; msgs.push(`⚠ 第 ${o.bar - G.ctx.playStart + 1} 根起就該賣了`); break; }
   } else if (hint === 'lines') {
-    msgs.push('提示模式：只有線。');
-  } else msgs.push('提示模式：什麼都不畫，檢討報告才會比對。');
-  if (adv.pendingOrders?.length) msgs.push(`<span class="sub">掛單：${adv.pendingOrders.map(o => `${o.side === 'buy' ? '買' : '賣'} ${fmtInt(o.qty)}`).join('、')}（下一根開盤成交）</span>`);
+    msgs.push('只畫線，不提示');
+  } else msgs.push('不提示，結束後在報告比對');
+  if (adv.pendingOrders?.length) msgs.push(`<span class="sub">掛單：${adv.pendingOrders.map(o => `${o.side === 'buy' ? '買' : '賣'} ${fmtInt(o.qty)}`).join('、')}（下一根開盤）</span>`);
   el.className = `hint ${cls}`;
   el.innerHTML = msgs.map(m => `<p>${m}</p>`).join('');
   void S;
@@ -299,11 +317,11 @@ function renderOrder(adv, run) {
   const pend = adv.pendingOrders || [];
   const thisBar = G.s.actions.filter(a => a.barIndex === G.t);
   const sug = adv.suggest;
-  const sugR = !p && sug ? `建議 ${fmtInt(sug.qty)} 股 · 1R = ${fmtInt(sug.R)} · 風險 ${fmt(sug.riskPct)}%` : p && adv.addSignal ? `建議加碼 ${fmtInt(adv.addQty)} 股` : p ? `持有 ${fmtInt(p.size)} 股` : '';
+  const sugR = !p && sug?.qty > 0 ? `建議 ${fmtInt(sug.qty)} 股 · 1R = ${fmtInt(sug.R)}（${fmt(sug.riskPct)}%）${qm('R')}` : p && adv.addSignal ? `建議加碼 ${fmtInt(adv.addQty)} 股` : p ? `持有 ${fmtInt(p.size)} 股` : '';
   const stopBtn = adv.hit?.stop && p ? `<button class="btn btn-sell btn-lg" id="oStop">確認停損 @ ${fmt(adv.hit.stop.price)}</button>` : '';
   const tgtBtn = adv.hit?.targets?.length && p ? `<button class="btn btn-warn btn-lg" id="oTgt">確認停利 @ ${fmt(adv.hit.targets[0].price)}（${fmtInt(adv.hit.targets.reduce((s, x) => s + x.qty, 0))} 股）</button>` : '';
   $('#order').innerHTML = `
-    <h2>下單 ${qm('R')} <span class="sub">${G.ctx.spec.fill.mode === 'this_close' ? '本根收盤成交' : '下一根開盤成交'}</span></h2>
+    <h2>下單 <span class="sub">${G.ctx.spec.fill.mode === 'this_close' ? '本根收盤成交' : '下一根開盤成交'}</span></h2>
     <div class="order-grid">
       ${stopBtn}${tgtBtn}
       <div class="qty-row">
@@ -342,7 +360,31 @@ function renderLog(run) {
       <td class="mono ${sign(tr.R)}">${fmtR(tr.R)}${tr.open ? '*' : ''}</td>
       <td>${hide ? '—' : v.length ? `<span class="tag neg">${v.map(x => esc(x.name)).join('、')}</span>` : '<span class="tag pos">合規</span>'}</td></tr>`;
   }).join('');
-  $('#log').innerHTML = `<h2>交易紀錄 <span class="sub">* 尚未出場，以現價計</span></h2>
+  $('#log').innerHTML = `<h2>交易紀錄 <span class="sub">* 還沒賣完，以現價計</span></h2>
     ${rows ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>批</th><th>進場根</th><th>進場價</th><th>加碼</th><th>出場（根:股）</th><th>結果</th><th>合規</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<p class="sub">還沒有交易。</p>'}`;
   $$('tr[data-bar]', $('#log')).forEach(tr => tr.onclick = () => G.chart.focus(+tr.dataset.bar, 60));
+}
+
+// 右側「策略」卡：白話規則 + 圖上標記代表什麼
+function renderRuleCard() {
+  const s = G.s, spec = G.ctx.spec;
+  const hasSell = (spec.exitSignals || []).length || (spec.stops || []).some(x => x.type === 'time_stop' || x.params?.trigger === 'close' || x.type === 'ma_trailing');
+  const mk = (glyph, color, txt) => `<li><span class="mk" style="color:${color}">${glyph}</span><span>${txt}</span></li>`;
+  const ln = (color, dash, txt) => `<li><i class="ln${dash ? ' dash' : ''}" style="--c:${color}"></i><span>${txt}</span></li>`;
+  const inds = spec.indicators.filter(x => G.chart.colors[x.id]);
+  $('#ruleCard').innerHTML = `
+    <h2>策略 <span class="sub">${esc(shortName(spec))}</span><a class="card-link" href="#/editor/${encodeURIComponent(s.presetId)}">完整規則</a></h2>
+    ${rulesBlock(spec, { risk: s.risk, equity: s.initialEquity })}
+    <h3>圖上標記</h3>
+    <ul class="mk-list">
+      ${mk('▼', COL.signal, '<b>買訊</b>：買進條件成立，下一根開盤買')}
+      ${hasSell ? mk('▼', COL.sellSig, '<b>賣訊</b>：賣出條件成立，下一根開盤賣') : ''}
+      ${spec.pyramiding?.enabled ? mk('●', COL.add, '<b>加訊</b>：加碼條件成立') : ''}
+      ${mk('▲', COL.up, '<b>買 / 加碼</b>：你的買進')}
+      ${mk('▼', COL.down, '<b>停損 / 停利 / 賣</b>：你的賣出')}
+    </ul>
+    <ul class="mk-list">
+      ${ln(COL.stop, false, '停損線')}${spec.targets?.length ? ln(COL.target, true, '停利價') : ''}${ln(COL.avg, true, '持有均價')}${spec.pyramiding?.enabled ? ln(COL.add, true, '加碼價') : ''}
+      ${inds.map(x => ln(G.chart.colors[x.id], false, `<span class="mono">${esc(x.id)}</span>${spec.roles?.[x.id] ? `　<span class="sub">${esc(spec.roles[x.id])}</span>` : ''}`)).join('')}
+    </ul>`;
 }

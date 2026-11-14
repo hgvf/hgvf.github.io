@@ -1,4 +1,4 @@
-# 盲測 K 線 — 行情資料要上傳成什麼樣子
+# 你有紀律嗎?（盲測 K 線）— 行情資料要上傳成什麼樣子
 
 題庫產生流程：**行情 parquet** → `tools/sample_segments.py`（品質檢查、流動性門檻、隨機抽片段）→ `tools/gen-puzzles.mjs`（用跟前端同一份 engine 標 regime、掃 preset 訊號、匿名化）→ 推到 orphan branch `blind-chart-puzzles` → 前端從 `raw.githubusercontent.com` 讀。
 
