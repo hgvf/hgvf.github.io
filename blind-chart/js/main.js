@@ -9,6 +9,7 @@ import { renderReport } from './report.js';
 import { renderHistory } from './history.js';
 import { renderEditor } from './editor.js';
 import { qm, initTips } from './glossary.js';
+import { loadPresetStats, sharpeChip } from './presetstats.js';
 
 const view = $('#view');
 
@@ -50,6 +51,7 @@ async function renderSetup(root) {
   const bank = await loadBank();
   const st = getSettings();
   const strategies = allStrategies();
+  const pstats = await loadPresetStats();
   const sessions = await allSessions();
   const playing = sessions.filter(s => s.status === 'playing');
   const counts = {};
@@ -64,8 +66,11 @@ async function renderSetup(root) {
       </div></div>
       <div class="field"><span class="lbl">策略 <a class="sub" href="#/editor" style="margin-left:6px;text-decoration:underline">編輯 / 新增</a></span>
         <div class="preset-list" data-k="presetId">
-          ${strategies.map(s => `<button class="preset${st.presetId === s.id ? ' on' : ''}" data-v="${esc(s.id)}"><b>${esc(s.name || s.id)}</b><span>${esc(s.entry?.signal || '')}</span>${s.builtin ? '' : '<span class="tag">自訂</span>'}</button>`).join('')}
-        </div></div>
+          ${strategies.map(s => `<button class="preset${st.presetId === s.id ? ' on' : ''}" data-v="${esc(s.id)}">
+            <span class="preset-top">${s.category ? `<span class="tag">${esc(s.category)}</span>` : ''}${s.level === '入門' ? '<span class="lv">入門</span>' : ''}${s.builtin ? '' : '<span class="tag">自訂</span>'}${sharpeChip(pstats, s.id)}</span>
+            <b>${esc(s.name || s.id)}</b><span class="preset-desc">${esc(s.idea || s.summary?.entry || s.entry?.signal || '')}</span></button>`).join('')}
+        </div>
+        <p class="preset-pick" id="presetPick"></p></div>
       <div class="field"><span class="lbl">可操作 K 棒數</span><div class="chips" data-k="playBars">
         ${[120, 250, 500].map(n => `<button class="chip${st.playBars === n ? ' on' : ''}" data-v="${n}">${n} 根</button>`).join('')}
       </div></div>
@@ -111,6 +116,13 @@ async function renderSetup(root) {
     const k = g.dataset.k, v = b.dataset.v;
     setSettings({ [k]: k === 'playBars' ? +v : v });
   }));
+  const syncPick = () => {
+    const cur = strategies.find(x => x.id === getSettings().presetId);
+    const el = $('#presetPick', root);
+    if (el) el.innerHTML = cur ? `已選：<b>${esc(cur.name || cur.id)}</b>　<a href="#/editor/${encodeURIComponent(cur.id)}">看白話說明、調整參數 →</a>` : '';
+  };
+  $('[data-k="presetId"]', root).addEventListener('click', () => setTimeout(syncPick));
+  syncPick();
   $('#campN', root).addEventListener('change', e => setSettings({ campaignN: +e.target.value }));
   $('#hideDisc', root).addEventListener('change', e => setSettings({ hideDiscipline: e.target.checked }));
   $$('[data-del]', root).forEach(b => b.addEventListener('click', async () => { await deleteSession(b.dataset.del); route(); }));

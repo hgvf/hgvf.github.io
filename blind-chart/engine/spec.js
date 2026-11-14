@@ -25,7 +25,68 @@ export function normalizeSpec(input) {
   s.discipline = { ...DEFAULT_DISCIPLINE, ...(s.discipline || {}) };
   s.fill = { mode: 'next_open', ...(s.fill || {}) };
   s.costModel = s.costModel || { type: 'none' };
+  // 策略變數：條件式裡的 $name 換成 vars.name 的數值（讓門檻可以用旋鈕調整）
+  s.vars = { ...(s.vars || {}) };
+  const sub = str => (typeof str === 'string' ? substituteVars(str, s.vars) : str);
+  s.entry.signal = sub(s.entry.signal);
+  s.exitSignals = s.exitSignals.map(x => ({ ...x, expr: sub(x.expr) }));
+  s.stops = s.stops.map(x => (x.activateWhen ? { ...x, activateWhen: sub(x.activateWhen) } : x));
+  s.targets = s.targets.map(t => ({
+    ...t,
+    at: t.at?.expr ? { ...t.at, expr: sub(t.at.expr) } : t.at,
+    thenStop: t.thenStop?.activateWhen ? { ...t.thenStop, activateWhen: sub(t.thenStop.activateWhen) } : t.thenStop,
+  }));
+  if (s.pyramiding.trigger) s.pyramiding.trigger = sub(s.pyramiding.trigger);
   return s;
+}
+
+/** Replace $name with vars[name]; unknown names are left as-is (validateSpec reports them). */
+export function substituteVars(str, vars = {}) {
+  return str.replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (m, k) => (Object.prototype.hasOwnProperty.call(vars, k) && Number.isFinite(+vars[k]) ? String(+vars[k]) : m));
+}
+
+// ─── Knobs（快速調整旋鈕）的路徑 ───
+//   ind:<指標 id>.<參數>     例 ind:dc20.length
+//   stop:<停損類型>.<參數>   例 stop:atr_initial.k（第一個該類型的停損）
+//   其他用點分路徑，陣列用索引  例 targets.0.at.r、sizing.caps.maxPositionPct、vars.rsiTh
+function knobTarget(spec, path, create) {
+  let m = /^ind:([^.]+)\.(.+)$/.exec(path);
+  if (m) {
+    const ind = (spec.indicators || []).find(x => x.id === m[1]);
+    if (!ind) return null;
+    if (create) ind.params = ind.params || {};
+    return ind.params ? [ind.params, m[2], ind] : null;
+  }
+  m = /^stop:([^.]+)\.(.+)$/.exec(path);
+  if (m) {
+    const st = (spec.stops || []).find(x => x.type === m[1]);
+    if (!st) return null;
+    if (create) st.params = st.params || {};
+    return st.params ? [st.params, m[2], st] : null;
+  }
+  const ks = path.split('.');
+  let cur = spec;
+  for (let i = 0; i < ks.length - 1; i++) {
+    if (cur[ks[i]] == null) { if (!create) return null; cur[ks[i]] = /^\d+$/.test(ks[i + 1]) ? [] : {}; }
+    cur = cur[ks[i]];
+  }
+  return [cur, ks[ks.length - 1]];
+}
+/** Current value of a knob (falls back to the plugin default for indicator params). */
+export function getKnob(spec, path) {
+  const t = knobTarget(spec, path, false);
+  if (!t) return undefined;
+  const v = t[0][t[1]];
+  if (v !== undefined) return v;
+  if (t[2]?.type && INDICATORS[t[2].type]) return INDICATORS[t[2].type].paramsSchema.properties?.[t[1]]?.default;
+  if (t[2]?.type && STOPS[t[2].type]) return STOPS[t[2].type].paramsSchema.properties?.[t[1]]?.default;
+  return undefined;
+}
+export function setKnob(spec, path, value) {
+  const t = knobTarget(spec, path, true);
+  if (!t) return false;
+  t[0][t[1]] = value;
+  return true;
 }
 
 /** Series names a spec can reference in expressions. */
@@ -61,7 +122,13 @@ export function validateSpec(raw) {
     }
   });
   const known = knownSeries(s);
+  for (const [k, v] of Object.entries(raw.vars || {})) {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(k)) E(`vars.${k}`, '變數名稱只能用英數與底線');
+    else if (!Number.isFinite(+v) || v === '' || v === null) E(`vars.${k}`, `變數 $${k} 必須是數字`);
+  }
   const ex = (path, src) => {
+    const un = /\$([A-Za-z_][A-Za-z0-9_]*)/.exec(src || '');
+    if (un) { E(path, `未定義的策略變數 $${un[1]}（在 vars 裡新增）`, un.index); return; }
     try { compile(src, known); } catch (e) { E(path, e.message, e instanceof ExprError ? e.pos : undefined); }
   };
   if (!s.entry.signal) E('entry.signal', '需要進場條件式'); else ex('entry.signal', s.entry.signal);
