@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-17T06:30:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": null
+  },
+  "event_window": {
+    "start": "2026-11-16",
+    "end": "2026-11-16"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "defense": 1,
+      "aerospace": 1
+    },
+    "importance_distribution": {
+      "relevant": 1
+    },
+    "top_tickers": [
+      "NOC",
+      "LMT"
+    ]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261116-001",
+      "slug": "supply-agreement-noc-lmt-pac3-mse-solid-rocket-motor",
+      "event_date": "2026-11-16",
+      "published_at": "2026-11-16",
+      "ingested_at": "2026-11-17T06:30:00+08:00",
+      "event_type": "supply_agreement",
+      "event_type_secondary": [
+        "capacity"
+      ],
+      "themes": [
+        "defense",
+        "aerospace"
+      ],
+      "regions": [
+        "US"
+      ],
+      "importance_score": 72,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+      "title_zh": "Northrop Grumman 取得 16 億美元多年期訂單，擴大供應 PAC-3 MSE 攔截彈固體火箭發動機",
+      "title_original": "Northrop Grumman Lands $1.6 Billion Award to Scale PAC-3 MSE Propulsion Production",
+      "summary_zh": "Northrop Grumman 於 11/16 宣布取得 16 億美元多年期訂單，供應美國陸軍 PAC-3 MSE 攔截彈（由 Lockheed Martin 總裝）所用的雙脈衝 solid rocket motor 與 ignition safety device，於西維吉尼亞州 Allegany Ballistics Laboratory 生產。此單為 8 月公布、合計逾 30 億美元之 PAC-3 MSE／THAAD 推進系統框架協議的首批落實訂單；公司稱 2021 年以來該廠 SRM 產能已近三倍、猶他州廠區翻倍、馬里蘭州 Elkton 增 25%。新聞稿未揭露數量、年產率與合約年期。",
+      "why_it_matters": "Solid rocket motor 是 PAC-3 MSE 擴產最硬的瓶頸節點（Lockheed Martin 與戰爭部的框架目標是把年產量由約 600 枚拉到約 2,000 枚，此數字來自先前框架報導而非本次新聞稿）。這筆訂單把 8 月的框架承諾轉成具約束力的多年期採購量，讓 Northrop 得以對推進劑、殼體與點火元件等二、三階供應商下長單並回收其逾 10 億美元的 SRM 擴產投資，同時鞏固其在 PAC-3 MSE 主發動機的既有供應地位；對 Lockheed Martin 而言則是鎖住攔截彈增產所需的發動機供給。受損方為仍以年度批次接單、缺乏量能可見度的其他 SRM 業者與新進者——在主力攔截彈專案上被長約排除的時間拉長。",
+      "tickers": [
+        "NOC",
+        "LMT"
+      ],
+      "companies": [
+        {
+          "name": "Northrop Grumman Corporation",
+          "ticker": "NOC",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "supplier"
+        },
+        {
+          "name": "Lockheed Martin Corporation",
+          "ticker": "LMT",
+          "exchange": "NYSE",
+          "country": "US",
+          "role": "customer"
+        },
+        {
+          "name": "U.S. Army",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "customer"
+        }
+      ],
+      "supply_chain": {
+        "upstream": [
+          "solid propellant",
+          "rocket motor case",
+          "ignition components"
+        ],
+        "component": "dual-pulse solid rocket motor",
+        "supplier": [
+          "Northrop Grumman Corporation"
+        ],
+        "customer": [
+          "Lockheed Martin Corporation",
+          "U.S. Army"
+        ],
+        "end_market": [
+          "air and missile defense interceptors"
+        ]
+      },
+      "products": [
+        "PAC-3 MSE solid rocket motor",
+        "ignition safety device"
+      ],
+      "materials": [
+        "solid propellant"
+      ],
+      "change": {
+        "type": "multi_year_volume_order",
+        "before": "PAC-3 MSE 發動機擴產僅有 8 月公布的框架協議（PAC-3 MSE 與 THAAD 合計逾 30 億美元），尚未轉為確定訂單",
+        "after": "16 億美元多年期訂單落實，鎖定 Allegany Ballistics Laboratory 的 PAC-3 MSE 發動機與點火安全裝置多年期產出"
+      },
+      "financial_data": {
+        "amount": 1600000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+      "search_keywords": [
+        "noc",
+        "northrop grumman",
+        "northrop",
+        "諾斯洛普格魯曼",
+        "lmt",
+        "lockheed martin",
+        "lockheed",
+        "洛克希德馬丁",
+        "u.s. army",
+        "美國陸軍",
+        "pac-3",
+        "pac-3 mse",
+        "patriot",
+        "愛國者",
+        "interceptor",
+        "攔截彈",
+        "solid rocket motor",
+        "srm",
+        "固體火箭發動機",
+        "ignition safety device",
+        "allegany ballistics laboratory",
+        "thaad",
+        "munitions",
+        "彈藥",
+        "missile defense",
+        "飛彈防禦",
+        "supply_agreement",
+        "capacity",
+        "defense",
+        "aerospace",
+        "國防",
+        "multi-year order",
+        "多年期訂單"
+      ],
+      "sources": [
+        {
+          "publisher": "Northrop Grumman — Investor Relations",
+          "source_type": "primary",
+          "url": "https://investor.northropgrumman.com/news-releases/news-release-details/northrop-grumman-lands-16-billion-award-scale-pac-3-mse",
+          "is_primary": true,
+          "accessed_at": "2026-11-17T06:30:00+08:00"
+        },
+        {
+          "publisher": "GlobeNewswire (Northrop Grumman press release)",
+          "source_type": "primary",
+          "url": "https://www.globenewswire.com/news-release/2026/11/16/3403745/189/en/northrop-grumman-lands-1-6-billion-award-to-scale-pac-3-mse-propulsion-production.html",
+          "is_primary": false,
+          "accessed_at": "2026-11-17T06:30:00+08:00"
+        },
+        {
+          "publisher": "Defence Industry Europe",
+          "source_type": "trade",
+          "url": "https://defence-industry.eu/northrop-grumman-receives-1-6-billion-multiyear-order-for-rocket-motors-for-lockheed-martins-pac-3-mse-interceptors/",
+          "is_primary": false,
+          "accessed_at": "2026-11-17T06:30:00+08:00"
+        },
+        {
+          "publisher": "WV MetroNews",
+          "source_type": "trade",
+          "url": "https://wvmetronews.com/2026/11/16/northrop-grumman-to-increase-production-at-w-va-facility/",
+          "is_primary": false,
+          "accessed_at": "2026-11-17T06:30:00+08:00"
+        }
+      ]
+    }
+  ]
+}
