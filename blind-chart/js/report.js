@@ -33,6 +33,11 @@ export async function renderReport(root, id) {
     await saveSession(s);
   }
   const A = rep.stats.actual, Sh = rep.stats.shadow, ps = ctx.playStart;
+  // 1R 換成金額：每筆的 R0（股數 × 每股停損距離）平均；總 R 對應的金額 = 各筆損益加總
+  const rMoney = run => { const t = run.trades.filter(x => x.R0 > 0); return { avg: t.length ? t.reduce((a, x) => a + x.R0, 0) / t.length : NaN, pnl: run.trades.reduce((a, x) => a + (x.pnl || 0), 0) }; };
+  const rA = rMoney(rep.actual), rS = rMoney(rep.shadow);
+  const rCell = r => (Number.isFinite(r.avg) ? `${fmtInt(r.avg)} <span class="sub">${fmt(r.avg / s.initialEquity * 100, 1)}%</span>` : '—');
+  const moneyOf = r => (Number.isFinite(r.avg) ? `<br><span class="sub ${sign(r.pnl)}">${r.pnl >= 0 ? '+' : ''}${fmtInt(r.pnl)}</span>` : '');
   const history = (await allSessions()).filter(x => x.id !== s.id && x.result?.costs);
   const histAvg = code => {
     const xs = history.filter(x => x.result.counts?.[code]).map(x => x.result.costs[code] / x.result.counts[code]);
@@ -69,10 +74,11 @@ export async function renderReport(root, id) {
     <section class="card w4">
       <h2>結果總表</h2>
       <div class="tbl-wrap"><table class="tbl">
-        <thead><tr><th></th><th>Actual</th><th>Shadow</th><th>Buy&amp;hold</th></tr></thead>
+        <thead><tr><th></th><th>你 ${qm('actual')}</th><th>照規則 ${qm('shadow')}</th><th>買進持有</th></tr></thead>
         <tbody>
           <tr><td>報酬 %</td><td class="${sign(A.returnPct)}">${fmtPct(A.returnPct)}</td><td class="${sign(Sh.returnPct)}">${fmtPct(Sh.returnPct)}</td><td class="${sign(rep.stats.buyHold.returnPct)}">${fmtPct(rep.stats.buyHold.returnPct)}</td></tr>
-          <tr><td>總 R ${qm('totalR')}</td><td>${fmtR(A.totalR)}</td><td>${fmtR(Sh.totalR)}</td><td>—</td></tr>
+          <tr><td>1R 約多少錢 ${qm('R')}</td><td>${rCell(rA)}</td><td>${rCell(rS)}</td><td>—</td></tr>
+          <tr><td>總 R ${qm('totalR')}</td><td>${fmtR(A.totalR)}${moneyOf(rA)}</td><td>${fmtR(Sh.totalR)}${moneyOf(rS)}</td><td>—</td></tr>
           <tr><td>最大回撤 ${qm('maxDD')}</td><td>${fmt(A.maxDDPct)}%</td><td>${fmt(Sh.maxDDPct)}%</td><td>—</td></tr>
           <tr><td>交易次數</td><td>${A.trades}</td><td>${Sh.trades}</td><td>1</td></tr>
           <tr><td>勝率</td><td>${fmt(A.winRate, 0)}%</td><td>${fmt(Sh.winRate, 0)}%</td><td>—</td></tr>
@@ -80,6 +86,7 @@ export async function renderReport(root, id) {
           <tr><td>期望值 R/筆 ${qm('expectancy')}</td><td>${fmtR(A.expectancyR)}</td><td>${fmtR(Sh.expectancyR)}</td><td>—</td></tr>
           <tr><td>Profit factor ${qm('profitFactor')}</td><td>${fmt(A.profitFactor)}</td><td>${fmt(Sh.profitFactor)}</td><td>—</td></tr>
         </tbody></table></div>
+      ${Number.isFinite(rA.avg) ? `<p class="sub" style="margin-top:8px;line-height:1.6">1R = 一筆交易照規則停損時會賠的錢。這題你平均 1R ≈ <b>${fmtInt(rA.avg)}</b>（起始資金的 ${fmt(rA.avg / s.initialEquity * 100, 1)}%），所以 ${fmtR(A.totalR)} 大約是${rA.pnl >= 0 ? '賺' : '賠'}了 <b>${fmtInt(Math.abs(rA.pnl))}</b>。</p>` : ''}
       <div class="ctrl" style="margin-top:12px">
         ${camp && !isLastOfCampaign ? '<button class="btn btn-primary" id="bNextCamp">連關下一題 →</button>' : '<a class="btn btn-primary" href="#/setup">再來一題</a>'}
         <button class="btn btn-sm" id="bMd">匯出 Markdown</button>

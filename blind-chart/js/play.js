@@ -266,7 +266,11 @@ function renderHint(adv, run, hint) {
     if (adv.hit?.targets?.length && adv.pos) { cls = cls || 'go'; for (const th of adv.hit.targets) msgs.push(`<b>碰到停利 ${fmt(th.line)}</b>：賣 ${fmtInt(th.qty)} 股（${Math.round(th.fraction * 100)}%）`); }
     if (adv.exitAll && adv.pos) { cls = 'alert'; msgs.push(`<b>賣訊</b>：${adv.exitAll.reason === 'time_stop' ? '持有時間到' : '收盤跌破移動停損'}，下一根開盤全部賣出`); }
     if (adv.exitPart && adv.pos) { cls = cls || 'alert'; msgs.push(`<b>賣訊</b>：下一根開盤賣 ${fmtInt(adv.exitPart.qty)} 股`); }
-    if (adv.entrySignal) { cls = 'go'; const g = adv.suggest; msgs.push(`<b>買訊</b>：建議買 ${fmtInt(g.qty)} 股，停損 ${fmt(g.stop)}，1R = ${fmtInt(g.R)}（帳戶 ${fmt(g.riskPct, 2)}%）`); }
+    if (adv.entrySignal) {
+      const g = adv.suggest;
+      if (g.qty > 0) { cls = 'go'; msgs.push(`<b>買訊</b>：建議買 ${fmtInt(g.qty)} 股，停損 ${fmt(g.stop)}，1R = ${fmtInt(g.R)}（帳戶 ${fmt(g.riskPct, 2)}%）`); }
+      else msgs.push(`<b>買訊</b>，但買 1 單位（${fmtInt(G.ctx.lot)} 股）停損就會超過每筆最多賠，照規則這次不買`);
+    }
     if (adv.addSignal && adv.pos) { cls = cls || 'go'; msgs.push(`<b>加訊</b>：建議加碼 ${fmtInt(adv.addQty)} 股`); }
     if (!msgs.length) msgs.push(adv.pos ? `持有中，停損 ${fmt(adv.pos.stop)}，目前 ${fmtR(adv.pos.unrealizedR)}` : '沒有訊號');
     for (const o of adv.openObligations || []) if (o.bar < t && o.type !== 'entry' && adv.pos) { cls = 'alert'; msgs.push(`⚠ 第 ${o.bar - G.ctx.playStart + 1} 根起就該賣了`); break; }
