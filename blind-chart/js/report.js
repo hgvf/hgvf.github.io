@@ -5,7 +5,7 @@ import { getSession, saveSession, allSessions } from './store.js';
 import { getPuzzle, getAnswer } from './bank.js';
 import { ChartView, lineChart, timeOf } from './chart.js';
 import { prepareForPuzzle, buildReport, reportMarkdown, VIOLATIONS } from '../engine/index.js';
-import { newSession } from './main.js';
+import { newSession } from './session.js';
 import { qm } from './glossary.js';
 
 export function summarize(rep, s, ans) {

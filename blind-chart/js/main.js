@@ -1,12 +1,13 @@
 // main.js — hash router + setup page.
 import { $, $$, esc, toast, MARKET_NAME } from './ui.js';
-import { loadBank, pickPuzzle, getPuzzle } from './bank.js';
-import { getSettings, setSettings, saveSession, allSessions, deleteSession, uid } from './store.js';
+import { loadBank } from './bank.js';
+import { getSettings, setSettings, allSessions, deleteSession, uid } from './store.js';
 import { shortName, rulesBlock, fmtMoney } from './describe.js';
-import { allStrategies, strategyById } from './strategies.js';
-import { prepareForPuzzle, scanSignals, deepClone, applyRiskLimit, CATEGORIES } from '../engine/index.js';
+import { allStrategies } from './strategies.js';
+import { CATEGORIES } from '../engine/index.js';
 import { renderPlay, stopPlay } from './play.js';
 import { renderReport } from './report.js';
+import { newSession } from './session.js';
 import { renderHistory } from './history.js';
 import { renderEditor } from './editor.js';
 import { renderGuide } from './guide.js';
@@ -147,38 +148,6 @@ async function renderSetup(root) {
       location.hash = `#/play/${sess.id}`;
     } catch (err) { console.error(err); toast(err.message); e.target.disabled = false; }
   });
-}
-
-/** Create and save a session. campaign: { id, index, total, played[], settings } */
-export async function newSession(settings, campaign = null, startEquity) {
-  const bank = await loadBank();
-  const spec = deepClone(strategyById(settings.presetId));
-  delete spec.builtin;
-  const mixed = settings.market === 'MIX';
-  const played = new Set([...(campaign?.played || []), ...(await allSessions()).map(s => s.puzzleId)]);
-  let puzzle = null, id = null;
-  for (let tries = 0; tries < 8; tries++) {
-    id = pickPuzzle(bank, { market: settings.market, presetId: spec.id, playBars: settings.playBars, played });
-    if (!id) throw new Error('沒有可用的題目');
-    puzzle = await getPuzzle(id);
-    const known = puzzle.tags?.presets?.[spec.id];
-    const nSig = known ? known.signalBars.length : scanSignals(prepareForPuzzle(puzzle, spec, { mixed })).length;
-    if (nSig >= 3 || tries === 7) break;     // 隨機池：訊號數低於 minSignals 自動換下一題
-    played.add(id);
-  }
-  const initialEquity = startEquity ?? spec.account?.initialEquity ?? 1000000;
-  const risk = settings.risk ?? 0.01;
-  applyRiskLimit(spec, risk, initialEquity);
-  const s = {
-    id: uid(), createdAt: Date.now(), status: 'playing', risk,
-    puzzleId: id, market: puzzle.market, mixed, regime: puzzle.tags?.regime, synthetic: !!puzzle.synthetic,
-    presetId: spec.id, spec, settings: { hint: settings.hint, hideDiscipline: !!settings.hideDiscipline, speed: settings.speed || 4 },
-    playStart: puzzle.contextBars, playBars: puzzle.playBars, cursor: puzzle.contextBars,
-    initialEquity,
-    actions: [], campaign: campaign ? { ...campaign, played: [...(campaign.played || []), id] } : null,
-  };
-  await saveSession(s);
-  return s;
 }
 
 initTips();

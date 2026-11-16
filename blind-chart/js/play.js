@@ -292,9 +292,9 @@ function renderPortfolio(adv, run) {
   const camp = G.s.campaign;
   $('#pf').innerHTML = `
     <h2>Portfolio <span class="sub">${G.s.mixed ? '' : `每單位 ${ctx.lot} 股`}</span></h2>
-    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span class="price-big">${fmt(c)}</span><span class="${sign(chg)} mono">${fmtPct(chg)}</span></div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px"><span class="price-big">${fmtInt(a.equity)}</span><span class="${sign(a.equity - ctx.initialEquity)} mono">${fmtPct((a.equity / ctx.initialEquity - 1) * 100)}</span></div>
     <dl class="kv">
-      <dt>權益</dt><dd>${fmtInt(a.equity)} <span class="${sign(a.equity - ctx.initialEquity)}">${fmtPct((a.equity / ctx.initialEquity - 1) * 100)}</span></dd>
+      <dt>股價</dt><dd>${fmt(c)} <span class="${sign(chg)}">今日 ${fmtPct(chg)}</span></dd>
       <dt>現金 / 市值</dt><dd>${fmtInt(a.cash)} / ${fmtInt(p ? p.size * c : 0)}</dd>
       <dt>持倉</dt><dd>${p ? `${fmtInt(p.size)} 股 @ ${fmt(p.avgPrice)}` : '空手'}</dd>
       ${p ? `<dt>持有 / 加碼</dt><dd>${p.barsHeld} 根 / ${p.adds} 次</dd>
