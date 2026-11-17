@@ -108,6 +108,23 @@ export const PROJECTS = [
     tags: ['Canvas 2D', 'Pixel Art', 'Idle Game', 'localStorage', 'Vercel'],
   },
   {
+    name: '打起來',
+    group: 'game',
+    icon: '🪖',
+    url: 'https://just-fight-olive.vercel.app/',
+    tagline: '像素軍武經營 × 扭蛋 × 征戰',
+    description: '用扭蛋收集史實兵器，在基地養成、配裝、編成有番號的部隊，再用不同戰術學說投入戰場。失去的東西不會回來，只能重新培養。',
+    features: [
+      '2,000+ 件史實兵器：飛機、直升機、戰車、車輛、步兵、艦艇與武裝彈藥（E4–E7）',
+      '從二戰開局，基地「時代躍進」進入冷戰、現代',
+      '配裝相容性系統：8 種掛點、重量、彈艙尺寸、火控需求與原廠配置加成',
+      '12×9 戰術地圖：程序化地形、戰場迷霧、ISR 偵搜、側擊與補給線',
+      '13 種戰術、11 種地形，永久損失、番號戰史、勳章與紀念牆',
+      '常駐池與武裝池，十連、軟硬保底與新手保證',
+    ],
+    tags: ['PixiJS', 'TypeScript', 'Vite', 'Supabase', 'Vercel'],
+  },
+  {
     name: '下班倒數',
     group: 'tool',
     icon: '⏰',
