@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-19T06:30:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "runtime-selected"
+  },
+  "event_window": {
+    "start": "2026-11-17",
+    "end": "2026-11-18"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "AI infrastructure": 1,
+      "semiconductor": 1,
+      "advanced packaging": 1
+    },
+    "importance_distribution": {
+      "critical": 1,
+      "high": 0,
+      "relevant": 0
+    },
+    "top_tickers": ["NVDA", "3189.TW", "3711.TW", "009150.KS"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261117-001",
+      "slug": "supply-agreement-nvda-kinsus-spil-abf-substrate-cowos",
+      "event_date": "2026-11-17",
+      "published_at": "2026-11-17",
+      "ingested_at": "2026-11-19T06:30:00+08:00",
+
+      "event_type": "supply_agreement",
+      "event_type_secondary": ["capacity", "strategic_investment"],
+      "themes": ["AI infrastructure", "semiconductor", "advanced packaging"],
+      "regions": ["US", "TW", "KR"],
+      "importance_score": 90,
+      "importance_tier": "critical",
+      "evidence_level": "confirmed",
+
+      "title_zh": "NVIDIA 與景碩、矽品、三星電機簽新多年期產能協議：景碩專屬 ABF 載板擴 3.5 倍、矽品獲數十億美元資金擴 CoWoS 一條龍產線",
+      "title_original": "NVIDIA Expands Commitments With Supply Chain Partners to Support AI Infrastructure Buildout",
+      "summary_zh": "NVIDIA 於 Q3 FY27 財報同日（2026-11-17）宣布三項新供應鏈協議：(1) 景碩 Kinsus 簽新多年期協議，於桃園楊梅（Youth）園區將 NVIDIA 專屬 ABF 載板產能擴增至現有 3.5 倍以上，2027H2 開始量產、2028Q3 達標；(2) 矽品 SPIL 簽新多年期先進封裝協議，由 NVIDIA 提供數十億美元資金，於台灣新建 bumping、interposer 晶圓製造、組裝與測試產線，NVIDIA 專屬產能 2029 年中前到位（Digitimes 報導目標為 CoWoS 產能約三倍）；(3) 三星電機 SEMCO 修訂既有載板協議，強化世宗、釜山廠產能，並把 AI 伺服器用 MLCC 納入合作範圍。NVIDIA 同時揭露總供應承諾由上季 2,790 億美元升至 3,900 億美元，增量主要來自多年期記憶體採購協議。",
+      "why_it_matters": "這是 NVIDIA 繼 10 月載板 2.5 倍、測試翻倍計畫後，再以預付款與直接出資鎖定封裝/載板瓶頸：(1) 矽品取得 interposer 晶圓到後段測試的 turnkey CoWoS-like 能力，代表 NVIDIA 在 CoWoS 上進一步分散對 TSMC 的單一依賴，日月光投控（3711）可望取得結構性的先進封裝營收增量，與 Amkor、GlobalFoundries interposer 共同形成第二供應鏈；(2) 景碩專屬產能 3.5 倍使其在 NVIDIA ABF 載板份額相對欣興、Ibiden 提升，ABF 高層數載板供給由買方出資擴產，緩解 2027–28 年載板短缺但也讓產能被 NVIDIA 鎖定，AMD、ASIC 客戶（Broadcom/Google TPU 等）取得載板與封裝產能的難度與成本上升；(3) 三星電機把 MLCC 納入合約，強化其約 40% AI 伺服器 MLCC 份額，對村田、太陽誘電形成份額壓力。3,900 億美元供應承諾意味 NVIDIA 以資產負債表搶占上游產能，上游供應商議價力提高，二線 AI 晶片商的 BOM 成本壓力加大。",
+
+      "tickers": ["NVDA", "3189.TW", "3711.TW", "009150.KS", "2330.TW", "TSM", "AMKR"],
+      "companies": [
+        {"name": "NVIDIA Corporation", "ticker": "NVDA", "exchange": "NASDAQ", "country": "US", "role": "customer"},
+        {"name": "Kinsus Interconnect Technology Corp. (景碩)", "ticker": "3189.TW", "exchange": "TWSE", "country": "TW", "role": "supplier"},
+        {"name": "Siliconware Precision Industries (矽品) / ASE Technology Holding (日月光投控)", "ticker": "3711.TW", "exchange": "TWSE", "country": "TW", "role": "new_supplier"},
+        {"name": "Samsung Electro-Mechanics (三星電機)", "ticker": "009150.KS", "exchange": "KRX", "country": "KR", "role": "supplier"},
+        {"name": "Taiwan Semiconductor Manufacturing Co. (台積電)", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "incumbent_supplier"},
+        {"name": "Taiwan Semiconductor Manufacturing Co. ADR", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "incumbent_supplier"},
+        {"name": "Amkor Technology", "ticker": "AMKR", "exchange": "NASDAQ", "country": "US", "role": "supplier"}
+      ],
+
+      "supply_chain": {
+        "upstream": ["ABF film", "glass fiber cloth", "copper foil", "silicon interposer wafer"],
+        "component": "ABF package substrate; CoWoS advanced packaging (bumping, interposer, assembly, test); MLCC",
+        "supplier": ["Kinsus Interconnect Technology Corp.", "Siliconware Precision Industries", "Samsung Electro-Mechanics"],
+        "customer": ["NVIDIA Corporation"],
+        "end_market": ["AI accelerator (Vera Rubin and next-gen GPU)", "AI data center networking"]
+      },
+
+      "products": ["ABF substrate", "CoWoS", "silicon interposer", "MLCC", "AI GPU"],
+      "materials": ["ABF", "silicon interposer"],
+
+      "change": {
+        "type": "dedicated_capacity_agreement_with_customer_funding",
+        "before": "景碩為 NVIDIA 既有 ABF 載板供應商但無專屬擴產協議；矽品 CoWoS 以後段為主、NVIDIA 僅傳聞出資；SEMCO 載板協議不含 MLCC",
+        "after": "景碩 NVIDIA 專屬 ABF 產能 2028Q3 前擴至 >3.5 倍；矽品獲 NVIDIA 數十億美元資金建 bumping/interposer/封測一條龍專屬產線（2029 年中）；SEMCO 協議擴大至 MLCC 並提升世宗、釜山產能"
+      },
+
+      "financial_data": {
+        "amount": null,
+        "currency": "USD",
+        "capacity_change_pct": 250,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "nvidia", "nvda", "輝達", "kinsus", "景碩", "3189", "3189.tw",
+        "spil", "siliconware", "矽品", "ase", "日月光", "3711", "3711.tw",
+        "samsung electro-mechanics", "semco", "三星電機", "009150",
+        "abf", "abf substrate", "載板", "cowos", "advanced packaging", "先進封裝",
+        "interposer", "中介層", "mlcc", "積層陶瓷電容", "supply agreement", "capacity",
+        "prepayment", "預付款", "supply commitment", "ai infrastructure", "semiconductor",
+        "tsmc", "台積電", "amkor", "vera rubin"
+      ],
+
+      "sources": [
+        {
+          "publisher": "NVIDIA Newsroom",
+          "source_type": "primary",
+          "url": "https://nvidianews.nvidia.com/news/nvidia-expands-commitments-with-supply-chain-partners-to-support-ai-infrastructure-buildout",
+          "is_primary": true,
+          "accessed_at": "2026-11-19T06:20:00+08:00"
+        },
+        {
+          "publisher": "NVIDIA — Q3 FY27 CFO Commentary (SEC EDGAR)",
+          "source_type": "primary",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm",
+          "is_primary": false,
+          "accessed_at": "2026-11-19T06:20:00+08:00"
+        },
+        {
+          "publisher": "The Korea Times",
+          "source_type": "trade",
+          "url": "https://www.koreatimes.co.kr/business/companies/20261118/samsung-electro-mechanics-expands-substrate-mlcc-supply-to-nvidia",
+          "is_primary": false,
+          "accessed_at": "2026-11-19T06:15:00+08:00"
+        },
+        {
+          "publisher": "Seoul Economic Daily",
+          "source_type": "trade",
+          "url": "https://en.sedaily.com/business/2026/11/18/nvidia-says-it-signed-new-substrate-deal-with-samsung",
+          "is_primary": false,
+          "accessed_at": "2026-11-19T06:15:00+08:00"
+        },
+        {
+          "publisher": "AIM Media House",
+          "source_type": "trade",
+          "url": "https://aimmediahouse.com/manufacturing/nvidias-390-billion-supply-bet-faces-a-post-jensen-test",
+          "is_primary": false,
+          "accessed_at": "2026-11-19T06:18:00+08:00"
+        }
+      ]
+    }
+  ]
+}
