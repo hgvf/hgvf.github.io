@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-22T09:00:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": "runtime-selected"},
+  "event_window": {"start": "2026-11-19", "end": "2026-11-20"},
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {"semiconductor": 1, "AI infrastructure": 1, "advanced packaging": 1},
+    "importance_distribution": {"high": 1},
+    "top_tickers": ["TSM", "2330.TW", "005930.KS", "BIDU", "1810.HK"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261119-001",
+      "slug": "supply-disruption-tsm-samsung-china-16nm-foundry-halt",
+      "event_date": "2026-11-19",
+      "published_at": "2026-11-19",
+      "ingested_at": "2026-11-22T09:00:00+08:00",
+      "event_type": "supply_disruption",
+      "event_type_secondary": ["trade_policy", "supplier_change"],
+      "themes": ["semiconductor", "AI infrastructure", "advanced packaging"],
+      "regions": ["US", "CN", "TW", "KR"],
+      "importance_score": 88,
+      "importance_tier": "high",
+      "evidence_level": "reported",
+      "title_zh": "美國 BIS 新規生效，台積電、三星暫停對中國 IC 設計客戶 16nm 以下晶片出貨",
+      "title_original": "TSMC and Samsung halt some chip shipments to Chinese customers as new U.S. export rule takes effect",
+      "summary_zh": "美國商務部 BIS「Addressing Remote Access to Advanced Semiconductors」暫行最終規則於 11/19 刊登 Federal Register 即日生效，取消 D:1/D:4/D:5 國家設計公司以晶圓廠自行電晶體數認證或封測廠認證豁免 16/14nm 以下邏輯晶片的路徑，且中國大陸無任何公司列於美方核准設計商名單。據 FT、Reuters 報導，台積電已要求中國客戶 16nm 以下製程訂單須取得美國出口許可才可續做（28/40nm 多數情況仍可），三星亦暫停對部分中國客戶（報導提及百度崑崙芯、字節跳動）出貨；影響延伸至小米、OPPO、vivo 等手機晶片。",
+      "why_it_matters": "此規則關閉中國 IC 設計公司經由海外封測廠或晶圓廠自行認證取得先進製程的通道，等同把台積電與三星 16nm 以下產能對中國設計客戶改為逐案許可制：短期內中國手機 SoC 與 AI ASIC（崑崙芯、字節自研晶片）面臨投片中斷與交期不確定，台積電/三星損失部分中國先進製程營收但可由美系客戶吸收產能；結構上加速中國設計客戶轉向 SMIC、華虹等本土先進製程與國產 AI 晶片（阿里 T-Head 已宣稱 2027 全面國產訓練），擴大本土晶圓代工與設備需求，同時曾承接轉單的韓國、東南亞封測廠失去此類訂單。",
+      "tickers": ["TSM", "2330.TW", "005930.KS", "BIDU", "1810.HK"],
+      "companies": [
+        {"name": "Taiwan Semiconductor Manufacturing Co.", "ticker": "TSM", "exchange": "NYSE", "country": "TW", "role": "affected_party"},
+        {"name": "Taiwan Semiconductor Manufacturing Co.", "ticker": "2330.TW", "exchange": "TWSE", "country": "TW", "role": "affected_party"},
+        {"name": "Samsung Electronics", "ticker": "005930.KS", "exchange": "KRX", "country": "KR", "role": "affected_party"},
+        {"name": "Baidu (Kunlunxin)", "ticker": "BIDU", "exchange": "NASDAQ", "country": "CN", "role": "customer"},
+        {"name": "ByteDance", "ticker": null, "exchange": null, "country": "CN", "role": "customer"},
+        {"name": "Xiaomi Corp", "ticker": "1810.HK", "exchange": "HKEX", "country": "CN", "role": "customer"},
+        {"name": "U.S. Department of Commerce — Bureau of Industry and Security", "ticker": null, "exchange": null, "country": "US", "role": "regulator"}
+      ],
+      "supply_chain": {
+        "upstream": ["US-origin semiconductor manufacturing equipment"],
+        "component": "advanced logic wafers (16/14nm and below)",
+        "supplier": ["Taiwan Semiconductor Manufacturing Co.", "Samsung Electronics"],
+        "customer": ["Baidu (Kunlunxin)", "ByteDance", "Xiaomi Corp", "OPPO", "vivo"],
+        "end_market": ["AI accelerators", "smartphone SoC", "data center"]
+      },
+      "products": ["advanced logic wafers", "AI ASIC", "smartphone SoC", "foundry services"],
+      "materials": [],
+      "change": {
+        "type": "export_license_requirement",
+        "before": "中國 IC 設計公司可透過晶圓廠電晶體數自我認證或核准封測廠認證，在台積電/三星投片 16nm 以下非管制晶片",
+        "after": "D:1/D:4/D:5 國家設計公司 16/14nm 以下邏輯晶片一律推定為管制品，需美國逐案出口許可；台積電、三星已暫停相關出貨"
+      },
+      "financial_data": {
+        "amount": null, "currency": null, "capacity_change_pct": null, "price_change_pct": null,
+        "revenue_exposure_pct": null, "contract_duration_years": null, "effective_date": "2026-11-19"
+      },
+      "search_keywords": [
+        "tsmc", "台積電", "tsm", "2330.tw", "2330", "taiwan semiconductor",
+        "samsung", "三星", "005930.ks", "005930",
+        "baidu", "kunlunxin", "崑崙芯", "bidu", "bytedance", "字節跳動", "xiaomi", "小米", "1810.hk",
+        "bis", "export control", "出口管制", "foundry", "晶圓代工", "16nm", "advanced node", "先進製程",
+        "ai chip", "ai asic", "smartphone soc", "china", "中國", "export license",
+        "supply_disruption", "trade_policy", "semiconductor", "半導體", "ai infrastructure", "advanced packaging"
+      ],
+      "sources": [
+        {"publisher": "Federal Register — BIS Interim Final Rule \"Addressing Remote Access to Advanced Semiconductors\" (2026-23529)", "source_type": "primary", "url": "https://www.federalregister.gov/d/2026-23529", "is_primary": true, "accessed_at": "2026-11-22T08:50:00+08:00"},
+        {"publisher": "Seoul Economic Daily (citing Financial Times)", "source_type": "wire", "url": "https://en.sedaily.com/world/2026/11/20/tsmc-samsung-halt-some-chip-shipments-to-china-as-us-rules", "is_primary": false, "accessed_at": "2026-11-22T08:45:00+08:00"},
+        {"publisher": "IntelliNews via Yahoo Finance (citing Reuters / Taipei Times)", "source_type": "trade", "url": "https://finance.yahoo.com/technology/ai/articles/tsmc-halts-advanced-chip-orders-000631441.html", "is_primary": false, "accessed_at": "2026-11-22T08:46:00+08:00"},
+        {"publisher": "TrendForce", "source_type": "trade", "url": "https://www.trendforce.com/news/", "is_primary": false, "accessed_at": "2026-11-22T08:40:00+08:00"}
+      ]
+    }
+  ]
+}
