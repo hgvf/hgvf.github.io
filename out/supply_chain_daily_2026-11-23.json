@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-24T09:30:00+08:00",
+  "generator": {
+    "name": "supply-chain-intelligence-daily",
+    "version": "1.0",
+    "model": "runtime-selected"
+  },
+  "event_window": {
+    "start": "2026-11-23",
+    "end": "2026-11-23"
+  },
+  "event_count": 1,
+  "digest": {
+    "themes_distribution": {
+      "semiconductor": 1,
+      "AI infrastructure": 1
+    },
+    "importance_distribution": {
+      "relevant": 1
+    },
+    "top_tickers": ["TSM", "2330.TW"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261123-001",
+      "slug": "capacity-tsm-brazos-texas-2nm-fab-jeti",
+      "event_date": "2026-11-23",
+      "published_at": "2026-11-23",
+      "ingested_at": "2026-11-24T09:30:00+08:00",
+
+      "event_type": "capacity",
+      "event_type_secondary": ["permit_regulatory"],
+      "themes": ["semiconductor", "AI infrastructure"],
+      "regions": ["US", "TW"],
+      "importance_score": 78,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+
+      "title_zh": "台積電向德州提交 JETI 申請，擬於 Brazos County 投資 226 億美元興建 2 奈米以下先進邏輯晶圓廠",
+      "title_original": "TSMC eyes Brazos County for $22.6 billion semiconductor facility (JETI application filed with Texas Comptroller)",
+      "summary_zh": "Brazos County 於 11/23 發布新聞稿，證實 TSMC 已向德州審計長辦公室提交 JETI（Jobs, Energy, Technology and Innovation）稅務優惠申請，計畫在約 3,000–3,200 英畝土地上興建至少一座晶圓廠，投資 226 億美元，生產 2 奈米或更先進製程的 AI / HPC / 行動邏輯晶片，預計 2027 年動工、2031 年完工，創造至少 2,099 個直接職缺。案件仍待審計長審查、州長與 College Station ISD 核准，以及 TSMC 最終投資決策（FID），土地合約尚不具約束力。",
+      "why_it_matters": "這是 TSMC 首度在 Arizona 以外的美國州別以正式政府申請文件揭露具體 capex、製程與時程，意味美國 2nm 級產能將從單一 Phoenix 聚落擴展為雙聚落：對 NVIDIA、AMD、Apple 等美國客戶而言，可降低先進邏輯對台灣單一地理來源的依賴並提高符合在地化／關稅（Section 232）要求的供貨比重；對 Samsung Taylor（同在德州）與 Intel 18A/14A 晶圓代工，則進一步壓縮其以「美國本土先進製程」作為差異化爭取外部客戶的空間。上游受惠者為美系設備商（AMAT、LRCX、KLAC）與德州在地氣體／化學品、廠務工程供應鏈；但因尚屬非約束性申請且 2031 年才完工，短期供需不變，屬中長期地理供應結構訊號。",
+
+      "tickers": ["TSM", "2330.TW"],
+      "companies": [
+        {
+          "name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "ticker": "TSM",
+          "exchange": "NYSE",
+          "country": "TW",
+          "role": "supplier"
+        },
+        {
+          "name": "Brazos County, Texas",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "regulator"
+        },
+        {
+          "name": "Texas Comptroller of Public Accounts",
+          "ticker": null,
+          "exchange": null,
+          "country": "US",
+          "role": "regulator"
+        }
+      ],
+
+      "supply_chain": {
+        "upstream": ["semiconductor equipment", "specialty gases and chemicals", "silicon wafers"],
+        "component": "2nm-class advanced logic wafers",
+        "supplier": ["Taiwan Semiconductor Manufacturing Company Limited"],
+        "customer": [],
+        "end_market": ["AI accelerators", "HPC", "mobile SoC"]
+      },
+
+      "products": ["2nm logic wafer", "advanced logic foundry"],
+      "materials": [],
+
+      "change": {
+        "type": "new_fab_site",
+        "before": "TSMC 美國先進製程產能集中於 Arizona Phoenix 單一聚落（N4/N3/N2/A16 規劃）",
+        "after": "新增德州 Brazos County 第二個美國先進製程候選聚落：226 億美元、2nm 以下、2027 動工 / 2031 完工（待 FID 與 JETI 核准）"
+      },
+
+      "financial_data": {
+        "amount": 22600000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": null
+      },
+
+      "search_keywords": [
+        "tsm", "2330.tw", "2330", "tsmc", "taiwan semiconductor", "台積電",
+        "texas", "德州", "brazos county", "college station", "jeti",
+        "2nm", "2奈米", "advanced logic", "先進製程", "fab", "晶圓廠",
+        "foundry", "晶圓代工", "capacity", "產能", "semiconductor", "半導體",
+        "ai infrastructure", "reshoring", "美國設廠", "permit_regulatory", "tax incentive"
+      ],
+
+      "sources": [
+        {
+          "publisher": "WTAW (quoting Brazos County news release, 2026-11-23)",
+          "source_type": "primary",
+          "url": "https://wtaw.com/worlds-largest-dedicated-semiconductor-manufacturer-eyes-facility-in-brazos-county/",
+          "is_primary": true,
+          "accessed_at": "2026-11-24T09:20:00+08:00"
+        },
+        {
+          "publisher": "KBTX",
+          "source_type": "trade",
+          "url": "https://www.kbtx.com/2026/11/23/worlds-leading-semiconductor-manufacturer-eyes-brazos-county-3200-acre-facility/",
+          "is_primary": false,
+          "accessed_at": "2026-11-24T09:20:00+08:00"
+        },
+        {
+          "publisher": "KXXV",
+          "source_type": "trade",
+          "url": "https://www.kxxv.com/news/local-news/in-your-neighborhood/brazos-county/tsmc-eyes-brazos-county-for-22-6-billion-semiconductor-facility",
+          "is_primary": false,
+          "accessed_at": "2026-11-24T09:20:00+08:00"
+        },
+        {
+          "publisher": "TrendForce",
+          "source_type": "trade",
+          "url": "https://www.trendforce.com/news/2026/11/24/news-tsmc-reportedly-eyes-us22-6b-fab-for-2nm-and-beyond-in-brazos-county-texas-targeting-2031-completion/",
+          "is_primary": false,
+          "accessed_at": "2026-11-24T09:20:00+08:00"
+        }
+      ]
+    }
+  ]
+}
