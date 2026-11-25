@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-11-26T06:30:00+08:00",
+  "generator": {"name": "supply-chain-intelligence-daily", "version": "1.0", "model": null},
+  "event_window": {"start": "2026-11-24", "end": "2026-11-25"},
+  "event_count": 2,
+  "digest": {
+    "themes_distribution": {"optical communication": 1, "CPO": 1, "AI infrastructure": 1, "data center": 1, "critical minerals": 1, "semiconductor": 1, "defense": 1},
+    "importance_distribution": {"critical": 0, "high": 1, "relevant": 1},
+    "top_tickers": ["AAOI", "AXTI"]
+  },
+  "events": [
+    {
+      "event_id": "SC-20261124-001",
+      "slug": "supply-agreement-aaoi-hyperscaler-800g-laser-lta",
+      "event_date": "2026-11-24",
+      "published_at": "2026-11-24",
+      "ingested_at": "2026-11-26T06:30:00+08:00",
+      "event_type": "supply_agreement",
+      "event_type_secondary": ["capacity"],
+      "themes": ["optical communication", "CPO", "AI infrastructure", "data center"],
+      "regions": ["US", "TW", "CN"],
+      "importance_score": 87,
+      "importance_tier": "high",
+      "evidence_level": "confirmed",
+      "title_zh": "AOI 與 Tier-1 超大規模資料中心客戶簽四年長約，最低採購承諾約 22 億美元（800G 光模組＋雷射晶片）",
+      "title_original": "AOI Announces Multi-Year Long-Term Agreement with Tier-1 Hyperscale Datacenter Customer",
+      "summary_zh": "Applied Optoelectronics (AAOI) 宣布與一家既有 Tier-1 hyperscale 客戶簽訂 2026/12–2030/12 的四年長約（其第二份 hyperscaler LTA），最低採購承諾約 22 億美元：2027 年約 15 億美元 800G 光收發模組、2028–2029 年約 7 億美元雷射晶片，部分雷射預計自 2028 年用於 CPO 架構。AOI 承諾自 2027Q1 起出貨一定數量美國製產品，並將擴充德州 Sugar Land 雷射產能；客戶未提供資本承諾，管理層稱長期需求討論逾 100 億美元但不保證。",
+      "why_it_matters": "單一客戶 2027 年 15 億美元 800G 承諾量相當於 AOI 近年年營收數倍，使其從邊緣二供躍升為 hyperscaler 800G 主力供應商之一，直接分食 Coherent、Innolight（中際旭創）、Eoptolink（新易盛）在該客戶的份額；更關鍵的是 2028–2029 年轉向供應雷射晶片（含 CPO 光源），顯示 hyperscaler 正把 CPO 時代的雷射光源鎖定在美國本土產能，降低對中國模組廠與 Lumentum/Coherent 等少數 EML/CW 雷射供應商的依賴。風險在於客戶無資本承諾，AOI 須自行承擔德州擴產的 capex 與執行風險。",
+      "tickers": ["AAOI"],
+      "companies": [
+        {"name": "Applied Optoelectronics, Inc.", "ticker": "AAOI", "exchange": "NASDAQ", "country": "US", "role": "supplier"},
+        {"name": "Unnamed Tier-1 hyperscale datacenter customer", "ticker": null, "exchange": null, "country": "US", "role": "customer"}
+      ],
+      "supply_chain": {
+        "upstream": ["InP laser chips", "DSP"],
+        "component": "800G optical transceiver / laser diode",
+        "supplier": ["Applied Optoelectronics, Inc."],
+        "customer": ["Tier-1 hyperscaler (unnamed)"],
+        "end_market": ["AI data center networking", "co-packaged optics"]
+      },
+      "products": ["800G optical transceiver", "laser diode", "CPO light source"],
+      "materials": ["InP"],
+      "change": {
+        "type": "long_term_supply_agreement",
+        "before": "AOI 對該 hyperscaler 以逐筆訂單供貨 800G，無長期最低採購承諾",
+        "after": "2026/12–2030/12 四年長約，最低承諾約 22 億美元，並延伸至 CPO 用雷射晶片與美國本土製造"
+      },
+      "financial_data": {
+        "amount": 2200000000,
+        "currency": "USD",
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": 4,
+        "effective_date": "2026-12-01"
+      },
+      "search_keywords": ["aaoi", "applied optoelectronics", "aoi", "祥茂光電", "hyperscaler", "hyperscale", "800g", "transceiver", "光模組", "光收發模組", "laser diode", "雷射", "cpo", "co-packaged optics", "共同封裝光學", "optical communication", "光通訊", "ai infrastructure", "data center", "資料中心", "supply_agreement", "long-term agreement", "lta", "長約", "sugar land", "texas", "inp", "made in usa"],
+      "sources": [
+        {"publisher": "Applied Optoelectronics — PR Newswire", "source_type": "primary", "url": "https://www.prnewswire.com/news-releases/aoi-announces-multi-year-long-term-agreement-with-tier-1-hyperscale-datacenter-customer-302949068.html", "is_primary": true, "accessed_at": "2026-11-26T06:20:00+08:00"},
+        {"publisher": "IEEE ComSoc Technology Blog", "source_type": "trade", "url": "https://techblog.comsoc.org/2026/11/24/aois-multi-year-tier-1-hyperscaler-deal-with-forecasted-demand-exceeding-committed-volumes/", "is_primary": false, "accessed_at": "2026-11-26T06:20:00+08:00"},
+        {"publisher": "Investing.com", "source_type": "wire", "url": "https://investing.com/news/stock-market-news/why-is-applied-optoelectronics-stock-rallying-today-93CH-5048448", "is_primary": false, "accessed_at": "2026-11-26T06:15:00+08:00"}
+      ]
+    },
+    {
+      "event_id": "SC-20261124-002",
+      "slug": "trade-policy-mofcom-gallium-germanium-antimony-us-pause-extended",
+      "event_date": "2026-11-24",
+      "published_at": "2026-11-24",
+      "ingested_at": "2026-11-26T06:30:00+08:00",
+      "event_type": "trade_policy",
+      "event_type_secondary": [],
+      "themes": ["critical minerals", "semiconductor", "defense"],
+      "regions": ["CN", "US"],
+      "importance_score": 73,
+      "importance_tier": "relevant",
+      "evidence_level": "confirmed",
+      "title_zh": "中國商務部延長暫停對美鎵、鍺、銻、超硬材料出口禁令至 2027/1/27，許可制仍維持",
+      "title_original": "MOFCOM suspends Clause 2 of Announcement No. 46 (2024) on dual-use exports to the US from 2026-11-28 to 2027-01-27",
+      "summary_zh": "商務部 11/24 公告，自 2026/11/28 至 2027/1/27 繼續暫停實施 2024 年第 46 號公告第二款，即對美國出口鎵、鍺、銻、超硬材料「原則上不予許可」以及石墨兩用物項對美更嚴格最終用戶審查。原暫停期將於 11/27 屆滿；公告其餘條款與出口許可、申報、海關查驗仍有效，軍事用戶禁令不受影響。",
+      "why_it_matters": "若未延長，11/28 起中國對美鎵、鍺、銻出口將回到全面禁止，美國 GaN/GaAs 化合物半導體、紅外光學（國防熱像）與銻系彈藥/阻燃劑供應鏈將立即斷供。延長僅兩個月且許可制不變，意味美國買家仍面臨逐案審批與「中國價 vs 非中國可得價」雙軌溢價（非中國鍺錠報價已近 2 萬美元/kg），採購端將持續加速轉向 Umicore、Teck、Nyrstar 等非中國來源並囤貨；在中國設廠的 AXT 等 Ga/Ge 基板商短期出口風險下降，但 2027/1 與稀土管制同步到期的懸崖風險仍在。",
+      "tickers": ["AXTI"],
+      "companies": [
+        {"name": "Ministry of Commerce of the People's Republic of China (MOFCOM)", "ticker": null, "exchange": null, "country": "CN", "role": "regulator"},
+        {"name": "AXT, Inc.", "ticker": "AXTI", "exchange": "NASDAQ", "country": "US", "role": "affected_party"}
+      ],
+      "supply_chain": {
+        "upstream": ["gallium", "germanium", "antimony", "superhard materials", "graphite"],
+        "component": "compound semiconductor substrates / infrared optics / antimony compounds",
+        "supplier": ["Chinese refiners"],
+        "customer": ["US semiconductor, defense and optics manufacturers"],
+        "end_market": ["GaN/GaAs RF and power devices", "infrared thermal imaging", "munitions", "batteries"]
+      },
+      "products": ["GaAs substrate", "germanium ingot", "infrared optics", "antimony trioxide"],
+      "materials": ["gallium", "germanium", "antimony", "graphite", "superhard materials"],
+      "change": {
+        "type": "export_control_suspension_extended",
+        "before": "對美鎵鍺銻出口禁令暫停期至 2026/11/27，11/28 起將恢復原則不予許可",
+        "after": "暫停延至 2027/1/27，但出口許可、申報、海關查驗及軍事用戶禁令持續"
+      },
+      "financial_data": {
+        "amount": null,
+        "currency": null,
+        "capacity_change_pct": null,
+        "price_change_pct": null,
+        "revenue_exposure_pct": null,
+        "contract_duration_years": null,
+        "effective_date": "2026-11-28"
+      },
+      "search_keywords": ["mofcom", "商務部", "商务部", "china", "中國", "export control", "出口管制", "gallium", "鎵", "germanium", "鍺", "antimony", "銻", "graphite", "石墨", "superhard materials", "超硬材料", "第46號公告", "dual-use", "兩用物項", "trade_policy", "critical minerals", "關鍵礦產", "semiconductor", "defense", "axti", "axt", "gaas", "infrared", "紅外"],
+      "sources": [
+        {"publisher": "商務部公告（騰訊新聞轉載）", "source_type": "primary", "url": "https://view.inews.qq.com/k/20261124A0BBCL00?scene=wap&no-redirect=1", "is_primary": true, "accessed_at": "2026-11-26T06:25:00+08:00"},
+        {"publisher": "Tech Times", "source_type": "trade", "url": "https://www.techtimes.com/articles/331482/20261125/china-extends-gallium-germanium-antimony-export-ban-pause-january-27-licenses-still-required.htm", "is_primary": false, "accessed_at": "2026-11-26T06:25:00+08:00"},
+        {"publisher": "DIGITIMES", "source_type": "trade", "url": "https://gb-www.digitimes.com.tw/tech/dt/n/shwnws.asp?id=0000775984_N738AVKC9TSIMY3I5KTBW", "is_primary": false, "accessed_at": "2026-11-26T06:25:00+08:00"},
+        {"publisher": "SP Angel Market View (25 Nov 2026)", "source_type": "analyst", "url": "https://www.share-talk.com/sp-angel-todays-market-view-wednesday-25th-november-2026/", "is_primary": false, "accessed_at": "2026-11-26T06:10:00+08:00"}
+      ]
+    }
+  ]
+}
